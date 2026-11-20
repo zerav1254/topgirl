@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #0b0b0f;
+  --color-panel: #14141a;
+  --color-panel-2: #1c1c24;
+  --color-brand: #dc2626;
+  --color-gold: #fbbf24;
+  --font-sans: ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--color-ink);
+  background-image:
+    radial-gradient(60rem 40rem at 15% -10%, rgb(220 38 38 / 0.18), transparent 70%),
+    radial-gradient(50rem 30rem at 90% 0%, rgb(251 191 36 / 0.1), transparent 70%);
+  background-repeat: no-repeat;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+::selection {
+  background: rgb(220 38 38 / 0.35);
+}
+
+*:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
