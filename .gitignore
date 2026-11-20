@@ -41,6 +41,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# local notes
+/api-top-girl.md
+
 # cache
 .cache
 .eslintcache
