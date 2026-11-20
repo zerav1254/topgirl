@@ -14,6 +14,7 @@ Panduan kerja untuk agent/AI di repo ini. Baca `RULE.md` (aturan keras) dan `DES
 ```bash
 npm install
 npm run dev      # http://localhost:3000
+npm run lint     # eslint (next/core-web-vitals + typescript)
 npm run build    # wajib lulus sebelum commit
 npm start
 ```

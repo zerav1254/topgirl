@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import type { Artist } from "@/lib/artists";
 
 const TEAM_SIZE = 5;
@@ -32,6 +33,13 @@ const GENRE_IMAGE: Record<string, string> = {
   "R&B": "rnb",
 };
 
+// Genre synergy is informational here: 3/4/5 artists of one genre grant +5/+10/+25% in game.
+const GENRE_BONUS: Record<number, number> = { 3: 5, 4: 10, 5: 25 };
+
+const STAT_ORDER = ["Dmg pemain", "Dmg skill", "Serangan", "DPS", "Fan", "Fan rally", "Red. serangan", "Red. skill"];
+const isPercent = (name: string) => name !== "DPS";
+const formatStat = (v: number) => v.toLocaleString("id-ID", { maximumFractionDigits: 1 });
+
 function Icon({ d, className = "h-4 w-4" }: { d: string; className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className={className}>
@@ -60,12 +68,12 @@ function TierBadge({ tier, className = "" }: { tier: string; className?: string 
 function Avatar({ artist, size = "h-10 w-10" }: { artist: Artist; size?: string }) {
   return (
     <span className={`block shrink-0 overflow-hidden rounded-lg bg-gradient-to-br ${AVATAR_STYLE[artist.tier] ?? AVATAR_STYLE.D} ${size}`}>
-      <img
+      <Image
         src={`/assets/images/artists/thumb/${artist.slug}.webp`}
         alt=""
         width={96}
         height={96}
-        loading="lazy"
+        sizes="96px"
         className="h-full w-full object-cover"
       />
     </span>
@@ -75,7 +83,7 @@ function Avatar({ artist, size = "h-10 w-10" }: { artist: Artist; size?: string 
 function GenreIcon({ genre, className = "h-4 w-4" }: { genre: string; className?: string }) {
   const file = GENRE_IMAGE[genre];
   if (!file) return null;
-  return <img src={`/assets/images/genres/${file}.png`} alt="" width={16} height={16} loading="lazy" className={`${className} object-contain`} />;
+  return <Image src={`/assets/images/genres/${file}.png`} alt="" width={16} height={16} sizes="16px" className={`${className} object-contain`} />;
 }
 
 export function TeamBuilder({ artists }: { artists: Artist[] }) {
@@ -120,17 +128,25 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
 
   const summary = useMemo(() => {
     const genreCount = new Map<string, number>();
-    const skillCount = new Map<string, number>();
+    const statTotal = new Map<string, number>();
     for (const a of team) {
       genreCount.set(a.genre, (genreCount.get(a.genre) ?? 0) + 1);
       for (const s of a.skills) {
-        if (s.name === "Non-tempur") continue;
-        skillCount.set(s.name, (skillCount.get(s.name) ?? 0) + 1);
+        const value = Number.parseFloat(s.value);
+        if (Number.isFinite(value)) statTotal.set(s.name, (statTotal.get(s.name) ?? 0) + value);
       }
     }
+    const genres = [...genreCount.entries()].sort((a, b) => b[1] - a[1]);
+    const [topGenre, topCount] = genres[0] ?? ["", 0];
+    const playerDmg = statTotal.get("Dmg pemain") ?? 0;
+    const isBoosted = (n: string) => n === "Dmg skill" || n === "Serangan";
     return {
-      genres: [...genreCount.entries()].sort((a, b) => b[1] - a[1]),
-      skills: [...skillCount.entries()].sort((a, b) => b[1] - a[1]),
+      genres,
+      stats: STAT_ORDER.filter((n) => statTotal.has(n) || (isBoosted(n) && playerDmg > 0)).map((n) => [n, statTotal.get(n) ?? 0] as const),
+      playerDmg,
+      topGenre,
+      topCount,
+      genreBonus: GENRE_BONUS[topCount] ?? 0,
       tiers: team.map((a) => a.tier).join(" · "),
     };
   }, [team]);
@@ -321,15 +337,40 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
                         </span>
                       ))}
                     </dd>
+                    <dd className="mt-1.5 flex flex-wrap items-center gap-1">
+                      {summary.genreBonus > 0 ? (
+                        <span className="inline-flex items-center gap-1 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-1.5 py-0.5 font-semibold text-emerald-300">
+                          Sinergi {summary.topCount}× {summary.topGenre}: +{summary.genreBonus}%
+                        </span>
+                      ) : (
+                        <span className="text-zinc-500">
+                          Sinergi: {summary.topCount}× {summary.topGenre} — butuh 3 genre sama untuk +5%
+                        </span>
+                      )}
+                      <span className="text-zinc-600">(info, tidak dihitung)</span>
+                    </dd>
                   </div>
                   <div>
-                    <dt className="text-zinc-500">Skill terpakai</dt>
-                    <dd className="mt-1 flex flex-wrap gap-1">
-                      {summary.skills.map(([s, n]) => (
-                        <span key={s} className="rounded-md border border-brand/30 bg-brand/10 px-1.5 py-0.5 text-red-200">
-                          {s} <span className="text-red-300/60">×{n}</span>
-                        </span>
-                      ))}
+                    <dt className="text-zinc-500">Statistik total</dt>
+                    <dd className="mt-1 flex flex-col gap-1">
+                      {summary.stats.length === 0 && <span className="text-zinc-500">Tidak ada skill berangka.</span>}
+                      {summary.stats.map(([name, value]) => {
+                        const boosted = (name === "Dmg skill" || name === "Serangan") && summary.playerDmg > 0;
+                        return (
+                          <div key={name} className="flex items-baseline justify-between gap-2">
+                            <span className="text-zinc-400">{name}</span>
+                            <span className="tabular font-semibold text-zinc-200">
+                              {formatStat(value)}
+                              {isPercent(name) && "%"}
+                              {boosted && (
+                                <span className="ml-1 font-normal text-emerald-300">
+                                  +{formatStat(summary.playerDmg)}% = {formatStat(value + summary.playerDmg)}%
+                                </span>
+                              )}
+                            </span>
+                          </div>
+                        );
+                      })}
                     </dd>
                   </div>
                 </dl>
