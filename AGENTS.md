@@ -63,4 +63,4 @@ Alur data satu arah: CSV → `lib/artists.ts` → `app/page.tsx` (server) → `T
 2. Cek 375 / 768 / 1024 / 1440 px, tanpa scroll horizontal.
 3. Keyboard: Tab ke semua kontrol, focus ring terlihat, `aria-pressed` benar.
 4. Tidak ada emoji sebagai ikon; tidak ada teks kontras rendah.
-5. Commit kecil, pesan imperatif (`Add ...`, `Fix ...`).
+5. Commit kecil, pesan imperatif (`Add ...`, `Fix ...`). Commit saja — push dilakukan pemilik repo (lihat `RULE.md`).

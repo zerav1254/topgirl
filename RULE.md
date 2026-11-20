@@ -41,9 +41,8 @@ Aturan keras repo ini. Kalau ragu, berhenti dan tanya — jangan improvisasi.
 
 ## Git
 
-- Commit kecil dan fokus. Pesan imperatif bahasa Inggris: `Add tier filter`, `Fix slot overflow`.
-- Jangan `git push --force`, jangan rewrite history `main`, jangan commit `node_modules`, `.next`, atau `.vercel`.
-- Tarik (`git pull --rebase`) sebelum push bila remote bergerak.
+- **Hanya commit, jangan push.** `git push` dilarang di repo ini, termasuk `--force`, `-u`, dan semua remote. Sinkronisasi ke GitHub dilakukan manual oleh pemilik repo.
+- Jangan rewrite history `main`, jangan commit `node_modules`, `.next`, atau `.vercel`.
 - File yang dihasilkan (`next-env.d.ts`, `package-lock.json` kecuali sengaja diubah) tidak diedit manual.
 
 ## Aksesibilitas & kualitas (tidak boleh dikorbankan)
