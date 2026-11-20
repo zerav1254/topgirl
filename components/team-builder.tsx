@@ -59,7 +59,7 @@ const ICONS = {
 
 function TierBadge({ tier, className = "" }: { tier: string; className?: string }) {
   return (
-    <span className={`inline-flex items-center rounded-md border px-1.5 py-0.5 text-[11px] font-semibold ${TIER_STYLE[tier] ?? TIER_STYLE.D} ${className}`}>
+    <span className={`inline-flex items-center rounded-md border px-1.5 py-0.5 text-xs font-semibold ${TIER_STYLE[tier] ?? TIER_STYLE.D} ${className}`}>
       {tier}
     </span>
   );
@@ -183,7 +183,7 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
                 type="search"
                 placeholder="Cari nama, genre, atau skill…"
                 aria-label="Cari artist"
-                className="w-full rounded-xl border border-white/10 bg-panel/80 py-2.5 pr-3 pl-9 text-sm placeholder:text-zinc-500 focus:border-brand/60"
+                className="w-full rounded-xl border border-white/10 bg-panel/80 py-2.5 pr-3 pl-9 text-sm placeholder:text-zinc-400 focus:border-brand/60"
               />
             </div>
 
@@ -194,7 +194,7 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
                   type="button"
                   onClick={() => setTier(t)}
                   aria-pressed={tier === t}
-                  className={`cursor-pointer rounded-lg border px-2.5 py-1 text-xs font-semibold transition-colors duration-200 ${
+                  className={`inline-flex min-h-11 cursor-pointer items-center justify-center rounded-lg border px-2.5 py-1 text-xs font-semibold transition-colors duration-200 ${
                     tier === t ? "border-gold/50 bg-gold/15 text-gold" : "border-white/10 bg-panel/60 text-zinc-400 hover:border-white/25 hover:text-zinc-200"
                   }`}
                 >
@@ -210,7 +210,7 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
                   type="button"
                   onClick={() => setGenre(g)}
                   aria-pressed={genre === g}
-                  className={`flex cursor-pointer items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors duration-200 ${
+                  className={`flex min-h-11 cursor-pointer items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors duration-200 ${
                     genre === g ? "border-brand/50 bg-brand/15 text-red-300" : "border-white/10 bg-panel/60 text-zinc-400 hover:border-white/25 hover:text-zinc-200"
                   }`}
                 >
@@ -243,7 +243,7 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
                         <span className="truncate text-sm font-semibold">{a.name}</span>
                         <TierBadge tier={a.tier} />
                       </span>
-                      <span className="mt-0.5 block truncate text-[11px] text-zinc-400">
+                      <span className="mt-0.5 block truncate text-xs text-zinc-400">
                         {a.genre} · {a.skills.map((s) => `${s.name}${s.value ? ` ${s.value}` : ""}`).join(" / ")}
                       </span>
                     </span>
@@ -261,7 +261,7 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
             })}
           </ul>
 
-          {visible.length === 0 && <p className="mt-6 text-sm text-zinc-500">Tidak ada artist yang cocok dengan filter.</p>}
+          {visible.length === 0 && <p className="mt-6 text-sm text-zinc-400">Tidak ada artist yang cocok dengan filter.</p>}
         </section>
 
         {/* Team panel */}
@@ -273,7 +273,7 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
                 <button
                   type="button"
                   onClick={() => setPicked([])}
-                  className="flex cursor-pointer items-center gap-1 rounded-md px-1.5 py-1 text-xs text-zinc-400 transition-colors duration-200 hover:bg-white/5 hover:text-red-300"
+                  className="flex min-h-10 cursor-pointer items-center gap-1 rounded-md px-1.5 py-1 text-xs text-zinc-400 transition-colors duration-200 hover:bg-white/5 hover:text-red-300"
                 >
                   <Icon d={ICONS.trash} className="h-3.5 w-3.5" />
                   Reset
@@ -299,19 +299,19 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
                             <span className="truncate text-sm font-semibold">{a.name}</span>
                             <TierBadge tier={a.tier} />
                           </span>
-                          <span className="block truncate text-[11px] text-zinc-400">{a.genre}</span>
+                          <span className="block truncate text-xs text-zinc-400">{a.genre}</span>
                         </span>
                         <button
                           type="button"
                           onClick={() => toggle(a.slug)}
                           aria-label={`Hapus ${a.name} dari tim`}
-                          className="grid h-7 w-7 cursor-pointer place-items-center rounded-md text-zinc-500 transition-colors duration-200 hover:bg-white/5 hover:text-red-300"
+                          className="grid h-9 w-9 cursor-pointer place-items-center rounded-md text-zinc-400 transition-colors duration-200 hover:bg-white/5 hover:text-red-300"
                         >
                           <Icon d={ICONS.close} className="h-4 w-4" />
                         </button>
                       </>
                     ) : (
-                      <span className="px-1 text-xs text-zinc-600">Slot {i + 1} kosong</span>
+                      <span className="px-1 text-xs text-zinc-400">Slot {i + 1} kosong</span>
                     )}
                   </li>
                 );
@@ -320,20 +320,20 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
 
             <div className="border-t border-white/10 pt-3">
               {team.length === 0 ? (
-                <p className="text-xs text-zinc-500">Klik artist di daftar untuk mengisi slot.</p>
+                <p className="text-xs text-zinc-400">Klik artist di daftar untuk mengisi slot.</p>
               ) : (
                 <dl className="flex flex-col gap-3 text-xs">
                   <div>
-                    <dt className="text-zinc-500">Komposisi tier</dt>
+                    <dt className="text-zinc-400">Komposisi tier</dt>
                     <dd className="tabular mt-0.5 font-semibold text-zinc-200">{summary.tiers}</dd>
                   </div>
                   <div>
-                    <dt className="text-zinc-500">Genre</dt>
+                    <dt className="text-zinc-400">Genre</dt>
                     <dd className="mt-1 flex flex-wrap gap-1">
                       {summary.genres.map(([g, n]) => (
                         <span key={g} className="inline-flex items-center gap-1 rounded-md bg-white/5 px-1.5 py-0.5 text-zinc-300">
                           <GenreIcon genre={g} className="h-3 w-3" />
-                          {g} <span className="text-zinc-500">×{n}</span>
+                          {g} <span className="text-zinc-400">×{n}</span>
                         </span>
                       ))}
                     </dd>
@@ -343,23 +343,23 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
                           Sinergi {summary.topCount}× {summary.topGenre}: +{summary.genreBonus}%
                         </span>
                       ) : (
-                        <span className="text-zinc-500">
+                        <span className="text-zinc-400">
                           Sinergi: {summary.topCount}× {summary.topGenre} — butuh 3 genre sama untuk +5%
                         </span>
                       )}
-                      <span className="text-zinc-600">(info, tidak dihitung)</span>
+                      <span className="text-zinc-400">(info, tidak dihitung)</span>
                     </dd>
                   </div>
                   <div>
-                    <dt className="text-zinc-500">Statistik total</dt>
+                    <dt className="text-zinc-400">Statistik total</dt>
                     <dd className="mt-1 flex flex-col gap-1">
-                      {summary.stats.length === 0 && <span className="text-zinc-500">Tidak ada skill berangka.</span>}
+                      {summary.stats.length === 0 && <span className="text-zinc-400">Tidak ada skill berangka.</span>}
                       {summary.stats.map(([name, value]) => {
                         const boosted = (name === "Dmg skill" || name === "Serangan") && summary.playerDmg > 0;
                         return (
                           <div key={name} className="flex items-baseline justify-between gap-2">
                             <span className="text-zinc-400">{name}</span>
-                            <span className="tabular font-semibold text-zinc-200">
+                            <span className="tabular shrink-0 whitespace-nowrap font-semibold text-zinc-200">
                               {formatStat(value)}
                               {isPercent(name) && "%"}
                               {boosted && (
