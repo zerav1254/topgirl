@@ -30,6 +30,8 @@ export type Artist = {
   slug: string;
   name: string;
   genre: string;
+  region: string | null;
+  season: number | null;
   baseSing: number | null;
   baseDance: number | null;
   skills: Skill[];
@@ -129,6 +131,8 @@ export function loadArtists(): Artist[] {
         slug: r[idx("slug")],
         name: r[idx("name")],
         genre: r[idx("genre")],
+        region: r[idx("region")] || null,
+        season: int(r[idx("season")]),
         baseSing,
         baseDance,
         skills,

@@ -18,8 +18,9 @@ Aturan keras repo ini. Kalau ragu, berhenti dan tanya — jangan improvisasi.
 ## Data
 
 - `data/artists.csv` adalah **satu-satunya** sumber data. Jangan duplikasi data ke `.ts`/`.json` atau ke komponen.
-- Skema kolom: `id,slug,name,genre,base_sing,base_dance,s1_effect,s1_value,s2_effect,s2_value`.
+- Skema kolom: `id,slug,name,genre,region,season,base_sing,base_dance,s1_effect,s1_value,s2_effect,s2_value`.
   - `slug` unik, huruf kecil, tanpa spasi.
+  - `region` ∈ `Tokyo Rome Bali Auction` atau kosong; `season` angka lokal (`Tokyo 4` → `4`) atau kosong.
   - `base_sing`/`base_dance` boleh kosong; skor memakai faktor basis netral saat kosong.
   - `sN_effect` ∈ `Effect` di `lib/artists.ts`; `sN_value` angka tanpa `%` (DPS tetap flat 200/240).
   - Slot skill boleh kosong; artist dengan satu skill cukup isi `s1_*`.

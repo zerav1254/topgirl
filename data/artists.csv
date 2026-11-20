@@ -1,81 +1,81 @@
-id,slug,name,genre,base_sing,base_dance,s1_effect,s1_value,s2_effect,s2_value
-24,claudius,Claudius,Hip Hop,34827,25071,player_dmg,24,player_dmg,24
-76,monica,Monica,Pop,29950,29950,player_dmg,30,player_dmg,30
-118,rena,Rena,R&B,,,player_dmg,32,basic_atk_red,12
-63,sienna,Sienna,Rock,,,player_dmg,28,skill_dmg_red,12
-111,sloane,Sloane,Pop,,,skill_dmg,28,player_dmg,28
-70,yumeno,Yumeno,Pop,42437,28211,player_dmg,28,basic_atk_red,12
-126,nephtys,Nephtys,R&B,,,player_dmg,24,fan,16
-35,isla,Isla,Pop,29950,29950,player_dmg,24,skill_dmg_red,12
-34,hikari,Hikari,Rock,29950,29950,player_dmg,24,skill_dmg_red,12
-75,longkui,Longkui,EDM,29950,29950,skill_dmg,30,player_dmg,30
-14,aurelia,Aurelia,EDM,34827,25071,player_dmg,24,fan,12
-57,riku,Riku,Rock,34827,25071,player_dmg,24,basic_atk_red,12
-37,kasha,Kasha,Rock,25071,34827,player_dmg,24,basic_atk,60
-69,xenia,Xenia,EDM,20893,29023,player_dmg,20,fan_rally,10
-61,sari,Sari,EDM,29023,20893,player_dmg,20,fan_rally,10
-21,chizuru,Chizuru,Pop,24959,24959,player_dmg,20,fan_rally,10
-60,ruby,Ruby,Pop,20893,29023,player_dmg,20,basic_atk,50
-33,hestia,Hestia,Hip Hop,24959,24959,player_dmg,20,fan_rally,10
-50,nastassja,Nastassja,EDM,29023,20893,player_dmg,20,fan_rally,10
-125,layla,Layla,Pop,,,basic_atk,80,skill_dmg_red,12
-122,landy,Landy,Hip Hop,,,basic_atk,80,skill_dmg_red,12
-121,momosaki,Momosaki,Rock,,,basic_atk,80,basic_atk_red,12
-120,hana,Hana,Pop,,,basic_atk,80,basic_atk_red,12
-27,dewi,Dewi,R&B,29950,29950,skill_dmg,24,basic_atk,60
-113,valerie,Valerie,Rock,,,basic_atk_red,12,skill_dmg,28
-124,elame,Elame,Hip Hop,,,basic_atk,80,fan,16
-47,mio,Mio,Hip Hop,28211,42437,basic_atk,70,basic_atk_red,12
-119,mizakura,Mizakura,EDM,,,basic_atk,80,fan,16
-123,momona,Momona,EDM,,,basic_atk,80,fan,12
-25,cornelia,Cornelia,R&B,25071,34827,dps_def,240,skill_dmg_red,12
-18,ayaka,Ayaka,Hip Hop,29023,20893,skill_dmg_red,12,basic_atk_red,12
-49,moana,Moana,Pop,29023,20893,skill_dmg_red,12,basic_atk_red,12
-16,avery,Avery,Hip Hop,19076,25851,skill_dmg_red,12,basic_atk_red,12
-55,paisley,Paisley,Rock,19076,25851,skill_dmg_red,12,basic_atk_red,12
-112,kendell,Kendell,Hip Hop,,,fan,14,skill_dmg,28
-26,daphne,Daphne,Hip Hop,24959,24959,skill_dmg,20,basic_atk,50
-43,margot,Margot,EDM,,,skill_dmg,28,fan,14
-41,leilani,Leilani,Hip Hop,20893,29023,skill_dmg,20,basic_atk,50
-17,aya,Aya,R&B,35540,35540,basic_atk,70,fan,14
-40,kokoro,Kokoro,EDM,24959,24959,skill_dmg,20,basic_atk,60
-48,miyuki,Miyuki,EDM,25071,34827,basic_atk,60,basic_atk_red,12
-15,aurora,Aurora,Pop,22464,22464,skill_dmg,20,basic_atk,50
-23,claire,Claire,Rock,22464,22464,skill_dmg,20,basic_atk,50
-9,alice,Alice,EDM,25851,19076,skill_dmg,20,basic_atk,50
-10,antonia,Antonia,Rock,25071,34827,skill_dmg,24,fan,12
-28,eirene,Eirene,R&B,24959,24959,basic_atk,50,basic_atk_red,12
-12,ariadne,Ariadne,Pop,20893,29023,basic_atk,50,basic_atk_red,12
-56,ratih,Ratih,R&B,20893,29023,basic_atk,50,basic_atk_red,12
-58,rin,Rin,EDM,34827,25071,skill_dmg,24,fan,12
-71,yuuko,Yuuko,Rock,20893,29023,basic_atk,50,basic_atk_red,12
-32,haruki,Haruki,Hip Hop,29950,29950,basic_atk,60,fan,12
-22,cindy,Cindy,EDM,22464,22464,skill_dmg,20,basic_atk_red,12
-30,everly,Everly,EDM,22464,22464,skill_dmg,20,basic_atk_red,12
-68,vivienne,Vivienne,Rock,25071,34827,dps_def,240,basic_atk_red,12
-53,nova,Nova,R&B,22464,22464,dps_def,200,basic_atk,50
-20,calliope,Calliope,Rock,29023,20893,basic_atk,50,fan,10
-45,megan,Megan,Hip Hop,20893,29023,player_dmg,20,gold,40
-13,audrey,Audrey,Hip Hop,22464,22464,wbg_dmg,30,skill_dmg_red,12
-66,talia,Talia,Rock,24959,24959,basic_atk,50,fan,10
-65,sora,Sora,R&B,29023,20893,basic_atk,50,fan,10
-67,valentina,Valentina,R&B,,,fan,14,basic_atk_red,12
-46,melissa,Melissa,Rock,24959,24959,basic_atk,50,fan,10
-59,rosemary,Rosemary,Pop,29023,20893,basic_atk,50,fan,10
-73,bella,Bella,Hip Hop,25851,19076,skill_dmg,20,fan,10
-31,flora,Flora,EDM,29950,29950,fan,12,basic_atk_red,12
-29,eri,Eri,R&B,25071,34827,fan,12,basic_atk_red,12
-52,noora,Noora,R&B,,,noncombat,,basic_atk,50
-36,julia,Julia,R&B,25851,19076,skill_dmg,20,drive,75
-64,skylar,Skylar,Rock,25851,19076,skill_dmg,20,wbg_dmg,30
-72,zendayah,Zendayah,R&B,19076,25851,drive,50,basic_atk,50
-44,marina,Marina,Hip Hop,34827,25071,dps_atk_rally,240,fan,12
-54,octavia,Octavia,Pop,29950,29950,dps_atk_company,240,fan,12
-51,ningsih,Ningsih,Hip Hop,25071,34827,dps_atk_company,240,fan,12
-42,lestari,Lestari,Pop,34827,25071,dps_def,240,wbg_dmg,36
-11,anya,Anya,EDM,24959,24959,dps_atk_rally,200,fan,10
-62,savannah,Savannah,Pop,19076,25851,dps_atk_company,200,fan,10
-74,caroline,Caroline,EDM,19076,25851,dps_atk_rally,200,fan,10
-19,brooklyn,Brooklyn,Pop,25851,19076,dps_def,200,wbg_dmg,36
-38,kelly,Kelly,Rock,,,fan,10,fan_rally,10
-39,kesnia,Kesnia,R&B,19076,25851,gold,40,gold,40
+id,slug,name,genre,region,season,base_sing,base_dance,s1_effect,s1_value,s2_effect,s2_value
+24,claudius,Claudius,Hip Hop,Rome,3,34827,25071,player_dmg,24,player_dmg,24
+76,monica,Monica,Pop,Auction,,29950,29950,player_dmg,30,player_dmg,30
+118,rena,Rena,R&B,,,,,player_dmg,32,basic_atk_red,12
+63,sienna,Sienna,Rock,,,,,player_dmg,28,skill_dmg_red,12
+111,sloane,Sloane,Pop,,,,,skill_dmg,28,player_dmg,28
+70,yumeno,Yumeno,Pop,Tokyo,4,42437,28211,player_dmg,28,basic_atk_red,12
+126,nephtys,Nephtys,R&B,,,,,player_dmg,24,fan,16
+35,isla,Isla,Pop,Bali,3,29950,29950,player_dmg,24,skill_dmg_red,12
+34,hikari,Hikari,Rock,Tokyo,3,29950,29950,player_dmg,24,skill_dmg_red,12
+75,longkui,Longkui,EDM,Auction,,29950,29950,skill_dmg,30,player_dmg,30
+14,aurelia,Aurelia,EDM,Rome,2,34827,25071,player_dmg,24,fan,12
+57,riku,Riku,Rock,Tokyo,2,34827,25071,player_dmg,24,basic_atk_red,12
+37,kasha,Kasha,Rock,,,25071,34827,player_dmg,24,basic_atk,60
+69,xenia,Xenia,EDM,Rome,1,20893,29023,player_dmg,20,fan_rally,10
+61,sari,Sari,EDM,Bali,1,29023,20893,player_dmg,20,fan_rally,10
+21,chizuru,Chizuru,Pop,Tokyo,1,24959,24959,player_dmg,20,fan_rally,10
+60,ruby,Ruby,Pop,,,20893,29023,player_dmg,20,basic_atk,50
+33,hestia,Hestia,Hip Hop,,,24959,24959,player_dmg,20,fan_rally,10
+50,nastassja,Nastassja,EDM,,,29023,20893,player_dmg,20,fan_rally,10
+125,layla,Layla,Pop,,,,,basic_atk,80,skill_dmg_red,12
+122,landy,Landy,Hip Hop,,,,,basic_atk,80,skill_dmg_red,12
+121,momosaki,Momosaki,Rock,,,,,basic_atk,80,basic_atk_red,12
+120,hana,Hana,Pop,,,,,basic_atk,80,basic_atk_red,12
+27,dewi,Dewi,R&B,Bali,2,29950,29950,skill_dmg,24,basic_atk,60
+113,valerie,Valerie,Rock,,,,,basic_atk_red,12,skill_dmg,28
+124,elame,Elame,Hip Hop,,,,,basic_atk,80,fan,16
+47,mio,Mio,Hip Hop,Tokyo,4,28211,42437,basic_atk,70,basic_atk_red,12
+119,mizakura,Mizakura,EDM,,,,,basic_atk,80,fan,16
+123,momona,Momona,EDM,,,,,basic_atk,80,fan,12
+25,cornelia,Cornelia,R&B,Rome,2,25071,34827,dps_def,240,skill_dmg_red,12
+18,ayaka,Ayaka,Hip Hop,Tokyo,1,29023,20893,skill_dmg_red,12,basic_atk_red,12
+49,moana,Moana,Pop,Bali,1,29023,20893,skill_dmg_red,12,basic_atk_red,12
+16,avery,Avery,Hip Hop,,,19076,25851,skill_dmg_red,12,basic_atk_red,12
+55,paisley,Paisley,Rock,,,19076,25851,skill_dmg_red,12,basic_atk_red,12
+112,kendell,Kendell,Hip Hop,,,,,fan,14,skill_dmg,28
+26,daphne,Daphne,Hip Hop,Rome,1,24959,24959,skill_dmg,20,basic_atk,50
+43,margot,Margot,EDM,,,,,skill_dmg,28,fan,14
+41,leilani,Leilani,Hip Hop,Bali,1,20893,29023,skill_dmg,20,basic_atk,50
+17,aya,Aya,R&B,Tokyo,4,35540,35540,basic_atk,70,fan,14
+40,kokoro,Kokoro,EDM,Tokyo,1,24959,24959,skill_dmg,20,basic_atk,60
+48,miyuki,Miyuki,EDM,Tokyo,2,25071,34827,basic_atk,60,basic_atk_red,12
+15,aurora,Aurora,Pop,,,22464,22464,skill_dmg,20,basic_atk,50
+23,claire,Claire,Rock,,,22464,22464,skill_dmg,20,basic_atk,50
+9,alice,Alice,EDM,,,25851,19076,skill_dmg,20,basic_atk,50
+10,antonia,Antonia,Rock,Rome,3,25071,34827,skill_dmg,24,fan,12
+28,eirene,Eirene,R&B,Rome,1,24959,24959,basic_atk,50,basic_atk_red,12
+12,ariadne,Ariadne,Pop,Rome,1,20893,29023,basic_atk,50,basic_atk_red,12
+56,ratih,Ratih,R&B,Bali,1,20893,29023,basic_atk,50,basic_atk_red,12
+58,rin,Rin,EDM,Tokyo,3,34827,25071,skill_dmg,24,fan,12
+71,yuuko,Yuuko,Rock,Tokyo,1,20893,29023,basic_atk,50,basic_atk_red,12
+32,haruki,Haruki,Hip Hop,Tokyo,2,29950,29950,basic_atk,60,fan,12
+22,cindy,Cindy,EDM,,,22464,22464,skill_dmg,20,basic_atk_red,12
+30,everly,Everly,EDM,,,22464,22464,skill_dmg,20,basic_atk_red,12
+68,vivienne,Vivienne,Rock,Bali,3,25071,34827,dps_def,240,basic_atk_red,12
+53,nova,Nova,R&B,,,22464,22464,dps_def,200,basic_atk,50
+20,calliope,Calliope,Rock,Rome,1,29023,20893,basic_atk,50,fan,10
+45,megan,Megan,Hip Hop,,,20893,29023,player_dmg,20,gold,40
+13,audrey,Audrey,Hip Hop,,,22464,22464,wbg_dmg,30,skill_dmg_red,12
+66,talia,Talia,Rock,Bali,1,24959,24959,basic_atk,50,fan,10
+65,sora,Sora,R&B,Tokyo,1,29023,20893,basic_atk,50,fan,10
+67,valentina,Valentina,R&B,,,,,fan,14,basic_atk_red,12
+46,melissa,Melissa,Rock,,,24959,24959,basic_atk,50,fan,10
+59,rosemary,Rosemary,Pop,,,29023,20893,basic_atk,50,fan,10
+73,bella,Bella,Hip Hop,,,25851,19076,skill_dmg,20,fan,10
+31,flora,Flora,EDM,Rome,3,29950,29950,fan,12,basic_atk_red,12
+29,eri,Eri,R&B,Tokyo,3,25071,34827,fan,12,basic_atk_red,12
+52,noora,Noora,R&B,,,,,noncombat,,basic_atk,50
+36,julia,Julia,R&B,,,25851,19076,skill_dmg,20,drive,75
+64,skylar,Skylar,Rock,,,25851,19076,skill_dmg,20,wbg_dmg,30
+72,zendayah,Zendayah,R&B,,,19076,25851,drive,50,basic_atk,50
+44,marina,Marina,Hip Hop,Bali,3,34827,25071,dps_atk_rally,240,fan,12
+54,octavia,Octavia,Pop,Rome,2,29950,29950,dps_atk_company,240,fan,12
+51,ningsih,Ningsih,Hip Hop,Bali,2,25071,34827,dps_atk_company,240,fan,12
+42,lestari,Lestari,Pop,Bali,2,34827,25071,dps_def,240,wbg_dmg,36
+11,anya,Anya,EDM,,,24959,24959,dps_atk_rally,200,fan,10
+62,savannah,Savannah,Pop,,,19076,25851,dps_atk_company,200,fan,10
+74,caroline,Caroline,EDM,,,19076,25851,dps_atk_rally,200,fan,10
+19,brooklyn,Brooklyn,Pop,,,25851,19076,dps_def,200,wbg_dmg,36
+38,kelly,Kelly,Rock,,,,,fan,10,fan_rally,10
+39,kesnia,Kesnia,R&B,,,19076,25851,gold,40,gold,40
