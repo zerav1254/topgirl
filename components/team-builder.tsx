@@ -24,6 +24,14 @@ const AVATAR_STYLE: Record<string, string> = {
   D: "from-zinc-500/80 to-zinc-700/50",
 };
 
+const GENRE_IMAGE: Record<string, string> = {
+  Pop: "pop",
+  Rock: "rock",
+  "Hip Hop": "hiphop",
+  EDM: "edm",
+  "R&B": "rnb",
+};
+
 function Icon({ d, className = "h-4 w-4" }: { d: string; className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className={className}>
@@ -49,15 +57,25 @@ function TierBadge({ tier, className = "" }: { tier: string; className?: string 
   );
 }
 
-function Avatar({ artist, size = "h-10 w-10 text-sm" }: { artist: Artist; size?: string }) {
+function Avatar({ artist, size = "h-10 w-10" }: { artist: Artist; size?: string }) {
   return (
-    <span
-      aria-hidden="true"
-      className={`grid shrink-0 place-items-center rounded-lg bg-gradient-to-br font-bold text-white/90 ${AVATAR_STYLE[artist.tier] ?? AVATAR_STYLE.D} ${size}`}
-    >
-      {artist.name.slice(0, 2)}
+    <span className={`block shrink-0 overflow-hidden rounded-lg bg-gradient-to-br ${AVATAR_STYLE[artist.tier] ?? AVATAR_STYLE.D} ${size}`}>
+      <img
+        src={`/assets/images/artists/thumb/${artist.slug}.webp`}
+        alt=""
+        width={96}
+        height={96}
+        loading="lazy"
+        className="h-full w-full object-cover"
+      />
     </span>
   );
+}
+
+function GenreIcon({ genre, className = "h-4 w-4" }: { genre: string; className?: string }) {
+  const file = GENRE_IMAGE[genre];
+  if (!file) return null;
+  return <img src={`/assets/images/genres/${file}.png`} alt="" width={16} height={16} loading="lazy" className={`${className} object-contain`} />;
 }
 
 export function TeamBuilder({ artists }: { artists: Artist[] }) {
@@ -176,10 +194,11 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
                   type="button"
                   onClick={() => setGenre(g)}
                   aria-pressed={genre === g}
-                  className={`cursor-pointer rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors duration-200 ${
+                  className={`flex cursor-pointer items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors duration-200 ${
                     genre === g ? "border-brand/50 bg-brand/15 text-red-300" : "border-white/10 bg-panel/60 text-zinc-400 hover:border-white/25 hover:text-zinc-200"
                   }`}
                 >
+                  <GenreIcon genre={g} className="h-3.5 w-3.5" />
                   {g}
                 </button>
               ))}
@@ -258,7 +277,7 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
                   >
                     {a ? (
                       <>
-                        <Avatar artist={a} size="h-9 w-9 text-xs" />
+                        <Avatar artist={a} size="h-9 w-9" />
                         <span className="min-w-0 flex-1">
                           <span className="flex items-center gap-1.5">
                             <span className="truncate text-sm font-semibold">{a.name}</span>
@@ -296,7 +315,8 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
                     <dt className="text-zinc-500">Genre</dt>
                     <dd className="mt-1 flex flex-wrap gap-1">
                       {summary.genres.map(([g, n]) => (
-                        <span key={g} className="rounded-md bg-white/5 px-1.5 py-0.5 text-zinc-300">
+                        <span key={g} className="inline-flex items-center gap-1 rounded-md bg-white/5 px-1.5 py-0.5 text-zinc-300">
+                          <GenreIcon genre={g} className="h-3 w-3" />
                           {g} <span className="text-zinc-500">×{n}</span>
                         </span>
                       ))}
