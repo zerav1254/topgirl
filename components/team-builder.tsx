@@ -103,14 +103,20 @@ function TierBadge({ tier, className = "" }: { tier: string; className?: string 
 function Avatar({ artist, size = "h-12 w-12" }: { artist: Artist; size?: string }) {
   return (
     <span className={`block shrink-0 overflow-hidden rounded-lg bg-gradient-to-br ${AVATAR_STYLE[artist.tier] ?? AVATAR_STYLE.D} ${size}`}>
-      <Image
-        src={`/assets/images/artists/thumb/${artist.slug}.webp`}
-        alt=""
-        width={96}
-        height={96}
-        sizes="96px"
-        className="h-full w-full object-cover"
-      />
+      {artist.hasThumb ? (
+        <Image
+          src={`/assets/images/artists/thumb/${artist.slug}.webp`}
+          alt=""
+          width={96}
+          height={96}
+          sizes="96px"
+          className="h-full w-full object-cover"
+        />
+      ) : (
+        <span aria-hidden="true" className="grid h-full w-full place-items-center font-display text-lg font-bold text-white/80">
+          {artist.name[0]}
+        </span>
+      )}
     </span>
   );
 }
@@ -130,7 +136,7 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
 
   const bySlug = useMemo(() => new Map(artists.map((a) => [a.slug, a])), [artists]);
   const tiers = useMemo(() => ["Semua", ...new Set(artists.map((a) => a.tier))], [artists]);
-  const genres = useMemo(() => ["Semua", ...new Set(artists.map((a) => a.genre))].sort(), [artists]);
+  const genres = useMemo(() => ["Semua", ...new Set(artists.map((a) => a.genre).filter(Boolean))].sort(), [artists]);
 
   useEffect(() => {
     try {
@@ -436,13 +442,19 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
                           }`}
                         >
                           <span className="relative block aspect-[9/16] w-full bg-panel-2">
-                            <Image
-                              src={`/assets/images/artists/thumb/${a.slug}.webp`}
-                              alt=""
-                              fill
-                              sizes="(max-width: 640px) 144px, 200px"
-                              className="object-cover"
-                            />
+                            {a.hasThumb ? (
+                              <Image
+                                src={`/assets/images/artists/thumb/${a.slug}.webp`}
+                                alt=""
+                                fill
+                                sizes="(max-width: 640px) 144px, 200px"
+                                className="object-cover"
+                              />
+                            ) : (
+                              <span aria-hidden="true" className="grid h-full w-full place-items-center font-display text-2xl font-bold text-white/25">
+                                {a.name[0]}
+                              </span>
+                            )}
                             <span className="absolute top-1.5 left-1.5 rounded-md bg-ink/70 p-0.5 backdrop-blur-sm">
                               <TierBadge tier={a.tier} />
                             </span>

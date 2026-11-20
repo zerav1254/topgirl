@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 export const TIER_ORDER = ["S+", "S", "A", "B", "C", "D"] as const;
@@ -35,6 +35,7 @@ export type Artist = {
   baseSing: number | null;
   baseDance: number | null;
   skills: Skill[];
+  hasThumb: boolean;
   score: number;
   tier: Tier;
 };
@@ -136,6 +137,7 @@ export function loadArtists(): Artist[] {
         baseSing,
         baseDance,
         skills,
+        hasThumb: existsSync(join(process.cwd(), "public", "assets", "images", "artists", "thumb", `${r[idx("slug")]}.webp`)),
         score,
         tier: tierFromScore(score),
       };

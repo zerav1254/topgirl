@@ -19,12 +19,20 @@ for (const line of md.split(/\r?\n/)) {
     empty.push(name);
     continue;
   }
-  const parts = raw.replace(/[\s.]/g, "").split(",");
-  if (parts.length !== 2 || !parts.every((p) => /^\d+$/.test(p))) {
+  const parts = raw.split(",").map((p) => p.trim());
+  const nums = [parts[0], parts[1]].map((p) => p.replace(/[\s.]/g, ""));
+  if (!nums.every((p) => /^\d+$/.test(p))) {
     bad.push(`${name}: "${raw}"`);
     continue;
   }
-  entries.push({ name, sing: parts[0], dance: parts[1] });
+  const place = parts[2]?.match(/^(tokyo|rome|roma|bali|abroad)\s+(\d+)$/i);
+  entries.push({
+    name,
+    sing: nums[0],
+    dance: nums[1],
+    region: place ? place[1].replace(/^roma$/i, "Rome").replace(/^./, (c) => c.toUpperCase()) : null,
+    season: place ? place[2] : null,
+  });
 }
 
 const csv = readFileSync(csvPath, "utf8");
@@ -32,6 +40,7 @@ const lines = csv.split(/\r?\n/);
 const header = lines[0].split(",");
 const col = (n) => header.indexOf(n);
 const [iName, iSing, iDance] = [col("name"), col("base_sing"), col("base_dance")];
+const [iRegion, iSeason] = [col("region"), col("season")];
 if (iName < 0 || iSing < 0 || iDance < 0) {
   console.error("Kolom name/base_sing/base_dance tidak ditemukan di data/artists.csv");
   process.exit(1);
@@ -47,9 +56,17 @@ const out = lines.map((line, i) => {
   const cells = line.split(",");
   const e = byName.get(cells[iName].toLowerCase());
   if (!e) return line;
-  if (cells[iSing] === e.sing && cells[iDance] === e.dance) return line;
+  const changed =
+    cells[iSing] !== e.sing ||
+    cells[iDance] !== e.dance ||
+    (e.region !== null && (cells[iRegion] !== e.region || cells[iSeason] !== e.season));
+  if (!changed) return line;
   cells[iSing] = e.sing;
   cells[iDance] = e.dance;
+  if (e.region !== null && iRegion >= 0 && iSeason >= 0) {
+    cells[iRegion] = e.region;
+    cells[iSeason] = e.season;
+  }
   updated.push(cells[iName]);
   return cells.join(",");
 });
