@@ -288,13 +288,24 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
 
   return (
     <main className="mx-auto flex max-w-7xl flex-col gap-5 px-4 pt-6 pb-32 sm:px-6 sm:pb-8 lg:px-8">
-      <header className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight sm:text-4xl">Team Builder</h1>
-          <p className="mt-2 max-w-xl text-sm text-zinc-400 sm:text-base">
-            Pilih {TEAM_SIZE} artist, lihat komposisi tier, genre, dan skill. Pilihan tersimpan otomatis di browser.
-          </p>
+      <header className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <Image
+            src="/assets/icon-topgirl.webp"
+            alt=""
+            width={96}
+            height={96}
+            sizes="48px"
+            priority
+            className="h-12 w-12 shrink-0 rounded-xl border border-white/10 object-cover"
+          />
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
+            <h1 className="mt-1 text-2xl font-bold tracking-tight sm:text-4xl">Team Builder</h1>
+            <p className="mt-2 max-w-xl text-sm text-zinc-400 sm:text-base">
+              Pilih {TEAM_SIZE} artist, lihat komposisi tier, genre, dan skill. Pilihan tersimpan otomatis di browser.
+            </p>
+          </div>
         </div>
         <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-panel/80 px-3 py-2 sm:gap-3 sm:px-4 sm:py-2.5">
           <Icon d={ICONS.users} className="h-5 w-5 text-gold" />

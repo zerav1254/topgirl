@@ -4,6 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "TopGirl Team Builder",
   description: "Susun tim 5 artist terbaik: bandingkan tier, genre, dan skill.",
+  icons: { icon: "/assets/icon-topgirl.webp", apple: "/assets/apple-icon.png" },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
