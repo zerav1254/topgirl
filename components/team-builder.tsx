@@ -319,7 +319,7 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
 
       <div className="grid gap-6 lg:grid-cols-[1fr_22rem]">
         {/* Roster */}
-        <section aria-label="Daftar artist">
+        <section aria-label="Daftar artist" className="min-w-0">
           <div className="sticky top-0 z-20 -mx-4 flex flex-col gap-2 border-b border-white/5 bg-ink/95 px-4 pt-2 pb-2 backdrop-blur sm:static sm:mx-0 sm:gap-3 sm:border-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none">
             <div className="relative">
               <Icon d={ICONS.search} className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-500" />
