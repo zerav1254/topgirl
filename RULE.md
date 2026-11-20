@@ -41,7 +41,7 @@ Aturan keras repo ini. Kalau ragu, berhenti dan tanya — jangan improvisasi.
 
 ## Git
 
-- **Hanya commit, jangan push.** `git push` dilarang di repo ini, termasuk `--force`, `-u`, dan semua remote. Sinkronisasi ke GitHub dilakukan manual oleh pemilik repo.
+- **Push hanya setelah izin eksplisit.** Jangan jalankan `git push` (termasuk `--force`, `-u`, remote mana pun) tanpa bertanya dulu dan mendapat "ya" dari pemilik repo pada giliran itu. Izin sekali tidak berlaku untuk push berikutnya.
 - Jangan rewrite history `main`, jangan commit `node_modules`, `.next`, atau `.vercel`.
 - File yang dihasilkan (`next-env.d.ts`, `package-lock.json` kecuali sengaja diubah) tidak diedit manual.
 
