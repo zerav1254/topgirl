@@ -60,7 +60,7 @@ const ICONS = {
 
 function TierBadge({ tier, className = "" }: { tier: string; className?: string }) {
   return (
-    <span className={`inline-flex items-center rounded-md border px-2 py-0.5 text-sm font-semibold ${TIER_STYLE[tier] ?? TIER_STYLE.D} ${className}`}>
+    <span className={`inline-flex items-center rounded-md border px-2 py-0.5 font-display text-sm font-semibold ${TIER_STYLE[tier] ?? TIER_STYLE.D} ${className}`}>
       {tier}
     </span>
   );
@@ -165,7 +165,7 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
   const panel = (
     <>
       <div className="flex items-center justify-between gap-2">
-        <h2 className="text-base font-semibold tracking-wide uppercase text-zinc-300">Tim Kamu</h2>
+        <h2 className="font-display text-base font-semibold tracking-wide uppercase text-zinc-300">Tim Kamu</h2>
         <div className="flex items-center gap-1">
           {team.length > 0 && (
             <button
@@ -300,8 +300,8 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
             className="h-12 w-12 shrink-0 rounded-xl border border-white/10 object-cover"
           />
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
-            <h1 className="mt-1 text-2xl font-bold tracking-tight sm:text-4xl">Team Builder</h1>
+            <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
+            <h1 className="font-display mt-1 text-2xl font-bold tracking-tight sm:text-4xl">Team Builder</h1>
             <p className="mt-2 max-w-xl text-sm text-zinc-400 sm:text-base">
               Pilih {TEAM_SIZE} artist, lihat komposisi tier, genre, dan skill. Pilihan tersimpan otomatis di browser.
             </p>
@@ -375,46 +375,71 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
             </div>
           </div>
 
-          <ul className="mt-3 grid grid-cols-2 gap-2 sm:mt-4 xl:grid-cols-3">
-            {visible.map((a) => {
-              const active = picked.includes(a.slug);
-              return (
-                <li key={a.slug}>
-                  <button
-                    type="button"
-                    onClick={() => toggle(a.slug)}
-                    aria-pressed={active}
-                    disabled={!active && full}
-                    className={`group relative flex w-full cursor-pointer flex-col gap-2 rounded-xl border p-2 text-left transition-colors duration-200 sm:flex-row sm:items-center sm:gap-3 sm:p-3 ${
-                      active
-                        ? "border-gold/45 bg-gold/10"
-                        : "border-white/10 bg-panel/70 hover:border-white/25 hover:bg-panel-2 disabled:cursor-not-allowed disabled:opacity-40"
-                    }`}
-                  >
-                    <Avatar artist={a} size="aspect-square w-full rounded-lg sm:aspect-auto sm:h-12 sm:w-12" />
-                    <span className="min-w-0 flex-1">
-                      <span className="flex items-center gap-1.5">
-                        <span className="truncate text-sm font-semibold sm:text-base">{a.name}</span>
-                        <TierBadge tier={a.tier} />
-                      </span>
-                      <span className="mt-0.5 block truncate text-xs text-zinc-400 sm:hidden">{a.genre}</span>
-                      <span className="mt-0.5 hidden truncate text-sm text-zinc-400 sm:block">
-                        {a.genre} · {a.skills.map((s) => `${s.name}${s.value ? ` ${s.value}` : ""}`).join(" / ")}
-                      </span>
-                    </span>
-                    <span
-                      aria-hidden="true"
-                      className={`absolute top-2 right-2 grid h-7 w-7 place-items-center rounded-md border transition-colors duration-200 sm:static ${
-                        active ? "border-gold/45 bg-gold/20 text-gold" : "border-white/15 bg-ink/70 text-zinc-300 group-hover:text-zinc-100"
-                      }`}
-                    >
-                      <Icon d={active ? ICONS.check : ICONS.plus} className="h-4 w-4" />
-                    </span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
+          {tiers
+            .filter((t) => t !== "Semua")
+            .map((t) => [t, visible.filter((a) => a.tier === t)] as const)
+            .filter(([, list]) => list.length > 0)
+            .map(([t, list]) => (
+              <section key={t} className="mt-4">
+                <h2 className="mb-2 flex items-center gap-2">
+                  <TierBadge tier={t} />
+                  <span className="text-xs font-normal text-zinc-400">{list.length} artist</span>
+                </h2>
+                <ul className="flex snap-x gap-2 overflow-x-auto pb-1 [scrollbar-width:none] sm:grid sm:grid-cols-[repeat(auto-fill,minmax(9rem,1fr))] sm:overflow-visible sm:pb-0 [&::-webkit-scrollbar]:hidden">
+                  {list.map((a) => {
+                    const active = picked.includes(a.slug);
+                    return (
+                      <li key={a.slug} className="shrink-0 snap-start sm:shrink">
+                        <button
+                          type="button"
+                          onClick={() => toggle(a.slug)}
+                          aria-pressed={active}
+                          disabled={!active && full}
+                          className={`group relative flex w-36 cursor-pointer flex-col overflow-hidden rounded-xl border text-left transition-colors duration-200 sm:w-full ${
+                            active
+                              ? "border-gold/45 bg-gold/10"
+                              : "border-white/10 bg-panel/70 hover:border-white/25 hover:bg-panel-2 disabled:cursor-not-allowed disabled:opacity-40"
+                          }`}
+                        >
+                          <span className="relative block aspect-[9/16] w-full bg-panel-2">
+                            <Image
+                              src={`/assets/images/artists/thumb/${a.slug}.webp`}
+                              alt=""
+                              fill
+                              sizes="(max-width: 640px) 144px, 200px"
+                              className="object-cover"
+                            />
+                            <span className="absolute top-1.5 left-1.5 rounded-md bg-ink/70 p-0.5 backdrop-blur-sm">
+                              <TierBadge tier={a.tier} />
+                            </span>
+                            <span
+                              aria-hidden="true"
+                              className={`absolute top-1.5 right-1.5 grid h-7 w-7 place-items-center rounded-md border transition-colors duration-200 ${
+                                active
+                                  ? "border-gold/45 bg-gold/20 text-gold"
+                                  : "border-white/15 bg-ink/70 text-zinc-300 group-hover:text-zinc-100"
+                              }`}
+                            >
+                              <Icon d={active ? ICONS.check : ICONS.plus} className="h-4 w-4" />
+                            </span>
+                          </span>
+                          <span className="block min-w-0 p-2">
+                            <span className="block truncate text-sm font-semibold">{a.name}</span>
+                            <span className="mt-1 flex items-center gap-1 text-xs text-zinc-400">
+                              <GenreIcon genre={a.genre} className="h-3 w-3 shrink-0" />
+                              <span className="truncate">{a.genre}</span>
+                            </span>
+                            <span className="mt-1 hidden truncate text-xs text-zinc-400 sm:block">
+                              {a.skills.map((s) => `${s.name}${s.value ? ` ${s.value}` : ""}`).join(" / ")}
+                            </span>
+                          </span>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </section>
+            ))}
 
           {visible.length === 0 && <p className="mt-6 text-base text-zinc-400">Tidak ada artist yang cocok dengan filter.</p>}
         </section>
