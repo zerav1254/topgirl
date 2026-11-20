@@ -2,7 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import type { Artist, Effect } from "@/lib/artists";
+import { EFFECT_LABEL } from "@/lib/score";
 
 const TEAM_SIZE = 5;
 const STORAGE_KEY = "topgirl.team.v1";
@@ -35,23 +37,6 @@ const GENRE_IMAGE: Record<string, string> = {
 
 // Genre synergy is informational here: 3/4/5 artists of one genre grant +5/+10/+25% in game.
 const GENRE_BONUS: Record<number, number> = { 3: 5, 4: 10, 5: 25 };
-
-const EFFECT_LABEL: Record<Effect, string> = {
-  player_dmg: "Dmg pemain",
-  skill_dmg: "Dmg skill",
-  basic_atk: "Serangan",
-  basic_atk_red: "Red. serangan",
-  skill_dmg_red: "Red. skill",
-  fan: "Fan",
-  fan_rally: "Fan rally",
-  dps_def: "DPS defend",
-  dps_atk_company: "DPS company",
-  dps_atk_rally: "DPS rally",
-  wbg_dmg: "Dmg WBG",
-  gold: "Gold",
-  drive: "Drive",
-  noncombat: "Non-tempur",
-};
 
 const STAT_ORDER: Effect[] = [
   "player_dmg",
@@ -347,6 +332,12 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
             </p>
           </div>
         </div>
+        <Link
+          href="/isi"
+          className="inline-flex min-h-11 items-center rounded-xl border border-white/10 bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
+        >
+          Isi stat
+        </Link>
         <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-panel/80 px-3 py-2 sm:gap-3 sm:px-4 sm:py-2.5">
           <Icon d={ICONS.users} className="h-5 w-5 text-gold" />
           <span className="tabular text-sm font-semibold sm:text-base">
