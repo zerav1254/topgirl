@@ -29,8 +29,9 @@ app/
 components/
   team-builder.tsx  satu-satunya client component ("use client")
 lib/
-  artists.ts        parser CSV + tipe Artist/Skill + urutan tier
-topgirl-artist.csv  sumber data tunggal
+  artists.ts        parser CSV + skor + tipe Artist/Effect
+data/
+  artists.csv       sumber data tunggal
 ```
 
 Alur data satu arah: CSV → `lib/artists.ts` → `app/page.tsx` (server) → `TeamBuilder` (props) → state UI. Tidak ada fetch di client.
@@ -39,14 +40,15 @@ Alur data satu arah: CSV → `lib/artists.ts` → `app/page.tsx` (server) → `T
 
 | Kebutuhan | File |
 | --- | --- |
-| Tambah/ubah artist | `topgirl-artist.csv` saja |
-| Ubah kolom CSV | `lib/artists.ts` (`loadArtists`, tipe `Artist`) |
+| Tambah/ubah artist | `data/artists.csv` saja |
+| Ubah kolom CSV | `lib/artists.ts` (`loadArtists`, tipe `Artist`/`Effect`) |
 | Ukuran tim | `TEAM_SIZE` di `components/team-builder.tsx` |
 | Filter/sort/summary | `components/team-builder.tsx` |
+| Bobot skor / ambang tier | `OFFENSE`, `SUSTAIN`, `BANDS` di `lib/artists.ts` |
 | Warna, font, radius, bayangan | `@theme` di `app/globals.css` |
 | Metadata/SEO/`lang` | `app/layout.tsx` |
 
-`TIER_ORDER` di `lib/artists.ts` menentukan urutan tier di roster. Tier baru di CSV harus ditambahkan di sana **dan** di `TIER_STYLE`/`AVATAR_STYLE` pada `team-builder.tsx`.
+`TIER_ORDER` di `lib/artists.ts` menentukan urutan tier di roster. Tier dihitung dari skor di `lib/artists.ts`; menambah tier baru berarti mengubah `TIER_ORDER`, `BANDS` **dan** `TIER_STYLE`/`AVATAR_STYLE` pada `team-builder.tsx`.
 
 ## Konvensi kode
 

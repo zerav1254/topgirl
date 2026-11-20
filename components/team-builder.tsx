@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
-import type { Artist } from "@/lib/artists";
+import type { Artist, Effect } from "@/lib/artists";
 
 const TEAM_SIZE = 5;
 const STORAGE_KEY = "topgirl.team.v1";
@@ -36,8 +36,42 @@ const GENRE_IMAGE: Record<string, string> = {
 // Genre synergy is informational here: 3/4/5 artists of one genre grant +5/+10/+25% in game.
 const GENRE_BONUS: Record<number, number> = { 3: 5, 4: 10, 5: 25 };
 
-const STAT_ORDER = ["Dmg pemain", "Dmg skill", "Serangan", "DPS", "Fan", "Fan rally", "Red. serangan", "Red. skill"];
-const isPercent = (name: string) => name !== "DPS";
+const EFFECT_LABEL: Record<Effect, string> = {
+  player_dmg: "Dmg pemain",
+  skill_dmg: "Dmg skill",
+  basic_atk: "Serangan",
+  basic_atk_red: "Red. serangan",
+  skill_dmg_red: "Red. skill",
+  fan: "Fan",
+  fan_rally: "Fan rally",
+  dps_def: "DPS defend",
+  dps_atk_company: "DPS company",
+  dps_atk_rally: "DPS rally",
+  wbg_dmg: "Dmg WBG",
+  gold: "Gold",
+  drive: "Drive",
+  noncombat: "Non-tempur",
+};
+
+const STAT_ORDER: Effect[] = [
+  "player_dmg",
+  "skill_dmg",
+  "basic_atk",
+  "dps_def",
+  "dps_atk_company",
+  "dps_atk_rally",
+  "fan",
+  "fan_rally",
+  "basic_atk_red",
+  "skill_dmg_red",
+  "wbg_dmg",
+  "gold",
+  "drive",
+];
+
+const isPercent = (effect: Effect) => !effect.startsWith("dps");
+const skillText = (s: Artist["skills"][number]) =>
+  `${EFFECT_LABEL[s.effect]}${s.value !== null ? ` ${s.value}${isPercent(s.effect) ? "%" : ""}` : ""}`;
 const formatStat = (v: number) => v.toLocaleString("id-ID", { maximumFractionDigits: 1 });
 
 function Icon({ d, className = "h-4 w-4" }: { d: string; className?: string }) {
@@ -134,26 +168,25 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
       (query === "" ||
         a.name.toLowerCase().includes(query.toLowerCase()) ||
         a.genre.toLowerCase().includes(query.toLowerCase()) ||
-        a.skills.some((s) => s.name.toLowerCase().includes(query.toLowerCase()))),
+        a.skills.some((s) => EFFECT_LABEL[s.effect].toLowerCase().includes(query.toLowerCase()))),
   );
 
   const summary = useMemo(() => {
     const genreCount = new Map<string, number>();
-    const statTotal = new Map<string, number>();
+    const statTotal = new Map<Effect, number>();
     for (const a of team) {
       genreCount.set(a.genre, (genreCount.get(a.genre) ?? 0) + 1);
       for (const s of a.skills) {
-        const value = Number.parseFloat(s.value);
-        if (Number.isFinite(value)) statTotal.set(s.name, (statTotal.get(s.name) ?? 0) + value);
+        if (s.value !== null) statTotal.set(s.effect, (statTotal.get(s.effect) ?? 0) + s.value);
       }
     }
     const genres = [...genreCount.entries()].sort((a, b) => b[1] - a[1]);
     const [topGenre, topCount] = genres[0] ?? ["", 0];
-    const playerDmg = statTotal.get("Dmg pemain") ?? 0;
-    const isBoosted = (n: string) => n === "Dmg skill" || n === "Serangan";
+    const playerDmg = statTotal.get("player_dmg") ?? 0;
+    const isBoosted = (e: Effect) => e === "skill_dmg" || e === "basic_atk";
     return {
       genres,
-      stats: STAT_ORDER.filter((n) => statTotal.has(n) || (isBoosted(n) && playerDmg > 0)).map((n) => [n, statTotal.get(n) ?? 0] as const),
+      stats: STAT_ORDER.filter((e) => statTotal.has(e) || (isBoosted(e) && playerDmg > 0)).map((e) => [e, statTotal.get(e) ?? 0] as const),
       playerDmg,
       topGenre,
       topCount,
@@ -205,6 +238,7 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
                     <span className="flex items-center gap-1.5">
                       <span className="truncate text-base font-semibold">{a.name}</span>
                       <TierBadge tier={a.tier} />
+                      <span className="tabular text-xs text-zinc-400">{formatStat(a.score)}</span>
                     </span>
                     <span className="block truncate text-sm text-zinc-400">{a.genre}</span>
                   </span>
@@ -261,14 +295,14 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
               <dt className="text-zinc-400">Statistik total</dt>
               <dd className="mt-1 flex flex-col gap-1.5">
                 {summary.stats.length === 0 && <span className="text-zinc-400">Tidak ada skill berangka.</span>}
-                {summary.stats.map(([name, value]) => {
-                  const boosted = (name === "Dmg skill" || name === "Serangan") && summary.playerDmg > 0;
+                {summary.stats.map(([effect, value]) => {
+                  const boosted = (effect === "skill_dmg" || effect === "basic_atk") && summary.playerDmg > 0;
                   return (
-                    <div key={name} className="flex items-baseline justify-between gap-2">
-                      <span className="text-zinc-400">{name}</span>
+                    <div key={effect} className="flex items-baseline justify-between gap-2">
+                      <span className="text-zinc-400">{EFFECT_LABEL[effect]}</span>
                       <span className="tabular shrink-0 whitespace-nowrap font-semibold text-zinc-200">
                         {formatStat(value)}
-                        {isPercent(name) && "%"}
+                        {isPercent(effect) && "%"}
                         {boosted && (
                           <span className="ml-1 font-normal text-emerald-300">
                             +{formatStat(summary.playerDmg)}% = {formatStat(value + summary.playerDmg)}%
@@ -303,7 +337,7 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
             <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
             <h1 className="font-display mt-1 text-2xl font-bold tracking-tight sm:text-4xl">Team Builder</h1>
             <p className="mt-2 max-w-xl text-sm text-zinc-400 sm:text-base">
-              Pilih {TEAM_SIZE} artist, lihat komposisi tier, genre, dan skill. Pilihan tersimpan otomatis di browser.
+              Pilih {TEAM_SIZE} artist, lihat tier hasil skor skill, genre, dan statistik. Pilihan tersimpan otomatis di browser.
             </p>
           </div>
         </div>
@@ -424,13 +458,16 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
                             </span>
                           </span>
                           <span className="block min-w-0 p-2">
-                            <span className="block truncate text-sm font-semibold">{a.name}</span>
+                            <span className="flex items-baseline justify-between gap-1">
+                              <span className="block truncate text-sm font-semibold">{a.name}</span>
+                              <span className="tabular shrink-0 text-xs font-semibold text-zinc-300">{formatStat(a.score)}</span>
+                            </span>
                             <span className="mt-1 flex items-center gap-1 text-xs text-zinc-400">
                               <GenreIcon genre={a.genre} className="h-3 w-3 shrink-0" />
                               <span className="truncate">{a.genre}</span>
                             </span>
                             <span className="mt-1 hidden truncate text-xs text-zinc-400 sm:block">
-                              {a.skills.map((s) => `${s.name}${s.value ? ` ${s.value}` : ""}`).join(" / ")}
+                              {a.skills.map(skillText).join(" / ")}
                             </span>
                           </span>
                         </button>

@@ -17,14 +17,16 @@ Aturan keras repo ini. Kalau ragu, berhenti dan tanya — jangan improvisasi.
 
 ## Data
 
-- `topgirl-artist.csv` adalah **satu-satunya** sumber data. Jangan duplikasi data ke `.ts`/`.json` atau ke komponen.
-- Skema kolom: `id,slug,name,tier,genre,skill_1,skill_1_value,skill_2,skill_2_value`.
+- `data/artists.csv` adalah **satu-satunya** sumber data. Jangan duplikasi data ke `.ts`/`.json` atau ke komponen.
+- Skema kolom: `id,slug,name,genre,base_sing,base_dance,s1_effect,s1_value,s2_effect,s2_value`.
   - `slug` unik, huruf kecil, tanpa spasi.
-  - `tier` ∈ `S+ S A B C D`; urutannya di `TIER_ORDER`.
-  - `skill_2`/`skill_2_value` boleh kosong (artis dengan satu skill).
-  - `skill_2_value` boleh kosong walau `skill_2` terisi (mis. `Non-tempur`).
+  - `base_sing`/`base_dance` boleh kosong; skor memakai faktor basis netral saat kosong.
+  - `sN_effect` ∈ `Effect` di `lib/artists.ts`; `sN_value` angka tanpa `%` (DPS tetap flat 200/240).
+  - Slot skill boleh kosong; artist dengan satu skill cukup isi `s1_*`.
+- Tier **tidak disimpan** di CSV. Tier dihitung dari skor (`BANDS` di `lib/artists.ts`).
 - Mengubah skema wajib disertai update `lib/artists.ts` **dan** schema di README/RULE ini dalam commit yang sama.
-- Tier baru wajib ditambahkan di `TIER_ORDER`, `TIER_STYLE`, dan `AVATAR_STYLE`. Kalau tidak, badge jatuh ke gaya D.
+- Tier baru wajib ditambahkan di `TIER_ORDER`, `BANDS`, `TIER_STYLE`, dan `AVATAR_STYLE`. Kalau tidak, badge jatuh ke gaya D.
+- Menambah `Effect` baru wajib disertai bobot di `OFFENSE`/`SUSTAIN` (atau sengaja 0) dan label di `EFFECT_LABEL`.
 - Jangan mengarang data artist. Hanya pemilik data yang boleh menambah/menghapus baris.
 
 ## Kode

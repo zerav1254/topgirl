@@ -10,7 +10,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "check:scores": "node --no-warnings scripts/score-check.mjs",
+    "fill:base": "node --no-warnings scripts/fill-base.mjs"
   },
   "dependencies": {
     "next": "^15.5.0",
