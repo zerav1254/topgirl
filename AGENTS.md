@@ -33,11 +33,15 @@ app/
     actions.ts      server actions: login, logout, saveArtist, uploadPhoto
   globals.css       @import "tailwindcss" + @theme tokens + base rules
 components/
-  team-builder.tsx  client ("use client")
+  team-builder.tsx  client ("use client") — shell: state tim + tab + nav bawah
+  artists-tab.tsx   client — tab Artists: cari + filter tier/genre + roster
+  team-tab.tsx      client — tab Team Builder: slot tim, ringkasan, tambah artist
+  artist-ui.tsx     atom bersama (Icon, TierBadge, Avatar, GenreIcon, SearchInput)
   artist-editor.tsx client ("use client") — form stat + upload foto
 lib/
   artists.ts        query Supabase -> tipe Artist/Effect
   score.ts          bobot skor, tier, label effect
+  team.ts           TEAM_SIZE, STAT_ORDER, GENRE_BONUS
   supabase.ts       read client (anon) + adminClient() (service_role)
   lookups.ts        opsi dropdown dari tabel genres/regions/effects
   auth.ts           cookie admin HMAC
@@ -59,13 +63,13 @@ Alur data: Supabase → `lib/artists.ts` → server component (props) → client
 | Ubah skema DB | migration Supabase + `supabase/schema.sql` + `lib/artists.ts` |
 | Seed ulang dari CSV/thumb lama | `scripts/seed-supabase.mjs` (`npm run seed`) |
 | Auth/login admin | `lib/auth.ts` + `app/isi/actions.ts` |
-| Ukuran tim | `TEAM_SIZE` di `components/team-builder.tsx` |
-| Filter/sort/summary | `components/team-builder.tsx` |
+| Ukuran tim | `TEAM_SIZE` di `lib/team.ts` |
+| Filter/sort/summary | `components/artists-tab.tsx` (filter + roster), `components/team-tab.tsx` (ringkasan tim) |
 | Bobot skor / ambang tier | `OFFENSE`, `SUSTAIN`, `BANDS` di `lib/score.ts` |
 | Warna, font, radius, bayangan | `@theme` di `app/globals.css` |
 | Metadata/SEO/`lang` | `app/layout.tsx` |
 
-`TIER_ORDER` di `lib/score.ts` menentukan urutan tier di roster. Tier dihitung dari skor di `lib/score.ts`; menambah tier baru berarti mengubah `TIER_ORDER`, `BANDS` **dan** `TIER_STYLE`/`AVATAR_STYLE` pada `team-builder.tsx`. `EFFECTS`/`EFFECT_LABEL` juga di `lib/score.ts` (dipakai DB constraint lewat server action).
+`TIER_ORDER` di `lib/score.ts` menentukan urutan tier di roster. Tier dihitung dari skor di `lib/score.ts`; menambah tier baru berarti mengubah `TIER_ORDER`, `BANDS` **dan** `TIER_STYLE`/`AVATAR_STYLE` pada `components/artist-ui.tsx`. `EFFECTS`/`EFFECT_LABEL` juga di `lib/score.ts` (dipakai DB constraint lewat server action).
 
 ## Konvensi kode
 

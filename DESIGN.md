@@ -55,7 +55,7 @@ Badge tier: `border-<warna>/45 bg-<warna>/15 text-<warna>-300` (S+ pakai `text-g
 
 **Slot tim** — daftar `<ol>` 5 baris tinggi tetap `min-h-[3.25rem]`. Kosong: border dashed + label "Slot n kosong". Terisi: avatar, nama, badge tier, genre, tombol hapus.
 
-**Filter chip** — `rounded-lg border px-3 py-1 text-sm min-h-10` (target sentuh). Aktif tier = emas; aktif genre = merah; nonaktif `text-zinc-400` dengan hover `text-zinc-200`. Urutan chip tier ikut `TIER_ORDER`; tier tanpa artist tidak ditampilkan.
+**Filter chip** — `rounded-lg border px-3 py-1 text-sm min-h-10` (target sentuh). Empat baris berlabel di tab Artists, urut: Genre, Region, Tier, Skill. Aktif tier = emas; aktif genre/region/skill = merah; nonaktif `text-zinc-400` dengan hover `text-zinc-200`. Label baris `text-[11px]` uppercase `text-zinc-500`, lebar tetap `w-14`. Urutan chip tier ikut `TIER_ORDER`; tier tanpa artist tidak ditampilkan.
 
 **Input pencarian** — ikon SVG di kiri (`pl-9`), border fokus `focus:border-brand/60`.
 

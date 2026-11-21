@@ -3,130 +3,21 @@
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import type { Artist, Effect } from "@/lib/artists";
-import { EFFECT_LABEL, TIER_ORDER } from "@/lib/score";
+import type { Artist } from "@/lib/artists";
+import { TEAM_SIZE } from "@/lib/team";
+import { ICONS, Icon } from "./artist-ui";
+import { ArtistsTab } from "./artists-tab";
+import { TeamTab } from "./team-tab";
 
-const TEAM_SIZE = 5;
 const STORAGE_KEY = "topgirl.team.v1";
 
-type Tab = "tier" | "team";
-
-const TIER_STYLE: Record<string, string> = {
-  "S+": "border-gold/45 bg-gold/15 text-gold",
-  S: "border-brand/45 bg-brand/15 text-red-300",
-  A: "border-purple-500/45 bg-purple-500/15 text-purple-300",
-  B: "border-sky-500/45 bg-sky-500/15 text-sky-300",
-  C: "border-emerald-500/45 bg-emerald-500/15 text-emerald-300",
-  D: "border-zinc-500/45 bg-zinc-500/15 text-zinc-300",
-};
-
-const AVATAR_STYLE: Record<string, string> = {
-  "S+": "from-gold/80 to-brand/70",
-  S: "from-brand/80 to-brand/40",
-  A: "from-purple-500/80 to-purple-700/50",
-  B: "from-sky-500/80 to-sky-700/50",
-  C: "from-emerald-500/80 to-emerald-700/50",
-  D: "from-zinc-500/80 to-zinc-700/50",
-};
-
-const GENRE_IMAGE: Record<string, string> = {
-  Pop: "pop",
-  Rock: "rock",
-  "Hip Hop": "hiphop",
-  EDM: "edm",
-  "R&B": "rnb",
-};
-
-// Genre synergy is informational here: 3/4/5 artists of one genre grant +5/+10/+25% in game.
-const GENRE_BONUS: Record<number, number> = { 3: 5, 4: 10, 5: 25 };
-
-const STAT_ORDER: Effect[] = [
-  "player_dmg",
-  "skill_dmg",
-  "basic_atk",
-  "dps_def",
-  "dps_atk_company",
-  "dps_atk_rally",
-  "fan",
-  "fan_rally",
-  "basic_atk_red",
-  "skill_dmg_red",
-  "wbg_dmg",
-  "gold",
-  "drive",
-];
-
-const isPercent = (effect: Effect) => !effect.startsWith("dps");
-const skillText = (s: Artist["skills"][number]) =>
-  `${EFFECT_LABEL[s.effect]}${s.value !== null ? ` ${s.value}${isPercent(s.effect) ? "%" : ""}` : ""}`;
-// Dua slot boleh berisi efek sama; ringkas jadi "… ×2" supaya tidak terbaca bug.
-const skillList = (skills: Artist["skills"]) => {
-  const counts = new Map<string, number>();
-  for (const s of skills) counts.set(skillText(s), (counts.get(skillText(s)) ?? 0) + 1);
-  return [...counts].map(([t, n]) => (n > 1 ? `${t} ×${n}` : t)).join(" / ");
-};
-const formatStat = (v: number) => v.toLocaleString("id-ID", { maximumFractionDigits: 1 });
-
-function Icon({ d, className = "h-4 w-4" }: { d: string; className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className={className}>
-      <path d={d} />
-    </svg>
-  );
-}
-
-const ICONS = {
-  search: "M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM21 21l-4.35-4.35",
-  plus: "M12 5v14M5 12h14",
-  close: "M18 6 6 18M6 6l12 12",
-  trash: "M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6",
-  users: "M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75",
-  check: "M20 6 9 17l-5-5",
-  list: "M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01",
-};
-
-function TierBadge({ tier, className = "" }: { tier: string; className?: string }) {
-  return (
-    <span className={`inline-flex items-center rounded-md border px-2 py-0.5 font-display text-sm font-semibold ${TIER_STYLE[tier] ?? TIER_STYLE.D} ${className}`}>
-      {tier}
-    </span>
-  );
-}
-
-function Avatar({ artist, size = "h-12 w-12" }: { artist: Artist; size?: string }) {
-  return (
-    <span className={`block shrink-0 overflow-hidden rounded-lg bg-gradient-to-br ${AVATAR_STYLE[artist.tier] ?? AVATAR_STYLE.D} ${size}`}>
-      {artist.photoUrl ? (
-        <Image src={artist.photoUrl} alt="" width={96} height={96} sizes="96px" className="h-full w-full object-cover" />
-      ) : (
-        <span aria-hidden="true" className="grid h-full w-full place-items-center font-display text-lg font-bold text-white/80">
-          {artist.name.slice(0, 2).toUpperCase()}
-        </span>
-      )}
-    </span>
-  );
-}
-
-function GenreIcon({ genre, className = "h-4 w-4" }: { genre: string; className?: string }) {
-  const file = GENRE_IMAGE[genre];
-  if (!file) return null;
-  return <Image src={`/assets/images/genres/${file}.png`} alt="" width={16} height={16} sizes="16px" className={`${className} object-contain`} />;
-}
+type Tab = "artists" | "team";
 
 export function TeamBuilder({ artists }: { artists: Artist[] }) {
-  const [tab, setTab] = useState<Tab>("tier");
+  const [tab, setTab] = useState<Tab>("artists");
   const [picked, setPicked] = useState<string[]>([]);
-  const [query, setQuery] = useState("");
-  const [tier, setTier] = useState("Semua");
-  const [genre, setGenre] = useState("Semua");
 
   const bySlug = useMemo(() => new Map(artists.map((a) => [a.slug, a])), [artists]);
-  // Urutan chip ikut TIER_ORDER, bukan urutan data; tier tanpa artist tidak ditampilkan.
-  const tiers = useMemo(() => {
-    const present = new Set(artists.map((a) => a.tier));
-    return ["Semua", ...TIER_ORDER.filter((t) => present.has(t))];
-  }, [artists]);
-  const genres = useMemo(() => ["Semua", ...new Set(artists.map((a) => a.genre).filter(Boolean))].sort(), [artists]);
 
   useEffect(() => {
     try {
@@ -142,7 +33,7 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
   }, [picked]);
 
   useEffect(() => {
-    document.title = `${tab === "team" ? "Tim Kamu" : "Tier List"} — TopGirl Team Builder`;
+    document.title = `${tab === "team" ? "Team Builder" : "Artists"} — TopGirl`;
   }, [tab]);
 
   const team = picked.map((slug) => bySlug.get(slug)).filter((a): a is Artist => Boolean(a));
@@ -151,169 +42,6 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
   function toggle(slug: string) {
     setPicked((prev) => (prev.includes(slug) ? prev.filter((s) => s !== slug) : prev.length >= TEAM_SIZE ? prev : [...prev, slug]));
   }
-
-  const q = query.trim().toLowerCase();
-  const matches = (a: Artist) =>
-    q === "" ||
-    a.name.toLowerCase().includes(q) ||
-    a.genre.toLowerCase().includes(q) ||
-    a.skills.some((s) => EFFECT_LABEL[s.effect].toLowerCase().includes(q));
-
-  const visible = artists.filter(
-    (a) => (tier === "Semua" || a.tier === tier) && (genre === "Semua" || a.genre === genre) && matches(a),
-  );
-
-  // ponytail: sort ulang tiap render; roster ~60 baris, memo belum perlu.
-  const pickable = artists.filter(matches).sort((a, b) => b.score - a.score);
-
-  const summary = useMemo(() => {
-    const genreCount = new Map<string, number>();
-    const statTotal = new Map<Effect, number>();
-    for (const a of team) {
-      genreCount.set(a.genre, (genreCount.get(a.genre) ?? 0) + 1);
-      for (const s of a.skills) {
-        if (s.value !== null) statTotal.set(s.effect, (statTotal.get(s.effect) ?? 0) + s.value);
-      }
-    }
-    const genreList = [...genreCount.entries()].sort((a, b) => b[1] - a[1]);
-    const [topGenre, topCount] = genreList[0] ?? ["", 0];
-    const playerDmg = statTotal.get("player_dmg") ?? 0;
-    const isBoosted = (e: Effect) => e === "skill_dmg" || e === "basic_atk";
-    return {
-      genreList,
-      stats: STAT_ORDER.filter((e) => statTotal.has(e) || (isBoosted(e) && playerDmg > 0)).map((e) => [e, statTotal.get(e) ?? 0] as const),
-      playerDmg,
-      topGenre,
-      topCount,
-      genreBonus: GENRE_BONUS[topCount] ?? 0,
-      tiers: team.map((a) => a.tier).join(" · "),
-    };
-  }, [team]);
-
-  const searchInput = (
-    <div className="relative">
-      <Icon d={ICONS.search} className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-500" />
-      <input
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        type="search"
-        placeholder="Cari nama, genre, atau skill…"
-        aria-label="Cari artist"
-        className="w-full rounded-xl border border-white/10 bg-panel/80 py-3 pr-9 pl-9 text-base placeholder:text-zinc-400 focus:border-brand/60 [&::-webkit-search-cancel-button]:appearance-none"
-      />
-      {query !== "" && (
-        <button
-          type="button"
-          onClick={() => setQuery("")}
-          aria-label="Hapus pencarian"
-          className="absolute top-1/2 right-1 grid h-10 w-10 -translate-y-1/2 cursor-pointer place-items-center rounded-md text-zinc-400 hover:bg-white/5 hover:text-zinc-200"
-        >
-          <Icon d={ICONS.close} className="h-4 w-4" />
-        </button>
-      )}
-    </div>
-  );
-
-  const teamPanel = (
-    <div className="flex flex-col gap-4">
-      <ol className="flex flex-col gap-2">
-        {Array.from({ length: TEAM_SIZE }).map((_, i) => {
-          const a = team[i];
-          return (
-            <li
-              key={i}
-              className={`flex min-h-[4rem] items-center gap-3 rounded-xl border p-2.5 ${
-                a ? "border-white/15 bg-panel-2" : "border-dashed border-white/10"
-              }`}
-            >
-              {a ? (
-                <>
-                  <Avatar artist={a} size="h-10 w-10" />
-                  <span className="min-w-0 flex-1">
-                    <span className="flex items-center gap-1.5">
-                      <span className="truncate text-base font-semibold">{a.name}</span>
-                      <TierBadge tier={a.tier} />
-                      <span className="tabular text-xs text-zinc-400">{formatStat(a.score)}</span>
-                    </span>
-                    <span className="block truncate text-sm text-zinc-400">{a.genre}</span>
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => toggle(a.slug)}
-                    aria-label={`Hapus ${a.name} dari tim`}
-                    className="grid h-10 w-10 cursor-pointer place-items-center rounded-md text-zinc-400 transition-colors duration-200 hover:bg-white/5 hover:text-red-300"
-                  >
-                    <Icon d={ICONS.close} className="h-5 w-5" />
-                  </button>
-                </>
-              ) : (
-                <span className="px-1 text-sm text-zinc-400">Slot {i + 1} kosong</span>
-              )}
-            </li>
-          );
-        })}
-      </ol>
-
-      <div className="border-t border-white/10 pt-3">
-        {team.length === 0 ? (
-          <p className="text-sm text-zinc-400">Pilih artist di bawah untuk mengisi slot.</p>
-        ) : (
-          <dl className="flex flex-col gap-3 text-sm">
-            <div>
-              <dt className="text-zinc-400">Komposisi tier</dt>
-              <dd className="tabular mt-0.5 font-semibold text-zinc-200">{summary.tiers}</dd>
-            </div>
-            <div>
-              <dt className="text-zinc-400">Genre</dt>
-              <dd className="mt-1 flex flex-wrap gap-1">
-                {summary.genreList.map(([g, n]) => (
-                  <span key={g} className="inline-flex items-center gap-1 rounded-md bg-white/5 px-2 py-0.5 text-zinc-300">
-                    <GenreIcon genre={g} className="h-3 w-3" />
-                    {g} <span className="text-zinc-400">×{n}</span>
-                  </span>
-                ))}
-              </dd>
-              <dd className="mt-1.5 flex flex-wrap items-center gap-1">
-                {summary.genreBonus > 0 ? (
-                  <span className="inline-flex items-center gap-1 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-1.5 py-0.5 font-semibold text-emerald-300">
-                    Sinergi {summary.topCount}× {summary.topGenre}: +{summary.genreBonus}%
-                  </span>
-                ) : (
-                  <span className="text-zinc-400">
-                    Sinergi: {summary.topCount}× {summary.topGenre} — butuh 3 genre sama untuk +5%
-                  </span>
-                )}
-                <span className="text-zinc-400">(info, tidak dihitung)</span>
-              </dd>
-            </div>
-            <div>
-              <dt className="text-zinc-400">Statistik total</dt>
-              <dd className="mt-1 flex flex-col gap-1.5">
-                {summary.stats.length === 0 && <span className="text-zinc-400">Tidak ada skill berangka.</span>}
-                {summary.stats.map(([effect, value]) => {
-                  const boosted = (effect === "skill_dmg" || effect === "basic_atk") && summary.playerDmg > 0;
-                  return (
-                    <div key={effect} className="flex items-baseline justify-between gap-2">
-                      <span className="text-zinc-400">{EFFECT_LABEL[effect]}</span>
-                      <span className="tabular shrink-0 whitespace-nowrap font-semibold text-zinc-200">
-                        {formatStat(value)}
-                        {isPercent(effect) && "%"}
-                        {boosted && (
-                          <span className="ml-1 font-normal text-emerald-300">
-                            +{formatStat(summary.playerDmg)}% = {formatStat(value + summary.playerDmg)}%
-                          </span>
-                        )}
-                      </span>
-                    </div>
-                  );
-                })}
-              </dd>
-            </div>
-          </dl>
-        )}
-      </div>
-    </div>
-  );
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-4 px-4 pt-4 pb-28 sm:px-6 sm:pt-6">
@@ -331,7 +59,7 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
           <div className="min-w-0">
             <p className="font-display text-[11px] font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
             <h1 className="font-display truncate text-xl font-bold tracking-tight sm:text-2xl">
-              {tab === "tier" ? "Tier List" : "Team Builder"}
+              {tab === "artists" ? "Artists" : "Team Builder"}
             </h1>
           </div>
         </div>
@@ -343,199 +71,10 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
         </Link>
       </header>
 
-      {tab === "tier" ? (
-        <section aria-label="Tier list" className="flex min-w-0 flex-col">
-          <div className="z-20 -mx-4 flex flex-col gap-2 border-b border-white/5 bg-ink/95 px-4 pt-2 pb-2 sm:sticky sm:top-0 sm:-mx-6 sm:px-6 sm:backdrop-blur">
-            {searchInput}
-
-            <div
-              className="flex items-center gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-              role="group"
-              aria-label="Filter tier"
-            >
-              {tiers.map((t) => (
-                <button
-                  key={t}
-                  type="button"
-                  onClick={() => setTier(t)}
-                  aria-pressed={tier === t}
-                  className={`inline-flex min-h-10 shrink-0 cursor-pointer items-center justify-center rounded-lg border px-3 py-1 text-sm font-semibold transition-colors duration-200 ${
-                    tier === t ? "border-gold/50 bg-gold/15 text-gold" : "border-white/10 bg-panel/60 text-zinc-400 hover:border-white/25 hover:text-zinc-200"
-                  }`}
-                >
-                  {t}
-                </button>
-              ))}
-            </div>
-
-            <div
-              className="flex items-center gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-              role="group"
-              aria-label="Filter genre"
-            >
-              {genres.map((g) => (
-                <button
-                  key={g}
-                  type="button"
-                  onClick={() => setGenre(g)}
-                  aria-pressed={genre === g}
-                  className={`flex min-h-10 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-1 text-sm font-medium transition-colors duration-200 ${
-                    genre === g ? "border-brand/50 bg-brand/15 text-red-300" : "border-white/10 bg-panel/60 text-zinc-400 hover:border-white/25 hover:text-zinc-200"
-                  }`}
-                >
-                  <GenreIcon genre={g} className="h-4 w-4" />
-                  {g}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {full && (
-            <p className="mt-4 flex flex-wrap items-center gap-2 rounded-xl border border-gold/30 bg-gold/10 px-3 py-2 text-sm text-zinc-200">
-              Tim penuh {TEAM_SIZE}/{TEAM_SIZE} — hapus satu artist untuk memilih yang lain.
-              <button
-                type="button"
-                onClick={() => setTab("team")}
-                className="cursor-pointer font-semibold text-gold underline-offset-2 hover:underline"
-              >
-                Atur tim
-              </button>
-            </p>
-          )}
-          <p aria-live="polite" className="sr-only">
-            {visible.length} artist cocok dengan filter.
-          </p>
-
-          {tiers
-            .filter((t) => t !== "Semua")
-            .map((t) => [t, visible.filter((a) => a.tier === t)] as const)
-            .filter(([, list]) => list.length > 0)
-            .map(([t, list]) => (
-              <section key={t} className="mt-4">
-                <h2 className="mb-2 flex items-center gap-2">
-                  <TierBadge tier={t} />
-                  <span className="text-xs font-normal text-zinc-400">{list.length} artist</span>
-                </h2>
-                <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
-                  {list.map((a) => {
-                    const active = picked.includes(a.slug);
-                    return (
-                      <li key={a.slug}>
-                        <button
-                          type="button"
-                          onClick={() => toggle(a.slug)}
-                          aria-pressed={active}
-                          disabled={!active && full}
-                          className={`group relative flex w-full cursor-pointer flex-col overflow-hidden rounded-xl border text-left transition-colors duration-200 ${
-                            active
-                              ? "border-gold/45 bg-gold/10"
-                              : "border-white/10 bg-panel/70 hover:border-white/25 hover:bg-panel-2 disabled:cursor-not-allowed disabled:opacity-60"
-                          }`}
-                        >
-                          <span className="relative block aspect-[3/4] w-full bg-panel-2">
-                            {a.photoUrl ? (
-                              <Image src={a.photoUrl} alt="" fill sizes="(max-width: 640px) 45vw, 200px" className="object-cover" />
-                            ) : (
-                              <span aria-hidden="true" className="grid h-full w-full place-items-center font-display text-2xl font-bold text-white/25">
-                                {a.name.slice(0, 2).toUpperCase()}
-                              </span>
-                            )}
-                            <span className="absolute top-1.5 left-1.5 rounded-md bg-ink/70 p-0.5 backdrop-blur-sm">
-                              <TierBadge tier={a.tier} />
-                            </span>
-                            <span
-                              aria-hidden="true"
-                              className={`absolute top-1.5 right-1.5 grid h-7 w-7 place-items-center rounded-md border transition-colors duration-200 ${
-                                active
-                                  ? "border-gold/45 bg-gold/20 text-gold"
-                                  : "border-white/15 bg-ink/70 text-zinc-300 group-hover:text-zinc-100"
-                              }`}
-                            >
-                              <Icon d={active ? ICONS.check : ICONS.plus} className="h-4 w-4" />
-                            </span>
-                          </span>
-                          <span className="block min-w-0 p-2">
-                            <span className="flex items-baseline justify-between gap-1">
-                              <span className="block truncate text-sm font-semibold">{a.name}</span>
-                              <span className="tabular shrink-0 text-xs font-semibold text-zinc-300">{formatStat(a.score)}</span>
-                            </span>
-                            <span className="mt-1 flex items-center gap-1 text-xs text-zinc-400">
-                              <GenreIcon genre={a.genre} className="h-3 w-3 shrink-0" />
-                              <span className="truncate">{a.genre}</span>
-                            </span>
-                            <span className="mt-1 line-clamp-2 block text-xs text-zinc-400">{skillList(a.skills)}</span>
-                          </span>
-                        </button>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </section>
-            ))}
-
-          {visible.length === 0 && <p className="mt-6 text-base text-zinc-400">Tidak ada artist yang cocok dengan filter.</p>}
-        </section>
+      {tab === "artists" ? (
+        <ArtistsTab artists={artists} picked={picked} full={full} onToggle={toggle} onOpenTeam={() => setTab("team")} />
       ) : (
-        <section aria-label="Team builder" className="flex flex-col gap-4">
-          <div className="flex items-center justify-between gap-2">
-            <h2 className="font-display text-sm font-semibold uppercase tracking-wide text-zinc-300">Tim Kamu</h2>
-            {team.length > 0 && (
-              <button
-                type="button"
-                onClick={() => setPicked([])}
-                className="flex min-h-10 cursor-pointer items-center gap-1 rounded-md px-2 py-1 text-sm text-zinc-400 transition-colors duration-200 hover:bg-white/5 hover:text-red-300"
-              >
-                <Icon d={ICONS.trash} className="h-4 w-4" />
-                Reset
-              </button>
-            )}
-          </div>
-
-          {teamPanel}
-
-          <div className="border-t border-white/10 pt-4">
-            <h2 className="font-display mb-2 text-sm font-semibold uppercase tracking-wide text-zinc-300">Tambah Artist</h2>
-            {searchInput}
-            <ul className="mt-2 flex flex-col gap-2">
-              {pickable.map((a) => {
-                const active = picked.includes(a.slug);
-                return (
-                  <li key={a.slug}>
-                    <button
-                      type="button"
-                      onClick={() => toggle(a.slug)}
-                      aria-pressed={active}
-                      disabled={!active && full}
-                      className={`flex min-h-14 w-full cursor-pointer items-center gap-3 rounded-xl border p-2 text-left transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-60 ${
-                        active ? "border-gold/45 bg-gold/10" : "border-white/10 bg-panel/70 hover:border-white/25 hover:bg-panel-2"
-                      }`}
-                    >
-                      <Avatar artist={a} size="h-9 w-9" />
-                      <span className="min-w-0 flex-1">
-                        <span className="flex items-center gap-1.5">
-                          <span className="truncate text-sm font-semibold">{a.name}</span>
-                          <TierBadge tier={a.tier} />
-                        </span>
-                        <span className="tabular block truncate text-xs text-zinc-400">
-                          {a.genre} · {formatStat(a.score)}
-                        </span>
-                      </span>
-                      <span
-                        aria-hidden="true"
-                        className={`grid h-7 w-7 shrink-0 place-items-center rounded-md border ${
-                          active ? "border-gold/45 bg-gold/20 text-gold" : "border-white/15 text-zinc-300"
-                        }`}
-                      >
-                        <Icon d={active ? ICONS.check : ICONS.plus} className="h-4 w-4" />
-                      </span>
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-            {pickable.length === 0 && <p className="mt-3 text-sm text-zinc-400">Tidak ada artist yang cocok.</p>}
-          </div>
-        </section>
+        <TeamTab artists={artists} team={team} picked={picked} full={full} onToggle={toggle} onReset={() => setPicked([])} />
       )}
 
       <nav
@@ -546,14 +85,14 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
         <div className="mx-auto grid max-w-md grid-cols-2 gap-1 px-2 pt-1">
           <button
             type="button"
-            onClick={() => setTab("tier")}
-            aria-current={tab === "tier" ? "true" : undefined}
+            onClick={() => setTab("artists")}
+            aria-current={tab === "artists" ? "true" : undefined}
             className={`flex min-h-14 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg text-xs font-semibold transition-colors duration-200 ${
-              tab === "tier" ? "text-gold" : "text-zinc-400 hover:text-zinc-200"
+              tab === "artists" ? "text-gold" : "text-zinc-400 hover:text-zinc-200"
             }`}
           >
             <Icon d={ICONS.list} className="h-5 w-5" />
-            Tier List
+            Artists
           </button>
           <button
             type="button"
@@ -575,7 +114,7 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
               </span>
             </span>
             <span>
-              Tim<span className="sr-only"> ({team.length} dari {TEAM_SIZE})</span>
+              Team Builder<span className="sr-only"> ({team.length} dari {TEAM_SIZE})</span>
             </span>
           </button>
         </div>
