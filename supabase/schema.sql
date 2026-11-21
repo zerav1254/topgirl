@@ -27,8 +27,6 @@ create table public.artists (
   genre text not null references public.genres (id) on update cascade,
   region text references public.regions (id) on update cascade,
   season integer,
-  base_sing integer check (base_sing > 0),
-  base_dance integer check (base_dance > 0),
   photo_path text,
   updated_at timestamptz not null default now()
 );

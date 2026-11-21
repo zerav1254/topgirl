@@ -55,8 +55,6 @@ export async function saveArtist(fd: FormData): Promise<SaveResult> {
       genre,
       region,
       season: pos(fd, "season"),
-      base_sing: pos(fd, "base_sing"),
-      base_dance: pos(fd, "base_dance"),
       updated_at: new Date().toISOString(),
     })
     .eq("slug", slug)

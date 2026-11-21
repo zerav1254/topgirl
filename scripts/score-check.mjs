@@ -7,7 +7,7 @@ assert.equal(new Set(artists.map((a) => a.slug)).size, 92, "slugs must be unique
 
 const byName = new Map(artists.map((a) => [a.name, a]));
 for (const name of ["Monica", "Longkui", "Kasha", "Dewi"]) {
-  assert.ok(byName.get(name).score >= 85, `${name} should be S+`);
+  assert.ok(byName.get(name).score >= 75, `${name} should be S+`);
   assert.equal(byName.get(name).tier, "S+");
 }
 for (const name of ["Ayaka", "Moana"]) {

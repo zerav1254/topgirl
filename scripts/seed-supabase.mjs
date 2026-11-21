@@ -33,8 +33,6 @@ for (const line of rows) {
         genre: get(r, "genre"),
         region: get(r, "region") || null,
         season: num(get(r, "season")),
-        base_sing: num(get(r, "base_sing")),
-        base_dance: num(get(r, "base_dance")),
       },
       { onConflict: "slug" },
     )

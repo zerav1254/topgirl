@@ -80,19 +80,16 @@ const FLAT_SCALE: Partial<Record<Effect, number>> = {
   dps_atk_rally: 1 / 2.4,
 };
 
-// Base stat of the Tokyo 1 / Rome 1 / Bali 1 cohort. Season power is already
-// baked into base stats, so no separate per-season multiplier is needed.
-const BASE_REF = 49918;
-
+// Score from skills only; base stats are no longer part of ranking.
 const BANDS: [Tier, number][] = [
-  ["S+", 85],
-  ["S", 65],
-  ["A", 45],
-  ["B", 30],
+  ["S+", 75],
+  ["S", 55],
+  ["A", 38],
+  ["B", 22],
   ["C", 16],
 ];
 
-export function scoreArtist(skills: Skill[], baseSing: number | null, baseDance: number | null): number {
+export function scoreArtist(skills: Skill[]): number {
   let offense = 0;
   let sustain = 0;
   for (const s of skills) {
@@ -102,9 +99,7 @@ export function scoreArtist(skills: Skill[], baseSing: number | null, baseDance:
     offense += (OFFENSE[s.effect] ?? 0) * v;
     sustain += (SUSTAIN[s.effect] ?? 0) * v;
   }
-  const base = (baseSing ?? 0) + (baseDance ?? 0);
-  const baseMult = base ? base / BASE_REF : 1;
-  return Math.min(100, Math.round((offense + 0.75 * sustain) * 1.4 * baseMult * 10) / 10);
+  return Math.min(100, Math.round((offense + 0.75 * sustain) * 1.4 * 10) / 10);
 }
 
 export function tierFromScore(score: number): Tier {

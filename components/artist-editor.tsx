@@ -12,8 +12,6 @@ type SkillDraft = { effect: Effect | ""; value: string };
 type Draft = {
   slug: string;
   genre: string;
-  baseSing: string;
-  baseDance: string;
   region: string;
   season: string;
   skills: [SkillDraft, SkillDraft];
@@ -29,15 +27,13 @@ function draftFromArtist(a: Artist): Draft {
   return {
     slug: a.slug,
     genre: a.genre,
-    baseSing: a.baseSing?.toString() ?? "",
-    baseDance: a.baseDance?.toString() ?? "",
     region: a.region ?? "",
     season: a.season?.toString() ?? "",
     skills: [skill(0), skill(1)],
   };
 }
 
-const isComplete = (d: Draft) => d.baseSing !== "" && d.baseDance !== "" && d.skills.some((s) => s.effect !== "");
+const isComplete = (d: Draft) => d.skills.some((s) => s.effect !== "");
 
 // ponytail: draft hanya menyimpan stat; name/genre belum bisa diedit dari web.
 function toFormData(d: Draft, a: Artist): FormData {
@@ -47,8 +43,6 @@ function toFormData(d: Draft, a: Artist): FormData {
   fd.set("genre", d.genre);
   fd.set("region", d.region);
   fd.set("season", d.region ? d.season : "");
-  fd.set("base_sing", d.baseSing);
-  fd.set("base_dance", d.baseDance);
   d.skills.forEach((s, i) => {
     fd.set(`s${i + 1}_effect`, s.effect);
     fd.set(`s${i + 1}_value`, s.effect ? s.value : "");
@@ -88,7 +82,7 @@ export function ArtistEditor({ artists, defaultSlug, lookups }: { artists: Artis
     const skills: Skill[] = form.skills
       .filter((s) => s.effect !== "")
       .map((s) => ({ effect: s.effect as Effect, value: s.value === "" ? null : Number(s.value) }));
-    const score = scoreArtist(skills, form.baseSing === "" ? null : Number(form.baseSing), form.baseDance === "" ? null : Number(form.baseDance));
+    const score = scoreArtist(skills);
     return { score, tier: tierFromScore(score) };
   }, [form]);
 
@@ -206,26 +200,6 @@ export function ArtistEditor({ artists, defaultSlug, lookups }: { artists: Artis
               </div>
 
               <div className="grid gap-3 sm:grid-cols-2">
-                <label className="flex flex-col gap-1 text-sm text-zinc-400">
-                  Base SING
-                  <input
-                    value={form.baseSing}
-                    onChange={(e) => update({ baseSing: digits(e.target.value) })}
-                    inputMode="numeric"
-                    placeholder="mis. 34827"
-                    className="rounded-lg border border-white/10 bg-ink/60 px-3 py-2 text-base text-zinc-100 placeholder:text-zinc-600 focus:border-brand/60"
-                  />
-                </label>
-                <label className="flex flex-col gap-1 text-sm text-zinc-400">
-                  Base DANCE
-                  <input
-                    value={form.baseDance}
-                    onChange={(e) => update({ baseDance: digits(e.target.value) })}
-                    inputMode="numeric"
-                    placeholder="mis. 25071"
-                    className="rounded-lg border border-white/10 bg-ink/60 px-3 py-2 text-base text-zinc-100 placeholder:text-zinc-600 focus:border-brand/60"
-                  />
-                </label>
                 <label className="flex flex-col gap-1 text-sm text-zinc-400">
                   Genre
                   <select

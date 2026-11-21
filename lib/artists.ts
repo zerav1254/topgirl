@@ -11,8 +11,6 @@ export type Artist = {
   genre: string;
   region: string | null;
   season: number | null;
-  baseSing: number | null;
-  baseDance: number | null;
   skills: Skill[];
   photoUrl: string | null;
   score: number;
@@ -28,8 +26,6 @@ type Row = {
   genre: string;
   region: string | null;
   season: number | null;
-  base_sing: number | null;
-  base_dance: number | null;
   photo_path: string | null;
   artist_skills: { slot: number; effect: string; value: number | null }[];
 };
@@ -37,7 +33,7 @@ type Row = {
 export async function loadArtists(): Promise<Artist[]> {
   const { data, error } = await supabase
     .from("artists")
-    .select("id, slug, name, genre, region, season, base_sing, base_dance, photo_path, artist_skills(slot, effect, value)")
+    .select("id, slug, name, genre, region, season, photo_path, artist_skills(slot, effect, value)")
     .order("id");
 
   if (error) throw new Error(`Gagal memuat artist: ${error.message}`);
@@ -48,7 +44,7 @@ export async function loadArtists(): Promise<Artist[]> {
         .sort((a, b) => a.slot - b.slot)
         .filter((s) => EFFECT_SET.has(s.effect))
         .map((s) => ({ effect: s.effect as Effect, value: s.value }));
-      const score = scoreArtist(skills, r.base_sing, r.base_dance);
+      const score = scoreArtist(skills);
       return {
         id: r.id,
         slug: r.slug,
@@ -56,8 +52,6 @@ export async function loadArtists(): Promise<Artist[]> {
         genre: r.genre,
         region: r.region,
         season: r.season,
-        baseSing: r.base_sing,
-        baseDance: r.base_dance,
         skills,
         photoUrl: r.photo_path ? `${SUPABASE_URL}/storage/v1/object/public/${PHOTO_BUCKET}/${r.photo_path}` : null,
         score,
