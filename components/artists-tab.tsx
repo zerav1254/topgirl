@@ -22,7 +22,7 @@ function FilterRow({
   label,
   value,
   onChange,
-  options,
+  options: base,
   tone = "brand",
   genreIcon = false,
 }: {
@@ -34,6 +34,8 @@ function FilterRow({
   genreIcon?: boolean;
 }) {
   const active = tone === "gold" ? "border-gold/50 bg-gold/15 text-gold" : "border-brand/50 bg-brand/15 text-red-300";
+  // "Semua" hanya muncul saat baris terfilter, sebagai jalan lepas filter baris itu.
+  const options = value === "Semua" ? base : [{ id: "Semua", text: "Semua" }, ...base];
   return (
     <div className="flex items-center gap-2">
       <span className="w-14 shrink-0 text-[11px] font-semibold uppercase tracking-wide text-zinc-500">{label}</span>
@@ -46,7 +48,7 @@ function FilterRow({
           <button
             key={o.id}
             type="button"
-            onClick={() => onChange(o.id)}
+            onClick={() => onChange(value === o.id ? "Semua" : o.id)}
             aria-pressed={value === o.id}
             className={`flex min-h-10 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-1 text-sm font-semibold transition-colors duration-200 ${
               value === o.id ? active : "border-white/10 bg-panel/60 text-zinc-400 hover:border-white/25 hover:text-zinc-200"
@@ -65,19 +67,17 @@ export function ArtistsTab({ artists, picked, full, onToggle, onOpenTeam }: Prop
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<Filter>({ genre: "Semua", region: "Semua", tier: "Semua", skill: "Semua" });
   const set = (key: keyof Filter) => (id: string) => setFilter((f) => ({ ...f, [key]: id }));
+  const filtered = Object.values(filter).some((v) => v !== "Semua");
 
-  const genres = useMemo(
-    () => ["Semua", ...new Set(artists.map((a) => a.genre).filter(Boolean))].sort(),
-    [artists],
-  );
+  const genres = useMemo(() => [...new Set(artists.map((a) => a.genre).filter(Boolean))].sort(), [artists]);
   const regions = useMemo(
-    () => ["Semua", ...new Set(artists.map((a) => a.region).filter((r): r is string => Boolean(r)))].sort(),
+    () => [...new Set(artists.map((a) => a.region).filter((r): r is string => Boolean(r)))].sort(),
     [artists],
   );
   // Urutan chip ikut TIER_ORDER, bukan urutan data; tier tanpa artist tidak ditampilkan.
   const tiers = useMemo(() => {
     const present = new Set(artists.map((a) => a.tier));
-    return ["Semua", ...TIER_ORDER.filter((t) => present.has(t))];
+    return TIER_ORDER.filter((t) => present.has(t));
   }, [artists]);
   const skillIds = useMemo(() => {
     const present = new Set(artists.flatMap((a) => a.skills.map((s) => s.effect)));
@@ -103,7 +103,21 @@ export function ArtistsTab({ artists, picked, full, onToggle, onOpenTeam }: Prop
   return (
     <section aria-label="Artists" className="flex min-w-0 flex-col">
       <div className="z-20 -mx-4 flex flex-col gap-1.5 border-b border-white/5 bg-ink/95 px-4 pt-2 pb-2 sm:sticky sm:top-0 sm:-mx-6 sm:px-6 sm:backdrop-blur">
-        <SearchInput value={query} onChange={setQuery} />
+        <div className="flex items-center gap-2">
+          <div className="min-w-0 flex-1">
+            <SearchInput value={query} onChange={setQuery} />
+          </div>
+          {/* invisible, bukan unmount: lebar search tidak melompat saat filter dipasang/dilepas. */}
+          <button
+            type="button"
+            onClick={() => setFilter({ genre: "Semua", region: "Semua", tier: "Semua", skill: "Semua" })}
+            className={`flex min-h-11 shrink-0 cursor-pointer items-center rounded-xl border border-white/10 bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100 ${
+              filtered ? "" : "invisible"
+            }`}
+          >
+            Reset filter
+          </button>
+        </div>
 
         {(
           [
@@ -124,7 +138,7 @@ export function ArtistsTab({ artists, picked, full, onToggle, onOpenTeam }: Prop
             label={label}
             value={filter[key]}
             onChange={set(key)}
-            options={[{ id: "Semua", text: "Semua" }, ...options]}
+            options={options}
             tone={tone}
             genreIcon={genreIcon}
           />
@@ -144,7 +158,6 @@ export function ArtistsTab({ artists, picked, full, onToggle, onOpenTeam }: Prop
       </p>
 
       {tiers
-        .filter((t) => t !== "Semua")
         .map((t) => [t, visible.filter((a) => a.tier === t)] as const)
         .filter(([, list]) => list.length > 0)
         .map(([t, list]) => (
