@@ -58,15 +58,19 @@ export const EFFECT_LABEL: Record<Effect, string> = {
 
 // Points per skill percent. Sustain counts 0.75x in the final score.
 const OFFENSE: Partial<Record<Effect, number>> = {
-  player_dmg: 1,
+  // player_dmg menaikkan basic_atk DAN skill_dmg (lihat ringkasan tim), jadi
+  // bobotnya = bobot kedua kanal: 0.5 + 0.8.
+  player_dmg: 1.3,
   skill_dmg: 0.8,
   basic_atk: 0.5,
+  // Fan = kapasitas pasukan -> serangan solo. Satu kanal dengan basic_atk.
+  // ponytail: sinergi kapasitas x buff ATK tidak dihitung per artist.
+  fan: 0.5,
   dps_def: 0.03,
   dps_atk_company: 0.03,
   dps_atk_rally: 0.03,
 };
 const SUSTAIN: Partial<Record<Effect, number>> = {
-  fan: 0.6,
   skill_dmg_red: 0.55,
   basic_atk_red: 0.4,
   fan_rally: 0.3,
@@ -82,7 +86,7 @@ const FLAT_SCALE: Partial<Record<Effect, number>> = {
 
 // Score from skills only; base stats are no longer part of ranking.
 const BANDS: [Tier, number][] = [
-  ["S+", 75],
+  ["S+", 80],
   ["S", 55],
   ["A", 38],
   ["B", 22],
