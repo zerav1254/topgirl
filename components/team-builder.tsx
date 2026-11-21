@@ -88,9 +88,9 @@ function TierBadge({ tier, className = "" }: { tier: string; className?: string 
 function Avatar({ artist, size = "h-12 w-12" }: { artist: Artist; size?: string }) {
   return (
     <span className={`block shrink-0 overflow-hidden rounded-lg bg-gradient-to-br ${AVATAR_STYLE[artist.tier] ?? AVATAR_STYLE.D} ${size}`}>
-      {artist.hasThumb ? (
+      {artist.photoUrl ? (
         <Image
-          src={`/assets/images/artists/thumb/${artist.slug}.webp`}
+          src={artist.photoUrl}
           alt=""
           width={96}
           height={96}
@@ -433,9 +433,9 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
                           }`}
                         >
                           <span className="relative block aspect-[9/16] w-full bg-panel-2">
-                            {a.hasThumb ? (
+                            {a.photoUrl ? (
                               <Image
-                                src={`/assets/images/artists/thumb/${a.slug}.webp`}
+                                src={a.photoUrl}
                                 alt=""
                                 fill
                                 sizes="(max-width: 640px) 144px, 200px"

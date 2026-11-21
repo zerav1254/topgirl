@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { loadArtists } from "../lib/artists.ts";
 
-const artists = loadArtists();
+const artists = await loadArtists();
 assert.equal(artists.length, 92, "expected 92 artists");
 assert.equal(new Set(artists.map((a) => a.slug)).size, 92, "slugs must be unique");
 

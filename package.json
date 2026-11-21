@@ -12,12 +12,15 @@
     "start": "next start",
     "lint": "eslint .",
     "check:scores": "node --no-warnings scripts/score-check.mjs",
-    "fill:base": "node --no-warnings scripts/fill-base.mjs"
+    "fill:base": "node --no-warnings scripts/fill-base.mjs",
+    "seed": "node --no-warnings --env-file=.env.local scripts/seed-supabase.mjs"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.119.2",
     "next": "^15.5.0",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "sharp": "^0.35.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.7",
