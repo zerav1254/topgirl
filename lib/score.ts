@@ -59,17 +59,17 @@ export const EFFECT_LABEL: Record<Effect, string> = {
 // Points per skill percent. Sustain counts 0.75x in the final score.
 const OFFENSE: Partial<Record<Effect, number>> = {
   player_dmg: 1,
-  skill_dmg: 1,
+  skill_dmg: 0.8,
   basic_atk: 0.5,
-  dps_def: 0.4,
-  dps_atk_company: 0.35,
-  dps_atk_rally: 0.35,
+  dps_def: 0.03,
+  dps_atk_company: 0.03,
+  dps_atk_rally: 0.03,
 };
 const SUSTAIN: Partial<Record<Effect, number>> = {
-  skill_dmg_red: 0.8,
-  basic_atk_red: 0.4,
   fan: 0.6,
-  fan_rally: 0.5,
+  skill_dmg_red: 0.55,
+  basic_atk_red: 0.4,
+  fan_rally: 0.3,
 };
 
 // Nilai "flat" (DPS) diskalakan ke skala persen. Efek baru dengan unit flat
