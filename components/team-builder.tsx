@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Artist, Effect } from "@/lib/artists";
-import { EFFECT_LABEL } from "@/lib/score";
+import { EFFECT_LABEL, TIER_ORDER } from "@/lib/score";
 
 const TEAM_SIZE = 5;
 const STORAGE_KEY = "topgirl.team.v1";
@@ -59,6 +59,12 @@ const STAT_ORDER: Effect[] = [
 const isPercent = (effect: Effect) => !effect.startsWith("dps");
 const skillText = (s: Artist["skills"][number]) =>
   `${EFFECT_LABEL[s.effect]}${s.value !== null ? ` ${s.value}${isPercent(s.effect) ? "%" : ""}` : ""}`;
+// Dua slot boleh berisi efek sama; ringkas jadi "… ×2" supaya tidak terbaca bug.
+const skillList = (skills: Artist["skills"]) => {
+  const counts = new Map<string, number>();
+  for (const s of skills) counts.set(skillText(s), (counts.get(skillText(s)) ?? 0) + 1);
+  return [...counts].map(([t, n]) => (n > 1 ? `${t} ×${n}` : t)).join(" / ");
+};
 const formatStat = (v: number) => v.toLocaleString("id-ID", { maximumFractionDigits: 1 });
 
 function Icon({ d, className = "h-4 w-4" }: { d: string; className?: string }) {
@@ -94,7 +100,7 @@ function Avatar({ artist, size = "h-12 w-12" }: { artist: Artist; size?: string 
         <Image src={artist.photoUrl} alt="" width={96} height={96} sizes="96px" className="h-full w-full object-cover" />
       ) : (
         <span aria-hidden="true" className="grid h-full w-full place-items-center font-display text-lg font-bold text-white/80">
-          {artist.name[0]}
+          {artist.name.slice(0, 2).toUpperCase()}
         </span>
       )}
     </span>
@@ -115,7 +121,11 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
   const [genre, setGenre] = useState("Semua");
 
   const bySlug = useMemo(() => new Map(artists.map((a) => [a.slug, a])), [artists]);
-  const tiers = useMemo(() => ["Semua", ...new Set(artists.map((a) => a.tier))], [artists]);
+  // Urutan chip ikut TIER_ORDER, bukan urutan data; tier tanpa artist tidak ditampilkan.
+  const tiers = useMemo(() => {
+    const present = new Set(artists.map((a) => a.tier));
+    return ["Semua", ...TIER_ORDER.filter((t) => present.has(t))];
+  }, [artists]);
   const genres = useMemo(() => ["Semua", ...new Set(artists.map((a) => a.genre).filter(Boolean))].sort(), [artists]);
 
   useEffect(() => {
@@ -131,6 +141,10 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(picked));
   }, [picked]);
 
+  useEffect(() => {
+    document.title = `${tab === "team" ? "Tim Kamu" : "Tier List"} — TopGirl Team Builder`;
+  }, [tab]);
+
   const team = picked.map((slug) => bySlug.get(slug)).filter((a): a is Artist => Boolean(a));
   const full = team.length >= TEAM_SIZE;
 
@@ -138,7 +152,7 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
     setPicked((prev) => (prev.includes(slug) ? prev.filter((s) => s !== slug) : prev.length >= TEAM_SIZE ? prev : [...prev, slug]));
   }
 
-  const q = query.toLowerCase();
+  const q = query.trim().toLowerCase();
   const matches = (a: Artist) =>
     q === "" ||
     a.name.toLowerCase().includes(q) ||
@@ -149,10 +163,8 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
     (a) => (tier === "Semua" || a.tier === tier) && (genre === "Semua" || a.genre === genre) && matches(a),
   );
 
-  const pickable = useMemo(
-    () => artists.filter((a) => q === "" || a.name.toLowerCase().includes(q) || a.genre.toLowerCase().includes(q) || a.skills.some((s) => EFFECT_LABEL[s.effect].toLowerCase().includes(q))).sort((a, b) => b.score - a.score),
-    [artists, q],
-  );
+  // ponytail: sort ulang tiap render; roster ~60 baris, memo belum perlu.
+  const pickable = artists.filter(matches).sort((a, b) => b.score - a.score);
 
   const summary = useMemo(() => {
     const genreCount = new Map<string, number>();
@@ -187,7 +199,7 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
         type="search"
         placeholder="Cari nama, genre, atau skill…"
         aria-label="Cari artist"
-        className="w-full rounded-xl border border-white/10 bg-panel/80 py-3 pr-9 pl-9 text-base placeholder:text-zinc-400 focus:border-brand/60"
+        className="w-full rounded-xl border border-white/10 bg-panel/80 py-3 pr-9 pl-9 text-base placeholder:text-zinc-400 focus:border-brand/60 [&::-webkit-search-cancel-button]:appearance-none"
       />
       {query !== "" && (
         <button
@@ -327,13 +339,13 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
           href="/isi"
           className="inline-flex min-h-11 shrink-0 items-center rounded-xl border border-white/10 bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
         >
-          Isi stat
+          Kelola data
         </Link>
       </header>
 
       {tab === "tier" ? (
         <section aria-label="Tier list" className="flex min-w-0 flex-col">
-          <div className="sticky top-0 z-20 -mx-4 flex flex-col gap-2 border-b border-white/5 bg-ink/95 px-4 pt-2 pb-2 backdrop-blur sm:-mx-6 sm:px-6">
+          <div className="z-20 -mx-4 flex flex-col gap-2 border-b border-white/5 bg-ink/95 px-4 pt-2 pb-2 sm:sticky sm:top-0 sm:-mx-6 sm:px-6 sm:backdrop-blur">
             {searchInput}
 
             <div
@@ -378,6 +390,22 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
             </div>
           </div>
 
+          {full && (
+            <p className="mt-4 flex flex-wrap items-center gap-2 rounded-xl border border-gold/30 bg-gold/10 px-3 py-2 text-sm text-zinc-200">
+              Tim penuh {TEAM_SIZE}/{TEAM_SIZE} — hapus satu artist untuk memilih yang lain.
+              <button
+                type="button"
+                onClick={() => setTab("team")}
+                className="cursor-pointer font-semibold text-gold underline-offset-2 hover:underline"
+              >
+                Atur tim
+              </button>
+            </p>
+          )}
+          <p aria-live="polite" className="sr-only">
+            {visible.length} artist cocok dengan filter.
+          </p>
+
           {tiers
             .filter((t) => t !== "Semua")
             .map((t) => [t, visible.filter((a) => a.tier === t)] as const)
@@ -401,7 +429,7 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
                           className={`group relative flex w-full cursor-pointer flex-col overflow-hidden rounded-xl border text-left transition-colors duration-200 ${
                             active
                               ? "border-gold/45 bg-gold/10"
-                              : "border-white/10 bg-panel/70 hover:border-white/25 hover:bg-panel-2 disabled:cursor-not-allowed disabled:opacity-40"
+                              : "border-white/10 bg-panel/70 hover:border-white/25 hover:bg-panel-2 disabled:cursor-not-allowed disabled:opacity-60"
                           }`}
                         >
                           <span className="relative block aspect-[3/4] w-full bg-panel-2">
@@ -409,7 +437,7 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
                               <Image src={a.photoUrl} alt="" fill sizes="(max-width: 640px) 45vw, 200px" className="object-cover" />
                             ) : (
                               <span aria-hidden="true" className="grid h-full w-full place-items-center font-display text-2xl font-bold text-white/25">
-                                {a.name[0]}
+                                {a.name.slice(0, 2).toUpperCase()}
                               </span>
                             )}
                             <span className="absolute top-1.5 left-1.5 rounded-md bg-ink/70 p-0.5 backdrop-blur-sm">
@@ -435,7 +463,7 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
                               <GenreIcon genre={a.genre} className="h-3 w-3 shrink-0" />
                               <span className="truncate">{a.genre}</span>
                             </span>
-                            <span className="mt-1 block truncate text-xs text-zinc-400">{a.skills.map(skillText).join(" / ")}</span>
+                            <span className="mt-1 line-clamp-2 block text-xs text-zinc-400">{skillList(a.skills)}</span>
                           </span>
                         </button>
                       </li>
@@ -478,7 +506,7 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
                       onClick={() => toggle(a.slug)}
                       aria-pressed={active}
                       disabled={!active && full}
-                      className={`flex min-h-14 w-full cursor-pointer items-center gap-3 rounded-xl border p-2 text-left transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-40 ${
+                      className={`flex min-h-14 w-full cursor-pointer items-center gap-3 rounded-xl border p-2 text-left transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-60 ${
                         active ? "border-gold/45 bg-gold/10" : "border-white/10 bg-panel/70 hover:border-white/25 hover:bg-panel-2"
                       }`}
                     >
@@ -519,7 +547,7 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
           <button
             type="button"
             onClick={() => setTab("tier")}
-            aria-pressed={tab === "tier"}
+            aria-current={tab === "tier" ? "true" : undefined}
             className={`flex min-h-14 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg text-xs font-semibold transition-colors duration-200 ${
               tab === "tier" ? "text-gold" : "text-zinc-400 hover:text-zinc-200"
             }`}
@@ -530,7 +558,7 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
           <button
             type="button"
             onClick={() => setTab("team")}
-            aria-pressed={tab === "team"}
+            aria-current={tab === "team" ? "true" : undefined}
             className={`relative flex min-h-14 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg text-xs font-semibold transition-colors duration-200 ${
               tab === "team" ? "text-gold" : "text-zinc-400 hover:text-zinc-200"
             }`}

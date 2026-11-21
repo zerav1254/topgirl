@@ -41,6 +41,9 @@ create table public.artist_skills (
 
 create index artist_skills_effect_idx on public.artist_skills (effect);
 
+-- Efek sama di slot 1 dan 2 itu sah (game memang memberi dua skill identik);
+-- skornya dijumlahkan, tampilannya diringkas "×2" di kartu.
+
 alter table public.artists enable row level security;
 alter table public.artist_skills enable row level security;
 alter table public.genres enable row level security;

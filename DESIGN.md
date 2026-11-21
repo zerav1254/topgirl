@@ -36,8 +36,8 @@ Badge tier: `border-<warna>/45 bg-<warna>/15 text-<warna>-300` (S+ pakai `text-g
 
 ## Tipografi
 
-- Family: system sans stack (`ui-sans-serif, system-ui, …`). Tanpa webfont — hindari FOUT dan build yang bergantung jaringan.
-- Skala: h1 `text-3xl`→`text-4xl` bold tracking-tight; judul panel `text-sm` semibold uppercase tracking-wide; body `text-sm`; metadata `text-[11px]`; badge `text-[11px]`.
+- Family: Inter (`--font-sans`) untuk teks, Sora (`--font-display`) untuk judul/badge, dimuat lewat `next/font` di `app/layout.tsx` (self-host, tanpa request ke Google saat runtime).
+- Skala: h1 `text-xl`→`sm:text-2xl` bold tracking-tight; judul panel `text-sm` semibold uppercase tracking-wide; body `text-sm`; metadata `text-xs`; badge `text-sm`.
 - Angka & komposisi tier: kelas `.tabular` (`font-variant-numeric: tabular-nums`).
 - Huruf besar hanya untuk label seksi, bukan isi data.
 
@@ -51,11 +51,11 @@ Badge tier: `border-<warna>/45 bg-<warna>/15 text-<warna>-300` (S+ pakai `text-g
 
 ## Komponen
 
-**Artist card** — tombol penuh. Normal: `border-white/10 bg-panel/70`. Hover: border lebih terang + `bg-panel-2`. Terpilih: `border-gold/45 bg-gold/10` + ikon centang. Saat tim penuh: `disabled:opacity-40 disabled:cursor-not-allowed`.
+**Artist card** — tombol penuh. Normal: `border-white/10 bg-panel/70`. Hover: border lebih terang + `bg-panel-2`. Terpilih: `border-gold/45 bg-gold/10` + ikon centang. Saat tim penuh: `disabled:opacity-60 disabled:cursor-not-allowed`. Skill identik di dua slot diringkas `… ×2` (efek sama itu sah, skornya tetap dijumlahkan).
 
 **Slot tim** — daftar `<ol>` 5 baris tinggi tetap `min-h-[3.25rem]`. Kosong: border dashed + label "Slot n kosong". Terisi: avatar, nama, badge tier, genre, tombol hapus.
 
-**Filter chip** — `rounded-lg border px-2.5 py-1 text-xs`. Aktif tier = emas; aktif genre = merah; nonaktif `text-zinc-400` dengan hover `text-zinc-200`.
+**Filter chip** — `rounded-lg border px-3 py-1 text-sm min-h-10` (target sentuh). Aktif tier = emas; aktif genre = merah; nonaktif `text-zinc-400` dengan hover `text-zinc-200`. Urutan chip tier ikut `TIER_ORDER`; tier tanpa artist tidak ditampilkan.
 
 **Input pencarian** — ikon SVG di kiri (`pl-9`), border fokus `focus:border-brand/60`.
 
