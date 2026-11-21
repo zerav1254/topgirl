@@ -22,7 +22,8 @@ Aturan keras repo ini. Kalau ragu, berhenti dan tanya — jangan improvisasi.
 - Tier **tidak disimpan** di DB; dihitung dari skor (`BANDS` di `lib/score.ts`).
 - `slug` unik, huruf kecil tanpa spasi; `region` ∈ `Tokyo Rome Bali Auction` atau NULL; `season` angka lokal (`Tokyo 4` → `4`) atau NULL.
 - `base_sing`/`base_dance` boleh NULL; skor memakai faktor basis netral saat kosong.
-- `effect` wajib salah satu `Effect` di `lib/score.ts`. Menambah `Effect` baru wajib disertai bobot di `OFFENSE`/`SUSTAIN` (atau sengaja 0) dan label di `EFFECT_LABEL`. DPS tetap flat 200/240.
+- `effect` wajib ada di tabel `effects` (FK). Kolom `unit` menentukan input: `percent` (12, 24, …) atau `flat` (DPS 200/240). Menambah `Effect` baru: insert baris `effects` + isi `unit`, lalu beri bobot di `OFFENSE`/`SUSTAIN` dan skala di `FLAT_SCALE` bila unit `flat` (`lib/score.ts`).
+- Dropdown `/isi` (genre, region, efek) dibaca dari tabel `genres`, `regions`, `effects`. Menambah opsi = insert baris di tabel, jangan hardcode di komponen.
 - Migrasi skema lewat Supabase migration, lalu `supabase/schema.sql` diperbarui di commit yang sama.
 - Foto: upload lewat server action → `sharp` resize 320×320 cover, WebP q80, simpan di bucket `artist-thumb` sebagai `<slug>.webp`, lalu isi `photo_path`. Jangan menyimpan gambar di repo saat runtime.
 - RLS: `anon` hanya boleh `select`. Semua tulis (stat, foto) lewat server action dengan `adminClient()` setelah `isAdmin()`. Jangan longgarkan policy tulis.

@@ -28,7 +28,7 @@ npm run dev                  # http://localhost:3000
 
 ## Skema
 
-`supabase/schema.sql` — tabel `artists`, `artist_skills`, bucket `artist-thumb`, RLS select-only untuk anon. Perubahan skema lewat migration di Supabase, lalu file ini diperbarui di commit yang sama.
+`supabase/schema.sql` — tabel `artists`, `artist_skills`, tabel opsi `genres`/`regions`/`effects`, bucket `artist-thumb`, RLS select-only untuk anon. Perubahan skema lewat migration di Supabase, lalu file ini diperbarui di commit yang sama.
 
 `data/artists.csv` + `public/assets/images/artists/thumb/` = bahan seed, bukan sumber runtime.
 

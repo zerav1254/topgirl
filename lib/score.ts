@@ -72,6 +72,14 @@ const SUSTAIN: Partial<Record<Effect, number>> = {
   fan_rally: 0.5,
 };
 
+// Nilai "flat" (DPS) diskalakan ke skala persen. Efek baru dengan unit flat
+// wajib ditambahkan di sini, kalau tidak skornya dihitung sebagai persen.
+const FLAT_SCALE: Partial<Record<Effect, number>> = {
+  dps_def: 1 / 2.4,
+  dps_atk_company: 1 / 2.4,
+  dps_atk_rally: 1 / 2.4,
+};
+
 // Base stat of the Tokyo 1 / Rome 1 / Bali 1 cohort. Season power is already
 // baked into base stats, so no separate per-season multiplier is needed.
 const BASE_REF = 49918;
@@ -89,8 +97,8 @@ export function scoreArtist(skills: Skill[], baseSing: number | null, baseDance:
   let sustain = 0;
   for (const s of skills) {
     if (s.value === null) continue;
-    // dps values are flat (200/240); /2.4 maps them onto the percent scale.
-    const v = s.effect.startsWith("dps") ? s.value / 2.4 : s.value;
+    // dps values are flat (200/240); the scale maps them onto the percent scale.
+    const v = s.value * (FLAT_SCALE[s.effect] ?? 1);
     offense += (OFFENSE[s.effect] ?? 0) * v;
     sustain += (SUSTAIN[s.effect] ?? 0) * v;
   }

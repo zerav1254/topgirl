@@ -4,18 +4,17 @@ import { useMemo, useState, useTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Artist } from "@/lib/artists";
-import { EFFECTS, EFFECT_LABEL, scoreArtist, tierFromScore, type Effect, type Skill } from "@/lib/score";
+import type { Lookups } from "@/lib/lookups";
+import { scoreArtist, tierFromScore, type Effect, type Skill } from "@/lib/score";
 import { logout, saveArtist, uploadPhoto } from "@/app/isi/actions";
 
-const REGIONS = ["", "Tokyo", "Rome", "Bali", "Auction"] as const;
-
-type Region = (typeof REGIONS)[number];
 type SkillDraft = { effect: Effect | ""; value: string };
 type Draft = {
   slug: string;
+  genre: string;
   baseSing: string;
   baseDance: string;
-  region: Region;
+  region: string;
   season: string;
   skills: [SkillDraft, SkillDraft];
 };
@@ -29,9 +28,10 @@ function draftFromArtist(a: Artist): Draft {
   });
   return {
     slug: a.slug,
+    genre: a.genre,
     baseSing: a.baseSing?.toString() ?? "",
     baseDance: a.baseDance?.toString() ?? "",
-    region: (a.region as Region) ?? "",
+    region: a.region ?? "",
     season: a.season?.toString() ?? "",
     skills: [skill(0), skill(1)],
   };
@@ -44,7 +44,7 @@ function toFormData(d: Draft, a: Artist): FormData {
   const fd = new FormData();
   fd.set("slug", d.slug);
   fd.set("name", a.name);
-  fd.set("genre", a.genre);
+  fd.set("genre", d.genre);
   fd.set("region", d.region);
   fd.set("season", d.region ? d.season : "");
   fd.set("base_sing", d.baseSing);
@@ -56,7 +56,7 @@ function toFormData(d: Draft, a: Artist): FormData {
   return fd;
 }
 
-export function ArtistEditor({ artists, defaultSlug }: { artists: Artist[]; defaultSlug?: string }) {
+export function ArtistEditor({ artists, defaultSlug, lookups }: { artists: Artist[]; defaultSlug?: string; lookups: Lookups }) {
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState(
     () =>
@@ -227,15 +227,30 @@ export function ArtistEditor({ artists, defaultSlug }: { artists: Artist[]; defa
                   />
                 </label>
                 <label className="flex flex-col gap-1 text-sm text-zinc-400">
+                  Genre
+                  <select
+                    value={form.genre}
+                    onChange={(e) => update({ genre: e.target.value })}
+                    className="rounded-lg border border-white/10 bg-ink/60 px-3 py-2 text-base text-zinc-100 focus:border-brand/60"
+                  >
+                    {lookups.genres.map((g) => (
+                      <option key={g.id} value={g.id}>
+                        {g.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex flex-col gap-1 text-sm text-zinc-400">
                   Region
                   <select
                     value={form.region}
-                    onChange={(e) => update({ region: e.target.value as Region })}
+                    onChange={(e) => update({ region: e.target.value })}
                     className="rounded-lg border border-white/10 bg-ink/60 px-3 py-2 text-base text-zinc-100 focus:border-brand/60"
                   >
-                    {REGIONS.map((r) => (
-                      <option key={r} value={r}>
-                        {r || "—"}
+                    <option value="">—</option>
+                    {lookups.regions.map((r) => (
+                      <option key={r.id} value={r.id}>
+                        {r.label}
                       </option>
                     ))}
                   </select>
@@ -252,37 +267,42 @@ export function ArtistEditor({ artists, defaultSlug }: { artists: Artist[]; defa
                 </label>
               </div>
 
-              {form.skills.map((skill, i) => (
-                <fieldset key={i} className="grid gap-3 rounded-xl border border-white/10 p-3 sm:grid-cols-[1fr_8rem]">
-                  <legend className="px-1 text-xs text-zinc-400">Skill {i + 1}</legend>
-                  <label className="flex flex-col gap-1 text-sm text-zinc-400">
-                    Efek
-                    <select
-                      value={skill.effect}
-                      onChange={(e) => updateSkill(i, { effect: e.target.value as Effect | "", value: e.target.value ? skill.value : "" })}
-                      className="rounded-lg border border-white/10 bg-ink/60 px-3 py-2 text-base text-zinc-100 focus:border-brand/60"
-                    >
-                      <option value="">—</option>
-                      {EFFECTS.map((effect) => (
-                        <option key={effect} value={effect}>
-                          {EFFECT_LABEL[effect]}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <label className="flex flex-col gap-1 text-sm text-zinc-400">
-                    Nilai
-                    <input
-                      value={skill.value}
-                      onChange={(e) => updateSkill(i, { value: digits(e.target.value) })}
-                      inputMode="numeric"
-                      disabled={skill.effect === ""}
-                      placeholder={skill.effect.startsWith("dps") ? "200/240" : "12"}
-                      className="rounded-lg border border-white/10 bg-ink/60 px-3 py-2 text-base text-zinc-100 placeholder:text-zinc-600 focus:border-brand/60 disabled:opacity-40"
-                    />
-                  </label>
-                </fieldset>
-              ))}
+              {form.skills.map((skill, i) => {
+                const unit = lookups.effects.find((e) => e.id === skill.effect)?.unit ?? "percent";
+                return (
+                  <fieldset key={i} className="grid gap-3 rounded-xl border border-white/10 p-3 sm:grid-cols-[1fr_8rem]">
+                    <legend className="px-1 text-xs text-zinc-400">Skill {i + 1}</legend>
+                    <label className="flex flex-col gap-1 text-sm text-zinc-400">
+                      Efek
+                      <select
+                        value={skill.effect}
+                        onChange={(e) => updateSkill(i, { effect: e.target.value as Effect | "", value: e.target.value ? skill.value : "" })}
+                        className="rounded-lg border border-white/10 bg-ink/60 px-3 py-2 text-base text-zinc-100 focus:border-brand/60"
+                      >
+                        <option value="">—</option>
+                        {lookups.effects.map((effect) => (
+                          <option key={effect.id} value={effect.id}>
+                            {effect.label}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <label className="flex flex-col gap-1 text-sm text-zinc-400">
+                      <span>
+                        Nilai <span className="text-zinc-500">{unit === "flat" ? "(flat)" : "(%)"}</span>
+                      </span>
+                      <input
+                        value={skill.value}
+                        onChange={(e) => updateSkill(i, { value: digits(e.target.value) })}
+                        inputMode="numeric"
+                        disabled={skill.effect === ""}
+                        placeholder={unit === "flat" ? "200/240" : "12"}
+                        className="rounded-lg border border-white/10 bg-ink/60 px-3 py-2 text-base text-zinc-100 placeholder:text-zinc-600 focus:border-brand/60 disabled:opacity-40"
+                      />
+                    </label>
+                  </fieldset>
+                );
+              })}
 
               <div className="flex flex-wrap items-center gap-2">
                 <button

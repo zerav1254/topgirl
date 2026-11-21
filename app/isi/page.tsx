@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { loadArtists } from "@/lib/artists";
 import { isAdmin } from "@/lib/auth";
+import { loadLookups } from "@/lib/lookups";
 import { ArtistEditor } from "@/components/artist-editor";
 import { login } from "./actions";
 
@@ -56,7 +57,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ e
     );
   }
 
-  const artists = await loadArtists();
+  const [artists, lookups] = await Promise.all([loadArtists(), loadLookups()]);
 
   return (
     <>
@@ -65,7 +66,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ e
           {ERRORS[params.error]}
         </p>
       ) : null}
-      <ArtistEditor artists={artists} defaultSlug={params.a} />
+      <ArtistEditor artists={artists} lookups={lookups} defaultSlug={params.a} />
     </>
   );
 }

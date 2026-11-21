@@ -39,6 +39,7 @@ lib/
   artists.ts        query Supabase -> tipe Artist/Effect
   score.ts          bobot skor, tier, label effect
   supabase.ts       read client (anon) + adminClient() (service_role)
+  lookups.ts        opsi dropdown dari tabel genres/regions/effects
   auth.ts           cookie admin HMAC
 supabase/
   schema.sql        skema tabel + bucket + RLS

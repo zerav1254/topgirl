@@ -4,7 +4,6 @@ import sharp from "sharp";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { clearAdminCookie, isAdmin, sameSecret, setAdminCookie } from "@/lib/auth";
-import { EFFECTS, type Effect } from "@/lib/score";
 import { PHOTO_BUCKET, adminClient } from "@/lib/supabase";
 
 export type SaveResult = { ok: boolean; error: string };
@@ -35,13 +34,17 @@ export async function saveArtist(fd: FormData): Promise<SaveResult> {
   const name = txt(fd, "name");
   const genre = txt(fd, "genre");
   const region = txt(fd, "region") || null;
-  if (!slug || !name || !genre) return { ok: false, error: "Nama dan genre wajib diisi." };
-  if (region && !["Tokyo", "Rome", "Bali", "Auction"].includes(region)) return { ok: false, error: "Region tidak valid." };
+  if (!slug || !name) return { ok: false, error: "Nama wajib diisi." };
 
+  // Region/genre/effect divalidasi foreign key di DB (lihat supabase/schema.sql).
   const skills = [1, 2].flatMap((slot) => {
     const effect = txt(fd, `s${slot}_effect`);
-    if (!EFFECTS.includes(effect as Effect)) return [];
-    return [{ slot, effect, value: pos(fd, `s${slot}_value`) }];
+    return effect ? [{ slot, effect, value: pos(fd, `s${slot}_value`) }] : [];
+  });
+
+  const fail = (e: { code?: string; message: string }) => ({
+    ok: false,
+    error: e.code === "23503" ? "Genre, region, atau efek tidak dikenal." : e.message,
   });
 
   const sb = adminClient();
@@ -59,14 +62,14 @@ export async function saveArtist(fd: FormData): Promise<SaveResult> {
     .eq("slug", slug)
     .select("id")
     .single();
-  if (error) return { ok: false, error: error.message };
+  if (error) return fail(error);
 
   const del = await sb.from("artist_skills").delete().eq("artist_id", data.id);
-  if (del.error) return { ok: false, error: del.error.message };
+  if (del.error) return fail(del.error);
 
   if (skills.length) {
     const ins = await sb.from("artist_skills").insert(skills.map((s) => ({ ...s, artist_id: data.id })));
-    if (ins.error) return { ok: false, error: ins.error.message };
+    if (ins.error) return fail(ins.error);
   }
 
   revalidatePath("/");
