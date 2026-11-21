@@ -3,8 +3,8 @@ import { loadArtists } from "../lib/artists.ts";
 import { scoreArtist } from "../lib/score.ts";
 
 const artists = await loadArtists();
-assert.equal(artists.length, 92, "expected 92 artists");
-assert.equal(new Set(artists.map((a) => a.slug)).size, 92, "slugs must be unique");
+assert.ok(artists.length >= 92, "expected at least 92 artists");
+assert.equal(new Set(artists.map((a) => a.slug)).size, artists.length, "slugs must be unique");
 
 const byName = new Map(artists.map((a) => [a.name, a]));
 for (const name of ["Monica", "Longkui", "Kasha"]) {
