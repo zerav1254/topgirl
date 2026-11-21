@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Artist } from "@/lib/artists";
@@ -11,26 +11,37 @@ import { TeamTab } from "./team-tab";
 
 const STORAGE_KEY = "topgirl.team.v1";
 
+const listeners = new Set<() => void>();
+const readTeam = () => localStorage.getItem(STORAGE_KEY);
+const getServerTeam = () => null;
+
+function subscribeTeam(listener: () => void) {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
+}
+
+function writeTeam(next: string[]) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+  listeners.forEach((notify) => notify());
+}
+
 type Tab = "artists" | "team";
 
 export function TeamBuilder({ artists }: { artists: Artist[] }) {
   const [tab, setTab] = useState<Tab>("artists");
-  const [picked, setPicked] = useState<string[]>([]);
 
   const bySlug = useMemo(() => new Map(artists.map((a) => [a.slug, a])), [artists]);
-
-  useEffect(() => {
+  const saved = useSyncExternalStore(subscribeTeam, readTeam, getServerTeam);
+  const picked = useMemo(() => {
     try {
-      const saved: unknown = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "[]");
-      if (Array.isArray(saved)) setPicked(saved.filter((s) => typeof s === "string" && bySlug.has(s)).slice(0, TEAM_SIZE));
+      const parsed: unknown = JSON.parse(saved ?? "[]");
+      return Array.isArray(parsed) ? parsed.filter((s) => typeof s === "string" && bySlug.has(s)).slice(0, TEAM_SIZE) : [];
     } catch {
-      // corrupt storage: start empty
+      return [];
     }
-  }, [bySlug]);
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(picked));
-  }, [picked]);
+  }, [saved, bySlug]);
 
   useEffect(() => {
     document.title = `${tab === "team" ? "Team Builder" : "Artists"} — TopGirl`;
@@ -40,7 +51,7 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
   const full = team.length >= TEAM_SIZE;
 
   function toggle(slug: string) {
-    setPicked((prev) => (prev.includes(slug) ? prev.filter((s) => s !== slug) : prev.length >= TEAM_SIZE ? prev : [...prev, slug]));
+    writeTeam(picked.includes(slug) ? picked.filter((s) => s !== slug) : picked.length >= TEAM_SIZE ? picked : [...picked, slug]);
   }
 
   return (
@@ -74,7 +85,7 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
       {tab === "artists" ? (
         <ArtistsTab artists={artists} picked={picked} full={full} onToggle={toggle} onOpenTeam={() => setTab("team")} />
       ) : (
-        <TeamTab artists={artists} team={team} picked={picked} full={full} onToggle={toggle} onReset={() => setPicked([])} />
+        <TeamTab artists={artists} team={team} picked={picked} full={full} onToggle={toggle} onReset={() => writeTeam([])} />
       )}
 
       <nav
