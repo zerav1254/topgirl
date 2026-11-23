@@ -7,24 +7,24 @@ export type EffectOption = Option & { unit: "percent" | "flat" };
 
 export type Lookups = {
   genres: Option[];
-  regions: Option[];
+  origins: Option[];
   effects: EffectOption[];
 };
 
-async function options(table: "genres" | "regions"): Promise<Option[]> {
+async function options(table: "genres" | "origins"): Promise<Option[]> {
   const { data, error } = await supabase.from(table).select("id, label").order("sort");
   if (error) throw new Error(`Gagal memuat ${table}: ${error.message}`);
   return data as Option[];
 }
 
 export async function loadLookups(): Promise<Lookups> {
-  const [genres, regions, effects] = await Promise.all([
+  const [genres, origins, effects] = await Promise.all([
     options("genres"),
-    options("regions"),
+    options("origins"),
     supabase.from("effects").select("id, label, unit").order("sort").then(({ data, error }) => {
       if (error) throw new Error(`Gagal memuat effects: ${error.message}`);
       return data as EffectOption[];
     }),
   ]);
-  return { genres, regions, effects };
+  return { genres, origins, effects };
 }

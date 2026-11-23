@@ -1,5 +1,6 @@
 import Image from "next/image";
 import type { Artist, Effect } from "@/lib/artists";
+import { DICT, numberLocale, type Locale } from "@/lib/i18n";
 import { EFFECT_LABEL } from "@/lib/score";
 
 const TIER_STYLE: Record<string, string> = {
@@ -30,17 +31,20 @@ const GENRE_IMAGE: Record<string, string> = {
 
 export const isPercent = (effect: Effect) => !effect.startsWith("dps");
 
-const skillText = (s: Artist["skills"][number]) =>
-  `${EFFECT_LABEL[s.effect]}${s.value !== null ? ` ${s.value}${isPercent(s.effect) ? "%" : ""}` : ""}`;
+const skillText = (s: Artist["skills"][number], locale: Locale) =>
+  `${EFFECT_LABEL[s.effect][locale]}${s.value !== null ? ` ${s.value}${isPercent(s.effect) ? "%" : ""}` : ""}`;
 
 // Dua slot boleh berisi efek sama; ringkas jadi "… ×2" supaya tidak terbaca bug.
-export const skillList = (skills: Artist["skills"]) => {
+export const skillList = (skills: Artist["skills"], locale: Locale) => {
   const counts = new Map<string, number>();
-  for (const s of skills) counts.set(skillText(s), (counts.get(skillText(s)) ?? 0) + 1);
+  for (const s of skills) {
+    const text = skillText(s, locale);
+    counts.set(text, (counts.get(text) ?? 0) + 1);
+  }
   return [...counts].map(([t, n]) => (n > 1 ? `${t} ×${n}` : t)).join(" / ");
 };
 
-export const formatStat = (v: number) => v.toLocaleString("id-ID", { maximumFractionDigits: 1 });
+export const formatStat = (v: number, locale: Locale) => v.toLocaleString(numberLocale(locale), { maximumFractionDigits: 1 });
 
 export function Icon({ d, className = "h-4 w-4" }: { d: string; className?: string }) {
   return (
@@ -88,7 +92,8 @@ export function GenreIcon({ genre, className = "h-4 w-4" }: { genre: string; cla
   return <Image src={`/assets/images/genres/${file}.png`} alt="" width={16} height={16} sizes="16px" className={`${className} object-contain`} />;
 }
 
-export function SearchInput({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+export function SearchInput({ value, onChange, locale }: { value: string; onChange: (value: string) => void; locale: Locale }) {
+  const c = DICT[locale].common;
   return (
     <div className="relative">
       <Icon d={ICONS.search} className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-500" />
@@ -96,15 +101,15 @@ export function SearchInput({ value, onChange }: { value: string; onChange: (val
         value={value}
         onChange={(e) => onChange(e.target.value)}
         type="search"
-        placeholder="Cari nama, genre, atau skill…"
-        aria-label="Cari artist"
+        placeholder={c.searchPlaceholder}
+        aria-label={c.searchArtist}
         className="w-full rounded-xl border border-white/10 bg-panel/80 py-3 pr-9 pl-9 text-base placeholder:text-zinc-400 focus:border-brand/60 [&::-webkit-search-cancel-button]:appearance-none"
       />
       {value !== "" && (
         <button
           type="button"
           onClick={() => onChange("")}
-          aria-label="Hapus pencarian"
+          aria-label={c.clearSearch}
           className="absolute top-1/2 right-1 grid h-10 w-10 -translate-y-1/2 cursor-pointer place-items-center rounded-md text-zinc-400 hover:bg-white/5 hover:text-zinc-200"
         >
           <Icon d={ICONS.close} className="h-4 w-4" />

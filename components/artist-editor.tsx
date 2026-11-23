@@ -4,15 +4,18 @@ import { useMemo, useState, useTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Artist } from "@/lib/artists";
+import { DICT, t, type Locale } from "@/lib/i18n";
 import type { Lookups } from "@/lib/lookups";
 import { scoreArtist, tierFromScore, type Effect, type Skill } from "@/lib/score";
-import { logout, saveArtist, uploadPhoto } from "@/app/isi/actions";
+import { logout, saveArtist, uploadPhoto } from "@/app/[locale]/manage/actions";
+import { formatStat } from "./artist-ui";
+import { LocaleSwitcher } from "./locale-switcher";
 
 type SkillDraft = { effect: Effect | ""; value: string };
 type Draft = {
   slug: string;
   genre: string;
-  region: string;
+  origin: string;
   season: string;
   skills: [SkillDraft, SkillDraft];
 };
@@ -27,7 +30,7 @@ function draftFromArtist(a: Artist): Draft {
   return {
     slug: a.slug,
     genre: a.genre,
-    region: a.region ?? "",
+    origin: a.origin ?? "",
     season: a.season?.toString() ?? "",
     skills: [skill(0), skill(1)],
   };
@@ -41,8 +44,8 @@ function toFormData(d: Draft, a: Artist): FormData {
   fd.set("slug", d.slug);
   fd.set("name", a.name);
   fd.set("genre", d.genre);
-  fd.set("region", d.region);
-  fd.set("season", d.region ? d.season : "");
+  fd.set("origin", d.origin);
+  fd.set("season", d.origin ? d.season : "");
   d.skills.forEach((s, i) => {
     fd.set(`s${i + 1}_effect`, s.effect);
     fd.set(`s${i + 1}_value`, s.effect ? s.value : "");
@@ -50,7 +53,18 @@ function toFormData(d: Draft, a: Artist): FormData {
   return fd;
 }
 
-export function ArtistEditor({ artists, defaultSlug, lookups }: { artists: Artist[]; defaultSlug?: string; lookups: Lookups }) {
+export function ArtistEditor({
+  artists,
+  defaultSlug,
+  lookups,
+  locale,
+}: {
+  artists: Artist[];
+  defaultSlug?: string;
+  lookups: Lookups;
+  locale: Locale;
+}) {
+  const C = DICT[locale].editor;
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState(
     () =>
@@ -72,7 +86,7 @@ export function ArtistEditor({ artists, defaultSlug, lookups }: { artists: Artis
         (a) =>
           query === "" ||
           a.name.toLowerCase().includes(query.toLowerCase()) ||
-          a.region?.toLowerCase().includes(query.toLowerCase()),
+          a.origin?.toLowerCase().includes(query.toLowerCase()),
       ),
     [artists, query],
   );
@@ -102,8 +116,8 @@ export function ArtistEditor({ artists, defaultSlug, lookups }: { artists: Artis
     e.preventDefault();
     if (!form || !current) return;
     startSaving(async () => {
-      const result = await saveArtist(toFormData(form, current));
-      setStatus(result.ok ? "Tersimpan." : result.error);
+      const result = await saveArtist(locale, toFormData(form, current));
+      setStatus(result.ok ? C.saved : result.error);
     });
   }
 
@@ -112,38 +126,42 @@ export function ArtistEditor({ artists, defaultSlug, lookups }: { artists: Artis
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
-          <h1 className="font-display mt-1 text-2xl font-bold tracking-tight sm:text-3xl">Isi Stat Artist</h1>
-          <p className="mt-2 text-sm text-zinc-400">Base stat, skill, dan foto tersimpan langsung ke database.</p>
+          <h1 className="font-display mt-1 text-2xl font-bold tracking-tight sm:text-3xl">{C.title}</h1>
+          <p className="mt-2 text-sm text-zinc-400">{C.subtitle}</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <LocaleSwitcher locale={locale} className="mr-1" />
           <span className="tabular rounded-xl border border-white/10 bg-panel/80 px-3 py-2 text-sm text-zinc-300">
-            {artists.filter((a) => isComplete(draftFromArtist(a))).length}/{artists.length} lengkap
+            {t(C.progress, {
+              done: artists.filter((a) => isComplete(draftFromArtist(a))).length,
+              total: artists.length,
+            })}
           </span>
           <Link
-            href="/"
+            href={`/${locale}`}
             className="inline-flex min-h-11 items-center rounded-xl border border-white/10 bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
           >
-            Tim
+            {C.teamLink}
           </Link>
-          <form action={logout}>
+          <form action={logout.bind(null, locale)}>
             <button
               type="submit"
               className="inline-flex min-h-11 cursor-pointer items-center rounded-xl border border-white/10 bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
             >
-              Keluar
+              {C.logout}
             </button>
           </form>
         </div>
       </header>
 
       <div className="mt-5 grid gap-5 lg:grid-cols-[20rem_1fr]">
-        <section aria-label="Daftar artist" className="min-w-0">
+        <section aria-label={C.listLabel} className="min-w-0">
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             type="search"
-            placeholder="Cari nama atau region…"
-            aria-label="Cari artist"
+            placeholder={C.searchPlaceholder}
+            aria-label={DICT[locale].common.searchArtist}
             className="w-full rounded-xl border border-white/10 bg-panel/80 px-3 py-3 text-base placeholder:text-zinc-400 focus:border-brand/60"
           />
           <ul className="mt-3 flex max-h-[65dvh] flex-col gap-1 overflow-y-auto pr-1">
@@ -173,11 +191,11 @@ export function ArtistEditor({ artists, defaultSlug, lookups }: { artists: Artis
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-sm font-semibold">{a.name}</span>
                       <span className="block truncate text-xs text-zinc-400">
-                        {[a.region, a.season].filter(Boolean).join(" ") || "tanpa region"}
+                        {[a.origin, a.season].filter(Boolean).join(" ") || C.noOrigin}
                       </span>
                     </span>
                     <span
-                      aria-label={complete ? "lengkap" : "belum lengkap"}
+                      aria-label={complete ? C.complete : C.incomplete}
                       className={`h-2 w-2 shrink-0 rounded-full ${complete ? "bg-emerald-400" : "bg-zinc-600"}`}
                     />
                   </button>
@@ -187,21 +205,21 @@ export function ArtistEditor({ artists, defaultSlug, lookups }: { artists: Artis
           </ul>
         </section>
 
-        <section aria-label="Form stat artist" className="min-w-0 rounded-2xl border border-white/10 bg-panel/80 p-4">
+        <section aria-label={C.formLabel} className="min-w-0 rounded-2xl border border-white/10 bg-panel/80 p-4">
           {current && form ? (
             <form className="flex flex-col gap-4" onSubmit={submit}>
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <h2 className="font-display text-xl font-semibold">{current.name}</h2>
                 {preview && (
                   <span className="tabular rounded-md border border-white/10 bg-panel-2 px-2 py-1 text-sm">
-                    Skor <strong>{preview.score.toLocaleString("id-ID")}</strong> · Tier <strong>{preview.tier}</strong>
+                    {C.score} <strong>{formatStat(preview.score, locale)}</strong> · {C.tier} <strong>{preview.tier}</strong>
                   </span>
                 )}
               </div>
 
               <div className="grid gap-3 sm:grid-cols-2">
                 <label className="flex flex-col gap-1 text-sm text-zinc-400">
-                  Genre
+                  {C.genre}
                   <select
                     value={form.genre}
                     onChange={(e) => update({ genre: e.target.value })}
@@ -215,14 +233,14 @@ export function ArtistEditor({ artists, defaultSlug, lookups }: { artists: Artis
                   </select>
                 </label>
                 <label className="flex flex-col gap-1 text-sm text-zinc-400">
-                  Region
+                  {C.origin}
                   <select
-                    value={form.region}
-                    onChange={(e) => update({ region: e.target.value })}
+                    value={form.origin}
+                    onChange={(e) => update({ origin: e.target.value })}
                     className="rounded-lg border border-white/10 bg-ink/60 px-3 py-2 text-base text-zinc-100 focus:border-brand/60"
                   >
                     <option value="">—</option>
-                    {lookups.regions.map((r) => (
+                    {lookups.origins.map((r) => (
                       <option key={r.id} value={r.id}>
                         {r.label}
                       </option>
@@ -230,12 +248,12 @@ export function ArtistEditor({ artists, defaultSlug, lookups }: { artists: Artis
                   </select>
                 </label>
                 <label className="flex flex-col gap-1 text-sm text-zinc-400">
-                  Season
+                  {C.season}
                   <input
                     value={form.season}
                     onChange={(e) => update({ season: digits(e.target.value) })}
                     inputMode="numeric"
-                    placeholder="mis. 14"
+                    placeholder="14"
                     className="rounded-lg border border-white/10 bg-ink/60 px-3 py-2 text-base text-zinc-100 placeholder:text-zinc-600 focus:border-brand/60"
                   />
                 </label>
@@ -245,9 +263,9 @@ export function ArtistEditor({ artists, defaultSlug, lookups }: { artists: Artis
                 const unit = lookups.effects.find((e) => e.id === skill.effect)?.unit ?? "percent";
                 return (
                   <fieldset key={i} className="grid gap-3 rounded-xl border border-white/10 p-3 sm:grid-cols-[1fr_8rem]">
-                    <legend className="px-1 text-xs text-zinc-400">Skill {i + 1}</legend>
+                    <legend className="px-1 text-xs text-zinc-400">{t(C.skill, { n: i + 1 })}</legend>
                     <label className="flex flex-col gap-1 text-sm text-zinc-400">
-                      Efek
+                      {C.effect}
                       <select
                         value={skill.effect}
                         onChange={(e) => updateSkill(i, { effect: e.target.value as Effect | "", value: e.target.value ? skill.value : "" })}
@@ -263,7 +281,7 @@ export function ArtistEditor({ artists, defaultSlug, lookups }: { artists: Artis
                     </label>
                     <label className="flex flex-col gap-1 text-sm text-zinc-400">
                       <span>
-                        Nilai <span className="text-zinc-500">{unit === "flat" ? "(flat)" : "(%)"}</span>
+                        {C.value} <span className="text-zinc-500">{unit === "flat" ? C.flat : C.percent}</span>
                       </span>
                       <input
                         value={skill.value}
@@ -284,21 +302,21 @@ export function ArtistEditor({ artists, defaultSlug, lookups }: { artists: Artis
                   disabled={saving}
                   className="inline-flex min-h-11 cursor-pointer items-center rounded-lg border border-gold/45 bg-gold/15 px-4 text-sm font-semibold text-gold transition-colors duration-200 hover:bg-gold/25 disabled:cursor-wait disabled:opacity-60"
                 >
-                  {saving ? "Menyimpan…" : "Simpan stat"}
+                  {saving ? C.saving : C.save}
                 </button>
                 {status ? (
-                  <p aria-live="polite" className={`text-sm ${status === "Tersimpan." ? "text-emerald-300" : "text-red-300"}`}>
+                  <p aria-live="polite" className={`text-sm ${status === C.saved ? "text-emerald-300" : "text-red-300"}`}>
                     {status}
                   </p>
                 ) : null}
               </div>
             </form>
           ) : (
-            <p className="text-zinc-400">Pilih artist di daftar.</p>
+            <p className="text-zinc-400">{C.pick}</p>
           )}
 
           {current ? (
-            <form action={uploadPhoto} className="mt-5 flex flex-wrap items-end gap-3 border-t border-white/10 pt-4">
+            <form action={uploadPhoto.bind(null, locale)} className="mt-5 flex flex-wrap items-end gap-3 border-t border-white/10 pt-4">
               <input type="hidden" name="slug" value={current.slug} />
               <span className="grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-lg bg-panel-2 text-lg font-semibold text-zinc-300">
                 {current.photoUrl ? (
@@ -308,7 +326,7 @@ export function ArtistEditor({ artists, defaultSlug, lookups }: { artists: Artis
                 )}
               </span>
               <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm text-zinc-400">
-                Foto (jpg/png/webp, maks 10 MB)
+                {C.photo}
                 <input
                   type="file"
                   name="photo"
@@ -321,9 +339,9 @@ export function ArtistEditor({ artists, defaultSlug, lookups }: { artists: Artis
                 type="submit"
                 className="inline-flex min-h-11 cursor-pointer items-center rounded-lg border border-white/15 bg-panel-2 px-4 text-sm font-semibold text-zinc-200 transition-colors duration-200 hover:border-white/30"
               >
-                Unggah foto
+                {C.upload}
               </button>
-              <p className="w-full text-xs text-zinc-400">Otomatis dipotong 320×320 dan dikonversi ke WebP.</p>
+              <p className="w-full text-xs text-zinc-400">{C.photoHint}</p>
             </form>
           ) : null}
         </section>

@@ -4,9 +4,11 @@ import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Artist } from "@/lib/artists";
+import { DICT, t, type Locale } from "@/lib/i18n";
 import { TEAM_SIZE } from "@/lib/team";
 import { ICONS, Icon } from "./artist-ui";
 import { ArtistsTab } from "./artists-tab";
+import { LocaleSwitcher } from "./locale-switcher";
 import { TeamTab } from "./team-tab";
 
 const STORAGE_KEY = "topgirl.team.v1";
@@ -29,8 +31,9 @@ function writeTeam(next: string[]) {
 
 type Tab = "artists" | "team";
 
-export function TeamBuilder({ artists }: { artists: Artist[] }) {
+export function TeamBuilder({ artists, locale }: { artists: Artist[]; locale: Locale }) {
   const [tab, setTab] = useState<Tab>("artists");
+  const C = DICT[locale];
 
   const bySlug = useMemo(() => new Map(artists.map((a) => [a.slug, a])), [artists]);
   const saved = useSyncExternalStore(subscribeTeam, readTeam, getServerTeam);
@@ -44,8 +47,8 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
   }, [saved, bySlug]);
 
   useEffect(() => {
-    document.title = `${tab === "team" ? "Team Builder" : "Artists"} — TopGirl`;
-  }, [tab]);
+    document.title = tab === "team" ? C.header.docTeam : C.header.docArtists;
+  }, [tab, C]);
 
   const team = picked.map((slug) => bySlug.get(slug)).filter((a): a is Artist => Boolean(a));
   const full = team.length >= TEAM_SIZE;
@@ -70,26 +73,29 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
           <div className="min-w-0">
             <p className="font-display text-[11px] font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
             <h1 className="font-display truncate text-xl font-bold tracking-tight sm:text-2xl">
-              {tab === "artists" ? "Artists" : "Team Builder"}
+              {tab === "artists" ? C.header.artists : C.header.team}
             </h1>
           </div>
         </div>
-        <Link
-          href="/isi"
-          className="inline-flex min-h-11 shrink-0 items-center rounded-xl border border-white/10 bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
-        >
-          Kelola data
-        </Link>
+        <div className="flex shrink-0 items-center gap-2">
+          <LocaleSwitcher locale={locale} />
+          <Link
+            href={`/${locale}/manage`}
+            className="inline-flex min-h-11 items-center rounded-xl border border-white/10 bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
+          >
+            {C.header.manage}
+          </Link>
+        </div>
       </header>
 
       {tab === "artists" ? (
-        <ArtistsTab artists={artists} picked={picked} full={full} onToggle={toggle} onOpenTeam={() => setTab("team")} />
+        <ArtistsTab artists={artists} picked={picked} full={full} locale={locale} onToggle={toggle} onOpenTeam={() => setTab("team")} />
       ) : (
-        <TeamTab artists={artists} team={team} picked={picked} full={full} onToggle={toggle} onReset={() => writeTeam([])} />
+        <TeamTab artists={artists} team={team} picked={picked} full={full} locale={locale} onToggle={toggle} onReset={() => writeTeam([])} />
       )}
 
       <nav
-        aria-label="Navigasi utama"
+        aria-label={C.header.mainNav}
         className="fixed inset-x-0 bottom-0 z-30 border-t border-white/10 bg-panel/95 backdrop-blur"
         style={{ paddingBottom: "max(0.25rem, env(safe-area-inset-bottom))" }}
       >
@@ -103,7 +109,7 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
             }`}
           >
             <Icon d={ICONS.list} className="h-5 w-5" />
-            Artists
+            {C.header.artists}
           </button>
           <button
             type="button"
@@ -125,7 +131,8 @@ export function TeamBuilder({ artists }: { artists: Artist[] }) {
               </span>
             </span>
             <span>
-              Team Builder<span className="sr-only"> ({team.length} dari {TEAM_SIZE})</span>
+              {C.header.team}
+              <span className="sr-only"> {t(C.header.tabCount, { n: team.length, size: TEAM_SIZE })}</span>
             </span>
           </button>
         </div>

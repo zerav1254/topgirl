@@ -31,7 +31,7 @@ for (const line of rows) {
         slug,
         name: get(r, "name"),
         genre: get(r, "genre"),
-        region: get(r, "region") || null,
+        origin: get(r, "origin") || null,
         season: num(get(r, "season")),
       },
       { onConflict: "slug" },

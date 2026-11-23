@@ -18,17 +18,18 @@ npm run dev                  # http://localhost:3000
 | `NEXT_PUBLIC_SUPABASE_URL` | `https://<ref>.supabase.co` |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | publishable key (aman di client) |
 | `SUPABASE_SERVICE_ROLE_KEY` | service role key — **server only**, jangan pernah di-commit |
-| `ADMIN_PASSWORD` | password halaman `/isi` |
+| `ADMIN_PASSWORD` | password halaman `/{locale}/manage` |
 | `AUTH_SECRET` | string acak panjang untuk tanda tangan cookie |
 
 ## Halaman
 
-- `/` — team builder (revalidate 5 menit; di-refresh langsung setelah simpan).
-- `/isi` — login admin → isi base stat, skill, dan foto 320×320 WebP.
+- `/` — redirect ke `/id`.
+- `/id`, `/en` — team builder (revalidate 5 menit; di-refresh langsung setelah simpan).
+- `/{locale}/manage` — login admin → isi base stat, skill, dan foto 320×320 WebP.
 
 ## Skema
 
-`supabase/schema.sql` — tabel `artists`, `artist_skills`, tabel opsi `genres`/`regions`/`effects`, bucket `artist-thumb`, RLS select-only untuk anon. Perubahan skema lewat migration di Supabase, lalu file ini diperbarui di commit yang sama.
+`supabase/schema.sql` — tabel `artists`, `artist_skills`, tabel opsi `genres`/`origins`/`effects`, bucket `artist-thumb`, RLS select-only untuk anon. Perubahan skema lewat migration di Supabase, lalu file ini diperbarui di commit yang sama.
 
 `data/artists.csv` + `public/assets/images/artists/thumb/` = bahan seed, bukan sumber runtime.
 

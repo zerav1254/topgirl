@@ -39,21 +39,21 @@ export const EFFECTS: Effect[] = [
   "noncombat",
 ];
 
-export const EFFECT_LABEL: Record<Effect, string> = {
-  player_dmg: "Dmg pemain",
-  skill_dmg: "Dmg skill",
-  basic_atk: "Serangan",
-  basic_atk_red: "Red. serangan",
-  skill_dmg_red: "Red. skill",
-  fan: "Fan",
-  fan_rally: "Fan rally",
-  dps_def: "DPS defend",
-  dps_atk_company: "DPS company",
-  dps_atk_rally: "DPS rally",
-  wbg_dmg: "Dmg WBG",
-  gold: "Gold",
-  drive: "Drive",
-  noncombat: "Non-tempur",
+export const EFFECT_LABEL: Record<Effect, Record<"id" | "en", string>> = {
+  player_dmg: { id: "Dmg pemain", en: "Player DMG" },
+  skill_dmg: { id: "Dmg skill", en: "Skill DMG" },
+  basic_atk: { id: "Serangan", en: "Basic ATK" },
+  basic_atk_red: { id: "Red. serangan", en: "Basic ATK red." },
+  skill_dmg_red: { id: "Red. skill", en: "Skill DMG red." },
+  fan: { id: "Fan", en: "Fan" },
+  fan_rally: { id: "Fan rally", en: "Fan rally" },
+  dps_def: { id: "DPS defend", en: "DPS defend" },
+  dps_atk_company: { id: "DPS company", en: "DPS company" },
+  dps_atk_rally: { id: "DPS rally", en: "DPS rally" },
+  wbg_dmg: { id: "Dmg WBG", en: "WBG DMG" },
+  gold: { id: "Gold", en: "Gold" },
+  drive: { id: "Drive", en: "Drive" },
+  noncombat: { id: "Non-tempur", en: "Non-combat" },
 };
 
 // Points per skill percent. Sustain counts 0.75x in the final score.

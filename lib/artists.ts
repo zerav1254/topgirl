@@ -9,7 +9,7 @@ export type Artist = {
   slug: string;
   name: string;
   genre: string;
-  region: string | null;
+  origin: string | null;
   season: number | null;
   skills: Skill[];
   photoUrl: string | null;
@@ -24,7 +24,7 @@ type Row = {
   slug: string;
   name: string;
   genre: string;
-  region: string | null;
+  origin: string | null;
   season: number | null;
   photo_path: string | null;
   artist_skills: { slot: number; effect: string; value: number | null }[];
@@ -33,7 +33,7 @@ type Row = {
 export async function loadArtists(): Promise<Artist[]> {
   const { data, error } = await supabase
     .from("artists")
-    .select("id, slug, name, genre, region, season, photo_path, artist_skills(slot, effect, value)")
+    .select("id, slug, name, genre, origin, season, photo_path, artist_skills(slot, effect, value)")
     .order("id");
 
   if (error) throw new Error(`Gagal memuat artist: ${error.message}`);
@@ -50,7 +50,7 @@ export async function loadArtists(): Promise<Artist[]> {
         slug: r.slug,
         name: r.name,
         genre: r.genre,
-        region: r.region,
+        origin: r.origin,
         season: r.season,
         skills,
         photoUrl: r.photo_path ? `${SUPABASE_URL}/storage/v1/object/public/${PHOTO_BUCKET}/${r.photo_path}` : null,

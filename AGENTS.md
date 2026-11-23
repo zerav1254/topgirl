@@ -26,11 +26,12 @@ npm start
 
 ```
 app/
-  layout.tsx        metadata + <html lang="id">
-  page.tsx          server: loadArtists() -> <TeamBuilder artists={...} />, revalidate 300
-  isi/
-    page.tsx        server: gate login admin + <ArtistEditor />
-    actions.ts      server actions: login, logout, saveArtist, uploadPhoto
+  [locale]/
+    layout.tsx      root layout: validasi locale + <html lang>, metadata per locale
+    page.tsx        server: loadArtists() -> <TeamBuilder artists locale />, revalidate 300
+    manage/
+      page.tsx      server: gate login admin + <ArtistEditor locale />
+      actions.ts    server actions: login, logout, saveArtist, uploadPhoto (param locale)
   globals.css       @import "tailwindcss" + @theme tokens + base rules
 components/
   team-builder.tsx  client ("use client") — shell: state tim + tab + nav bawah
@@ -38,13 +39,17 @@ components/
   team-tab.tsx      client — tab Team Builder: slot tim, ringkasan, tambah artist
   artist-ui.tsx     atom bersama (Icon, TierBadge, Avatar, GenreIcon, SearchInput)
   artist-editor.tsx client ("use client") — form stat + upload foto
+  locale-switcher.tsx client — link ganti bahasa (ganti segmen locale di path)
 lib/
   artists.ts        query Supabase -> tipe Artist/Effect
   score.ts          bobot skor, tier, label effect
   team.ts           TEAM_SIZE, STAT_ORDER, GENRE_BONUS
   supabase.ts       read client (anon) + adminClient() (service_role)
-  lookups.ts        opsi dropdown dari tabel genres/regions/effects
+  lookups.ts        opsi dropdown dari tabel genres/origins/effects
   auth.ts           cookie admin HMAC
+  i18n.ts           LOCALES, Locale, DICT, t() interpolasi, numberLocale
+  dict/id.ts        sumber string UI (tipe Dict)
+  dict/en.ts        terjemahan, wajib lengkap sesuai Dict
 supabase/
   schema.sql        skema tabel + bucket + RLS
 scripts/
@@ -53,16 +58,17 @@ data/
   artists.csv       bahan seed (bukan sumber runtime)
 ```
 
-Alur data: Supabase → `lib/artists.ts` → server component (props) → client component. Tulis data hanya lewat `app/isi/actions.ts` (admin cookie + service_role). Tidak ada fetch data dari browser.
+Alur data: Supabase → `lib/artists.ts` → server component (props) → client component. Tulis data hanya lewat `app/[locale]/manage/actions.ts` (admin cookie + service_role). Tidak ada fetch data dari browser.
 
 ## Di mana mengubah apa
 
 | Kebutuhan | File |
 | --- | --- |
-| Tambah/ubah artist, stat, skill | halaman `/isi` (DB), bukan CSV |
+| Tambah/ubah artist, stat, skill | halaman `/{locale}/manage` (DB), bukan CSV |
 | Ubah skema DB | migration Supabase + `supabase/schema.sql` + `lib/artists.ts` |
 | Seed ulang dari CSV/thumb lama | `scripts/seed-supabase.mjs` (`npm run seed`) |
-| Auth/login admin | `lib/auth.ts` + `app/isi/actions.ts` |
+| Auth/login admin | `lib/auth.ts` + `app/[locale]/manage/actions.ts` |
+| Teks UI / bahasa baru | `lib/dict/id.ts` + `en.ts` (+ `LOCALES` di `lib/i18n.ts`) |
 | Ukuran tim | `TEAM_SIZE` di `lib/team.ts` |
 | Filter/sort/summary | `components/artists-tab.tsx` (filter + roster), `components/team-tab.tsx` (ringkasan tim) |
 | Bobot skor / ambang tier | `OFFENSE`, `SUSTAIN`, `BANDS` di `lib/score.ts` |

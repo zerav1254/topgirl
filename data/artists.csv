@@ -1,4 +1,4 @@
-id,slug,name,genre,region,season,s1_effect,s1_value,s2_effect,s2_value
+id,slug,name,genre,origin,season,s1_effect,s1_value,s2_effect,s2_value
 24,claudius,Claudius,Hip Hop,Rome,9,player_dmg,24,player_dmg,24
 76,monica,Monica,Pop,Auction,,player_dmg,30,player_dmg,30
 118,rena,Rena,R&B,,,player_dmg,32,basic_atk_red,12

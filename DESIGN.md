@@ -36,7 +36,7 @@ Badge tier: `border-<warna>/45 bg-<warna>/15 text-<warna>-300` (S+ pakai `text-g
 
 ## Tipografi
 
-- Family: Inter (`--font-sans`) untuk teks, Sora (`--font-display`) untuk judul/badge, dimuat lewat `next/font` di `app/layout.tsx` (self-host, tanpa request ke Google saat runtime).
+- Family: Inter (`--font-sans`) untuk teks, Sora (`--font-display`) untuk judul/badge, dimuat lewat `next/font` di `app/[locale]/layout.tsx` (self-host, tanpa request ke Google saat runtime).
 - Skala: h1 `text-xl`→`sm:text-2xl` bold tracking-tight; judul panel `text-sm` semibold uppercase tracking-wide; body `text-sm`; metadata `text-xs`; badge `text-sm`.
 - Angka & komposisi tier: kelas `.tabular` (`font-variant-numeric: tabular-nums`).
 - Huruf besar hanya untuk label seksi, bukan isi data.
@@ -55,9 +55,11 @@ Badge tier: `border-<warna>/45 bg-<warna>/15 text-<warna>-300` (S+ pakai `text-g
 
 **Slot tim** — daftar `<ol>` 5 baris tinggi tetap `min-h-[3.25rem]`. Kosong: border dashed + label "Slot n kosong". Terisi: avatar, nama, badge tier, genre, tombol hapus.
 
-**Filter chip** — `rounded-lg border px-3 py-1 text-sm min-h-10` (target sentuh). Empat baris berlabel di tab Artists, urut: Genre, Region, Tier, Skill. Aktif tier = emas; aktif genre/region/skill = merah; nonaktif `text-zinc-400` dengan hover `text-zinc-200`. Label baris `text-[11px]` uppercase `text-zinc-500`, lebar tetap `w-14`. Chip `Semua` hanya dirender saat baris itu terfilter; klik chip aktif = lepas filter. Satu tombol `Reset filter` (selalu memesan lebar, `invisible` saat bersih) mengosongkan keempatnya. Urutan chip tier ikut `TIER_ORDER`; tier tanpa artist tidak ditampilkan.
+**Filter chip** — `rounded-lg border px-3 py-1 text-sm min-h-10` (target sentuh). Empat baris berlabel di tab Artists, urut: Genre, Asal, Tier, Skill. Aktif tier = emas; aktif genre/asal/skill = merah; nonaktif `text-zinc-400` dengan hover `text-zinc-200`. Label baris `text-[11px]` uppercase `text-zinc-500`, lebar tetap `w-14`. Chip `Semua` hanya dirender saat baris itu terfilter; klik chip aktif = lepas filter. Satu tombol `Reset filter` (selalu memesan lebar, `invisible` saat bersih) mengosongkan keempatnya. Urutan chip tier ikut `TIER_ORDER`; tier tanpa artist tidak ditampilkan.
 
 **Input pencarian** — ikon SVG di kiri (`pl-9`), border fokus `focus:border-brand/60`.
+
+**Language switcher** — dua link `ID`/`EN`, `text-xs uppercase font-semibold min-h-9 px-2 rounded-md`. Aktif `text-gold` + `aria-current="true"`; nonaktif `text-zinc-400 hover:text-zinc-100`. Href hanya mengganti segmen locale pertama pada path (`/id/manage` ↔ `/en/manage`), bukan state client.
 
 ## Gerak
 

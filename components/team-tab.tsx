@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { Artist, Effect } from "@/lib/artists";
+import { DICT, t, type Locale } from "@/lib/i18n";
 import { EFFECT_LABEL } from "@/lib/score";
 import { GENRE_BONUS, STAT_ORDER, TEAM_SIZE } from "@/lib/team";
 import { Avatar, GenreIcon, ICONS, Icon, SearchInput, TierBadge, formatStat, isPercent } from "./artist-ui";
@@ -11,11 +12,13 @@ type Props = {
   team: Artist[];
   picked: string[];
   full: boolean;
+  locale: Locale;
   onToggle: (slug: string) => void;
   onReset: () => void;
 };
 
-export function TeamTab({ artists, team, picked, full, onToggle, onReset }: Props) {
+export function TeamTab({ artists, team, picked, full, locale, onToggle, onReset }: Props) {
+  const C = DICT[locale];
   const [query, setQuery] = useState("");
 
   const q = query.trim().toLowerCase();
@@ -26,7 +29,7 @@ export function TeamTab({ artists, team, picked, full, onToggle, onReset }: Prop
         q === "" ||
         a.name.toLowerCase().includes(q) ||
         a.genre.toLowerCase().includes(q) ||
-        a.skills.some((s) => EFFECT_LABEL[s.effect].toLowerCase().includes(q)),
+        a.skills.some((s) => EFFECT_LABEL[s.effect][locale].toLowerCase().includes(q)),
     )
     .sort((a, b) => b.score - a.score);
 
@@ -55,9 +58,9 @@ export function TeamTab({ artists, team, picked, full, onToggle, onReset }: Prop
   }, [team]);
 
   return (
-    <section aria-label="Team Builder" className="flex flex-col gap-4">
+    <section aria-label={C.team.section} className="flex flex-col gap-4">
       <div className="flex items-center justify-between gap-2">
-        <h2 className="font-display text-sm font-semibold uppercase tracking-wide text-zinc-300">Tim Kamu</h2>
+        <h2 className="font-display text-sm font-semibold uppercase tracking-wide text-zinc-300">{C.team.title}</h2>
         {team.length > 0 && (
           <button
             type="button"
@@ -65,7 +68,7 @@ export function TeamTab({ artists, team, picked, full, onToggle, onReset }: Prop
             className="flex min-h-10 cursor-pointer items-center gap-1 rounded-md px-2 py-1 text-sm text-zinc-400 transition-colors duration-200 hover:bg-white/5 hover:text-red-300"
           >
             <Icon d={ICONS.trash} className="h-4 w-4" />
-            Reset
+            {C.common.reset}
           </button>
         )}
       </div>
@@ -87,21 +90,21 @@ export function TeamTab({ artists, team, picked, full, onToggle, onReset }: Prop
                     <span className="flex items-center gap-1.5">
                       <span className="truncate text-base font-semibold">{a.name}</span>
                       <TierBadge tier={a.tier} />
-                      <span className="tabular text-xs text-zinc-400">{formatStat(a.score)}</span>
+                      <span className="tabular text-xs text-zinc-400">{formatStat(a.score, locale)}</span>
                     </span>
                     <span className="block truncate text-sm text-zinc-400">{a.genre}</span>
                   </span>
                   <button
                     type="button"
                     onClick={() => onToggle(a.slug)}
-                    aria-label={`Hapus ${a.name} dari tim`}
+                    aria-label={t(C.team.remove, { name: a.name })}
                     className="grid h-10 w-10 cursor-pointer place-items-center rounded-md text-zinc-400 transition-colors duration-200 hover:bg-white/5 hover:text-red-300"
                   >
                     <Icon d={ICONS.close} className="h-5 w-5" />
                   </button>
                 </>
               ) : (
-                <span className="px-1 text-sm text-zinc-400">Slot {i + 1} kosong</span>
+                <span className="px-1 text-sm text-zinc-400">{t(C.team.emptySlot, { n: i + 1 })}</span>
               )}
             </li>
           );
@@ -110,15 +113,15 @@ export function TeamTab({ artists, team, picked, full, onToggle, onReset }: Prop
 
       <div className="border-t border-white/10 pt-3">
         {team.length === 0 ? (
-          <p className="text-sm text-zinc-400">Pilih artist di bawah untuk mengisi slot.</p>
+          <p className="text-sm text-zinc-400">{C.team.pick}</p>
         ) : (
           <dl className="flex flex-col gap-3 text-sm">
             <div>
-              <dt className="text-zinc-400">Komposisi tier</dt>
+              <dt className="text-zinc-400">{C.team.tiers}</dt>
               <dd className="tabular mt-0.5 font-semibold text-zinc-200">{summary.tiers}</dd>
             </div>
             <div>
-              <dt className="text-zinc-400">Genre</dt>
+              <dt className="text-zinc-400">{C.team.genre}</dt>
               <dd className="mt-1 flex flex-wrap gap-1">
                 {summary.genreList.map(([g, n]) => (
                   <span key={g} className="inline-flex items-center gap-1 rounded-md bg-white/5 px-2 py-0.5 text-zinc-300">
@@ -130,31 +133,31 @@ export function TeamTab({ artists, team, picked, full, onToggle, onReset }: Prop
               <dd className="mt-1.5 flex flex-wrap items-center gap-1">
                 {summary.genreBonus > 0 ? (
                   <span className="inline-flex items-center gap-1 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-1.5 py-0.5 font-semibold text-emerald-300">
-                    Sinergi {summary.topCount}× {summary.topGenre}: +{summary.genreBonus}%
+                    {t(C.team.synergy, { n: summary.topCount, genre: summary.topGenre, bonus: summary.genreBonus })}
                   </span>
                 ) : (
                   <span className="text-zinc-400">
-                    Sinergi: {summary.topCount}× {summary.topGenre} — butuh 3 genre sama untuk +5%
+                    {t(C.team.synergyNeed, { n: summary.topCount, genre: summary.topGenre })}
                   </span>
                 )}
-                <span className="text-zinc-400">(info, tidak dihitung)</span>
+                <span className="text-zinc-400">{C.team.infoOnly}</span>
               </dd>
             </div>
             <div>
-              <dt className="text-zinc-400">Statistik total</dt>
+              <dt className="text-zinc-400">{C.team.stats}</dt>
               <dd className="mt-1 flex flex-col gap-1.5">
-                {summary.stats.length === 0 && <span className="text-zinc-400">Tidak ada skill berangka.</span>}
+                {summary.stats.length === 0 && <span className="text-zinc-400">{C.team.noStats}</span>}
                 {summary.stats.map(([effect, value]) => {
                   const boosted = (effect === "skill_dmg" || effect === "basic_atk") && summary.playerDmg > 0;
                   return (
                     <div key={effect} className="flex items-baseline justify-between gap-2">
-                      <span className="text-zinc-400">{EFFECT_LABEL[effect]}</span>
+                      <span className="text-zinc-400">{EFFECT_LABEL[effect][locale]}</span>
                       <span className="tabular shrink-0 whitespace-nowrap font-semibold text-zinc-200">
-                        {formatStat(value)}
+                        {formatStat(value, locale)}
                         {isPercent(effect) && "%"}
                         {boosted && (
                           <span className="ml-1 font-normal text-emerald-300">
-                            +{formatStat(summary.playerDmg)}% = {formatStat(value + summary.playerDmg)}%
+                            +{formatStat(summary.playerDmg, locale)}% = {formatStat(value + summary.playerDmg, locale)}%
                           </span>
                         )}
                       </span>
@@ -168,8 +171,8 @@ export function TeamTab({ artists, team, picked, full, onToggle, onReset }: Prop
       </div>
 
       <div className="border-t border-white/10 pt-4">
-        <h2 className="font-display mb-2 text-sm font-semibold uppercase tracking-wide text-zinc-300">Tambah Artist</h2>
-        <SearchInput value={query} onChange={setQuery} />
+        <h2 className="font-display mb-2 text-sm font-semibold uppercase tracking-wide text-zinc-300">{C.team.add}</h2>
+        <SearchInput value={query} onChange={setQuery} locale={locale} />
         <ul className="mt-2 flex flex-col gap-2">
           {pickable.map((a) => {
             const active = picked.includes(a.slug);
@@ -191,7 +194,7 @@ export function TeamTab({ artists, team, picked, full, onToggle, onReset }: Prop
                       <TierBadge tier={a.tier} />
                     </span>
                     <span className="tabular block truncate text-xs text-zinc-400">
-                      {a.genre} · {formatStat(a.score)}
+                      {a.genre} · {formatStat(a.score, locale)}
                     </span>
                   </span>
                   <span
@@ -207,7 +210,7 @@ export function TeamTab({ artists, team, picked, full, onToggle, onReset }: Prop
             );
           })}
         </ul>
-        {pickable.length === 0 && <p className="mt-3 text-sm text-zinc-400">Tidak ada artist yang cocok.</p>}
+        {pickable.length === 0 && <p className="mt-3 text-sm text-zinc-400">{C.team.empty}</p>}
       </div>
     </section>
   );

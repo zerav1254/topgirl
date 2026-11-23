@@ -4,6 +4,13 @@ const supabaseHost = process.env.NEXT_PUBLIC_SUPABASE_URL ? new URL(process.env.
 
 const nextConfig: NextConfig = {
   serverExternalPackages: ["sharp"],
+  async redirects() {
+    return [
+      { source: "/", destination: "/id", permanent: false },
+      { source: "/manage", destination: "/id/manage", permanent: false },
+      { source: "/isi", destination: "/id/manage", permanent: false },
+    ];
+  },
   experimental: {
     serverActions: { bodySizeLimit: "10mb" },
   },

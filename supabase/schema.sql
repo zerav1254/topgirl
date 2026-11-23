@@ -7,7 +7,7 @@ create table public.genres (
   sort integer not null default 0
 );
 
-create table public.regions (
+create table public.origins (
   id text primary key,
   label text not null default '',
   sort integer not null default 0
@@ -25,7 +25,7 @@ create table public.artists (
   slug text not null unique check (slug ~ '^[a-z0-9-]+$'),
   name text not null,
   genre text not null references public.genres (id) on update cascade,
-  region text references public.regions (id) on update cascade,
+  origin text references public.origins (id) on update cascade,
   season integer,
   photo_path text,
   updated_at timestamptz not null default now()
@@ -47,14 +47,14 @@ create index artist_skills_effect_idx on public.artist_skills (effect);
 alter table public.artists enable row level security;
 alter table public.artist_skills enable row level security;
 alter table public.genres enable row level security;
-alter table public.regions enable row level security;
+alter table public.origins enable row level security;
 alter table public.effects enable row level security;
 
 -- Publik hanya boleh membaca. Semua tulis lewat service_role di server action.
 create policy "read artists" on public.artists for select to anon, authenticated using (true);
 create policy "read artist skills" on public.artist_skills for select to anon, authenticated using (true);
 create policy "read genres" on public.genres for select to anon, authenticated using (true);
-create policy "read regions" on public.regions for select to anon, authenticated using (true);
+create policy "read origins" on public.origins for select to anon, authenticated using (true);
 create policy "read effects" on public.effects for select to anon, authenticated using (true);
 
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)

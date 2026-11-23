@@ -20,10 +20,10 @@ Aturan keras repo ini. Kalau ragu, berhenti dan tanya — jangan improvisasi.
 - Sumber data runtime = Supabase (tabel `artists`, `artist_skills`, bucket `artist-thumb`). Skema tercatat di `supabase/schema.sql`.
 - `data/artists.csv` dan `public/assets/images/artists/thumb/` hanya bahan seed (`npm run seed`). Jangan dipakai sebagai sumber runtime.
 - Tier **tidak disimpan** di DB; dihitung dari skor (`BANDS` di `lib/score.ts`).
-- `slug` unik, huruf kecil tanpa spasi; `region` ∈ `Tokyo Rome Bali Auction` atau NULL; `season` angka lokal (`Tokyo 4` → `4`) atau NULL.
+- `slug` unik, huruf kecil tanpa spasi; `origin` ∈ `Tokyo Rome Bali Auction Home Event` atau NULL; `season` angka lokal (`Tokyo 4` → `4`) atau NULL.
 - `base_sing`/`base_dance` boleh NULL; skor memakai faktor basis netral saat kosong.
 - `effect` wajib ada di tabel `effects` (FK). Kolom `unit` menentukan input: `percent` (12, 24, …) atau `flat` (DPS 200/240). Menambah `Effect` baru: insert baris `effects` + isi `unit`, lalu beri bobot di `OFFENSE`/`SUSTAIN` dan skala di `FLAT_SCALE` bila unit `flat` (`lib/score.ts`).
-- Dropdown `/isi` (genre, region, efek) dibaca dari tabel `genres`, `regions`, `effects`. Menambah opsi = insert baris di tabel, jangan hardcode di komponen.
+- Dropdown `/{locale}/manage` (genre, origin, efek) dibaca dari tabel `genres`, `origins`, `effects`. Menambah opsi = insert baris di tabel, jangan hardcode di komponen.
 - Migrasi skema lewat Supabase migration, lalu `supabase/schema.sql` diperbarui di commit yang sama.
 - Foto: upload lewat server action → `sharp` resize 320×320 cover, WebP q80, simpan di bucket `artist-thumb` sebagai `<slug>.webp`, lalu isi `photo_path`. Jangan menyimpan gambar di repo saat runtime.
 - RLS: `anon` hanya boleh `select`. Semua tulis (stat, foto) lewat server action dengan `adminClient()` setelah `isAdmin()`. Jangan longgarkan policy tulis.
@@ -31,8 +31,8 @@ Aturan keras repo ini. Kalau ragu, berhenti dan tanya — jangan improvisasi.
 
 ## Kode
 
-- `"use client"` hanya di `components/team-builder.tsx` dan `components/artist-editor.tsx`. Jangan jadikan `app/layout.tsx`/`app/page.tsx`/`app/isi/page.tsx` client component.
-- `lib/supabase.ts`/`lib/auth.ts` server-only: jangan impor dari client component. Client boleh impor server action dari `app/isi/actions.ts`.
+- `"use client"` hanya di `components/team-builder.tsx` dan `components/artist-editor.tsx`. Jangan jadikan `app/[locale]/layout.tsx`/`app/[locale]/page.tsx`/`app/[locale]/manage/page.tsx` client component.
+- `lib/supabase.ts`/`lib/auth.ts` server-only: jangan impor dari client component. Client boleh impor server action dari `app/[locale]/manage/actions.ts`.
 - `node:fs` hanya di `scripts/` (seed). Jangan impor di app/lib.
 - `adminClient()` (service_role) hanya di server action setelah `isAdmin()`. Jangan pernah kirim service key ke client.
 - Jangan fetch data dari browser; data dilewatkan sebagai props dari server component.
@@ -41,7 +41,8 @@ Aturan keras repo ini. Kalau ragu, berhenti dan tanya — jangan improvisasi.
 - Jangan `useEffect` untuk hal yang bisa dihitung saat render (`useMemo`/turunan langsung).
 - Jangan menambah `tailwind.config.*`; token hanya di `@theme` pada `app/globals.css`.
 - Ikon wajib inline SVG dari set yang sudah ada. Emoji sebagai ikon dilarang.
-- Semua teks UI berbahasa Indonesia, sesuai `lang="id"`.
+- Teks UI tidak boleh hardcode. Semua string tampil diambil dari `lib/dict/id.ts`/`en.ts` lewat `DICT[locale]` + `t()`; `id` default, `en` wajib ikut diisi saat menambah key.
+- Bahasa ditentukan segmen URL pertama (`/id`, `/en`); `<html lang>` mengikuti locale. Jangan baca bahasa dari localStorage. Label data dari DB (`genres.label` dkk.) tidak diterjemah.
 
 ## Git
 
