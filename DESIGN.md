@@ -59,7 +59,7 @@ Badge tier: `border-<warna>/45 bg-<warna>/15 text-<warna>-300` (S+ pakai `text-g
 
 **Input pencarian** — ikon SVG di kiri (`pl-9`), border fokus `focus:border-brand/60`.
 
-**Language switcher** — tombol pemicu `h-11 rounded-lg border-white/10 bg-panel/80` berisi bendera SVG (`public/assets/flags/<locale>.svg`, 20×14, `rounded-[2px]`) + chevron; menu `role="listbox"` muncul di bawah (kanan), tiap opsi `min-h-11` dengan bendera + `LANG_NAME`, opsi aktif `bg-gold/10 text-gold`. Keyboard: Enter/Space buka, ArrowUp/Down pindah, Escape tutup dan fokus balik ke tombol; klik di luar menutup. Ganti bahasa = `router.push` path sama dengan segmen locale diganti, query dipertahankan.
+**Language switcher** — tombol pemicu `h-11 rounded-lg border-white/10 bg-panel/80` berisi bendera SVG (`public/assets/flags/<locale>.svg`, 20×14) + singkatan (`LANG_CODE`: ID/EN/FR/KO) + chevron; menu `role="listbox"` muncul di bawah (rata kanan), tiap opsi `min-h-11` berisi bendera + singkatan (`aria-label` = `LANG_NAME`), opsi aktif `bg-gold/10 text-gold`. Di header utama ia bertumpuk di atas tombol "Kelola data" (kolom rata kanan). Keyboard: Enter/Space buka, ArrowUp/Down pindah, Escape tutup dan fokus balik ke tombol; klik di luar menutup. Ganti bahasa = `router.push` path sama dengan segmen locale diganti, query dipertahankan.
 
 ## Gerak
 

@@ -99,7 +99,7 @@ export function TeamBuilder({ artists, locale }: { artists: Artist[]; locale: Lo
             </h1>
           </div>
         </div>
-        <div className="flex w-full items-center justify-between gap-2 sm:w-auto sm:justify-end">
+        <div className="flex w-full flex-col items-end gap-2 sm:w-auto">
           <LocaleSwitcher locale={locale} />
           <Link
             href={`/${locale}/manage`}

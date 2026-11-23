@@ -12,6 +12,9 @@ export const DICT: Record<Locale, Dict> = { id, en, fr, ko };
 // Nama bahasa untuk aria-label tombol ganti bahasa (ditulis dalam bahasanya sendiri).
 export const LANG_NAME: Record<Locale, string> = { id: "Indonesia", en: "English", fr: "Français", ko: "한국어" };
 
+// Singkatan yang tampil di switcher (dipakai bersama bendera).
+export const LANG_CODE: Record<Locale, string> = { id: "ID", en: "EN", fr: "FR", ko: "KO" };
+
 export const isLocale = (value: string): value is Locale => (LOCALES as readonly string[]).includes(value);
 
 export const t = (text: string, vars?: Record<string, string | number>) =>
