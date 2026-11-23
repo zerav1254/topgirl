@@ -72,9 +72,9 @@ export function TierBadge({ tier, className = "" }: { tier: string; className?: 
   );
 }
 
-export function Avatar({ artist, size = "h-12 w-12" }: { artist: Artist; size?: string }) {
+export function Avatar({ artist, size = "h-12 w-12", tier = artist.tier }: { artist: Artist; size?: string; tier?: string }) {
   return (
-    <span className={`block shrink-0 overflow-hidden rounded-lg bg-gradient-to-br ${AVATAR_STYLE[artist.tier] ?? AVATAR_STYLE.D} ${size}`}>
+    <span className={`block shrink-0 overflow-hidden rounded-lg bg-gradient-to-br ${AVATAR_STYLE[tier] ?? AVATAR_STYLE.D} ${size}`}>
       {artist.photoUrl ? (
         <Image src={artist.photoUrl} alt="" width={96} height={96} sizes="96px" className="h-full w-full object-cover" />
       ) : (

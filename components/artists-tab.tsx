@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Image from "next/image";
-import type { Artist, Effect } from "@/lib/artists";
+import type { Artist, Category, Effect } from "@/lib/artists";
 import { DICT, t, type Locale } from "@/lib/i18n";
 import { EFFECTS, EFFECT_LABEL, TIER_ORDER } from "@/lib/score";
 import { GenreIcon, ICONS, Icon, SearchInput, TierBadge, formatStat, isPercent } from "./artist-ui";
@@ -11,6 +11,7 @@ type Props = {
   artists: Artist[];
   picked: string[];
   locale: Locale;
+  category: Category;
 };
 
 type Filter = { genre: string; origin: string; tier: string; skill: string };
@@ -60,7 +61,7 @@ function FilterSelect({
   );
 }
 
-export function ArtistsTab({ artists, picked, locale }: Props) {
+export function ArtistsTab({ artists, picked, locale, category }: Props) {
   const C = DICT[locale];
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<Filter>({ genre: ALL, origin: ALL, tier: ALL, skill: ALL });
@@ -74,9 +75,9 @@ export function ArtistsTab({ artists, picked, locale }: Props) {
   );
   // Urutan chip ikut TIER_ORDER, bukan urutan data; tier tanpa artist tidak ditampilkan.
   const tiers = useMemo(() => {
-    const present = new Set(artists.map((a) => a.tier));
+    const present = new Set(artists.map((a) => a.tiers[category]));
     return TIER_ORDER.filter((tier) => present.has(tier));
-  }, [artists]);
+  }, [artists, category]);
   const skillIds = useMemo(() => {
     const present = new Set(artists.flatMap((a) => a.skills.map((s) => s.effect)));
     return EFFECTS.filter((e) => present.has(e));
@@ -89,14 +90,21 @@ export function ArtistsTab({ artists, picked, locale }: Props) {
     a.genre.toLowerCase().includes(q) ||
     a.skills.some((s) => EFFECT_LABEL[s.effect][locale].toLowerCase().includes(q));
 
-  const visible = artists.filter(
-    (a) =>
-      (filter.genre === ALL || a.genre === filter.genre) &&
-      (filter.origin === ALL || a.origin === filter.origin) &&
-      (filter.tier === ALL || a.tier === filter.tier) &&
-      (filter.skill === ALL || a.skills.some((s) => s.effect === filter.skill)) &&
-      matches(a),
-  );
+  const visible = artists
+    .filter(
+      (a) =>
+        (filter.genre === ALL || a.genre === filter.genre) &&
+        (filter.origin === ALL || a.origin === filter.origin) &&
+        (filter.tier === ALL || a.tiers[category] === filter.tier) &&
+        (filter.skill === ALL || a.skills.some((s) => s.effect === filter.skill)) &&
+        matches(a),
+    )
+    .sort(
+      (a, b) =>
+        TIER_ORDER.indexOf(a.tiers[category]) - TIER_ORDER.indexOf(b.tiers[category]) ||
+        b.scores[category] - a.scores[category] ||
+        a.name.localeCompare(b.name),
+    );
 
   return (
     <section aria-label={C.artists.section} className="flex min-w-0 flex-col">
@@ -155,7 +163,7 @@ export function ArtistsTab({ artists, picked, locale }: Props) {
       </p>
 
       {tiers
-        .map((tier) => [tier, visible.filter((a) => a.tier === tier)] as const)
+        .map((tier) => [tier, visible.filter((a) => a.tiers[category] === tier)] as const)
         .filter(([, list]) => list.length > 0)
         .map(([tier, list]) => (
           <section key={tier} className="mt-4">
@@ -183,7 +191,7 @@ export function ArtistsTab({ artists, picked, locale }: Props) {
                           </span>
                         )}
                         <span className="absolute top-1.5 left-1.5 rounded-md bg-ink/70 p-0.5 backdrop-blur-sm">
-                          <TierBadge tier={a.tier} />
+                          <TierBadge tier={a.tiers[category]} />
                         </span>
                         {inTeam && (
                           <span className="absolute top-1.5 right-1.5 grid h-7 w-7 place-items-center rounded-md border border-gold/45 bg-ink/80 text-gold">
@@ -194,7 +202,7 @@ export function ArtistsTab({ artists, picked, locale }: Props) {
                       <span className="block min-w-0 p-2">
                         <span className="flex items-baseline justify-between gap-1">
                           <span className="block truncate text-sm font-semibold">{a.name}</span>
-                          <span className="tabular shrink-0 text-xs font-semibold text-zinc-300">{formatStat(a.score, locale)}</span>
+                          <span className="tabular shrink-0 text-xs font-semibold text-zinc-300">{formatStat(a.scores[category], locale)}</span>
                         </span>
                         <span className="mt-1 flex items-center gap-1 text-xs text-zinc-400">
                           <GenreIcon genre={a.genre} className="h-3 w-3 shrink-0" />

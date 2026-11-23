@@ -73,11 +73,11 @@ Alur data: Supabase → `lib/artists.ts` → server component (props) → client
 | Teks UI / bahasa baru | `lib/dict/*.ts` (+ `LOCALES`/`LANG_NAME` di `lib/i18n.ts`) |
 | Ukuran tim | `TEAM_SIZE` di `lib/team.ts` |
 | Filter/sort/summary | `components/artists-tab.tsx` (filter + roster), `components/team-tab.tsx` (ringkasan tim) |
-| Bobot skor / ambang tier | `OFFENSE`, `SUSTAIN`, `BANDS` di `lib/score.ts` |
+| Bobot skor / ambang tier | `SCORE` per kategori + `BANDS` di `lib/score.ts` |
 | Warna, font, radius, bayangan | `@theme` di `app/globals.css` |
 | Metadata/SEO/`lang` | `app/layout.tsx` |
 
-`TIER_ORDER` di `lib/score.ts` menentukan urutan tier di roster. Tier dihitung dari skor di `lib/score.ts`; menambah tier baru berarti mengubah `TIER_ORDER`, `BANDS` **dan** `TIER_STYLE`/`AVATAR_STYLE` pada `components/artist-ui.tsx`. `EFFECTS`/`EFFECT_LABEL` juga di `lib/score.ts` (dipakai DB constraint lewat server action).
+`TIER_ORDER` di `lib/score.ts` menentukan urutan tier di roster. Tier dihitung per kategori (`CATEGORIES`/`SCORE`) di `lib/score.ts`; menambah tier baru berarti mengubah `TIER_ORDER`, `BANDS` **dan** `TIER_STYLE`/`AVATAR_STYLE` pada `components/artist-ui.tsx`. Menambah kategori berarti mengisi `CATEGORIES`, `SCORE`, label di `lib/dict/*.ts`, dan pemilih di `components/team-builder.tsx`. `EFFECTS`/`EFFECT_LABEL` juga di `lib/score.ts` (dipakai DB constraint lewat server action).
 
 ## Konvensi kode
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { Artist, Effect } from "@/lib/artists";
+import type { Artist, Category, Effect } from "@/lib/artists";
 import { DICT, t, type Locale } from "@/lib/i18n";
 import { EFFECT_LABEL } from "@/lib/score";
 import { GENRE_BONUS, STAT_ORDER, TEAM_SIZE } from "@/lib/team";
@@ -13,11 +13,12 @@ type Props = {
   picked: string[];
   full: boolean;
   locale: Locale;
+  category: Category;
   onToggle: (slug: string) => void;
   onReset: () => void;
 };
 
-export function TeamTab({ artists, team, picked, full, locale, onToggle, onReset }: Props) {
+export function TeamTab({ artists, team, picked, full, locale, category, onToggle, onReset }: Props) {
   const C = DICT[locale];
   const [query, setQuery] = useState("");
 
@@ -31,7 +32,7 @@ export function TeamTab({ artists, team, picked, full, locale, onToggle, onReset
         a.genre.toLowerCase().includes(q) ||
         a.skills.some((s) => EFFECT_LABEL[s.effect][locale].toLowerCase().includes(q)),
     )
-    .sort((a, b) => b.score - a.score);
+    .sort((a, b) => b.scores[category] - a.scores[category]);
 
   const summary = useMemo(() => {
     const genreCount = new Map<string, number>();
@@ -53,9 +54,9 @@ export function TeamTab({ artists, team, picked, full, locale, onToggle, onReset
       topGenre,
       topCount,
       genreBonus: GENRE_BONUS[topCount] ?? 0,
-      tiers: team.map((a) => a.tier).join(" · "),
+      tiers: team.map((a) => a.tiers[category]).join(" · "),
     };
-  }, [team]);
+  }, [team, category]);
 
   return (
     <section aria-label={C.team.section} className="flex flex-col gap-4">
@@ -85,12 +86,12 @@ export function TeamTab({ artists, team, picked, full, locale, onToggle, onReset
             >
               {a ? (
                 <>
-                  <Avatar artist={a} size="h-10 w-10" />
+                  <Avatar artist={a} tier={a.tiers[category]} size="h-10 w-10" />
                   <span className="min-w-0 flex-1">
                     <span className="flex items-center gap-1.5">
                       <span className="truncate text-base font-semibold">{a.name}</span>
-                      <TierBadge tier={a.tier} />
-                      <span className="tabular text-xs text-zinc-400">{formatStat(a.score, locale)}</span>
+                      <TierBadge tier={a.tiers[category]} />
+                      <span className="tabular text-xs text-zinc-400">{formatStat(a.scores[category], locale)}</span>
                     </span>
                     <span className="block truncate text-sm text-zinc-400">{a.genre}</span>
                   </span>
@@ -187,14 +188,14 @@ export function TeamTab({ artists, team, picked, full, locale, onToggle, onReset
                     active ? "border-gold/45 bg-gold/10" : "border-white/10 bg-panel/70 hover:border-white/25 hover:bg-panel-2"
                   }`}
                 >
-                  <Avatar artist={a} size="h-9 w-9" />
+                  <Avatar artist={a} tier={a.tiers[category]} size="h-9 w-9" />
                   <span className="min-w-0 flex-1">
                     <span className="flex items-center gap-1.5">
                       <span className="truncate text-sm font-semibold">{a.name}</span>
-                      <TierBadge tier={a.tier} />
+                      <TierBadge tier={a.tiers[category]} />
                     </span>
                     <span className="tabular block truncate text-xs text-zinc-400">
-                      {a.genre} · {formatStat(a.score, locale)}
+                      {a.genre} · {formatStat(a.scores[category], locale)}
                     </span>
                   </span>
                   <span

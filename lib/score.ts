@@ -58,24 +58,39 @@ export const EFFECT_LABEL: Record<Effect, Record<Locale, string>> = {
   noncombat: { id: "Non-tempur", en: "Non-combat", fr: "Non-combat", ko: "비전투" },
 };
 
-// Points per skill percent. Sustain counts 0.75x in the final score.
-const OFFENSE: Partial<Record<Effect, number>> = {
-  // player_dmg menaikkan basic_atk DAN skill_dmg (lihat ringkasan tim), jadi
-  // bobotnya = bobot kedua kanal: 0.5 + 0.8.
-  player_dmg: 1.3,
-  skill_dmg: 0.8,
-  basic_atk: 0.5,
-  // Fan = kapasitas pasukan -> serangan solo. Satu kanal dengan basic_atk.
-  // ponytail: sinergi kapasitas x buff ATK tidak dihitung per artist.
-  fan: 0.5,
-  dps_def: 0.03,
-  dps_atk_company: 0.03,
-  dps_atk_rally: 0.03,
-};
-const SUSTAIN: Partial<Record<Effect, number>> = {
-  skill_dmg_red: 0.55,
-  basic_atk_red: 0.4,
-  fan_rally: 0.3,
+export const CATEGORIES = ["solo", "rally", "defense", "economy"] as const;
+export type Category = (typeof CATEGORIES)[number];
+
+// detail_skill.md: 50% basic_atk = 20% skill_dmg = 10% fan.
+// Jadi bobot per 1%: basic 0.5, skill 1.25, fan 2.5.
+// Urutan tiap kategori ditentukan pemilik data; player_dmg bisa beda bobot
+// antar kategori (SOLO di atas fan, RALLY di bawah fan_rally).
+const SCORE: Record<Category, Partial<Record<Effect, number>>> = {
+  solo: {
+    player_dmg: 2.6,
+    fan: 2.5,
+    skill_dmg: 1.25,
+    basic_atk: 0.5,
+  },
+  rally: {
+    fan_rally: 7.5,
+    player_dmg: 2.4,
+    skill_dmg: 1.25,
+    basic_atk: 0.5,
+    dps_atk_rally: 0.1,
+    dps_atk_company: 0.1,
+    wbg_dmg: 1,
+  },
+  defense: {
+    player_dmg: 2.6,
+    basic_atk_red: 0.8,
+    skill_dmg_red: 0.6,
+    dps_def: 0.1,
+  },
+  economy: {
+    gold: 2,
+    drive: 1,
+  },
 };
 
 // Nilai "flat" (DPS) diskalakan ke skala persen. Efek baru dengan unit flat
@@ -86,26 +101,26 @@ const FLAT_SCALE: Partial<Record<Effect, number>> = {
   dps_atk_rally: 1 / 2.4,
 };
 
-// Score from skills only; base stats are no longer part of ranking.
+const SCALE = 0.6;
 const BANDS: [Tier, number][] = [
-  ["S+", 80],
-  ["S", 55],
-  ["A", 38],
-  ["B", 22],
-  ["C", 16],
+  ["S+", 85],
+  ["S", 60],
+  ["A", 40],
+  ["B", 25],
+  ["C", 11],
 ];
 
-export function scoreArtist(skills: Skill[]): number {
-  let offense = 0;
-  let sustain = 0;
+// Score from skills only; base stats are no longer part of ranking.
+export function scoreArtist(skills: Skill[], category: Category = "solo"): number {
+  const weights = SCORE[category];
+  let total = 0;
   for (const s of skills) {
     if (s.value === null) continue;
     // dps values are flat (200/240); the scale maps them onto the percent scale.
     const v = s.value * (FLAT_SCALE[s.effect] ?? 1);
-    offense += (OFFENSE[s.effect] ?? 0) * v;
-    sustain += (SUSTAIN[s.effect] ?? 0) * v;
+    total += (weights[s.effect] ?? 0) * v;
   }
-  return Math.min(100, Math.round((offense + 0.75 * sustain) * 1.4 * 10) / 10);
+  return Math.min(100, Math.round(total * SCALE * 10) / 10);
 }
 
 export function tierFromScore(score: number): Tier {

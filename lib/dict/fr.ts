@@ -17,6 +17,13 @@ export const fr: Dict = {
     docTeam: "Team Builder — TopGirl",
     tabCount: "({n} sur {size})",
   },
+  categories: {
+    label: "Catégorie",
+    solo: "PVP Solo",
+    rally: "PVP Rally",
+    defense: "PVP Défense",
+    economy: "Économie",
+  },
   common: {
     reset: "Réinitialiser",
     skip: "Aller au contenu",

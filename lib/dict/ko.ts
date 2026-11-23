@@ -17,6 +17,13 @@ export const ko: Dict = {
     docTeam: "팀 빌더 — TopGirl",
     tabCount: "({size}명 중 {n}명)",
   },
+  categories: {
+    label: "카테고리",
+    solo: "PVP 솔로",
+    rally: "PVP 랠리",
+    defense: "PVP 방어",
+    economy: "경제",
+  },
   common: {
     reset: "초기화",
     skip: "본문으로 건너뛰기",

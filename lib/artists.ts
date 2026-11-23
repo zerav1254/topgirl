@@ -1,8 +1,8 @@
-import { EFFECTS, TIER_ORDER, scoreArtist, tierFromScore, type Effect, type Skill, type Tier } from "./score.ts";
+import { CATEGORIES, EFFECTS, TIER_ORDER, scoreArtist, tierFromScore, type Category, type Effect, type Skill, type Tier } from "./score.ts";
 import { PHOTO_BUCKET, SUPABASE_URL, supabase } from "./supabase.ts";
 
-export { TIER_ORDER, tierFromScore } from "./score.ts";
-export type { Effect, Skill, Tier } from "./score.ts";
+export { CATEGORIES, TIER_ORDER, tierFromScore } from "./score.ts";
+export type { Category, Effect, Skill, Tier } from "./score.ts";
 
 export type Artist = {
   id: number;
@@ -13,8 +13,11 @@ export type Artist = {
   season: number | null;
   skills: Skill[];
   photoUrl: string | null;
+  // SOLO tetap disimpan terpisah supaya sort server dan editor tidak perlu kategori.
   score: number;
   tier: Tier;
+  scores: Record<Category, number>;
+  tiers: Record<Category, Tier>;
 };
 
 const EFFECT_SET = new Set<string>(EFFECTS);
@@ -45,7 +48,8 @@ export async function loadArtists(): Promise<Artist[]> {
         .sort((a, b) => a.slot - b.slot)
         .filter((s) => EFFECT_SET.has(s.effect))
         .map((s) => ({ effect: s.effect as Effect, value: s.value }));
-      const score = scoreArtist(skills);
+      const scores = Object.fromEntries(CATEGORIES.map((c) => [c, scoreArtist(skills, c)])) as Record<Category, number>;
+      const tiers = Object.fromEntries(CATEGORIES.map((c) => [c, tierFromScore(scores[c])])) as Record<Category, Tier>;
       return {
         id: r.id,
         slug: r.slug,
@@ -58,8 +62,10 @@ export async function loadArtists(): Promise<Artist[]> {
         photoUrl: r.photo_path
           ? `${SUPABASE_URL}/storage/v1/object/public/${PHOTO_BUCKET}/${r.photo_path}?v=${new Date(r.updated_at).getTime()}`
           : null,
-        score,
-        tier: tierFromScore(score),
+        score: scores.solo,
+        tier: tiers.solo,
+        scores,
+        tiers,
       };
     })
     .sort(

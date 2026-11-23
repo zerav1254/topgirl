@@ -15,6 +15,13 @@ export const id = {
     docTeam: "Team Builder — TopGirl",
     tabCount: "({n} dari {size})",
   },
+  categories: {
+    label: "Kategori",
+    solo: "PVP Solo",
+    rally: "PVP Rally",
+    defense: "PVP Defense",
+    economy: "Economy",
+  },
   common: {
     reset: "Reset",
     skip: "Langsung ke konten",
