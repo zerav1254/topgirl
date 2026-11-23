@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useSyncExternalStore } from "react";
 import Image from "next/image";
 import type { Artist } from "@/lib/artists";
 import { DICT, type Locale } from "@/lib/i18n";
-import { CATEGORIES, type Category } from "@/lib/score";
+import type { Category } from "@/lib/score";
 import { TEAM_SIZE } from "@/lib/team";
 import { getServerTeam, getServerUrl, readTeam, readUrl, subscribeTeam, subscribeUrl, writeTeam } from "@/lib/team-store";
+import { isCategory, useArtistFilter } from "./artist-filter";
 import { ArtistsTab } from "./artists-tab";
 import { LocaleSwitcher } from "./locale-switcher";
 import { TeamTab } from "./team-tab";
@@ -18,7 +19,9 @@ export function TeamBuilder({ artists, locale }: { artists: Artist[]; locale: Lo
   // Tab ikut ?tab=team: refresh tidak selalu kembali ke Artists, dan back/forward ikut tersinkron.
   const search = useSyncExternalStore(subscribeUrl, readUrl, getServerUrl);
   const tab: Tab = new URLSearchParams(search).get("tab") === "team" ? "team" : "artists";
-  const [category, setCategory] = useState<Category>("solo");
+  // Tidak ada bar kategori terpisah: filter "Spesialis" menentukan kategori skor/tier.
+  const state = useArtistFilter(artists, locale);
+  const category: Category = isCategory(state.filter.specialty) ? state.filter.specialty : "solo";
 
   const bySlug = useMemo(() => new Map(artists.map((a) => [a.slug, a])), [artists]);
   const saved = useSyncExternalStore(subscribeTeam, readTeam, getServerTeam);
@@ -74,28 +77,8 @@ export function TeamBuilder({ artists, locale }: { artists: Artist[]; locale: Lo
         </div>
       </header>
 
-      <div
-        role="group"
-        aria-label={C.categories.label}
-        className="grid grid-cols-2 gap-1 rounded-xl border border-white/10 bg-panel/60 p-1 sm:grid-cols-4"
-      >
-        {CATEGORIES.map((c) => (
-          <button
-            key={c}
-            type="button"
-            onClick={() => setCategory(c)}
-            aria-pressed={category === c}
-            className={`min-h-11 cursor-pointer rounded-lg px-2 text-sm font-semibold transition-colors duration-200 ${
-              category === c ? "bg-gold/15 text-gold" : "text-zinc-400 hover:bg-white/5 hover:text-zinc-200"
-            }`}
-          >
-            {C.categories[c]}
-          </button>
-        ))}
-      </div>
-
       {tab === "artists" ? (
-        <ArtistsTab artists={artists} picked={picked} locale={locale} category={category} />
+        <ArtistsTab artists={artists} picked={picked} locale={locale} category={category} state={state} />
       ) : (
         <TeamTab
           artists={artists}
@@ -103,6 +86,7 @@ export function TeamBuilder({ artists, locale }: { artists: Artist[]; locale: Lo
           picked={picked}
           locale={locale}
           category={category}
+          state={state}
           onToggle={toggle}
           onAssign={assign}
           onReset={() => writeTeam([])}

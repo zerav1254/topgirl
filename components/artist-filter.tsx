@@ -12,6 +12,8 @@ const ALL = "all";
 export type ArtistFilter = { genre: string; origin: string; specialty: string; skill: string };
 const EMPTY: ArtistFilter = { genre: ALL, origin: ALL, specialty: ALL, skill: ALL };
 
+export const isCategory = (value: string): value is Category => (CATEGORIES as readonly string[]).includes(value);
+
 // Spesialis = kategori dengan skor tertinggi; seri dimenangkan urutan CATEGORIES (solo dulu).
 export function specialtyOf(a: Artist): Category {
   return CATEGORIES.reduce((best, c) => (a.scores[c] > a.scores[best] ? c : best), CATEGORIES[0]);

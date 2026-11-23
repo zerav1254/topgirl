@@ -5,7 +5,7 @@ import type { Artist, Category, Effect } from "@/lib/artists";
 import { DICT, t, type Locale } from "@/lib/i18n";
 import { EFFECT_LABEL } from "@/lib/score";
 import { GENRE_BONUS, STAT_ORDER, TEAM_SIZE } from "@/lib/team";
-import { ArtistFilterBar, useArtistFilter } from "./artist-filter";
+import { ArtistFilterBar, type ArtistFilterState } from "./artist-filter";
 import { Avatar, GenreIcon, ICONS, Icon, TierBadge, formatStat, isPercent } from "./artist-ui";
 
 type Props = {
@@ -14,17 +14,17 @@ type Props = {
   picked: string[];
   locale: Locale;
   category: Category;
+  state: ArtistFilterState;
   onToggle: (slug: string) => void;
   onAssign: (index: number, slug: string) => void;
   onReset: () => void;
 };
 
-export function TeamTab({ artists, team, picked, locale, category, onToggle, onAssign, onReset }: Props) {
+export function TeamTab({ artists, team, picked, locale, category, state, onToggle, onAssign, onReset }: Props) {
   const C = DICT[locale];
   // Slot yang sedang dipilih; null = dialog tertutup. Picker menggantikan daftar panjang di bawah.
   const [slot, setSlot] = useState<number | null>(null);
   const dialog = useRef<HTMLDialogElement>(null);
-  const state = useArtistFilter(artists, locale);
 
   useEffect(() => {
     const d = dialog.current;

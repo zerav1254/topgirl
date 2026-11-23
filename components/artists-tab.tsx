@@ -5,7 +5,7 @@ import Image from "next/image";
 import type { Artist, Category } from "@/lib/artists";
 import { DICT, t, type Locale } from "@/lib/i18n";
 import { EFFECT_LABEL, TIER_ORDER } from "@/lib/score";
-import { ArtistFilterBar, useArtistFilter } from "./artist-filter";
+import { ArtistFilterBar, type ArtistFilterState } from "./artist-filter";
 import { GenreIcon, ICONS, Icon, TierBadge, formatStat, isPercent } from "./artist-ui";
 
 type Props = {
@@ -13,14 +13,14 @@ type Props = {
   picked: string[];
   locale: Locale;
   category: Category;
+  state: ArtistFilterState;
 };
 
 // Season hanya bermakna untuk artist dari kota tuan rumah; origin lain tidak menampilkannya.
 const SEASON_ORIGINS = new Set(["Tokyo", "Bali", "Rome"]);
 
-export function ArtistsTab({ artists, picked, locale, category }: Props) {
+export function ArtistsTab({ artists, picked, locale, category, state }: Props) {
   const C = DICT[locale];
-  const state = useArtistFilter(artists, locale);
   const visible = state.visible;
   // Urutan chip ikut TIER_ORDER, bukan urutan data; tier tanpa artist tidak ditampilkan.
   const tiers = useMemo(() => {
