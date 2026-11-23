@@ -41,7 +41,7 @@ Aturan keras repo ini. Kalau ragu, berhenti dan tanya — jangan improvisasi.
 - Jangan `useEffect` untuk hal yang bisa dihitung saat render (`useMemo`/turunan langsung).
 - Jangan menambah `tailwind.config.*`; token hanya di `@theme` pada `app/globals.css`.
 - Ikon wajib inline SVG dari set yang sudah ada. Emoji sebagai ikon dilarang.
-- Teks UI tidak boleh hardcode. Semua string tampil diambil dari `lib/dict/id.ts`/`en.ts` lewat `DICT[locale]` + `t()`; `id` default, `en` wajib ikut diisi saat menambah key.
+- Teks UI tidak boleh hardcode. Semua string tampil diambil dari `lib/dict/<locale>.ts` lewat `DICT[locale]` + `t()`; `id` default, semua locale (`en`, `fr`, `ko`) wajib ikut diisi saat menambah key.
 - Bahasa ditentukan segmen URL pertama (`/id`, `/en`); `<html lang>` mengikuti locale. Jangan baca bahasa dari localStorage. Label data dari DB (`genres.label` dkk.) tidak diterjemah.
 
 ## Git

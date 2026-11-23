@@ -47,9 +47,9 @@ lib/
   supabase.ts       read client (anon) + adminClient() (service_role)
   lookups.ts        opsi dropdown dari tabel genres/origins/effects
   auth.ts           cookie admin HMAC
-  i18n.ts           LOCALES, Locale, DICT, t() interpolasi, numberLocale
+  i18n.ts           LOCALES, Locale, DICT, LANG_NAME, t() interpolasi, numberLocale
   dict/id.ts        sumber string UI (tipe Dict)
-  dict/en.ts        terjemahan, wajib lengkap sesuai Dict
+  dict/en|fr|ko.ts  terjemahan, wajib lengkap sesuai Dict
 supabase/
   schema.sql        skema tabel + bucket + RLS
 scripts/
@@ -68,7 +68,7 @@ Alur data: Supabase → `lib/artists.ts` → server component (props) → client
 | Ubah skema DB | migration Supabase + `supabase/schema.sql` + `lib/artists.ts` |
 | Seed ulang dari CSV/thumb lama | `scripts/seed-supabase.mjs` (`npm run seed`) |
 | Auth/login admin | `lib/auth.ts` + `app/[locale]/manage/actions.ts` |
-| Teks UI / bahasa baru | `lib/dict/id.ts` + `en.ts` (+ `LOCALES` di `lib/i18n.ts`) |
+| Teks UI / bahasa baru | `lib/dict/*.ts` (+ `LOCALES`/`LANG_NAME` di `lib/i18n.ts`) |
 | Ukuran tim | `TEAM_SIZE` di `lib/team.ts` |
 | Filter/sort/summary | `components/artists-tab.tsx` (filter + roster), `components/team-tab.tsx` (ringkasan tim) |
 | Bobot skor / ambang tier | `OFFENSE`, `SUSTAIN`, `BANDS` di `lib/score.ts` |

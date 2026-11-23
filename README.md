@@ -24,7 +24,7 @@ npm run dev                  # http://localhost:3000
 ## Halaman
 
 - `/` — redirect ke `/id`.
-- `/id`, `/en` — team builder (revalidate 5 menit; di-refresh langsung setelah simpan).
+- `/id`, `/en`, `/fr`, `/ko` — team builder (revalidate 5 menit; di-refresh langsung setelah simpan).
 - `/{locale}/manage` — login admin → isi base stat, skill, dan foto 320×320 WebP.
 
 ## Skema

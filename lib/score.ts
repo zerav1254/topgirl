@@ -1,3 +1,5 @@
+import type { Locale } from "./i18n.ts";
+
 export const TIER_ORDER = ["S+", "S", "A", "B", "C", "D"] as const;
 export type Tier = (typeof TIER_ORDER)[number];
 
@@ -39,21 +41,21 @@ export const EFFECTS: Effect[] = [
   "noncombat",
 ];
 
-export const EFFECT_LABEL: Record<Effect, Record<"id" | "en", string>> = {
-  player_dmg: { id: "Dmg pemain", en: "Player DMG" },
-  skill_dmg: { id: "Dmg skill", en: "Skill DMG" },
-  basic_atk: { id: "Serangan", en: "Basic ATK" },
-  basic_atk_red: { id: "Red. serangan", en: "Basic ATK red." },
-  skill_dmg_red: { id: "Red. skill", en: "Skill DMG red." },
-  fan: { id: "Fan", en: "Fan" },
-  fan_rally: { id: "Fan rally", en: "Fan rally" },
-  dps_def: { id: "DPS defend", en: "DPS defend" },
-  dps_atk_company: { id: "DPS company", en: "DPS company" },
-  dps_atk_rally: { id: "DPS rally", en: "DPS rally" },
-  wbg_dmg: { id: "Dmg WBG", en: "WBG DMG" },
-  gold: { id: "Gold", en: "Gold" },
-  drive: { id: "Drive", en: "Drive" },
-  noncombat: { id: "Non-tempur", en: "Non-combat" },
+export const EFFECT_LABEL: Record<Effect, Record<Locale, string>> = {
+  player_dmg: { id: "Dmg pemain", en: "Player DMG", fr: "Dégâts joueur", ko: "플레이어 피해" },
+  skill_dmg: { id: "Dmg skill", en: "Skill DMG", fr: "Dégâts compétence", ko: "스킬 피해" },
+  basic_atk: { id: "Serangan", en: "Basic ATK", fr: "Attaque de base", ko: "기본 공격" },
+  basic_atk_red: { id: "Red. serangan", en: "Basic ATK red.", fr: "Réduc. attaque", ko: "기본 공격 감소" },
+  skill_dmg_red: { id: "Red. skill", en: "Skill DMG red.", fr: "Réduc. compétence", ko: "스킬 피해 감소" },
+  fan: { id: "Fan", en: "Fan", fr: "Fans", ko: "팬" },
+  fan_rally: { id: "Fan rally", en: "Fan rally", fr: "Fans rallye", ko: "팬 랠리" },
+  dps_def: { id: "DPS defend", en: "DPS defend", fr: "DPS défense", ko: "DPS 방어" },
+  dps_atk_company: { id: "DPS company", en: "DPS company", fr: "DPS compagnie", ko: "DPS 컴퍼니" },
+  dps_atk_rally: { id: "DPS rally", en: "DPS rally", fr: "DPS rallye", ko: "DPS 랠리" },
+  wbg_dmg: { id: "Dmg WBG", en: "WBG DMG", fr: "Dégâts WBG", ko: "WBG 피해" },
+  gold: { id: "Gold", en: "Gold", fr: "Or", ko: "골드" },
+  drive: { id: "Drive", en: "Drive", fr: "Drive", ko: "드라이브" },
+  noncombat: { id: "Non-tempur", en: "Non-combat", fr: "Non-combat", ko: "비전투" },
 };
 
 // Points per skill percent. Sustain counts 0.75x in the final score.
