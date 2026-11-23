@@ -1,8 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Noto_Sans_KR, Sora } from "next/font/google";
 import { notFound } from "next/navigation";
 import { Analytics } from "@vercel/analytics/next";
-import { DICT, LOCALES, isLocale } from "@/lib/i18n";
+import { DICT, LOCALES, isLocale, type Locale } from "@/lib/i18n";
 import "../globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
@@ -14,13 +14,43 @@ export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }));
 }
 
+// Vercel menyetel VERCEL_PROJECT_PRODUCTION_URL di production; lokal pakai localhost.
+const SITE_URL = `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL ?? process.env.VERCEL_URL ?? "localhost:3000"}`;
+
+const OG_LOCALE: Record<Locale, string> = { id: "id_ID", en: "en_US", fr: "fr_FR", ko: "ko_KR" };
+const ICON = "/assets/icon-topgirl.webp";
+
+export const viewport: Viewport = { themeColor: "#0b0b0f", colorScheme: "dark" };
+
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
-  const meta = DICT[isLocale(locale) ? locale : "id"].meta;
+  const l: Locale = isLocale(locale) ? locale : "id";
+  const meta = DICT[l].meta;
   return {
+    metadataBase: new URL(SITE_URL),
     title: meta.title,
     description: meta.description,
-    icons: { icon: "/assets/icon-topgirl.webp", apple: "/assets/apple-icon.png" },
+    icons: { icon: ICON, apple: "/assets/apple-icon.png" },
+    alternates: {
+      canonical: `/${l}`,
+      languages: Object.fromEntries(LOCALES.map((x) => [x, `/${x}`])),
+    },
+    openGraph: {
+      type: "website",
+      siteName: "TopGirl",
+      title: meta.title,
+      description: meta.description,
+      url: `/${l}`,
+      locale: OG_LOCALE[l],
+      alternateLocale: LOCALES.filter((x) => x !== l).map((x) => OG_LOCALE[x]),
+      images: [{ url: ICON, width: 512, height: 512, alt: "TopGirl" }],
+    },
+    twitter: {
+      card: "summary",
+      title: meta.title,
+      description: meta.description,
+      images: [ICON],
+    },
   };
 }
 
