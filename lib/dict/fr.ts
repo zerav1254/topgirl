@@ -7,7 +7,7 @@ export const fr: Dict = {
     adminTitle: "Modifier les stats — TopGirl",
     adminDescription: "Connectez-vous pour modifier les stats de base, les compétences et les photos des artistes.",
   },
-  lang: { switch: "Changer la langue en {name}" },
+  lang: { label: "Langue", switch: "Changer la langue en {name}" },
   header: {
     artists: "Artistes",
     team: "Team Builder",

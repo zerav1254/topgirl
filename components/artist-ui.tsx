@@ -92,7 +92,17 @@ export function GenreIcon({ genre, className = "h-4 w-4" }: { genre: string; cla
   return <Image src={`/assets/images/genres/${file}.png`} alt="" width={16} height={16} sizes="16px" className={`${className} object-contain`} />;
 }
 
-export function SearchInput({ value, onChange, locale }: { value: string; onChange: (value: string) => void; locale: Locale }) {
+export function SearchInput({
+  value,
+  onChange,
+  locale,
+  placeholder,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  locale: Locale;
+  placeholder?: string;
+}) {
   const c = DICT[locale].common;
   return (
     <div className="relative">
@@ -101,7 +111,7 @@ export function SearchInput({ value, onChange, locale }: { value: string; onChan
         value={value}
         onChange={(e) => onChange(e.target.value)}
         type="search"
-        placeholder={c.searchPlaceholder}
+        placeholder={placeholder ?? c.searchPlaceholder}
         aria-label={c.searchArtist}
         className="w-full rounded-xl border border-white/10 bg-panel/80 py-3 pr-9 pl-9 text-base placeholder:text-zinc-400 focus:border-brand/60 [&::-webkit-search-cancel-button]:appearance-none"
       />

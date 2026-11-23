@@ -7,7 +7,7 @@ export const ko: Dict = {
     adminTitle: "스탯 편집 — TopGirl",
     adminDescription: "아티스트 기본 스탯, 스킬, 사진을 수정하려면 로그인하세요.",
   },
-  lang: { switch: "언어를 {name}(으)로 변경" },
+  lang: { label: "언어", switch: "언어를 {name}(으)로 변경" },
   header: {
     artists: "아티스트",
     team: "팀 빌더",

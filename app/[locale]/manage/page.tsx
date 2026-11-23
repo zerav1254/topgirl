@@ -37,36 +37,38 @@ export default async function Page({
 
   if (!(await isAdmin())) {
     return (
-      <main className="mx-auto flex min-h-dvh max-w-sm flex-col justify-center px-4 py-10">
-        <div className="flex items-center justify-between gap-3">
-          <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
-          <LocaleSwitcher locale={locale} />
-        </div>
-        <h1 className="font-display mt-1 text-2xl font-bold tracking-tight">{C.isi.title}</h1>
-        <p className="mt-2 text-sm text-zinc-400">{C.isi.subtitle}</p>
-        <form action={login.bind(null, locale)} className="mt-6 flex flex-col gap-3">
-          <label className="flex flex-col gap-1 text-sm text-zinc-400">
-            {C.isi.password}
-            <input
-              type="password"
-              name="password"
-              autoComplete="current-password"
-              required
-              className="rounded-lg border border-white/10 bg-ink/60 px-3 py-2 text-base text-zinc-100 focus:border-brand/60"
-            />
-          </label>
-          {errorText ? (
-            <p role="alert" className="text-sm text-red-300">
-              {errorText}
-            </p>
-          ) : null}
-          <button
-            type="submit"
-            className="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-lg border border-gold/45 bg-gold/15 px-4 text-sm font-semibold text-gold transition-colors duration-200 hover:bg-gold/25"
-          >
-            {C.isi.submit}
-          </button>
-        </form>
+      <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center px-4 py-10">
+        <section className="rounded-2xl border border-white/10 bg-panel/80 p-5 sm:p-6">
+          <div className="flex items-center justify-between gap-3">
+            <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
+            <LocaleSwitcher locale={locale} />
+          </div>
+          <h1 className="font-display mt-3 text-2xl font-bold tracking-tight">{C.isi.title}</h1>
+          <p className="mt-1.5 text-sm text-zinc-400">{C.isi.subtitle}</p>
+          <form action={login.bind(null, locale)} className="mt-5 flex flex-col gap-3">
+            <label className="flex flex-col gap-1 text-sm text-zinc-400">
+              {C.isi.password}
+              <input
+                type="password"
+                name="password"
+                autoComplete="current-password"
+                required
+                className="rounded-lg border border-white/10 bg-ink/60 px-3 py-2 text-base text-zinc-100 focus:border-brand/60"
+              />
+            </label>
+            {errorText ? (
+              <p role="alert" className="text-sm text-red-300">
+                {errorText}
+              </p>
+            ) : null}
+            <button
+              type="submit"
+              className="inline-flex min-h-11 w-full cursor-pointer items-center justify-center rounded-lg border border-gold/45 bg-gold/15 px-4 text-sm font-semibold text-gold transition-colors duration-200 hover:bg-gold/25"
+            >
+              {C.isi.submit}
+            </button>
+          </form>
+        </section>
       </main>
     );
   }

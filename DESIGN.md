@@ -59,7 +59,7 @@ Badge tier: `border-<warna>/45 bg-<warna>/15 text-<warna>-300` (S+ pakai `text-g
 
 **Input pencarian** — ikon SVG di kiri (`pl-9`), border fokus `focus:border-brand/60`.
 
-**Language switcher** — dua link `ID`/`EN`, `text-xs uppercase font-semibold min-h-9 px-2 rounded-md`. Aktif `text-gold` + `aria-current="true"`; nonaktif `text-zinc-400 hover:text-zinc-100`. Href hanya mengganti segmen locale pertama pada path (`/id/manage` ↔ `/en/manage`), bukan state client.
+**Language switcher** — satu `<select>` berisi semua bahasa (`LANG_NAME`), `h-10 rounded-lg border-white/10 bg-panel/80 text-xs`, chevron SVG absolut di kanan. Ganti bahasa = `router.push` path yang sama dengan segmen locale diganti. Di header utama mobile ia satu baris dengan tombol "Kelola data" (`justify-between`); `sm` ke atas kembali sebaris dengan judul. Di halaman login/manage posisinya di kanan atas kartu.
 
 ## Gerak
 

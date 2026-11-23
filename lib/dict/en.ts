@@ -7,7 +7,7 @@ export const en: Dict = {
     adminTitle: "Edit Stats — TopGirl",
     adminDescription: "Sign in to edit artist base stats, skills, and photos.",
   },
-  lang: { switch: "Switch language to {name}" },
+  lang: { label: "Language", switch: "Switch language to {name}" },
   header: {
     artists: "Artists",
     team: "Team Builder",

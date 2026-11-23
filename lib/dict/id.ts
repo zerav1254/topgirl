@@ -5,7 +5,7 @@ export const id = {
     adminTitle: "Isi Stat — TopGirl",
     adminDescription: "Masuk untuk mengisi base stat, skill, dan foto artist.",
   },
-  lang: { switch: "Ganti bahasa ke {name}" },
+  lang: { label: "Bahasa", switch: "Ganti bahasa ke {name}" },
   header: {
     artists: "Artists",
     team: "Team Builder",
