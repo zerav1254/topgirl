@@ -36,7 +36,7 @@ Badge tier: `border-<warna>/45 bg-<warna>/15 text-<warna>-300` (S+ pakai `text-g
 
 ## Tipografi
 
-- Family: Inter (`--font-sans`) untuk teks, Sora (`--font-display`) untuk judul/badge, dimuat lewat `next/font` di `app/[locale]/layout.tsx` (self-host, tanpa request ke Google saat runtime).
+- Family: Inter (`--font-sans`) untuk teks, Sora (`--font-display`) untuk judul/badge, Noto Sans KR (`--font-ko`) sebagai fallback glyph Hangul sesudah Inter/Sora. Dimuat lewat `next/font` di `app/[locale]/layout.tsx` (self-host, tanpa request ke Google saat runtime); Noto `preload: false` supaya tidak diunduh di locale non-Korea.
 - Skala: h1 `text-xl`→`sm:text-2xl` bold tracking-tight; judul panel `text-sm` semibold uppercase tracking-wide; body `text-sm`; metadata `text-xs`; badge `text-sm`.
 - Angka & komposisi tier: kelas `.tabular` (`font-variant-numeric: tabular-nums`).
 - Huruf besar hanya untuk label seksi, bukan isi data.
