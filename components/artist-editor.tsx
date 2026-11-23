@@ -144,6 +144,8 @@ export function ArtistEditor({
     startSaving(async () => {
       const result = await saveArtist(locale, toFormData(form, current));
       setStatus(result.ok ? C.saved : result.error);
+      // Progress bar dan titik "lengkap" di daftar dihitung dari props server.
+      if (result.ok) router.refresh();
     });
   }
 
