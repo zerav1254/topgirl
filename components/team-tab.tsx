@@ -178,7 +178,7 @@ export function TeamTab({ artists, team, picked, locale, category, state, onTogg
                   const boosted = (effect === "skill_dmg" || effect === "basic_atk") && summary.playerDmg > 0;
                   return (
                     <div key={effect} className="flex items-baseline justify-between gap-2">
-                      <span className="text-zinc-400">{EFFECT_LABEL[effect][locale]}</span>
+                      <span className="min-w-0 truncate text-zinc-400">{EFFECT_LABEL[effect][locale]}</span>
                       <span className="tabular shrink-0 whitespace-nowrap font-semibold text-zinc-200">
                         {formatStat(value, locale)}
                         {isPercent(effect) && "%"}

@@ -97,7 +97,7 @@ export function LocaleSwitcher({ locale, className = "" }: { locale: Locale; cla
           role="listbox"
           aria-label={DICT[locale].lang.label}
           onKeyDown={onListKey}
-          className="absolute top-full right-0 z-50 mt-1 w-44 overflow-hidden rounded-lg border border-white/10 bg-panel shadow-xl shadow-black/40"
+          className="absolute top-full right-0 z-50 mt-1 w-44 rounded-lg border border-white/10 bg-panel shadow-xl shadow-black/40"
         >
           {LOCALES.map((l) => (
             <button
@@ -108,7 +108,7 @@ export function LocaleSwitcher({ locale, className = "" }: { locale: Locale; cla
               aria-selected={l === locale}
               aria-label={LANG_NAME[l]}
               onClick={() => change(l)}
-              className={`flex min-h-11 w-full cursor-pointer items-center gap-2 px-2.5 text-sm transition-colors duration-200 ${
+              className={`flex min-h-11 w-full cursor-pointer items-center gap-2 px-2.5 text-sm transition-colors duration-200 first:rounded-t-lg last:rounded-b-lg ${
                 l === locale ? "bg-gold/10 font-semibold text-gold" : "text-zinc-300 hover:bg-white/5 hover:text-zinc-100"
               }`}
             >

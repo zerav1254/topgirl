@@ -73,7 +73,7 @@ function Select({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className={`h-11 w-full cursor-pointer rounded-lg border bg-panel/80 px-2.5 text-sm font-semibold transition-colors duration-200 focus:border-brand/60 ${
+        className={`h-11 w-full cursor-pointer rounded-lg border bg-panel/80 px-2.5 text-base font-semibold transition-colors duration-200 focus:border-brand/60 ${
           value === ALL ? "border-white/10 text-zinc-300" : active
         }`}
       >

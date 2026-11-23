@@ -213,7 +213,15 @@ export function ArtistEditor({
         </div>
         <p className="mt-3 text-sm text-zinc-400">{C.subtitle}</p>
         <div className="mt-3 flex items-center gap-3">
-          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/10">
+          <div
+            role="progressbar"
+            aria-label={C.progressLabel}
+            aria-valuemin={0}
+            aria-valuemax={artists.length}
+            aria-valuenow={done}
+            aria-valuetext={t(C.progress, { done, total: artists.length })}
+            className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/10"
+          >
             <div className="h-full rounded-full bg-gold transition-[width] duration-300" style={{ width: `${pct}%` }} />
           </div>
           <span className="tabular shrink-0 text-xs text-zinc-400">{t(C.progress, { done, total: artists.length })}</span>
@@ -255,6 +263,7 @@ export function ArtistEditor({
                       </span>
                     </span>
                     <span
+                      role="img"
                       aria-label={complete ? C.complete : C.incomplete}
                       className={`h-2 w-2 shrink-0 rounded-full ${complete ? "bg-emerald-400" : "bg-zinc-600"}`}
                     />

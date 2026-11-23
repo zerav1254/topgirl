@@ -47,13 +47,13 @@ export const ko: Dict = {
     score: "점수",
   },
   categories: {
-    label: "카테고리",
     solo: "PVP 솔로",
     rally: "PVP 랠리",
     defense: "PVP 방어",
     economy: "경제",
   },
   common: {
+    loading: "불러오는 중…",
     reset: "초기화",
     skip: "본문으로 건너뛰기",
     all: "전체",
@@ -73,6 +73,7 @@ export const ko: Dict = {
     retry: "다시 시도",
   },
   artists: {
+    inTeam: "팀에 포함",
     section: "아티스트",
     genre: "장르",
     origin: "출신",
@@ -102,6 +103,7 @@ export const ko: Dict = {
     empty: "일치하는 아티스트가 없습니다.",
   },
   editor: {
+    progressLabel: "데이터 진행률",
     title: "아티스트 스탯 편집",
     subtitle: "기본 스탯, 스킬, 사진이 데이터베이스에 바로 저장됩니다.",
     progress: "{done}/{total} 완료",

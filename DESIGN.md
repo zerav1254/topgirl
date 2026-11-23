@@ -11,10 +11,10 @@ Dark gaming dashboard: latar hampir hitam, panel berlapis, aksen merah agresif +
 | Token | Nilai | Pakai untuk |
 | --- | --- | --- |
 | `ink` | `#0b0b0f` | Latar halaman |
-| `panel` | `#14141a` | Kartu, input, sidebar |
+| `panel` | `#14141a` | Kartu, input, dialog |
 | `panel-2` | `#1c1c24` | Hover kartu, slot tim terisi |
 | `brand` | `#dc2626` | Aksen utama, filter genre aktif, skill |
-| `gold` | `#fbbf24` | Tier S+, filter tier aktif, counter tim, focus ring |
+| `gold` | `#fbbf24` | Tier S+, filter Spesialis aktif, counter tim, focus ring |
 | teks utama | `zinc-100` | Judul, nama artist |
 | teks sekunder | `zinc-400` | Metadata, label, deskripsi |
 | teks lemah | `zinc-400` | Placeholder, hint, unit, label kecil (jangan pakai `zinc-500`/`zinc-600` untuk teks — kontras < 4,5:1) |
@@ -43,23 +43,22 @@ Badge tier: `border-<warna>/45 bg-<warna>/15 text-<warna>-300` (S+ pakai `text-g
 
 ## Spasi & layout
 
-- Grid utama: `grid lg:grid-cols-[1fr_22rem]`, gap `gap-6`; halaman `max-w-7xl px-4 sm:px-6 lg:px-8 py-8`.
+- Satu kolom: shell `mx-auto flex max-w-4xl flex-col gap-4 px-4 pt-4 pb-28 sm:px-6 sm:pt-6`. Tab Artists/Team dipilih lewat bottom nav (`?tab=team`), bukan bar tab di dalam halaman.
 - Roster: 2 kolom < 640px, 3 kolom `sm`, 4 kolom `md`.
 - Radius: kartu besar `rounded-2xl`, kartu artist/slot `rounded-xl`, badge/tombol kecil `rounded-lg`/`rounded-md`.
-- Panel tim `lg:sticky lg:top-6`, selalu tampil paling atas di mobile (`order-1`).
 - Border pemisah: `border-white/10`; hover `border-white/25`.
 
 ## Komponen
 
-**Artist card** — kartu baca-saja (bukan tombol): pemilihan artist hanya di tab Team Builder. Normal: `border-white/10 bg-panel/70`. Artist yang sudah masuk tim: `border-gold/30 bg-gold/5` + ikon centang di pojok kanan-atas. Isi kartu: nama + skor sebaris, genre (ikon + teks), baris label **Asal** (`text-[10px]` uppercase `text-zinc-400`, nilai `text-zinc-300`), baris label **Season** hanya untuk origin `Tokyo`/`Bali`/`Rome`, lalu dua baris skill dipisah border atas — nama efek kiri (`text-zinc-400`), nilai kanan (`tabular font-semibold text-zinc-200`, `—` bila kosong). Tiap slot skill tampil sendiri (tidak digabung `×2`).
+**Artist card** — kartu baca-saja (bukan tombol): pemilihan artist hanya di tab Team Builder. Normal: `border-white/10 bg-panel/70`. Artist yang sudah masuk tim: `border-gold/30 bg-gold/5` + ikon centang di pojok kanan-atas (`sr-only` "Dalam tim"). Isi kartu: nama + skor sebaris, genre (ikon + teks), baris label **Asal** (`text-[11px]` uppercase `text-zinc-400`, nilai `text-zinc-300`), baris label **Season** hanya untuk origin `Tokyo`/`Bali`/`Rome`, lalu dua baris skill dipisah border atas — nama efek kiri (`text-zinc-400`), nilai kanan (`tabular font-semibold text-zinc-200`, `—` bila kosong). Tiap slot skill tampil sendiri (tidak digabung `×2`).
 
-**Slot tim** — daftar `<ol>` 5 baris tinggi tetap `min-h-[3.25rem]`. Kosong: border dashed + label "Slot n kosong". Terisi: avatar, nama, badge tier, genre, tombol hapus.
+**Slot tim** — daftar `<ol>` 5 baris `min-h-[4rem]`. Kosong: `border-dashed border-white/10` + label "Slot n kosong". Terisi: `border-white/15 bg-panel-2`, avatar, nama, badge tier, genre, skor kategori aktif, tombol hapus. Baris terisi bisa diklik membuka dialog pemilih slot (`<dialog>` `w-[min(100%-2rem,32rem)]` berisi filter bersama + daftar kandidat dengan detail skill).
 
-**Filter dropdown** — empat `<select>` dalam grid `grid-cols-2 sm:grid-cols-4`, urut Genre, Asal, Tier, Skill. Tiap sel: label `text-[11px]` uppercase `text-zinc-400` di atas, select `h-11 rounded-lg border bg-panel/80 px-2.5 text-sm font-semibold`. Nilai `Semua` (`common.all`) selalu jadi opsi pertama; select terfilter memakai border/bg aksen (tier emas, lainnya merah), tidak terfilter `border-white/10 text-zinc-300`. Satu tombol `Reset filter` (selalu memesan lebar, `invisible` saat bersih) mengembalikan keempatnya ke `Semua`.
+**Filter dropdown** — empat `<select>` dalam grid `grid-cols-2 sm:grid-cols-4`, urut Genre, Asal, Spesialis, Skill. Tiap sel: label `text-[11px]` uppercase `text-zinc-400` di atas, select `h-11 rounded-lg border bg-panel/80 px-2.5 text-base font-semibold` (`text-base`, bukan `text-sm`, agar Safari iOS tidak auto-zoom saat fokus). Nilai `Semua` (`common.all`) selalu jadi opsi pertama; select terfilter memakai border/bg aksen (Spesialis emas, lainnya merah), tidak terfilter `border-white/10 text-zinc-300`. Filter Spesialis juga menentukan kategori skor/tier yang ditampilkan (`Semua` = SOLO). Satu state filter dipakai bersama tab Artists, tab Team, dan dialog slot. Tombol `Reset filter` (selalu memesan lebar, `invisible` saat bersih) mengembalikan keempatnya ke `Semua`.
 
 **Input pencarian** — ikon SVG di kiri (`pl-9`), border fokus `focus:border-brand/60`.
 
-**Language switcher** — tombol pemicu `h-11 rounded-lg border-white/10 bg-panel/80` berisi bendera SVG (`public/assets/flags/<locale>.svg`, 20×14) + singkatan (`LANG_CODE`: ID/EN/FR/KO) + chevron; menu `role="listbox"` muncul di bawah (rata kanan), tiap opsi `min-h-11` berisi bendera + singkatan (`aria-label` = `LANG_NAME`), opsi aktif `bg-gold/10 text-gold`. Di header utama ia bertumpuk di atas tombol "Kelola data" (kolom rata kanan). Keyboard: Enter/Space buka, ArrowUp/Down pindah, Escape tutup dan fokus balik ke tombol; klik di luar menutup. Ganti bahasa = `router.push` path sama dengan segmen locale diganti, query dipertahankan.
+**Language switcher** — tombol pemicu `h-11 rounded-lg border-white/10 bg-panel/80` berisi bendera SVG (`public/assets/flags/<locale>.svg`, 20×14) + singkatan (`LANG_CODE`: ID/EN/FR/KO) + chevron; menu `role="listbox"` muncul di bawah (rata kanan), tiap opsi `min-h-11` berisi bendera + singkatan (`aria-label` = `LANG_NAME`), opsi aktif `bg-gold/10 text-gold`. Berada di header, rata kanan. Tombol "Kelola" ada di bottom nav, bukan di header. Keyboard: Enter/Space buka, ArrowUp/Down pindah, Escape tutup dan fokus balik ke tombol; klik di luar menutup. Ganti bahasa = `router.push` path sama dengan segmen locale diganti, query dipertahankan.
 
 ## Gerak
 
@@ -73,7 +72,7 @@ Badge tier: `border-<warna>/45 bg-<warna>/15 text-<warna>-300` (S+ pakai `text-g
 - Ikon dekoratif `aria-hidden="true"`; tombol ikon wajib `aria-label`.
 - Status pilihan diumumkan lewat `aria-pressed`, bukan warna saja.
 - Target sentuh minimal 44×44 px (`min-h-11` / `h-11 w-11`).
-- `lang="id"`, label form eksplisit.
+- `lang` mengikuti locale aktif (`id`/`en`/`fr`/`ko`), label form eksplisit.
 
 ## Jangan
 

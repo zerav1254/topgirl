@@ -47,13 +47,13 @@ export const en: Dict = {
     score: "Score",
   },
   categories: {
-    label: "Category",
     solo: "PVP Solo",
     rally: "PVP Rally",
     defense: "PVP Defense",
     economy: "Economy",
   },
   common: {
+    loading: "Loading…",
     reset: "Reset",
     skip: "Skip to content",
     all: "All",
@@ -73,6 +73,7 @@ export const en: Dict = {
     retry: "Try again",
   },
   artists: {
+    inTeam: "In team",
     section: "Artists",
     genre: "Genre",
     origin: "Origin",
@@ -102,6 +103,7 @@ export const en: Dict = {
     empty: "No matching artists.",
   },
   editor: {
+    progressLabel: "Data progress",
     title: "Edit Artist Stats",
     subtitle: "Base stats, skills, and photos are saved straight to the database.",
     progress: "{done}/{total} complete",

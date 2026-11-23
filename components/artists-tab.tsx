@@ -30,7 +30,7 @@ export function ArtistsTab({ artists, picked, locale, category, state }: Props) 
 
   return (
     <section aria-label={C.artists.section} className="flex min-w-0 flex-col">
-      <div className="sm:sticky sm:top-0 sm:backdrop-blur">
+      <div className="sm:sticky sm:top-0">
         <ArtistFilterBar artists={artists} locale={locale} state={state} />
       </div>
 
@@ -60,7 +60,7 @@ export function ArtistsTab({ artists, picked, locale, category, state }: Props) 
                     >
                       <span className="relative block aspect-[3/4] w-full bg-panel-2">
                         {a.photoUrl ? (
-                          <Image src={a.photoUrl} alt="" fill sizes="(max-width: 640px) 45vw, 200px" className="object-cover" />
+                          <Image src={a.photoUrl} alt="" fill sizes="(max-width: 640px) 45vw, (max-width: 768px) 33vw, 25vw" className="object-cover" />
                         ) : (
                           <span aria-hidden="true" className="grid h-full w-full place-items-center font-display text-2xl font-bold text-white/25">
                             {a.name.slice(0, 2).toUpperCase()}
@@ -71,6 +71,7 @@ export function ArtistsTab({ artists, picked, locale, category, state }: Props) 
                         </span>
                         {inTeam && (
                           <span className="absolute top-1.5 right-1.5 grid h-7 w-7 place-items-center rounded-md border border-gold/45 bg-ink/80 text-gold">
+                            <span className="sr-only">{C.artists.inTeam}</span>
                             <Icon d={ICONS.check} className="h-4 w-4" />
                           </span>
                         )}
@@ -85,14 +86,14 @@ export function ArtistsTab({ artists, picked, locale, category, state }: Props) 
                           <span className="truncate">{a.genre}</span>
                         </span>
                         <span className="mt-0.5 flex items-baseline justify-between gap-2 text-xs">
-                          <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wide text-zinc-400">
+                          <span className="shrink-0 text-[11px] font-semibold uppercase tracking-wide text-zinc-400">
                             {C.artists.origin}
                           </span>
                           <span className="truncate text-zinc-300">{a.origin ?? "—"}</span>
                         </span>
                         {a.season !== null && a.origin && SEASON_ORIGINS.has(a.origin) && (
                           <span className="flex items-baseline justify-between gap-2 text-xs">
-                            <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wide text-zinc-400">
+                            <span className="shrink-0 text-[11px] font-semibold uppercase tracking-wide text-zinc-400">
                               {C.artists.season}
                             </span>
                             <span className="tabular truncate text-zinc-300">{a.season}</span>

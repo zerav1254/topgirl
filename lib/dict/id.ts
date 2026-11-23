@@ -45,13 +45,13 @@ export const id = {
     score: "Skor",
   },
   categories: {
-    label: "Kategori",
     solo: "PVP Solo",
     rally: "PVP Rally",
     defense: "PVP Defense",
     economy: "Economy",
   },
   common: {
+    loading: "Memuat…",
     reset: "Reset",
     skip: "Langsung ke konten",
     all: "Semua",
@@ -71,6 +71,7 @@ export const id = {
     retry: "Coba lagi",
   },
   artists: {
+    inTeam: "Dalam tim",
     section: "Artists",
     genre: "Genre",
     origin: "Asal",
@@ -100,6 +101,7 @@ export const id = {
     empty: "Tidak ada artist yang cocok.",
   },
   editor: {
+    progressLabel: "Kemajuan data",
     title: "Isi Stat Artist",
     subtitle: "Base stat, skill, dan foto tersimpan langsung ke database.",
     progress: "{done}/{total} lengkap",
