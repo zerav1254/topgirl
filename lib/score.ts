@@ -65,12 +65,18 @@ export type Category = (typeof CATEGORIES)[number];
 // Jadi bobot per 1%: basic 0.5, skill 1.25, fan 2.5.
 // player_dmg menambah basic_atk DAN skill_dmg, jadi bobotnya 0.5 + 1.25 = 1.75.
 // fan_rally memakai bobot sendiri; RALLY sengaja di atas player_dmg.
+// SOLO tetap damage-first, tapi bertahan hidup diberi bobot kecil supaya unit
+// defensif tidak mentok 0 (dps_def ikut FLAT_SCALE).
 export const SCORE: Record<Category, Partial<Record<Effect, number>>> = {
   solo: {
     player_dmg: 1.75,
     fan: 2.5,
     skill_dmg: 1.25,
     basic_atk: 0.5,
+    basic_atk_red: 0.25,
+    skill_dmg_red: 0.2,
+    wbg_dmg: 0.2,
+    dps_def: 0.05,
   },
   rally: {
     fan_rally: 7.5,

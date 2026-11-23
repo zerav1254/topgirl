@@ -12,8 +12,15 @@ assert.equal(byName.get("Monica").tiers.solo, "S+");
 assert.equal(byName.get("Rhea").tiers.rally, "S+");
 assert.equal(byName.get("Kesnia").tiers.economy, "S+");
 for (const name of ["Ayaka", "Moana"]) {
-  assert.equal(byName.get(name).tiers.solo, "D", `${name} tanpa efek SOLO harus D`);
+  assert.equal(byName.get(name).tiers.solo, "D", `${name} tanpa efek damage SOLO harus D`);
+  assert.ok(byName.get(name).scores.solo > 0, `${name} dapat bobot mitigasi kecil, bukan 0`);
+  assert.ok(
+    byName.get(name).scores.solo < scoreArtist([{ effect: "basic_atk", value: 50 }], "solo"),
+    `${name} defensif harus di bawah damage murni`,
+  );
 }
+// Ekonomi murni tidak memberi nilai di SOLO.
+assert.equal(byName.get("Kesnia").scores.solo, 0, "Kesnia gold-only harus 0 di SOLO");
 
 const orders = {
   solo: ["fan", "player_dmg", "skill_dmg", "basic_atk"],
@@ -27,6 +34,11 @@ for (const [category, order] of Object.entries(orders)) {
     assert.ok(scores[i] < scores[i - 1], `priority ${category}: ${order[i]} must rank below ${order[i - 1]}`);
   }
 }
+// Bobot kecil SOLO tidak boleh mengalahkan damage murni.
+assert.ok(
+  scoreArtist([{ effect: "wbg_dmg", value: 20 }], "solo") > scoreArtist([{ effect: "dps_def", value: 20 }], "solo"),
+  "wbg_dmg harus di atas dps_def di SOLO",
+);
 // player_dmg menambah basic_atk DAN skill_dmg: skill 30 + player 30 == skill 60 + basic 30.
 assert.equal(
   scoreArtist([{ effect: "skill_dmg", value: 30 }, { effect: "player_dmg", value: 30 }], "solo"),
