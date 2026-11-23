@@ -31,8 +31,6 @@ export const id = {
     tier: "Tier",
     skill: "Skill",
     resetFilter: "Reset filter",
-    full: "Tim penuh {size}/{size} — hapus satu artist untuk memilih yang lain.",
-    arrange: "Atur tim",
     results: "{n} artist cocok dengan filter.",
     tierCount: "{n} artist",
     empty: "Tidak ada artist yang cocok dengan filter.",

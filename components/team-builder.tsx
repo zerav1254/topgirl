@@ -111,7 +111,7 @@ export function TeamBuilder({ artists, locale }: { artists: Artist[]; locale: Lo
       </header>
 
       {tab === "artists" ? (
-        <ArtistsTab artists={artists} picked={picked} full={full} locale={locale} onToggle={toggle} onOpenTeam={() => go("team")} />
+        <ArtistsTab artists={artists} picked={picked} locale={locale} />
       ) : (
         <TeamTab artists={artists} team={team} picked={picked} full={full} locale={locale} onToggle={toggle} onReset={() => writeTeam([])} />
       )}

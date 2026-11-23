@@ -33,8 +33,6 @@ export const ko: Dict = {
     tier: "티어",
     skill: "스킬",
     resetFilter: "필터 초기화",
-    full: "팀이 가득 찼습니다 {size}/{size} — 다른 아티스트를 선택하려면 한 명을 제거하세요.",
-    arrange: "팀 관리",
     results: "{n}명의 아티스트가 필터와 일치합니다.",
     tierCount: "{n}명의 아티스트",
     empty: "필터와 일치하는 아티스트가 없습니다.",

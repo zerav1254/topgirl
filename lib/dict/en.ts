@@ -33,8 +33,6 @@ export const en: Dict = {
     tier: "Tier",
     skill: "Skill",
     resetFilter: "Reset filters",
-    full: "Team full {size}/{size} — remove an artist to pick another.",
-    arrange: "Manage team",
     results: "{n} artists match the filters.",
     tierCount: "{n} artists",
     empty: "No artists match the filters.",

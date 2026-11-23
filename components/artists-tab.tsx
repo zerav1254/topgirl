@@ -5,16 +5,12 @@ import Image from "next/image";
 import type { Artist, Effect } from "@/lib/artists";
 import { DICT, t, type Locale } from "@/lib/i18n";
 import { EFFECTS, EFFECT_LABEL, TIER_ORDER } from "@/lib/score";
-import { TEAM_SIZE } from "@/lib/team";
 import { GenreIcon, ICONS, Icon, SearchInput, TierBadge, formatStat, isPercent } from "./artist-ui";
 
 type Props = {
   artists: Artist[];
   picked: string[];
-  full: boolean;
   locale: Locale;
-  onToggle: (slug: string) => void;
-  onOpenTeam: () => void;
 };
 
 type Filter = { genre: string; origin: string; tier: string; skill: string };
@@ -77,7 +73,7 @@ function FilterRow({
   );
 }
 
-export function ArtistsTab({ artists, picked, full, locale, onToggle, onOpenTeam }: Props) {
+export function ArtistsTab({ artists, picked, locale }: Props) {
   const C = DICT[locale];
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<Filter>({ genre: ALL, origin: ALL, tier: ALL, skill: ALL });
@@ -161,14 +157,6 @@ export function ArtistsTab({ artists, picked, full, locale, onToggle, onOpenTeam
         ))}
       </div>
 
-      {full && (
-        <p className="mt-4 flex flex-wrap items-center gap-2 rounded-xl border border-gold/30 bg-gold/10 px-3 py-2 text-sm text-zinc-200">
-          {t(C.artists.full, { size: TEAM_SIZE })}
-          <button type="button" onClick={onOpenTeam} className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-gold underline-offset-2 hover:underline">
-            {C.artists.arrange}
-          </button>
-        </p>
-      )}
       <p aria-live="polite" className="sr-only">
         {t(C.artists.results, { n: visible.length })}
       </p>
@@ -184,18 +172,13 @@ export function ArtistsTab({ artists, picked, full, locale, onToggle, onOpenTeam
             </h2>
             <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
               {list.map((a) => {
-                const active = picked.includes(a.slug);
+                const inTeam = picked.includes(a.slug);
                 return (
                   <li key={a.slug}>
-                    <button
-                      type="button"
-                      onClick={() => onToggle(a.slug)}
-                      aria-pressed={active}
-                      disabled={!active && full}
-                      className={`group relative flex w-full cursor-pointer flex-col overflow-hidden rounded-xl border text-left transition-colors duration-200 ${
-                        active
-                          ? "border-gold/45 bg-gold/10"
-                          : "border-white/10 bg-panel/70 hover:border-white/25 hover:bg-panel-2 disabled:cursor-not-allowed disabled:opacity-60"
+                    {/* Kartu hanya info: pemilihan artist dilakukan di tab Team Builder. */}
+                    <div
+                      className={`relative flex w-full flex-col overflow-hidden rounded-xl border ${
+                        inTeam ? "border-gold/30 bg-gold/5" : "border-white/10 bg-panel/70"
                       }`}
                     >
                       <span className="relative block aspect-[3/4] w-full bg-panel-2">
@@ -209,7 +192,7 @@ export function ArtistsTab({ artists, picked, full, locale, onToggle, onOpenTeam
                         <span className="absolute top-1.5 left-1.5 rounded-md bg-ink/70 p-0.5 backdrop-blur-sm">
                           <TierBadge tier={a.tier} />
                         </span>
-                        {active && (
+                        {inTeam && (
                           <span className="absolute top-1.5 right-1.5 grid h-7 w-7 place-items-center rounded-md border border-gold/45 bg-ink/80 text-gold">
                             <Icon d={ICONS.check} className="h-4 w-4" />
                           </span>
@@ -241,7 +224,7 @@ export function ArtistsTab({ artists, picked, full, locale, onToggle, onOpenTeam
                           ))}
                         </span>
                       </span>
-                    </button>
+                    </div>
                   </li>
                 );
               })}
