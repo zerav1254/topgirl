@@ -11,6 +11,8 @@ const byName = new Map(artists.map((a) => [a.name, a]));
 assert.equal(byName.get("Monica").tiers.solo, "S+");
 assert.equal(byName.get("Rhea").tiers.rally, "S+");
 assert.equal(byName.get("Kesnia").tiers.economy, "S+");
+const rallyCapped = artists.filter((a) => a.scores.rally >= 100);
+assert.ok(rallyCapped.length <= 2, `RALLY terlalu banyak skor 100: ${rallyCapped.map((a) => a.name).join(", ")}`);
 for (const name of ["Ayaka", "Moana"]) {
   assert.equal(byName.get(name).tiers.solo, "D", `${name} tanpa efek damage SOLO harus D`);
   assert.ok(byName.get(name).scores.solo > 0, `${name} dapat bobot mitigasi kecil, bukan 0`);
@@ -21,11 +23,17 @@ for (const name of ["Ayaka", "Moana"]) {
 }
 // Ekonomi murni tidak memberi nilai di SOLO.
 assert.equal(byName.get("Kesnia").scores.solo, 0, "Kesnia gold-only harus 0 di SOLO");
+// DEFENSE: semua efek punya bobot kecil, jadi tidak ada artist berskor 0.
+for (const a of artists) {
+  assert.ok(a.scores.defense > 0, `${a.name} tanpa efek defense tetap harus dapat poin`);
+}
+assert.equal(byName.get("Ayaka").tiers.defense, "S", "tank murni harus S di DEFENSE");
+assert.ok(byName.get("Aoi").scores.defense > byName.get("Monica").scores.defense, "Aoi (red + damage) di atas Monica (damage murni)");
 
 const orders = {
   solo: ["fan", "player_dmg", "skill_dmg", "basic_atk"],
   rally: ["fan_rally", "player_dmg", "skill_dmg", "basic_atk"],
-  defense: ["player_dmg", "basic_atk_red", "skill_dmg_red"],
+  defense: ["basic_atk_red", "skill_dmg_red", "player_dmg"],
   economy: ["gold", "drive"],
 };
 for (const [category, order] of Object.entries(orders)) {
