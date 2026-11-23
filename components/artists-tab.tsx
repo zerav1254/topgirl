@@ -17,8 +17,6 @@ type Props = {
 };
 
 // Season hanya bermakna untuk artist dari kota tuan rumah; origin lain tidak menampilkannya.
-const SEASON_ORIGINS = new Set(["Tokyo", "Bali", "Rome"]);
-
 export function ArtistsTab({ artists, picked, locale, category, state }: Props) {
   const C = DICT[locale];
   const visible = state.visible;
@@ -91,14 +89,6 @@ export function ArtistsTab({ artists, picked, locale, category, state }: Props) 
                           </span>
                           <span className="truncate text-zinc-300">{a.origin ?? "—"}</span>
                         </span>
-                        {a.season !== null && a.origin && SEASON_ORIGINS.has(a.origin) && (
-                          <span className="flex items-baseline justify-between gap-2 text-xs">
-                            <span className="shrink-0 text-[11px] font-semibold uppercase tracking-wide text-zinc-400">
-                              {C.artists.season}
-                            </span>
-                            <span className="tabular truncate text-zinc-300">{a.season}</span>
-                          </span>
-                        )}
                         <span className="mt-1 flex flex-col gap-0.5 border-t border-white/10 pt-1">
                           {a.skills.map((s, i) => (
                             <span key={i} className="flex items-baseline justify-between gap-2 text-xs">

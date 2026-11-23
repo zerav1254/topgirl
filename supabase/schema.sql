@@ -26,7 +26,6 @@ create table public.artists (
   name text not null,
   genre text not null references public.genres (id) on update cascade,
   origin text references public.origins (id) on update cascade,
-  season integer,
   photo_path text,
   -- Versi cache foto, terpisah dari updated_at supaya edit stat tidak memicu unduh ulang gambar.
   photo_updated_at timestamptz not null default now(),
@@ -85,7 +84,6 @@ create or replace function public.save_artist_stats(
   p_name text,
   p_genre text,
   p_origin text,
-  p_season integer,
   p_skills jsonb
 ) returns integer
 language plpgsql
@@ -98,8 +96,7 @@ begin
   update public.artists
      set name = p_name,
          genre = p_genre,
-         origin = v_origin,
-         season = case when v_origin is null then null else p_season end
+         origin = v_origin
    where slug = p_slug
   returning id into v_id;
 
@@ -117,8 +114,8 @@ begin
 end;
 $$;
 
-revoke all on function public.save_artist_stats(text, text, text, text, integer, jsonb) from public, anon, authenticated;
-grant execute on function public.save_artist_stats(text, text, text, text, integer, jsonb) to service_role;
+revoke all on function public.save_artist_stats(text, text, text, text, jsonb) from public, anon, authenticated;
+grant execute on function public.save_artist_stats(text, text, text, text, jsonb) to service_role;
 
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values ('artist-thumb', 'artist-thumb', true, 5242880, array['image/webp'])

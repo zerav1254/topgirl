@@ -17,7 +17,6 @@ type Draft = {
   slug: string;
   genre: string;
   origin: string;
-  season: string;
   skills: [SkillDraft, SkillDraft];
 };
 
@@ -48,7 +47,6 @@ function draftFromArtist(a: Artist): Draft {
     slug: a.slug,
     genre: a.genre,
     origin: a.origin ?? "",
-    season: a.season?.toString() ?? "",
     skills: [skill(0), skill(1)],
   };
 }
@@ -63,7 +61,6 @@ function toFormData(d: Draft, a: Artist): FormData {
   fd.set("name", a.name);
   fd.set("genre", d.genre);
   fd.set("origin", d.origin);
-  fd.set("season", d.origin ? d.season : "");
   d.skills.forEach((s, i) => {
     fd.set(`s${i + 1}_effect`, s.effect);
     fd.set(`s${i + 1}_value`, s.effect ? s.value : "");
@@ -259,7 +256,7 @@ export function ArtistEditor({
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-sm font-semibold">{a.name}</span>
                       <span className="block truncate text-xs text-zinc-400">
-                        {[a.origin, a.season && `S${a.season}`].filter(Boolean).join(" · ") || C.noOrigin}
+                        {a.origin || C.noOrigin}
                       </span>
                     </span>
                     <span
@@ -284,9 +281,7 @@ export function ArtistEditor({
                   <div className="min-w-0">
                     <h2 className="font-display truncate text-xl font-semibold">{current.name}</h2>
                     <p className="truncate text-xs text-zinc-400">
-                      {[current.genre, current.origin ?? C.noOrigin, current.season && `S${current.season}`]
-                        .filter(Boolean)
-                        .join(" · ")}
+                      {[current.genre, current.origin ?? C.noOrigin].filter(Boolean).join(" · ")}
                     </p>
                   </div>
                 </div>
@@ -300,7 +295,7 @@ export function ArtistEditor({
               </div>
 
               <form className="flex flex-col gap-4" onSubmit={submit}>
-                <div className="grid gap-3 sm:grid-cols-3">
+                <div className="grid gap-3 sm:grid-cols-2">
                   <label className="flex flex-col gap-1 text-sm text-zinc-400">
                     {C.genre}
                     <select value={form.genre} onChange={(e) => update({ genre: e.target.value })} className={inputClass}>
@@ -321,16 +316,6 @@ export function ArtistEditor({
                         </option>
                       ))}
                     </select>
-                  </label>
-                  <label className="flex flex-col gap-1 text-sm text-zinc-400">
-                    {C.season}
-                    <input
-                      value={form.season}
-                      onChange={(e) => update({ season: digits(e.target.value) })}
-                      inputMode="numeric"
-                      placeholder="14"
-                      className={inputClass}
-                    />
                   </label>
                 </div>
 

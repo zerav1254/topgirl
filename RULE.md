@@ -20,7 +20,7 @@ Aturan keras repo ini. Kalau ragu, berhenti dan tanya — jangan improvisasi.
 - Sumber data runtime = Supabase (tabel `artists`, `artist_skills`, bucket `artist-thumb`). Skema tercatat di `supabase/schema.sql`.
 - `data/artists.csv` dan `public/assets/images/artists/thumb/` hanya bahan seed (`npm run seed`). Jangan dipakai sebagai sumber runtime.
 - Tier **tidak disimpan** di DB; dihitung per kategori dari skor (`SCORE`/`BANDS` di `lib/score.ts`).
-- `slug` unik, huruf kecil tanpa spasi; `origin` ∈ `Tokyo Rome Bali Auction Home Event` atau NULL; `season` angka lokal (`Tokyo 4` → `4`) atau NULL.
+- `slug` unik, huruf kecil tanpa spasi; `origin` ∈ `Tokyo Rome Bali Auction Home Event` atau NULL.
 - `base_sing`/`base_dance` boleh NULL; skor memakai faktor basis netral saat kosong.
 - `effect` wajib ada di tabel `effects` (FK). Kolom `unit` menentukan input: `percent` (12, 24, …) atau `flat` (DPS 200/240). Menambah `Effect` baru: insert baris `effects` + isi `unit`, lalu beri bobot di `SCORE[category]` dan skala di `FLAT_SCALE` bila unit `flat` (`lib/score.ts`).
 - Dropdown `/{locale}/manage` (genre, origin, efek) dibaca dari tabel `genres`, `origins`, `effects`. Menambah opsi = insert baris di tabel, jangan hardcode di komponen.

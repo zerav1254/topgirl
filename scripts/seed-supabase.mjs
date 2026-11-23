@@ -52,7 +52,6 @@ for (const line of rows) {
         name: get(r, "name"),
         genre: get(r, "genre"),
         origin: get(r, "origin") || null,
-        season: num(get(r, "season")),
       },
       { onConflict: "slug" },
     )

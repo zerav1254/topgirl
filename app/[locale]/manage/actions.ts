@@ -89,7 +89,6 @@ export async function saveArtist(locale: Locale, fd: FormData): Promise<SaveResu
     p_name: name,
     p_genre: genre,
     p_origin: origin ?? "",
-    p_season: pos(fd, "season"),
     p_skills: skills,
   });
   if (error) return fail(error);
