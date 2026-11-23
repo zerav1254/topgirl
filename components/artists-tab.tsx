@@ -6,7 +6,7 @@ import type { Artist, Effect } from "@/lib/artists";
 import { DICT, t, type Locale } from "@/lib/i18n";
 import { EFFECTS, EFFECT_LABEL, TIER_ORDER } from "@/lib/score";
 import { TEAM_SIZE } from "@/lib/team";
-import { GenreIcon, ICONS, Icon, SearchInput, TierBadge, formatStat, skillList } from "./artist-ui";
+import { GenreIcon, ICONS, Icon, SearchInput, TierBadge, formatStat, isPercent } from "./artist-ui";
 
 type Props = {
   artists: Artist[];
@@ -209,16 +209,11 @@ export function ArtistsTab({ artists, picked, full, locale, onToggle, onOpenTeam
                         <span className="absolute top-1.5 left-1.5 rounded-md bg-ink/70 p-0.5 backdrop-blur-sm">
                           <TierBadge tier={a.tier} />
                         </span>
-                        <span
-                          aria-hidden="true"
-                          className={`absolute top-1.5 right-1.5 grid h-7 w-7 place-items-center rounded-md border transition-colors duration-200 ${
-                            active
-                              ? "border-gold/45 bg-gold/20 text-gold"
-                              : "border-white/15 bg-ink/70 text-zinc-300 group-hover:text-zinc-100"
-                          }`}
-                        >
-                          <Icon d={active ? ICONS.check : ICONS.plus} className="h-4 w-4" />
-                        </span>
+                        {active && (
+                          <span className="absolute top-1.5 right-1.5 grid h-7 w-7 place-items-center rounded-md border border-gold/45 bg-ink/80 text-gold">
+                            <Icon d={ICONS.check} className="h-4 w-4" />
+                          </span>
+                        )}
                       </span>
                       <span className="block min-w-0 p-2">
                         <span className="flex items-baseline justify-between gap-1">
@@ -229,7 +224,22 @@ export function ArtistsTab({ artists, picked, full, locale, onToggle, onOpenTeam
                           <GenreIcon genre={a.genre} className="h-3 w-3 shrink-0" />
                           <span className="truncate">{a.genre}</span>
                         </span>
-                        <span className="mt-1 line-clamp-2 block text-xs text-zinc-400">{skillList(a.skills, locale)}</span>
+                        <span className="mt-0.5 flex items-baseline justify-between gap-2 text-xs">
+                          <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wide text-zinc-400">
+                            {C.artists.origin}
+                          </span>
+                          <span className="truncate text-zinc-300">{a.origin ?? "—"}</span>
+                        </span>
+                        <span className="mt-1 flex flex-col gap-0.5 border-t border-white/10 pt-1">
+                          {a.skills.map((s, i) => (
+                            <span key={i} className="flex items-baseline justify-between gap-2 text-xs">
+                              <span className="truncate text-zinc-400">{EFFECT_LABEL[s.effect][locale]}</span>
+                              <span className="tabular shrink-0 font-semibold text-zinc-200">
+                                {s.value === null ? "—" : `${formatStat(s.value, locale)}${isPercent(s.effect) ? "%" : ""}`}
+                              </span>
+                            </span>
+                          ))}
+                        </span>
                       </span>
                     </button>
                   </li>

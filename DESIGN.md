@@ -51,7 +51,7 @@ Badge tier: `border-<warna>/45 bg-<warna>/15 text-<warna>-300` (S+ pakai `text-g
 
 ## Komponen
 
-**Artist card** — tombol penuh. Normal: `border-white/10 bg-panel/70`. Hover: border lebih terang + `bg-panel-2`. Terpilih: `border-gold/45 bg-gold/10` + ikon centang. Saat tim penuh: `disabled:opacity-60 disabled:cursor-not-allowed`. Skill identik di dua slot diringkas `… ×2` (efek sama itu sah, skornya tetap dijumlahkan).
+**Artist card** — tombol penuh. Normal: `border-white/10 bg-panel/70`. Hover: border lebih terang + `bg-panel-2`. Terpilih: `border-gold/45 bg-gold/10` + ikon centang di pojok kanan-atas (tidak ada tombol tambah). Saat tim penuh: `disabled:opacity-60 disabled:cursor-not-allowed`. Isi kartu: nama + skor sebaris, genre (ikon + teks), baris label **Asal** (`text-[10px]` uppercase `text-zinc-400`, nilai `text-zinc-300`), lalu dua baris skill dipisah border atas — nama efek kiri (`text-zinc-400`), nilai kanan (`tabular font-semibold text-zinc-200`, `—` bila kosong). Tiap slot skill tampil sendiri (tidak digabung `×2`).
 
 **Slot tim** — daftar `<ol>` 5 baris tinggi tetap `min-h-[3.25rem]`. Kosong: border dashed + label "Slot n kosong". Terisi: avatar, nama, badge tier, genre, tombol hapus.
 
@@ -72,7 +72,7 @@ Badge tier: `border-<warna>/45 bg-<warna>/15 text-<warna>-300` (S+ pakai `text-g
 - Focus ring global: 2px `gold`, offset 2px, `:focus-visible` saja.
 - Ikon dekoratif `aria-hidden="true"`; tombol ikon wajib `aria-label`.
 - Status pilihan diumumkan lewat `aria-pressed`, bukan warna saja.
-- Target sentuh minimal 28×28 px (tombol kecil 7×7 Tailwind).
+- Target sentuh minimal 44×44 px (`min-h-11` / `h-11 w-11`).
 - `lang="id"`, label form eksplisit.
 
 ## Jangan
