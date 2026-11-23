@@ -45,25 +45,32 @@ function FilterRow({
   return (
     <div className="flex items-center gap-2">
       <span className="w-14 shrink-0 text-[11px] font-semibold uppercase tracking-wide text-zinc-400">{label}</span>
-      <div
-        className="flex min-w-0 items-center gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        role="group"
-        aria-label={t(DICT[locale].artists.filterLabel, { label })}
-      >
-        {options.map((o) => (
-          <button
-            key={o.id}
-            type="button"
-            onClick={() => onChange(value === o.id ? ALL : o.id)}
-            aria-pressed={value === o.id}
-            className={`flex min-h-11 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-1 text-sm font-semibold transition-colors duration-200 ${
-              value === o.id ? active : "border-white/10 bg-panel/60 text-zinc-400 hover:border-white/25 hover:text-zinc-200"
-            }`}
-          >
-            {genreIcon && <GenreIcon genre={o.id} className="h-4 w-4" />}
-            {o.text}
-          </button>
-        ))}
+      <div className="relative min-w-0 flex-1">
+        <div
+          className="flex min-w-0 items-center gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          role="group"
+          aria-label={t(DICT[locale].artists.filterLabel, { label })}
+        >
+          {options.map((o) => (
+            <button
+              key={o.id}
+              type="button"
+              onClick={() => onChange(value === o.id ? ALL : o.id)}
+              aria-pressed={value === o.id}
+              className={`flex min-h-11 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-1 text-sm font-semibold transition-colors duration-200 ${
+                value === o.id ? active : "border-white/10 bg-panel/60 text-zinc-400 hover:border-white/25 hover:text-zinc-200"
+              }`}
+            >
+              {genreIcon && <GenreIcon genre={o.id} className="h-4 w-4" />}
+              {o.text}
+            </button>
+          ))}
+        </div>
+        {/* ponytail: fade tetap ada walau sudah di ujung; sembunyikan lewat scroll listener kalau mengganggu. */}
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-ink to-transparent"
+        />
       </div>
     </div>
   );
