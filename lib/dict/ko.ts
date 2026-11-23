@@ -67,7 +67,7 @@ export const ko: Dict = {
     genre: "장르",
     origin: "출신",
     season: "시즌",
-    tier: "티어",
+    specialty: "전문 분야",
     skill: "스킬",
     resetFilter: "필터 초기화",
     results: "{n}명의 아티스트가 필터와 일치합니다.",

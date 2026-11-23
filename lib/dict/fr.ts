@@ -67,7 +67,7 @@ export const fr: Dict = {
     genre: "Genre",
     origin: "Origine",
     season: "Saison",
-    tier: "Tier",
+    specialty: "Spécialité",
     skill: "Compétence",
     resetFilter: "Réinitialiser les filtres",
     results: "{n} artistes correspondent aux filtres.",

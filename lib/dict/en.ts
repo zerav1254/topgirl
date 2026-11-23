@@ -67,7 +67,7 @@ export const en: Dict = {
     genre: "Genre",
     origin: "Origin",
     season: "Season",
-    tier: "Tier",
+    specialty: "Specialty",
     skill: "Skill",
     resetFilter: "Reset filters",
     results: "{n} artists match the filters.",

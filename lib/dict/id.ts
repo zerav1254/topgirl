@@ -65,7 +65,7 @@ export const id = {
     genre: "Genre",
     origin: "Asal",
     season: "Season",
-    tier: "Tier",
+    specialty: "Spesialis",
     skill: "Skill",
     resetFilter: "Reset filter",
     results: "{n} artist cocok dengan filter.",

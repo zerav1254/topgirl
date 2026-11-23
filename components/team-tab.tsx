@@ -5,7 +5,8 @@ import type { Artist, Category, Effect } from "@/lib/artists";
 import { DICT, t, type Locale } from "@/lib/i18n";
 import { EFFECT_LABEL } from "@/lib/score";
 import { GENRE_BONUS, STAT_ORDER, TEAM_SIZE } from "@/lib/team";
-import { Avatar, GenreIcon, ICONS, Icon, SearchInput, TierBadge, formatStat, isPercent } from "./artist-ui";
+import { ArtistFilterBar, useArtistFilter } from "./artist-filter";
+import { Avatar, GenreIcon, ICONS, Icon, TierBadge, formatStat, isPercent } from "./artist-ui";
 
 type Props = {
   artists: Artist[];
@@ -20,10 +21,10 @@ type Props = {
 
 export function TeamTab({ artists, team, picked, locale, category, onToggle, onAssign, onReset }: Props) {
   const C = DICT[locale];
-  const [query, setQuery] = useState("");
   // Slot yang sedang dipilih; null = dialog tertutup. Picker menggantikan daftar panjang di bawah.
   const [slot, setSlot] = useState<number | null>(null);
   const dialog = useRef<HTMLDialogElement>(null);
+  const state = useArtistFilter(artists, locale);
 
   useEffect(() => {
     const d = dialog.current;
@@ -32,18 +33,10 @@ export function TeamTab({ artists, team, picked, locale, category, onToggle, onA
     if (slot === null && d.open) d.close();
   }, [slot]);
 
-  const q = query.trim().toLowerCase();
   const current = slot === null ? undefined : team[slot];
   // Artist di slot aktif tetap tampil supaya bisa dibatalkan; yang lain sudah dipakai disembunyikan.
-  const candidates = artists
+  const candidates = state.visible
     .filter((a) => a.slug === current?.slug || !picked.includes(a.slug))
-    .filter(
-      (a) =>
-        q === "" ||
-        a.name.toLowerCase().includes(q) ||
-        a.genre.toLowerCase().includes(q) ||
-        a.skills.some((s) => EFFECT_LABEL[s.effect][locale].toLowerCase().includes(q)),
-    )
     .sort((a, b) => b.scores[category] - a.scores[category]);
 
   const summary = useMemo(() => {
@@ -71,7 +64,6 @@ export function TeamTab({ artists, team, picked, locale, category, onToggle, onA
   }, [team, category]);
 
   function open(index: number) {
-    setQuery("");
     setSlot(index);
   }
 
@@ -208,10 +200,7 @@ export function TeamTab({ artists, team, picked, locale, category, onToggle, onA
       <dialog
         ref={dialog}
         aria-labelledby="team-picker-title"
-        onClose={() => {
-          setSlot(null);
-          setQuery("");
-        }}
+        onClose={() => setSlot(null)}
         className="m-auto w-[min(100%-2rem,32rem)] rounded-2xl border border-white/10 bg-panel p-0 text-zinc-100 backdrop:bg-ink/80"
       >
         <div className="flex max-h-[85vh] flex-col">
@@ -229,7 +218,7 @@ export function TeamTab({ artists, team, picked, locale, category, onToggle, onA
             </button>
           </div>
           <div className="p-3">
-            <SearchInput value={query} onChange={setQuery} locale={locale} />
+            <ArtistFilterBar artists={artists} locale={locale} state={state} bare />
           </div>
           <ul className="flex flex-col gap-2 overflow-y-auto px-3 pb-3">
             {candidates.map((a) => {

@@ -39,7 +39,8 @@ app/
   globals.css       @import "tailwindcss" + @theme tokens + base rules
 components/
   team-builder.tsx  client ("use client") — shell: state tim + tab + nav bawah
-  artists-tab.tsx   client — tab Artists: cari + filter tier/genre + roster
+  artists-tab.tsx   client — tab Artists: cari + filter + roster per tier
+  artist-filter.tsx client — hook + bar filter bersama (genre/asal/spesialis/skill), dipakai kedua tab
   team-tab.tsx      client — tab Team Builder: slot tim (klik slot buka dialog pilih artist), ringkasan
   artist-ui.tsx     atom bersama (Icon, TierBadge, Avatar, GenreIcon, SearchInput)
   artist-editor.tsx client ("use client") — form stat + upload foto
@@ -74,7 +75,7 @@ Alur data: Supabase → `lib/artists.ts` → server component (props) → client
 | Auth/login admin | `lib/auth.ts` + `app/[locale]/manage/actions.ts` |
 | Teks UI / bahasa baru | `lib/dict/*.ts` (+ `LOCALES`/`LANG_NAME` di `lib/i18n.ts`) |
 | Ukuran tim | `TEAM_SIZE` di `lib/team.ts` |
-| Filter/sort/summary | `components/artists-tab.tsx` (filter + roster), `components/team-tab.tsx` (ringkasan tim) |
+| Filter/sort/summary | `components/artist-filter.tsx` (filter shared), `components/artists-tab.tsx` (roster), `components/team-tab.tsx` (ringkasan tim) |
 | Bobot skor / ambang tier | `SCORE` per kategori + `BANDS` di `lib/score.ts` |
 | Teks halaman info rank | `app/[locale]/info/page.tsx` + `info` di `lib/dict/*.ts` |
 | Warna, font, radius, bayangan | `@theme` di `app/globals.css` |
