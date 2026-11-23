@@ -60,6 +60,7 @@ export const en: Dict = {
     searchPlaceholder: "Search name, genre, or skill…",
     searchArtist: "Search artists",
     clearSearch: "Clear search",
+    close: "Close",
   },
   artists: {
     section: "Artists",
@@ -78,7 +79,8 @@ export const en: Dict = {
     title: "Your Team",
     remove: "Remove {name} from the team",
     emptySlot: "Slot {n} empty",
-    pick: "Pick an artist below to fill a slot.",
+    chooseSlot: "Pick an artist for slot {n}",
+    pick: "Click an empty slot to pick an artist.",
     tiers: "Tier composition",
     genre: "Genre",
     synergy: "Synergy {n}× {genre}: +{bonus}%",

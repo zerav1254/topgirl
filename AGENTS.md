@@ -40,7 +40,7 @@ app/
 components/
   team-builder.tsx  client ("use client") — shell: state tim + tab + nav bawah
   artists-tab.tsx   client — tab Artists: cari + filter tier/genre + roster
-  team-tab.tsx      client — tab Team Builder: slot tim, ringkasan, tambah artist
+  team-tab.tsx      client — tab Team Builder: slot tim (klik slot buka dialog pilih artist), ringkasan
   artist-ui.tsx     atom bersama (Icon, TierBadge, Avatar, GenreIcon, SearchInput)
   artist-editor.tsx client ("use client") — form stat + upload foto
   locale-switcher.tsx client — link ganti bahasa (ganti segmen locale di path)

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Artist, Category, Effect } from "@/lib/artists";
 import { DICT, t, type Locale } from "@/lib/i18n";
 import { EFFECT_LABEL } from "@/lib/score";
@@ -11,20 +11,32 @@ type Props = {
   artists: Artist[];
   team: Artist[];
   picked: string[];
-  full: boolean;
   locale: Locale;
   category: Category;
   onToggle: (slug: string) => void;
+  onAssign: (index: number, slug: string) => void;
   onReset: () => void;
 };
 
-export function TeamTab({ artists, team, picked, full, locale, category, onToggle, onReset }: Props) {
+export function TeamTab({ artists, team, picked, locale, category, onToggle, onAssign, onReset }: Props) {
   const C = DICT[locale];
   const [query, setQuery] = useState("");
+  // Slot yang sedang dipilih; null = dialog tertutup. Picker menggantikan daftar panjang di bawah.
+  const [slot, setSlot] = useState<number | null>(null);
+  const dialog = useRef<HTMLDialogElement>(null);
+
+  useEffect(() => {
+    const d = dialog.current;
+    if (!d) return;
+    if (slot !== null && !d.open) d.showModal();
+    if (slot === null && d.open) d.close();
+  }, [slot]);
 
   const q = query.trim().toLowerCase();
-  // ponytail: sort ulang tiap render; roster ~60 baris, memo belum perlu.
-  const pickable = artists
+  const current = slot === null ? undefined : team[slot];
+  // Artist di slot aktif tetap tampil supaya bisa dibatalkan; yang lain sudah dipakai disembunyikan.
+  const candidates = artists
+    .filter((a) => a.slug === current?.slug || !picked.includes(a.slug))
     .filter(
       (a) =>
         q === "" ||
@@ -58,6 +70,17 @@ export function TeamTab({ artists, team, picked, full, locale, category, onToggl
     };
   }, [team, category]);
 
+  function open(index: number) {
+    setQuery("");
+    setSlot(index);
+  }
+
+  function choose(a: Artist) {
+    if (slot === null) return;
+    if (current?.slug !== a.slug) onAssign(slot, a.slug);
+    setSlot(null);
+  }
+
   return (
     <section aria-label={C.team.section} className="flex flex-col gap-4">
       <div className="flex items-center justify-between gap-2">
@@ -80,21 +103,27 @@ export function TeamTab({ artists, team, picked, full, locale, category, onToggl
           return (
             <li
               key={i}
-              className={`flex min-h-[4rem] items-center gap-3 rounded-xl border p-2.5 ${
-                a ? "border-white/15 bg-panel-2" : "border-dashed border-white/10"
+              className={`flex min-h-[4rem] items-center gap-1 border p-2.5 ${
+                a ? "rounded-xl border-white/15 bg-panel-2" : "rounded-xl border-dashed border-white/10"
               }`}
             >
               {a ? (
                 <>
-                  <Avatar artist={a} tier={a.tiers[category]} size="h-10 w-10" />
-                  <span className="min-w-0 flex-1">
-                    <span className="flex items-center gap-1.5">
-                      <span className="truncate text-base font-semibold">{a.name}</span>
-                      <TierBadge tier={a.tiers[category]} />
-                      <span className="tabular text-xs text-zinc-400">{formatStat(a.scores[category], locale)}</span>
+                  <button
+                    type="button"
+                    onClick={() => open(i)}
+                    className="flex min-h-11 min-w-0 flex-1 cursor-pointer items-center gap-3 rounded-lg text-left transition-colors duration-200 hover:bg-white/5"
+                  >
+                    <Avatar artist={a} tier={a.tiers[category]} size="h-10 w-10" />
+                    <span className="min-w-0 flex-1">
+                      <span className="flex items-center gap-1.5">
+                        <span className="truncate text-base font-semibold">{a.name}</span>
+                        <TierBadge tier={a.tiers[category]} />
+                        <span className="tabular text-xs text-zinc-400">{formatStat(a.scores[category], locale)}</span>
+                      </span>
+                      <span className="block truncate text-sm text-zinc-400">{a.genre}</span>
                     </span>
-                    <span className="block truncate text-sm text-zinc-400">{a.genre}</span>
-                  </span>
+                  </button>
                   <button
                     type="button"
                     onClick={() => onToggle(a.slug)}
@@ -105,7 +134,14 @@ export function TeamTab({ artists, team, picked, full, locale, category, onToggl
                   </button>
                 </>
               ) : (
-                <span className="px-1 text-sm text-zinc-400">{t(C.team.emptySlot, { n: i + 1 })}</span>
+                <button
+                  type="button"
+                  onClick={() => open(i)}
+                  className="flex min-h-11 w-full cursor-pointer items-center gap-2 rounded-lg px-1 text-left text-sm text-zinc-400 transition-colors duration-200 hover:text-zinc-200"
+                >
+                  <Icon d={ICONS.plus} className="h-4 w-4 shrink-0" />
+                  {t(C.team.emptySlot, { n: i + 1 })}
+                </button>
               )}
             </li>
           );
@@ -137,9 +173,7 @@ export function TeamTab({ artists, team, picked, full, locale, category, onToggl
                     {t(C.team.synergy, { n: summary.topCount, genre: summary.topGenre, bonus: summary.genreBonus })}
                   </span>
                 ) : (
-                  <span className="text-zinc-400">
-                    {t(C.team.synergyNeed, { n: summary.topCount, genre: summary.topGenre })}
-                  </span>
+                  <span className="text-zinc-400">{t(C.team.synergyNeed, { n: summary.topCount, genre: summary.topGenre })}</span>
                 )}
                 <span className="text-zinc-400">{C.team.infoOnly}</span>
               </dd>
@@ -171,48 +205,71 @@ export function TeamTab({ artists, team, picked, full, locale, category, onToggl
         )}
       </div>
 
-      <div className="border-t border-white/10 pt-4">
-        <h2 className="font-display mb-2 text-sm font-semibold uppercase tracking-wide text-zinc-300">{C.team.add}</h2>
-        <SearchInput value={query} onChange={setQuery} locale={locale} />
-        <ul className="mt-2 flex flex-col gap-2">
-          {pickable.map((a) => {
-            const active = picked.includes(a.slug);
-            return (
-              <li key={a.slug}>
-                <button
-                  type="button"
-                  onClick={() => onToggle(a.slug)}
-                  aria-pressed={active}
-                  disabled={!active && full}
-                  className={`flex min-h-14 w-full cursor-pointer items-center gap-3 rounded-xl border p-2 text-left transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-60 ${
-                    active ? "border-gold/45 bg-gold/10" : "border-white/10 bg-panel/70 hover:border-white/25 hover:bg-panel-2"
-                  }`}
-                >
-                  <Avatar artist={a} tier={a.tiers[category]} size="h-9 w-9" />
-                  <span className="min-w-0 flex-1">
-                    <span className="flex items-center gap-1.5">
-                      <span className="truncate text-sm font-semibold">{a.name}</span>
-                      <TierBadge tier={a.tiers[category]} />
-                    </span>
-                    <span className="tabular block truncate text-xs text-zinc-400">
-                      {a.genre} · {formatStat(a.scores[category], locale)}
-                    </span>
-                  </span>
-                  <span
-                    aria-hidden="true"
-                    className={`grid h-7 w-7 shrink-0 place-items-center rounded-md border ${
-                      active ? "border-gold/45 bg-gold/20 text-gold" : "border-white/15 text-zinc-300"
+      <dialog
+        ref={dialog}
+        aria-labelledby="team-picker-title"
+        onClose={() => {
+          setSlot(null);
+          setQuery("");
+        }}
+        className="m-auto w-[min(100%-2rem,32rem)] rounded-2xl border border-white/10 bg-panel p-0 text-zinc-100 backdrop:bg-ink/80"
+      >
+        <div className="flex max-h-[85vh] flex-col">
+          <div className="flex items-center justify-between gap-2 border-b border-white/10 p-3">
+            <h2 id="team-picker-title" className="font-display text-sm font-semibold uppercase tracking-wide text-zinc-300">
+              {t(C.team.chooseSlot, { n: (slot ?? 0) + 1 })}
+            </h2>
+            <button
+              type="button"
+              onClick={() => setSlot(null)}
+              aria-label={C.common.close}
+              className="grid h-11 w-11 cursor-pointer place-items-center rounded-md text-zinc-400 transition-colors duration-200 hover:bg-white/5 hover:text-zinc-100"
+            >
+              <Icon d={ICONS.close} className="h-5 w-5" />
+            </button>
+          </div>
+          <div className="p-3">
+            <SearchInput value={query} onChange={setQuery} locale={locale} />
+          </div>
+          <ul className="flex flex-col gap-2 overflow-y-auto px-3 pb-3">
+            {candidates.map((a) => {
+              const active = a.slug === current?.slug;
+              return (
+                <li key={a.slug}>
+                  <button
+                    type="button"
+                    onClick={() => choose(a)}
+                    aria-pressed={active}
+                    className={`flex min-h-14 w-full cursor-pointer items-center gap-3 rounded-xl border p-2 text-left transition-colors duration-200 ${
+                      active ? "border-gold/45 bg-gold/10" : "border-white/10 bg-panel/70 hover:border-white/25 hover:bg-panel-2"
                     }`}
                   >
-                    <Icon d={active ? ICONS.check : ICONS.plus} className="h-4 w-4" />
-                  </span>
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-        {pickable.length === 0 && <p className="mt-3 text-sm text-zinc-400">{C.team.empty}</p>}
-      </div>
+                    <Avatar artist={a} tier={a.tiers[category]} size="h-9 w-9" />
+                    <span className="min-w-0 flex-1">
+                      <span className="flex items-center gap-1.5">
+                        <span className="truncate text-sm font-semibold">{a.name}</span>
+                        <TierBadge tier={a.tiers[category]} />
+                      </span>
+                      <span className="tabular block truncate text-xs text-zinc-400">
+                        {a.genre} · {formatStat(a.scores[category], locale)}
+                      </span>
+                    </span>
+                    <span
+                      aria-hidden="true"
+                      className={`grid h-7 w-7 shrink-0 place-items-center rounded-md border ${
+                        active ? "border-gold/45 bg-gold/20 text-gold" : "border-white/15 text-zinc-300"
+                      }`}
+                    >
+                      <Icon d={active ? ICONS.check : ICONS.plus} className="h-4 w-4" />
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+          {candidates.length === 0 && <p className="px-3 pb-3 text-sm text-zinc-400">{C.team.empty}</p>}
+        </div>
+      </dialog>
     </section>
   );
 }

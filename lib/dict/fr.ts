@@ -60,6 +60,7 @@ export const fr: Dict = {
     searchPlaceholder: "Rechercher un nom, un genre ou une compétence…",
     searchArtist: "Rechercher des artistes",
     clearSearch: "Effacer la recherche",
+    close: "Fermer",
   },
   artists: {
     section: "Artistes",
@@ -78,7 +79,8 @@ export const fr: Dict = {
     title: "Votre équipe",
     remove: "Retirer {name} de l'équipe",
     emptySlot: "Emplacement {n} vide",
-    pick: "Choisissez un artiste ci-dessous pour remplir un emplacement.",
+    chooseSlot: "Choisir un artiste pour l'emplacement {n}",
+    pick: "Cliquez sur un emplacement vide pour choisir un artiste.",
     tiers: "Composition des tiers",
     genre: "Genre",
     synergy: "Synergie {n}× {genre} : +{bonus}%",

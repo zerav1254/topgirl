@@ -81,6 +81,14 @@ export function TeamBuilder({ artists, locale }: { artists: Artist[]; locale: Lo
     writeTeam(picked.includes(slug) ? picked.filter((s) => s !== slug) : picked.length >= TEAM_SIZE ? picked : [...picked, slug]);
   }
 
+  // Pilih dari dialog slot: tempatkan di slot yang diklik, buang duplikat artist yang sama.
+  function assign(index: number, slug: string) {
+    const next = picked.filter((s) => s !== slug);
+    if (next[index] !== undefined) next[index] = slug;
+    else next.push(slug);
+    writeTeam(next.slice(0, TEAM_SIZE));
+  }
+
   return (
     <div id="main" className="mx-auto flex max-w-4xl flex-col gap-4 px-4 pt-4 pb-28 sm:px-6 sm:pt-6">
       <header className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
@@ -147,10 +155,10 @@ export function TeamBuilder({ artists, locale }: { artists: Artist[]; locale: Lo
           artists={artists}
           team={team}
           picked={picked}
-          full={full}
           locale={locale}
           category={category}
           onToggle={toggle}
+          onAssign={assign}
           onReset={() => writeTeam([])}
         />
       )}

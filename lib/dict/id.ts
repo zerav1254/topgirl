@@ -58,6 +58,7 @@ export const id = {
     searchPlaceholder: "Cari nama, genre, atau skill…",
     searchArtist: "Cari artist",
     clearSearch: "Hapus pencarian",
+    close: "Tutup",
   },
   artists: {
     section: "Artists",
@@ -76,7 +77,8 @@ export const id = {
     title: "Tim Kamu",
     remove: "Hapus {name} dari tim",
     emptySlot: "Slot {n} kosong",
-    pick: "Pilih artist di bawah untuk mengisi slot.",
+    chooseSlot: "Pilih artist untuk slot {n}",
+    pick: "Klik slot kosong untuk memilih artist.",
     tiers: "Komposisi tier",
     genre: "Genre",
     synergy: "Sinergi {n}× {genre}: +{bonus}%",

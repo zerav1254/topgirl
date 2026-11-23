@@ -60,6 +60,7 @@ export const ko: Dict = {
     searchPlaceholder: "이름, 장르, 스킬 검색…",
     searchArtist: "아티스트 검색",
     clearSearch: "검색 지우기",
+    close: "닫기",
   },
   artists: {
     section: "아티스트",
@@ -78,7 +79,8 @@ export const ko: Dict = {
     title: "내 팀",
     remove: "팀에서 {name} 제거",
     emptySlot: "{n}번 슬롯 비어 있음",
-    pick: "아래에서 아티스트를 선택해 슬롯을 채우세요.",
+    chooseSlot: "슬롯 {n}에 아티스트 선택",
+    pick: "빈 슬롯을 눌러 아티스트를 선택하세요.",
     tiers: "티어 구성",
     genre: "장르",
     synergy: "시너지 {n}× {genre}: +{bonus}%",
