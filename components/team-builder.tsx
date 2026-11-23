@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useSyncExternalStore } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Artist } from "@/lib/artists";
@@ -31,9 +31,23 @@ function writeTeam(next: string[]) {
 
 type Tab = "artists" | "team";
 
+const URL_EVENT = "topgirl:url";
+const subscribeUrl = (listener: () => void) => {
+  window.addEventListener("popstate", listener);
+  window.addEventListener(URL_EVENT, listener);
+  return () => {
+    window.removeEventListener("popstate", listener);
+    window.removeEventListener(URL_EVENT, listener);
+  };
+};
+const readUrl = () => window.location.search;
+const getServerUrl = () => "";
+
 export function TeamBuilder({ artists, locale }: { artists: Artist[]; locale: Locale }) {
-  const [tab, setTab] = useState<Tab>("artists");
   const C = DICT[locale];
+  // Tab ikut ?tab=team: refresh tidak selalu kembali ke Artists, dan back/forward ikut tersinkron.
+  const search = useSyncExternalStore(subscribeUrl, readUrl, getServerUrl);
+  const tab: Tab = new URLSearchParams(search).get("tab") === "team" ? "team" : "artists";
 
   const bySlug = useMemo(() => new Map(artists.map((a) => [a.slug, a])), [artists]);
   const saved = useSyncExternalStore(subscribeTeam, readTeam, getServerTeam);
@@ -49,6 +63,14 @@ export function TeamBuilder({ artists, locale }: { artists: Artist[]; locale: Lo
   useEffect(() => {
     document.title = tab === "team" ? C.header.docTeam : C.header.docArtists;
   }, [tab, C]);
+
+  function go(next: Tab) {
+    const url = new URL(window.location.href);
+    if (next === "team") url.searchParams.set("tab", "team");
+    else url.searchParams.delete("tab");
+    window.history.replaceState(null, "", url);
+    window.dispatchEvent(new Event(URL_EVENT));
+  }
 
   const team = picked.map((slug) => bySlug.get(slug)).filter((a): a is Artist => Boolean(a));
   const full = team.length >= TEAM_SIZE;
@@ -89,7 +111,7 @@ export function TeamBuilder({ artists, locale }: { artists: Artist[]; locale: Lo
       </header>
 
       {tab === "artists" ? (
-        <ArtistsTab artists={artists} picked={picked} full={full} locale={locale} onToggle={toggle} onOpenTeam={() => setTab("team")} />
+        <ArtistsTab artists={artists} picked={picked} full={full} locale={locale} onToggle={toggle} onOpenTeam={() => go("team")} />
       ) : (
         <TeamTab artists={artists} team={team} picked={picked} full={full} locale={locale} onToggle={toggle} onReset={() => writeTeam([])} />
       )}
@@ -102,7 +124,7 @@ export function TeamBuilder({ artists, locale }: { artists: Artist[]; locale: Lo
         <div className="mx-auto grid max-w-md grid-cols-2 gap-1 px-2 pt-1">
           <button
             type="button"
-            onClick={() => setTab("artists")}
+            onClick={() => go("artists")}
             aria-current={tab === "artists" ? "true" : undefined}
             className={`flex min-h-14 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg text-xs font-semibold transition-colors duration-200 ${
               tab === "artists" ? "text-gold" : "text-zinc-400 hover:text-zinc-200"
@@ -113,7 +135,7 @@ export function TeamBuilder({ artists, locale }: { artists: Artist[]; locale: Lo
           </button>
           <button
             type="button"
-            onClick={() => setTab("team")}
+            onClick={() => go("team")}
             aria-current={tab === "team" ? "true" : undefined}
             className={`relative flex min-h-14 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg text-xs font-semibold transition-colors duration-200 ${
               tab === "team" ? "text-gold" : "text-zinc-400 hover:text-zinc-200"
