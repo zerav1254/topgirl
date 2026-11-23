@@ -62,6 +62,16 @@ export const ko: Dict = {
     clearSearch: "검색 지우기",
     close: "닫기",
   },
+  notFound: {
+    title: "페이지를 찾을 수 없습니다",
+    description: "링크가 잘못되었거나 페이지가 이동했을 수 있습니다.",
+    home: "홈으로 돌아가기",
+  },
+  error: {
+    title: "오류가 발생했습니다",
+    description: "페이지를 새로고침하세요. 계속 실패하면 나중에 다시 시도하세요.",
+    retry: "다시 시도",
+  },
   artists: {
     section: "아티스트",
     genre: "장르",

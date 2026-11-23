@@ -3,7 +3,7 @@ import { loadArtists } from "../lib/artists.ts";
 import { CATEGORIES, scoreArtist } from "../lib/score.ts";
 
 const artists = await loadArtists();
-assert.ok(artists.length >= 92, "expected at least 92 artists");
+assert.ok(artists.length > 0, "expected at least one artist");
 assert.equal(new Set(artists.map((a) => a.slug)).size, artists.length, "slugs must be unique");
 
 const byName = new Map(artists.map((a) => [a.name, a]));

@@ -62,6 +62,16 @@ export const en: Dict = {
     clearSearch: "Clear search",
     close: "Close",
   },
+  notFound: {
+    title: "Page not found",
+    description: "The link may be wrong or the page has moved.",
+    home: "Back to home",
+  },
+  error: {
+    title: "Something went wrong",
+    description: "Reload the page. If it keeps failing, try again later.",
+    retry: "Try again",
+  },
   artists: {
     section: "Artists",
     genre: "Genre",

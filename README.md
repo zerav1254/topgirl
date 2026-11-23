@@ -1,6 +1,6 @@
 # topgirl
 
-Team builder + editor stat artist. Next.js 15, data di Supabase (Postgres + Storage).
+Team builder + editor stat artist. Next.js 16, data di Supabase (Postgres + Storage).
 
 ## Setup lokal
 
@@ -10,6 +10,8 @@ cp .env.example .env.local   # lalu isi nilainya
 npm run seed                 # sekali: isi tabel + upload thumb dari data/artists.csv
 npm run dev                  # http://localhost:3000
 ```
+
+Cek bobot skor/tier terhadap DB: `npm run check:scores`.
 
 `.env.local`:
 

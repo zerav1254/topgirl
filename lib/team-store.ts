@@ -3,11 +3,23 @@ const STORAGE_KEY = "topgirl.team.v1";
 
 const teamListeners = new Set<() => void>();
 
+const notify = () => teamListeners.forEach((listener) => listener());
+
+// Tab lain menulis localStorage -> sinkronkan lewat event storage (tidak terpicu di tab asal).
+let storageBound = false;
+const onStorage = (e: StorageEvent) => {
+  if (e.key === STORAGE_KEY) notify();
+};
+
 export const readTeam = () => localStorage.getItem(STORAGE_KEY);
 export const getServerTeam = () => null;
 
 export function subscribeTeam(listener: () => void) {
   teamListeners.add(listener);
+  if (!storageBound && typeof window !== "undefined") {
+    window.addEventListener("storage", onStorage);
+    storageBound = true;
+  }
   return () => {
     teamListeners.delete(listener);
   };
@@ -15,7 +27,7 @@ export function subscribeTeam(listener: () => void) {
 
 export function writeTeam(next: string[]) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-  teamListeners.forEach((notify) => notify());
+  notify();
 }
 
 export const URL_EVENT = "topgirl:url";

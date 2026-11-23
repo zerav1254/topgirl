@@ -6,7 +6,7 @@ Aturan keras repo ini. Kalau ragu, berhenti dan tanya — jangan improvisasi.
 
 - Package manager **npm** saja. Jangan buat/commit `pnpm-lock.yaml`, `yarn.lock`, atau mengubah `package-lock.json` dengan tool lain.
 - Node **24** (lihat `engines`). Jangan menurunkan `engines` demi menghindari error lokal.
-- Jangan menambah dependency baru kecuali sudah disepakati. Yang boleh: `@supabase/supabase-js` (akses DB/storage) dan `sharp` (resize foto). UI kit, icon pack, state manager, CSV library tetap dilarang.
+- Jangan menambah dependency baru kecuali sudah disepakati. Yang boleh: `@supabase/supabase-js` (akses DB/storage), `sharp` (resize foto), dan `@vercel/analytics` (Web Analytics). UI kit, icon pack, state manager, CSV library tetap dilarang.
 - Sebelum commit: `npm run build` harus lulus.
 
 ## Deploy
@@ -31,7 +31,7 @@ Aturan keras repo ini. Kalau ragu, berhenti dan tanya — jangan improvisasi.
 
 ## Kode
 
-- `"use client"` hanya di `components/team-builder.tsx` dan `components/artist-editor.tsx`. Jangan jadikan `app/[locale]/layout.tsx`/`app/[locale]/page.tsx`/`app/[locale]/manage/page.tsx` client component.
+- `"use client"` hanya di `components/team-builder.tsx`, `components/artist-editor.tsx`, dan `app/[locale]/error.tsx` (error boundary wajib client di Next). Jangan jadikan `app/[locale]/layout.tsx`/`app/[locale]/page.tsx`/`app/[locale]/manage/page.tsx` client component.
 - `lib/supabase.ts`/`lib/auth.ts` server-only: jangan impor dari client component. Client boleh impor server action dari `app/[locale]/manage/actions.ts`.
 - `node:fs` hanya di `scripts/` (seed). Jangan impor di app/lib.
 - `adminClient()` (service_role) hanya di server action setelah `isAdmin()`. Jangan pernah kirim service key ke client.

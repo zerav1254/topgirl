@@ -28,6 +28,8 @@ create table public.artists (
   origin text references public.origins (id) on update cascade,
   season integer,
   photo_path text,
+  -- Versi cache foto, terpisah dari updated_at supaya edit stat tidak memicu unduh ulang gambar.
+  photo_updated_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
 
@@ -40,6 +42,8 @@ create table public.artist_skills (
 );
 
 create index artist_skills_effect_idx on public.artist_skills (effect);
+create index artists_genre_idx on public.artists (genre);
+create index artists_origin_idx on public.artists (origin);
 
 -- Efek sama di slot 1 dan 2 itu sah (game memang memberi dua skill identik);
 -- skornya dijumlahkan, tampilannya diringkas "×2" di kartu.
@@ -57,6 +61,68 @@ create policy "read genres" on public.genres for select to anon, authenticated u
 create policy "read origins" on public.origins for select to anon, authenticated using (true);
 create policy "read effects" on public.effects for select to anon, authenticated using (true);
 
+-- updated_at diisi trigger, bukan oleh aplikasi.
+create or replace function public.set_updated_at()
+returns trigger
+language plpgsql
+set search_path = ''
+as $$
+begin
+  new.updated_at = pg_catalog.now();
+  return new;
+end;
+$$;
+
+drop trigger if exists artists_set_updated_at on public.artists;
+create trigger artists_set_updated_at
+  before update on public.artists
+  for each row execute function public.set_updated_at();
+
+-- Simpan stat artist secara atomik (update baris + ganti skill dalam satu transaksi).
+-- Hanya service_role: dipanggil dari server action setelah isAdmin().
+create or replace function public.save_artist_stats(
+  p_slug text,
+  p_name text,
+  p_genre text,
+  p_origin text,
+  p_season integer,
+  p_skills jsonb
+) returns integer
+language plpgsql
+set search_path = ''
+as $$
+declare
+  v_id integer;
+  v_origin text := nullif(p_origin, '');
+begin
+  update public.artists
+     set name = p_name,
+         genre = p_genre,
+         origin = v_origin,
+         season = case when v_origin is null then null else p_season end
+   where slug = p_slug
+  returning id into v_id;
+
+  if v_id is null then
+    raise exception 'artist % not found', p_slug using errcode = 'P0002';
+  end if;
+
+  delete from public.artist_skills where artist_id = v_id;
+
+  insert into public.artist_skills (artist_id, slot, effect, value)
+  select v_id, (e->>'slot')::smallint, e->>'effect', nullif(e->>'value', '')::integer
+    from jsonb_array_elements(coalesce(p_skills, '[]'::jsonb)) e;
+
+  return v_id;
+end;
+$$;
+
+revoke all on function public.save_artist_stats(text, text, text, text, integer, jsonb) from public, anon, authenticated;
+grant execute on function public.save_artist_stats(text, text, text, text, integer, jsonb) to service_role;
+
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values ('artist-thumb', 'artist-thumb', true, 5242880, array['image/webp'])
 on conflict (id) do nothing;
+
+-- catatan: pgvector dipasang Supabase di schema extensions, bukan public.
+-- helper public.rls_auto_enable() milik Supabase; execute-nya dicabut dari anon/authenticated.

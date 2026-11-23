@@ -62,6 +62,16 @@ export const fr: Dict = {
     clearSearch: "Effacer la recherche",
     close: "Fermer",
   },
+  notFound: {
+    title: "Page introuvable",
+    description: "Le lien est peut-être incorrect ou la page a été déplacée.",
+    home: "Retour à l'accueil",
+  },
+  error: {
+    title: "Une erreur est survenue",
+    description: "Rechargez la page. Si le problème persiste, réessayez plus tard.",
+    retry: "Réessayer",
+  },
   artists: {
     section: "Artistes",
     genre: "Genre",

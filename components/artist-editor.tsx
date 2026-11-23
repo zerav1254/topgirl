@@ -53,7 +53,8 @@ function draftFromArtist(a: Artist): Draft {
   };
 }
 
-const isComplete = (d: Draft) => d.skills.some((s) => s.effect !== "");
+// Kedua slot wajib terisi effect: semua artist punya 2 skill di DB.
+const isComplete = (d: Draft) => d.skills.every((s) => s.effect !== "");
 
 // ponytail: draft hanya menyimpan stat; name/genre belum bisa diedit dari web.
 function toFormData(d: Draft, a: Artist): FormData {
@@ -283,7 +284,7 @@ export function ArtistEditor({
                 {preview && (
                   <span className="tabular rounded-lg border border-white/10 bg-ink/40 px-2.5 py-1.5 text-sm text-zinc-300">
                     {C.score} <strong className="text-gold">{formatStat(preview.score, locale)}</strong>
-                    <span className="mx-1.5 text-zinc-600">·</span>
+                    <span className="mx-1.5 text-zinc-400">·</span>
                     {C.tier} <strong>{preview.tier}</strong>
                   </span>
                 )}

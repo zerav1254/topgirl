@@ -4,11 +4,11 @@ Panduan kerja untuk agent/AI di repo ini. Baca `RULE.md` (aturan keras) dan `DES
 
 ## Stack
 
-- Next.js 15 App Router, React 19, TypeScript strict
+- Next.js 16 App Router, React 19, TypeScript strict
 - Tailwind CSS v4 via `@tailwindcss/postcss` (tanpa `tailwind.config`)
 - Package manager: **npm**, Node **24** (`engines` di `package.json`). Jangan pakai pnpm/yarn.
 - Supabase (Postgres + Storage) untuk artist, skill, dan foto. Client: `@supabase/supabase-js`.
-- `sharp` untuk resize foto upload (320×320 WebP).
+- `sharp` untuk resize foto upload (320×320 WebP). `@vercel/analytics` untuk Web Analytics.
 - Auth admin: satu password (`ADMIN_PASSWORD`) + cookie HMAC (`AUTH_SECRET`). Tanpa library auth.
 
 ## Perintah
@@ -18,6 +18,7 @@ npm install
 npm run dev      # http://localhost:3000
 npm run lint     # eslint (next/core-web-vitals + typescript)
 npm run build    # wajib lulus sebelum commit (butuh env Supabase)
+npm run check:scores  # assert bobot/tier terhadap DB (baca .env.local)
 npm run seed     # isi DB + upload thumb dari CSV (butuh service_role key)
 npm start
 ```
@@ -31,11 +32,14 @@ app/
   [locale]/
     layout.tsx      root layout: validasi locale + <html lang>, metadata per locale
     page.tsx        server: loadArtists() -> <TeamBuilder artists locale />, revalidate 300
+    loading.tsx     skeleton saat route dimuat
+    error.tsx       error boundary per locale (wajib "use client")
+    not-found.tsx   halaman 404 (locale tidak tersedia, pakai DICT.id)
     info/
       page.tsx      server: penjelasan rumus rank, bobot, dan tier (tanpa fetch DB)
     manage/
       page.tsx      server: gate login admin + <ArtistEditor locale />
-      actions.ts    server actions: login, logout, saveArtist, uploadPhoto (param locale)
+      actions.ts    server actions: login, logout, saveArtist (RPC atomik), uploadPhoto (param locale)
   globals.css       @import "tailwindcss" + @theme tokens + base rules
 components/
   team-builder.tsx  client ("use client") — shell: state tim + tab + nav bawah
@@ -73,6 +77,7 @@ Alur data: Supabase → `lib/artists.ts` → server component (props) → client
 | --- | --- |
 | Tambah/ubah artist, stat, skill | halaman `/{locale}/manage` (DB), bukan CSV |
 | Ubah skema DB | migration Supabase + `supabase/schema.sql` + `lib/artists.ts` |
+| Simpan stat atomik | RPC `save_artist_stats` di `supabase/schema.sql`, dipanggil `app/[locale]/manage/actions.ts` |
 | Seed ulang dari CSV/thumb lama | `scripts/seed-supabase.mjs` (`npm run seed`) |
 | Auth/login admin | `lib/auth.ts` + `app/[locale]/manage/actions.ts` |
 | Teks UI / bahasa baru | `lib/dict/*.ts` (+ `LOCALES`/`LANG_NAME` di `lib/i18n.ts`) |

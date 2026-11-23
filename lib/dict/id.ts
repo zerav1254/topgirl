@@ -60,6 +60,16 @@ export const id = {
     clearSearch: "Hapus pencarian",
     close: "Tutup",
   },
+  notFound: {
+    title: "Halaman tidak ditemukan",
+    description: "Tautan mungkin salah atau halaman sudah dipindah.",
+    home: "Kembali ke beranda",
+  },
+  error: {
+    title: "Terjadi kesalahan",
+    description: "Muat ulang halaman. Kalau masih gagal, coba lagi nanti.",
+    retry: "Coba lagi",
+  },
   artists: {
     section: "Artists",
     genre: "Genre",

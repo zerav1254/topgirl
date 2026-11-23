@@ -11,8 +11,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "check:scores": "node --no-warnings scripts/score-check.mjs",
-    "seed": "node --no-warnings --env-file=.env.local scripts/seed-supabase.mjs"
+    "check:scores": "node --no-warnings --env-file-if-exists=.env.local scripts/score-check.mjs",
+    "seed": "node --no-warnings --env-file-if-exists=.env.local scripts/seed-supabase.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.119.2",

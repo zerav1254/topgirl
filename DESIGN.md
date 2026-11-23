@@ -44,7 +44,7 @@ Badge tier: `border-<warna>/45 bg-<warna>/15 text-<warna>-300` (S+ pakai `text-g
 ## Spasi & layout
 
 - Grid utama: `grid lg:grid-cols-[1fr_22rem]`, gap `gap-6`; halaman `max-w-7xl px-4 sm:px-6 lg:px-8 py-8`.
-- Roster: 1 kolom < 640px, 2 kolom `sm`, 3 kolom `xl`.
+- Roster: 2 kolom < 640px, 3 kolom `sm`, 4 kolom `md`.
 - Radius: kartu besar `rounded-2xl`, kartu artist/slot `rounded-xl`, badge/tombol kecil `rounded-lg`/`rounded-md`.
 - Panel tim `lg:sticky lg:top-6`, selalu tampil paling atas di mobile (`order-1`).
 - Border pemisah: `border-white/10`; hover `border-white/25`.

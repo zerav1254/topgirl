@@ -10,8 +10,28 @@ if (!url || !key) throw new Error("NEXT_PUBLIC_SUPABASE_URL / SUPABASE_SERVICE_R
 
 const sb = createClient(url, key, { auth: { persistSession: false } });
 const root = process.cwd();
-const [header, ...rows] = readFileSync(join(root, "data", "artists.csv"), "utf8").split(/\r?\n/).filter(Boolean);
-const cols = header.split(",");
+const lines = readFileSync(join(root, "data", "artists.csv"), "utf8").split(/\r?\n/).filter(Boolean);
+// ponytail: parser satu baris saja (cukup untuk CSV seed); tidak menangani field multi-baris.
+function parseLine(line) {
+  const out = [];
+  let cur = "";
+  let quoted = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (quoted) {
+      if (ch !== '"') cur += ch;
+      else if (line[i + 1] === '"') { cur += '"'; i++; }
+      else quoted = false;
+    } else if (ch === '"') quoted = true;
+    else if (ch === ",") { out.push(cur); cur = ""; }
+    else cur += ch;
+  }
+  out.push(cur);
+  return out;
+}
+const header = parseLine(lines[0]);
+const rows = lines.slice(1);
+const cols = header.map((c) => c.trim());
 const get = (r, name) => r[cols.indexOf(name)]?.trim() ?? "";
 const num = (v) => {
   const n = Number(v);
@@ -20,7 +40,7 @@ const num = (v) => {
 
 let done = 0;
 for (const line of rows) {
-  const r = line.split(",");
+  const r = parseLine(line);
   const slug = get(r, "slug");
   if (!slug) continue;
 
@@ -58,7 +78,7 @@ for (const line of rows) {
       upsert: true,
     });
     if (up.error) throw new Error(`${slug}: ${up.error.message}`);
-    await sb.from("artists").update({ photo_path: `${slug}.webp` }).eq("id", data.id);
+    await sb.from("artists").update({ photo_path: `${slug}.webp`, photo_updated_at: new Date().toISOString() }).eq("id", data.id);
   }
 
   done++;

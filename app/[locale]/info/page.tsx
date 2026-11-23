@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isPercent, TierBadge } from "@/components/artist-ui";
 import { LocaleSwitcher } from "@/components/locale-switcher";
-import { DICT, LOCALES, isLocale, numberLocale, t } from "@/lib/i18n";
+import { DICT, LOCALES, isLocale, numberLocale, t, type Locale } from "@/lib/i18n";
 import {
   BANDS,
   CATEGORIES,
@@ -21,6 +21,9 @@ const EXAMPLES: { name: string; skills: Skill[] }[] = [
   { name: "Monica", skills: [{ effect: "player_dmg", value: 30 }, { effect: "player_dmg", value: 30 }] },
 ];
 
+const OG_LOCALE: Record<Locale, string> = { id: "id_ID", en: "en_US", fr: "fr_FR", ko: "ko_KR" };
+const ICON = "/assets/icon-topgirl.webp";
+
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   const l = isLocale(locale) ? locale : "id";
@@ -30,8 +33,18 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     description: info.metaDescription,
     alternates: {
       canonical: `/${l}/info`,
-      languages: Object.fromEntries(LOCALES.map((x) => [x, `/${x}/info`])),
+      languages: { ...Object.fromEntries(LOCALES.map((x) => [x, `/${x}/info`])), "x-default": "/id/info" },
     },
+    openGraph: {
+      type: "website",
+      siteName: "TopGirl",
+      title: info.metaTitle,
+      description: info.metaDescription,
+      url: `/${l}/info`,
+      locale: OG_LOCALE[l],
+      images: [{ url: ICON, width: 512, height: 512, alt: "TopGirl" }],
+    },
+    twitter: { card: "summary", title: info.metaTitle, description: info.metaDescription, images: [ICON] },
   };
 }
 

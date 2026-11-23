@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Noto_Sans_KR, Sora } from "next/font/google";
-import { notFound } from "next/navigation";
 import { Analytics } from "@vercel/analytics/next";
 import { BottomNav } from "@/components/bottom-nav";
 import { DICT, LOCALES, isLocale, type Locale } from "@/lib/i18n";
@@ -34,7 +33,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     icons: { icon: ICON, apple: "/assets/apple-icon.png" },
     alternates: {
       canonical: `/${l}`,
-      languages: Object.fromEntries(LOCALES.map((x) => [x, `/${x}`])),
+      languages: { ...Object.fromEntries(LOCALES.map((x) => [x, `/${x}`])), "x-default": "/id" },
     },
     openGraph: {
       type: "website",
@@ -62,8 +61,10 @@ export default async function LocaleLayout({
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }) {
-  const { locale } = await params;
-  if (!isLocale(locale)) notFound();
+  const { locale: raw } = await params;
+  // Jangan notFound() di layout: Next memakai 404 default, bukan [locale]/not-found.
+  // Halaman di bawah segmen ini yang memvalidasi lalu memanggil notFound().
+  const locale: Locale = isLocale(raw) ? raw : "id";
 
   return (
     <html lang={locale} className={`${inter.variable} ${sora.variable} ${notoKo.variable}`}>

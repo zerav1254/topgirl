@@ -1,4 +1,7 @@
+import { EFFECTS } from "./score.ts";
 import { supabase } from "./supabase.ts";
+
+const EFFECT_SET = new Set<string>(EFFECTS);
 
 export type Option = { id: string; label: string };
 
@@ -23,7 +26,8 @@ export async function loadLookups(): Promise<Lookups> {
     options("origins"),
     supabase.from("effects").select("id, label, unit").order("sort").then(({ data, error }) => {
       if (error) throw new Error(`Gagal memuat effects: ${error.message}`);
-      return data as EffectOption[];
+      // Hanya efek yang dikenal kode (punya bobot tampil/skor); baris DB lain tidak bisa dipilih.
+      return (data as EffectOption[]).filter((e) => EFFECT_SET.has(e.id));
     }),
   ]);
   return { genres, origins, effects };
