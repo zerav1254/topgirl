@@ -109,22 +109,8 @@ export function TeamBuilder({ artists, locale }: { artists: Artist[]; locale: Lo
             </h1>
           </div>
         </div>
-        <div className="flex w-full flex-col items-end gap-2 sm:w-auto">
+        <div className="flex w-full items-center justify-end sm:w-auto">
           <LocaleSwitcher locale={locale} />
-          <div className="flex flex-wrap justify-end gap-2">
-            <Link
-              href={`/${locale}/info`}
-              className="inline-flex min-h-11 items-center rounded-xl border border-white/10 bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
-            >
-              {C.header.info}
-            </Link>
-            <Link
-              href={`/${locale}/manage`}
-              className="inline-flex min-h-11 items-center rounded-xl border border-white/10 bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
-            >
-              {C.header.manage}
-            </Link>
-          </div>
         </div>
       </header>
 
@@ -168,7 +154,7 @@ export function TeamBuilder({ artists, locale }: { artists: Artist[]; locale: Lo
         className="fixed inset-x-0 bottom-0 z-30 border-t border-white/10 bg-panel/95 backdrop-blur"
         style={{ paddingBottom: "max(0.25rem, env(safe-area-inset-bottom))" }}
       >
-        <div className="mx-auto grid max-w-md grid-cols-2 gap-1 px-2 pt-1">
+        <div className="mx-auto grid max-w-lg grid-cols-4 gap-1 px-2 pt-1">
           <button
             type="button"
             onClick={() => go("artists")}
@@ -204,6 +190,20 @@ export function TeamBuilder({ artists, locale }: { artists: Artist[]; locale: Lo
               <span className="sr-only"> {t(C.header.tabCount, { n: team.length, size: TEAM_SIZE })}</span>
             </span>
           </button>
+          <Link
+            href={`/${locale}/info`}
+            className="flex min-h-14 flex-col items-center justify-center gap-1 rounded-lg text-center text-xs font-semibold leading-tight text-zinc-400 transition-colors duration-200 hover:text-zinc-200"
+          >
+            <Icon d={ICONS.info} className="h-5 w-5" />
+            {C.header.info}
+          </Link>
+          <Link
+            href={`/${locale}/manage`}
+            className="flex min-h-14 flex-col items-center justify-center gap-1 rounded-lg text-center text-xs font-semibold leading-tight text-zinc-400 transition-colors duration-200 hover:text-zinc-200"
+          >
+            <Icon d={ICONS.sliders} className="h-5 w-5" />
+            {C.header.manage}
+          </Link>
         </div>
       </nav>
     </div>
