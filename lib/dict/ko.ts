@@ -30,6 +30,7 @@ export const ko: Dict = {
     filterLabel: "{label} 필터",
     genre: "장르",
     origin: "출신",
+    season: "시즌",
     tier: "티어",
     skill: "스킬",
     resetFilter: "필터 초기화",

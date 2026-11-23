@@ -28,6 +28,7 @@ export const id = {
     filterLabel: "Filter {label}",
     genre: "Genre",
     origin: "Asal",
+    season: "Season",
     tier: "Tier",
     skill: "Skill",
     resetFilter: "Reset filter",

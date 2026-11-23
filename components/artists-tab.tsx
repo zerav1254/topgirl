@@ -19,6 +19,9 @@ type Option = { id: string; text: string };
 // Sentinel filter, bukan teks tampil: label "Semua" datang dari dict.
 const ALL = "all";
 
+// Season hanya bermakna untuk artist dari kota tuan rumah; origin lain tidak menampilkannya.
+const SEASON_ORIGINS = new Set(["Tokyo", "Bali", "Rome"]);
+
 function FilterRow({
   label,
   value,
@@ -213,6 +216,14 @@ export function ArtistsTab({ artists, picked, locale }: Props) {
                           </span>
                           <span className="truncate text-zinc-300">{a.origin ?? "—"}</span>
                         </span>
+                        {a.season !== null && a.origin && SEASON_ORIGINS.has(a.origin) && (
+                          <span className="flex items-baseline justify-between gap-2 text-xs">
+                            <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wide text-zinc-400">
+                              {C.artists.season}
+                            </span>
+                            <span className="tabular truncate text-zinc-300">{a.season}</span>
+                          </span>
+                        )}
                         <span className="mt-1 flex flex-col gap-0.5 border-t border-white/10 pt-1">
                           {a.skills.map((s, i) => (
                             <span key={i} className="flex items-baseline justify-between gap-2 text-xs">

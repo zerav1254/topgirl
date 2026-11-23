@@ -51,7 +51,7 @@ Badge tier: `border-<warna>/45 bg-<warna>/15 text-<warna>-300` (S+ pakai `text-g
 
 ## Komponen
 
-**Artist card** — kartu baca-saja (bukan tombol): pemilihan artist hanya di tab Team Builder. Normal: `border-white/10 bg-panel/70`. Artist yang sudah masuk tim: `border-gold/30 bg-gold/5` + ikon centang di pojok kanan-atas. Isi kartu: nama + skor sebaris, genre (ikon + teks), baris label **Asal** (`text-[10px]` uppercase `text-zinc-400`, nilai `text-zinc-300`), lalu dua baris skill dipisah border atas — nama efek kiri (`text-zinc-400`), nilai kanan (`tabular font-semibold text-zinc-200`, `—` bila kosong). Tiap slot skill tampil sendiri (tidak digabung `×2`).
+**Artist card** — kartu baca-saja (bukan tombol): pemilihan artist hanya di tab Team Builder. Normal: `border-white/10 bg-panel/70`. Artist yang sudah masuk tim: `border-gold/30 bg-gold/5` + ikon centang di pojok kanan-atas. Isi kartu: nama + skor sebaris, genre (ikon + teks), baris label **Asal** (`text-[10px]` uppercase `text-zinc-400`, nilai `text-zinc-300`), baris label **Season** hanya untuk origin `Tokyo`/`Bali`/`Rome`, lalu dua baris skill dipisah border atas — nama efek kiri (`text-zinc-400`), nilai kanan (`tabular font-semibold text-zinc-200`, `—` bila kosong). Tiap slot skill tampil sendiri (tidak digabung `×2`).
 
 **Slot tim** — daftar `<ol>` 5 baris tinggi tetap `min-h-[3.25rem]`. Kosong: border dashed + label "Slot n kosong". Terisi: avatar, nama, badge tier, genre, tombol hapus.
 

@@ -30,6 +30,7 @@ export const fr: Dict = {
     filterLabel: "Filtrer {label}",
     genre: "Genre",
     origin: "Origine",
+    season: "Saison",
     tier: "Tier",
     skill: "Compétence",
     resetFilter: "Réinitialiser les filtres",
