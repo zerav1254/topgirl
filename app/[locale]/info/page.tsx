@@ -48,7 +48,7 @@ export default async function InfoPage({ params }: { params: Promise<{ locale: s
     `${EFFECT_LABEL[s.effect][locale]} ${s.value ?? 0}${isPercent(s.effect) ? "%" : ""}`;
 
   return (
-    <main id="main" className="mx-auto flex max-w-4xl flex-col gap-6 px-4 py-8 sm:px-6">
+    <main id="main" className="mx-auto flex max-w-4xl flex-col gap-6 px-4 pt-8 pb-28 sm:px-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <Link
           href={`/${locale}`}

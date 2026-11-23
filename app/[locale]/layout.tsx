@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Noto_Sans_KR, Sora } from "next/font/google";
 import { notFound } from "next/navigation";
 import { Analytics } from "@vercel/analytics/next";
+import { BottomNav } from "@/components/bottom-nav";
 import { DICT, LOCALES, isLocale, type Locale } from "@/lib/i18n";
 import "../globals.css";
 
@@ -74,6 +75,7 @@ export default async function LocaleLayout({
           {DICT[locale].common.skip}
         </a>
         {children}
+        <BottomNav locale={locale} />
         <Analytics />
       </body>
     </html>

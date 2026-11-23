@@ -42,6 +42,7 @@ components/
   artists-tab.tsx   client — tab Artists: cari + filter + roster per tier
   artist-filter.tsx client — hook + bar filter bersama (genre/asal/spesialis/skill), dipakai kedua tab
   team-tab.tsx      client — tab Team Builder: slot tim (klik slot buka dialog pilih artist), ringkasan
+  bottom-nav.tsx    client — bottom nav 4 menu (Artists/Team/Info/Kelola), dirender root layout
   artist-ui.tsx     atom bersama (Icon, TierBadge, Avatar, GenreIcon, SearchInput)
   artist-editor.tsx client ("use client") — form stat + upload foto
   locale-switcher.tsx client — link ganti bahasa (ganti segmen locale di path)
@@ -49,6 +50,7 @@ lib/
   artists.ts        query Supabase -> tipe Artist/Effect
   score.ts          bobot skor, tier, label effect
   team.ts           TEAM_SIZE, STAT_ORDER, GENRE_BONUS
+  team-store.ts     store tim di localStorage + query tab (BottomNav & TeamBuilder)
   supabase.ts       read client (anon) + adminClient() (service_role)
   lookups.ts        opsi dropdown dari tabel genres/origins/effects
   auth.ts           cookie admin HMAC

@@ -174,7 +174,7 @@ export function ArtistEditor({
   }
 
   return (
-    <main id="main" className="mx-auto max-w-6xl px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
+    <main id="main" className="mx-auto max-w-6xl px-4 py-5 pb-28 sm:px-6 sm:py-6 sm:pb-28 lg:px-8">
       <header className={`${cardClass} p-4 sm:p-5`}>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-3">

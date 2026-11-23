@@ -38,7 +38,7 @@ export default async function Page({
 
   if (!(await isAdmin())) {
     return (
-      <main id="main" className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center px-4 py-10">
+      <main id="main" className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center px-4 pt-10 pb-28">
         <section className="rounded-2xl border border-white/10 bg-panel/80 p-5 sm:p-6">
           <div className="flex items-center justify-between gap-3">
             <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>

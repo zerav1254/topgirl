@@ -2,47 +2,16 @@
 
 import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import type { Artist } from "@/lib/artists";
-import { DICT, t, type Locale } from "@/lib/i18n";
+import { DICT, type Locale } from "@/lib/i18n";
 import { CATEGORIES, type Category } from "@/lib/score";
 import { TEAM_SIZE } from "@/lib/team";
-import { ICONS, Icon } from "./artist-ui";
+import { getServerTeam, getServerUrl, readTeam, readUrl, subscribeTeam, subscribeUrl, writeTeam } from "@/lib/team-store";
 import { ArtistsTab } from "./artists-tab";
 import { LocaleSwitcher } from "./locale-switcher";
 import { TeamTab } from "./team-tab";
 
-const STORAGE_KEY = "topgirl.team.v1";
-
-const listeners = new Set<() => void>();
-const readTeam = () => localStorage.getItem(STORAGE_KEY);
-const getServerTeam = () => null;
-
-function subscribeTeam(listener: () => void) {
-  listeners.add(listener);
-  return () => {
-    listeners.delete(listener);
-  };
-}
-
-function writeTeam(next: string[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-  listeners.forEach((notify) => notify());
-}
-
 type Tab = "artists" | "team";
-
-const URL_EVENT = "topgirl:url";
-const subscribeUrl = (listener: () => void) => {
-  window.addEventListener("popstate", listener);
-  window.addEventListener(URL_EVENT, listener);
-  return () => {
-    window.removeEventListener("popstate", listener);
-    window.removeEventListener(URL_EVENT, listener);
-  };
-};
-const readUrl = () => window.location.search;
-const getServerUrl = () => "";
 
 export function TeamBuilder({ artists, locale }: { artists: Artist[]; locale: Locale }) {
   const C = DICT[locale];
@@ -66,16 +35,7 @@ export function TeamBuilder({ artists, locale }: { artists: Artist[]; locale: Lo
     document.title = tab === "team" ? C.header.docTeam : C.header.docArtists;
   }, [tab, C]);
 
-  function go(next: Tab) {
-    const url = new URL(window.location.href);
-    if (next === "team") url.searchParams.set("tab", "team");
-    else url.searchParams.delete("tab");
-    window.history.replaceState(null, "", url);
-    window.dispatchEvent(new Event(URL_EVENT));
-  }
-
   const team = picked.map((slug) => bySlug.get(slug)).filter((a): a is Artist => Boolean(a));
-  const full = team.length >= TEAM_SIZE;
 
   function toggle(slug: string) {
     writeTeam(picked.includes(slug) ? picked.filter((s) => s !== slug) : picked.length >= TEAM_SIZE ? picked : [...picked, slug]);
@@ -148,64 +108,6 @@ export function TeamBuilder({ artists, locale }: { artists: Artist[]; locale: Lo
           onReset={() => writeTeam([])}
         />
       )}
-
-      <nav
-        aria-label={C.header.mainNav}
-        className="fixed inset-x-0 bottom-0 z-30 border-t border-white/10 bg-panel/95 backdrop-blur"
-        style={{ paddingBottom: "max(0.25rem, env(safe-area-inset-bottom))" }}
-      >
-        <div className="mx-auto grid max-w-lg grid-cols-4 gap-1 px-2 pt-1">
-          <button
-            type="button"
-            onClick={() => go("artists")}
-            aria-current={tab === "artists" ? "true" : undefined}
-            className={`flex min-h-14 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg text-xs font-semibold transition-colors duration-200 ${
-              tab === "artists" ? "text-gold" : "text-zinc-400 hover:text-zinc-200"
-            }`}
-          >
-            <Icon d={ICONS.list} className="h-5 w-5" />
-            {C.header.artists}
-          </button>
-          <button
-            type="button"
-            onClick={() => go("team")}
-            aria-current={tab === "team" ? "true" : undefined}
-            className={`relative flex min-h-14 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg text-xs font-semibold transition-colors duration-200 ${
-              tab === "team" ? "text-gold" : "text-zinc-400 hover:text-zinc-200"
-            }`}
-          >
-            <span className="relative">
-              <Icon d={ICONS.users} className="h-5 w-5" />
-              <span
-                aria-hidden="true"
-                className={`tabular absolute -top-2.5 -right-3 grid h-5 min-w-5 place-items-center rounded-full px-1 text-[10px] font-bold ${
-                  full ? "bg-gold text-ink" : team.length > 0 ? "bg-brand text-white" : "bg-white/10 text-zinc-300"
-                }`}
-              >
-                {team.length}
-              </span>
-            </span>
-            <span>
-              {C.header.team}
-              <span className="sr-only"> {t(C.header.tabCount, { n: team.length, size: TEAM_SIZE })}</span>
-            </span>
-          </button>
-          <Link
-            href={`/${locale}/info`}
-            className="flex min-h-14 flex-col items-center justify-center gap-1 rounded-lg text-center text-xs font-semibold leading-tight text-zinc-400 transition-colors duration-200 hover:text-zinc-200"
-          >
-            <Icon d={ICONS.info} className="h-5 w-5" />
-            {C.header.info}
-          </Link>
-          <Link
-            href={`/${locale}/manage`}
-            className="flex min-h-14 flex-col items-center justify-center gap-1 rounded-lg text-center text-xs font-semibold leading-tight text-zinc-400 transition-colors duration-200 hover:text-zinc-200"
-          >
-            <Icon d={ICONS.sliders} className="h-5 w-5" />
-            {C.header.manage}
-          </Link>
-        </div>
-      </nav>
     </div>
   );
 }
