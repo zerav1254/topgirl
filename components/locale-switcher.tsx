@@ -19,7 +19,7 @@ export function LocaleSwitcher({ locale, className = "" }: { locale: Locale; cla
         value={locale}
         onChange={(e) => change(e.target.value)}
         aria-label={DICT[locale].lang.label}
-        className="h-10 cursor-pointer appearance-none rounded-lg border border-white/10 bg-panel/80 pr-7 pl-2.5 text-xs font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100 focus:border-brand/60"
+        className="h-11 cursor-pointer appearance-none rounded-lg border border-white/10 bg-panel/80 pr-7 pl-2.5 text-xs font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100 focus:border-brand/60"
       >
         {LOCALES.map((l) => (
           <option key={l} value={l} className="bg-panel text-zinc-100">

@@ -113,14 +113,14 @@ export function SearchInput({
         type="search"
         placeholder={placeholder ?? c.searchPlaceholder}
         aria-label={c.searchArtist}
-        className="w-full rounded-xl border border-white/10 bg-panel/80 py-3 pr-9 pl-9 text-base placeholder:text-zinc-400 focus:border-brand/60 [&::-webkit-search-cancel-button]:appearance-none"
+        className="w-full rounded-xl border border-white/10 bg-panel/80 py-3 pr-12 pl-9 text-base placeholder:text-zinc-400 focus:border-brand/60 [&::-webkit-search-cancel-button]:appearance-none"
       />
       {value !== "" && (
         <button
           type="button"
           onClick={() => onChange("")}
           aria-label={c.clearSearch}
-          className="absolute top-1/2 right-1 grid h-10 w-10 -translate-y-1/2 cursor-pointer place-items-center rounded-md text-zinc-400 hover:bg-white/5 hover:text-zinc-200"
+          className="absolute top-1/2 right-0.5 grid h-11 w-11 -translate-y-1/2 cursor-pointer place-items-center rounded-md text-zinc-400 hover:bg-white/5 hover:text-zinc-200"
         >
           <Icon d={ICONS.close} className="h-4 w-4" />
         </button>

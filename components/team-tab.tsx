@@ -65,7 +65,7 @@ export function TeamTab({ artists, team, picked, full, locale, onToggle, onReset
           <button
             type="button"
             onClick={onReset}
-            className="flex min-h-10 cursor-pointer items-center gap-1 rounded-md px-2 py-1 text-sm text-zinc-400 transition-colors duration-200 hover:bg-white/5 hover:text-red-300"
+            className="flex min-h-11 cursor-pointer items-center gap-1 rounded-md px-2 py-1 text-sm text-zinc-400 transition-colors duration-200 hover:bg-white/5 hover:text-red-300"
           >
             <Icon d={ICONS.trash} className="h-4 w-4" />
             {C.common.reset}
@@ -98,7 +98,7 @@ export function TeamTab({ artists, team, picked, full, locale, onToggle, onReset
                     type="button"
                     onClick={() => onToggle(a.slug)}
                     aria-label={t(C.team.remove, { name: a.name })}
-                    className="grid h-10 w-10 cursor-pointer place-items-center rounded-md text-zinc-400 transition-colors duration-200 hover:bg-white/5 hover:text-red-300"
+                    className="grid h-11 w-11 cursor-pointer place-items-center rounded-md text-zinc-400 transition-colors duration-200 hover:bg-white/5 hover:text-red-300"
                   >
                     <Icon d={ICONS.close} className="h-5 w-5" />
                   </button>

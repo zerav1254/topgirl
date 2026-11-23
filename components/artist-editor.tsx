@@ -71,7 +71,7 @@ function toFormData(d: Draft, a: Artist): FormData {
 }
 
 const inputClass =
-  "rounded-lg border border-white/10 bg-ink/60 px-3 py-2 text-base text-zinc-100 placeholder:text-zinc-400 focus:border-brand/60";
+  "min-h-11 rounded-lg border border-white/10 bg-ink/60 px-3 py-2 text-base text-zinc-100 placeholder:text-zinc-400 focus:border-brand/60";
 const cardClass = "rounded-2xl border border-white/10 bg-panel/60";
 
 export function ArtistEditor({
@@ -194,14 +194,14 @@ export function ArtistEditor({
             <LocaleSwitcher locale={locale} />
             <Link
               href={`/${locale}`}
-              className="inline-flex min-h-10 items-center rounded-lg border border-white/10 bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
+              className="inline-flex min-h-11 items-center rounded-lg border border-white/10 bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
             >
               {C.teamLink}
             </Link>
             <form action={logout.bind(null, locale)}>
               <button
                 type="submit"
-                className="inline-flex min-h-10 cursor-pointer items-center rounded-lg border border-white/10 px-3 text-sm font-semibold text-zinc-400 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
+                className="inline-flex min-h-11 cursor-pointer items-center rounded-lg border border-white/10 px-3 text-sm font-semibold text-zinc-400 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
               >
                 {C.logout}
               </button>

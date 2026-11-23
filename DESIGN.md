@@ -55,11 +55,11 @@ Badge tier: `border-<warna>/45 bg-<warna>/15 text-<warna>-300` (S+ pakai `text-g
 
 **Slot tim** — daftar `<ol>` 5 baris tinggi tetap `min-h-[3.25rem]`. Kosong: border dashed + label "Slot n kosong". Terisi: avatar, nama, badge tier, genre, tombol hapus.
 
-**Filter chip** — `rounded-lg border px-3 py-1 text-sm min-h-10` (target sentuh). Empat baris berlabel di tab Artists, urut: Genre, Asal, Tier, Skill. Aktif tier = emas; aktif genre/asal/skill = merah; nonaktif `text-zinc-400` dengan hover `text-zinc-200`. Label baris `text-[11px]` uppercase `text-zinc-400`, lebar tetap `w-14`. Chip `Semua` hanya dirender saat baris itu terfilter; klik chip aktif = lepas filter. Satu tombol `Reset filter` (selalu memesan lebar, `invisible` saat bersih) mengosongkan keempatnya. Urutan chip tier ikut `TIER_ORDER`; tier tanpa artist tidak ditampilkan.
+**Filter chip** — `rounded-lg border px-3 py-1 text-sm min-h-11` (target sentuh 44px). Empat baris berlabel di tab Artists, urut: Genre, Asal, Tier, Skill. Aktif tier = emas; aktif genre/asal/skill = merah; nonaktif `text-zinc-400` dengan hover `text-zinc-200`. Label baris `text-[11px]` uppercase `text-zinc-400`, lebar tetap `w-14`. Chip `Semua` hanya dirender saat baris itu terfilter; klik chip aktif = lepas filter. Satu tombol `Reset filter` (selalu memesan lebar, `invisible` saat bersih) mengosongkan keempatnya. Urutan chip tier ikut `TIER_ORDER`; tier tanpa artist tidak ditampilkan.
 
 **Input pencarian** — ikon SVG di kiri (`pl-9`), border fokus `focus:border-brand/60`.
 
-**Language switcher** — satu `<select>` berisi semua bahasa (`LANG_NAME`), `h-10 rounded-lg border-white/10 bg-panel/80 text-xs`, chevron SVG absolut di kanan. Ganti bahasa = `router.push` path yang sama dengan segmen locale diganti. Di header utama mobile ia satu baris dengan tombol "Kelola data" (`justify-between`); `sm` ke atas kembali sebaris dengan judul. Di halaman login/manage posisinya di kanan atas kartu.
+**Language switcher** — satu `<select>` berisi semua bahasa (`LANG_NAME`), `h-11 rounded-lg border-white/10 bg-panel/80 text-xs`, chevron SVG absolut di kanan. Ganti bahasa = `router.push` path yang sama dengan segmen locale diganti. Di header utama mobile ia satu baris dengan tombol "Kelola data" (`justify-between`); `sm` ke atas kembali sebaris dengan judul. Di halaman login/manage posisinya di kanan atas kartu.
 
 ## Gerak
 

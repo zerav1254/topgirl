@@ -56,7 +56,7 @@ function FilterRow({
             type="button"
             onClick={() => onChange(value === o.id ? ALL : o.id)}
             aria-pressed={value === o.id}
-            className={`flex min-h-10 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-1 text-sm font-semibold transition-colors duration-200 ${
+            className={`flex min-h-11 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-1 text-sm font-semibold transition-colors duration-200 ${
               value === o.id ? active : "border-white/10 bg-panel/60 text-zinc-400 hover:border-white/25 hover:text-zinc-200"
             }`}
           >
@@ -156,7 +156,7 @@ export function ArtistsTab({ artists, picked, full, locale, onToggle, onOpenTeam
       {full && (
         <p className="mt-4 flex flex-wrap items-center gap-2 rounded-xl border border-gold/30 bg-gold/10 px-3 py-2 text-sm text-zinc-200">
           {t(C.artists.full, { size: TEAM_SIZE })}
-          <button type="button" onClick={onOpenTeam} className="cursor-pointer font-semibold text-gold underline-offset-2 hover:underline">
+          <button type="button" onClick={onOpenTeam} className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-gold underline-offset-2 hover:underline">
             {C.artists.arrange}
           </button>
         </p>
