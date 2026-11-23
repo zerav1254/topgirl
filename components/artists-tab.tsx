@@ -20,7 +20,8 @@ type Props = {
 type Filter = { genre: string; origin: string; tier: string; skill: string };
 type Option = { id: string; text: string };
 
-const ALL = "Semua";
+// Sentinel filter, bukan teks tampil: label "Semua" datang dari dict.
+const ALL = "all";
 
 function FilterRow({
   label,
