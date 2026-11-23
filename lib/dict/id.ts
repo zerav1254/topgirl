@@ -25,7 +25,6 @@ export const id = {
   },
   artists: {
     section: "Artists",
-    filterLabel: "Filter {label}",
     genre: "Genre",
     origin: "Asal",
     season: "Season",

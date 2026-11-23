@@ -27,7 +27,6 @@ export const en: Dict = {
   },
   artists: {
     section: "Artists",
-    filterLabel: "Filter {label}",
     genre: "Genre",
     origin: "Origin",
     season: "Season",

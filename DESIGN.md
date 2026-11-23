@@ -55,7 +55,7 @@ Badge tier: `border-<warna>/45 bg-<warna>/15 text-<warna>-300` (S+ pakai `text-g
 
 **Slot tim** — daftar `<ol>` 5 baris tinggi tetap `min-h-[3.25rem]`. Kosong: border dashed + label "Slot n kosong". Terisi: avatar, nama, badge tier, genre, tombol hapus.
 
-**Filter chip** — `rounded-lg border px-3 py-1 text-sm min-h-11` (target sentuh 44px). Empat baris berlabel di tab Artists, urut: Genre, Asal, Tier, Skill. Aktif tier = emas; aktif genre/asal/skill = merah; nonaktif `text-zinc-400` dengan hover `text-zinc-200`. Label baris `text-[11px]` uppercase `text-zinc-400`, lebar tetap `w-14`. Chip `Semua` hanya dirender saat baris itu terfilter; klik chip aktif = lepas filter. Tepi kanan baris chip diberi fade `w-8 bg-gradient-to-l from-ink to-transparent` sebagai petunjuk masih bisa digeser (scrollbar disembunyikan). Satu tombol `Reset filter` (selalu memesan lebar, `invisible` saat bersih) mengosongkan keempatnya. Urutan chip tier ikut `TIER_ORDER`; tier tanpa artist tidak ditampilkan.
+**Filter dropdown** — empat `<select>` dalam grid `grid-cols-2 sm:grid-cols-4`, urut Genre, Asal, Tier, Skill. Tiap sel: label `text-[11px]` uppercase `text-zinc-400` di atas, select `h-11 rounded-lg border bg-panel/80 px-2.5 text-sm font-semibold`. Nilai `Semua` (`common.all`) selalu jadi opsi pertama; select terfilter memakai border/bg aksen (tier emas, lainnya merah), tidak terfilter `border-white/10 text-zinc-300`. Satu tombol `Reset filter` (selalu memesan lebar, `invisible` saat bersih) mengembalikan keempatnya ke `Semua`.
 
 **Input pencarian** — ikon SVG di kiri (`pl-9`), border fokus `focus:border-brand/60`.
 

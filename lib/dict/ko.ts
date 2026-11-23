@@ -27,7 +27,6 @@ export const ko: Dict = {
   },
   artists: {
     section: "아티스트",
-    filterLabel: "{label} 필터",
     genre: "장르",
     origin: "출신",
     season: "시즌",

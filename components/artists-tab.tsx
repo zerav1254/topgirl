@@ -22,14 +22,13 @@ const ALL = "all";
 // Season hanya bermakna untuk artist dari kota tuan rumah; origin lain tidak menampilkannya.
 const SEASON_ORIGINS = new Set(["Tokyo", "Bali", "Rome"]);
 
-function FilterRow({
+function FilterSelect({
   label,
   value,
   onChange,
-  options: base,
+  options,
   locale,
   tone = "brand",
-  genreIcon = false,
 }: {
   label: string;
   value: string;
@@ -37,42 +36,27 @@ function FilterRow({
   options: Option[];
   locale: Locale;
   tone?: "gold" | "brand";
-  genreIcon?: boolean;
 }) {
-  const active = tone === "gold" ? "border-gold/50 bg-gold/15 text-gold" : "border-brand/50 bg-brand/15 text-red-300";
-  // "Semua" hanya muncul saat baris terfilter, sebagai jalan lepas filter baris itu.
-  const options = value === ALL ? base : [{ id: ALL, text: DICT[locale].common.all }, ...base];
+  const active =
+    tone === "gold" ? "border-gold/50 bg-gold/10 text-gold" : "border-brand/50 bg-brand/10 text-zinc-100";
   return (
-    <div className="flex items-center gap-2">
-      <span className="w-14 shrink-0 text-[11px] font-semibold uppercase tracking-wide text-zinc-400">{label}</span>
-      <div className="relative min-w-0 flex-1">
-        <div
-          className="flex min-w-0 items-center gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-          role="group"
-          aria-label={t(DICT[locale].artists.filterLabel, { label })}
-        >
-          {options.map((o) => (
-            <button
-              key={o.id}
-              type="button"
-              onClick={() => onChange(value === o.id ? ALL : o.id)}
-              aria-pressed={value === o.id}
-              className={`flex min-h-11 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-1 text-sm font-semibold transition-colors duration-200 ${
-                value === o.id ? active : "border-white/10 bg-panel/60 text-zinc-400 hover:border-white/25 hover:text-zinc-200"
-              }`}
-            >
-              {genreIcon && <GenreIcon genre={o.id} className="h-4 w-4" />}
-              {o.text}
-            </button>
-          ))}
-        </div>
-        {/* ponytail: fade tetap ada walau sudah di ujung; sembunyikan lewat scroll listener kalau mengganggu. */}
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-ink to-transparent"
-        />
-      </div>
-    </div>
+    <label className="flex min-w-0 flex-col gap-1">
+      <span className="text-[11px] font-semibold uppercase tracking-wide text-zinc-400">{label}</span>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className={`h-11 w-full cursor-pointer rounded-lg border bg-panel/80 px-2.5 text-sm font-semibold transition-colors duration-200 focus:border-brand/60 ${
+          value === ALL ? "border-white/10 text-zinc-300" : active
+        }`}
+      >
+        <option value={ALL}>{DICT[locale].common.all}</option>
+        {options.map((o) => (
+          <option key={o.id} value={o.id}>
+            {o.text}
+          </option>
+        ))}
+      </select>
+    </label>
   );
 }
 
@@ -133,31 +117,37 @@ export function ArtistsTab({ artists, picked, locale }: Props) {
           </button>
         </div>
 
-        {(
-          [
-            [C.artists.genre, "genre", genres.map((g) => ({ id: g, text: g })), "brand", true],
-            [C.artists.origin, "origin", origins.map((r) => ({ id: r, text: r })), "brand", false],
-            [C.artists.tier, "tier", tiers.map((t) => ({ id: t, text: t })), "gold", false],
-            [
-              C.artists.skill,
-              "skill",
-              skillIds.map((e) => ({ id: e, text: EFFECT_LABEL[e as Effect][locale] })),
-              "brand",
-              false,
-            ],
-          ] as const
-        ).map(([label, key, options, tone, genreIcon]) => (
-          <FilterRow
-            key={key}
-            label={label}
-            value={filter[key]}
-            onChange={set(key)}
-            options={options}
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <FilterSelect
+            label={C.artists.genre}
+            value={filter.genre}
+            onChange={set("genre")}
+            options={genres.map((g) => ({ id: g, text: g }))}
             locale={locale}
-            tone={tone}
-            genreIcon={genreIcon}
           />
-        ))}
+          <FilterSelect
+            label={C.artists.origin}
+            value={filter.origin}
+            onChange={set("origin")}
+            options={origins.map((r) => ({ id: r, text: r }))}
+            locale={locale}
+          />
+          <FilterSelect
+            label={C.artists.tier}
+            value={filter.tier}
+            onChange={set("tier")}
+            options={tiers.map((t) => ({ id: t, text: t }))}
+            locale={locale}
+            tone="gold"
+          />
+          <FilterSelect
+            label={C.artists.skill}
+            value={filter.skill}
+            onChange={set("skill")}
+            options={skillIds.map((e) => ({ id: e, text: EFFECT_LABEL[e as Effect][locale] }))}
+            locale={locale}
+          />
+        </div>
       </div>
 
       <p aria-live="polite" className="sr-only">
