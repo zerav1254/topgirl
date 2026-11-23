@@ -71,7 +71,7 @@ function toFormData(d: Draft, a: Artist): FormData {
 }
 
 const inputClass =
-  "rounded-lg border border-white/10 bg-ink/60 px-3 py-2 text-base text-zinc-100 placeholder:text-zinc-600 focus:border-brand/60";
+  "rounded-lg border border-white/10 bg-ink/60 px-3 py-2 text-base text-zinc-100 placeholder:text-zinc-400 focus:border-brand/60";
 const cardClass = "rounded-2xl border border-white/10 bg-panel/60";
 
 export function ArtistEditor({
@@ -221,7 +221,7 @@ export function ArtistEditor({
         <section aria-label={C.listLabel} className={`${cardClass} flex min-w-0 flex-col p-3`}>
           <div className="mb-2 flex items-center justify-between px-1">
             <h2 className="font-display text-[11px] font-semibold uppercase tracking-wide text-zinc-400">{C.listLabel}</h2>
-            <span className="tabular text-xs text-zinc-500">{visible.length}</span>
+            <span className="tabular text-xs text-zinc-400">{visible.length}</span>
           </div>
           <SearchInput value={query} onChange={setQuery} locale={locale} placeholder={C.searchPlaceholder} />
           <ul className="mt-2 flex max-h-[42dvh] flex-col gap-1 overflow-y-auto pr-1 lg:max-h-[calc(100dvh-17rem)]">
@@ -327,7 +327,7 @@ export function ArtistEditor({
                     const unit = lookups.effects.find((e) => e.id === skill.effect)?.unit ?? "percent";
                     return (
                       <fieldset key={i} className="flex flex-col gap-3 rounded-xl border border-white/10 bg-ink/30 p-3">
-                        <legend className="px-1 text-[11px] font-semibold uppercase tracking-wide text-zinc-500">
+                        <legend className="px-1 text-[11px] font-semibold uppercase tracking-wide text-zinc-400">
                           {t(C.skill, { n: i + 1 })}
                         </legend>
                         <label className="flex flex-col gap-1 text-sm text-zinc-400">
@@ -349,7 +349,7 @@ export function ArtistEditor({
                         </label>
                         <label className="flex flex-col gap-1 text-sm text-zinc-400">
                           <span className="flex items-center justify-between">
-                            {C.value} <span className="text-xs text-zinc-500">{unit === "flat" ? C.flat : C.percent}</span>
+                            {C.value} <span className="text-xs text-zinc-400">{unit === "flat" ? C.flat : C.percent}</span>
                           </span>
                           <input
                             value={skill.value}

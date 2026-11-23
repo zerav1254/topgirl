@@ -44,7 +44,7 @@ function FilterRow({
   const options = value === ALL ? base : [{ id: ALL, text: DICT[locale].common.all }, ...base];
   return (
     <div className="flex items-center gap-2">
-      <span className="w-14 shrink-0 text-[11px] font-semibold uppercase tracking-wide text-zinc-500">{label}</span>
+      <span className="w-14 shrink-0 text-[11px] font-semibold uppercase tracking-wide text-zinc-400">{label}</span>
       <div
         className="flex min-w-0 items-center gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         role="group"

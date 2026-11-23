@@ -17,7 +17,7 @@ Dark gaming dashboard: latar hampir hitam, panel berlapis, aksen merah agresif +
 | `gold` | `#fbbf24` | Tier S+, filter tier aktif, counter tim, focus ring |
 | teks utama | `zinc-100` | Judul, nama artist |
 | teks sekunder | `zinc-400` | Metadata, label, deskripsi |
-| teks lemah | `zinc-500` / `zinc-600` | Placeholder, slot kosong |
+| teks lemah | `zinc-400` | Placeholder, hint, unit, label kecil (jangan pakai `zinc-500`/`zinc-600` untuk teks — kontras < 4,5:1) |
 
 Latar memakai dua `radial-gradient` (merah 18% kiri-atas, emas 10% kanan-atas) di `body`.
 
@@ -55,7 +55,7 @@ Badge tier: `border-<warna>/45 bg-<warna>/15 text-<warna>-300` (S+ pakai `text-g
 
 **Slot tim** — daftar `<ol>` 5 baris tinggi tetap `min-h-[3.25rem]`. Kosong: border dashed + label "Slot n kosong". Terisi: avatar, nama, badge tier, genre, tombol hapus.
 
-**Filter chip** — `rounded-lg border px-3 py-1 text-sm min-h-10` (target sentuh). Empat baris berlabel di tab Artists, urut: Genre, Asal, Tier, Skill. Aktif tier = emas; aktif genre/asal/skill = merah; nonaktif `text-zinc-400` dengan hover `text-zinc-200`. Label baris `text-[11px]` uppercase `text-zinc-500`, lebar tetap `w-14`. Chip `Semua` hanya dirender saat baris itu terfilter; klik chip aktif = lepas filter. Satu tombol `Reset filter` (selalu memesan lebar, `invisible` saat bersih) mengosongkan keempatnya. Urutan chip tier ikut `TIER_ORDER`; tier tanpa artist tidak ditampilkan.
+**Filter chip** — `rounded-lg border px-3 py-1 text-sm min-h-10` (target sentuh). Empat baris berlabel di tab Artists, urut: Genre, Asal, Tier, Skill. Aktif tier = emas; aktif genre/asal/skill = merah; nonaktif `text-zinc-400` dengan hover `text-zinc-200`. Label baris `text-[11px]` uppercase `text-zinc-400`, lebar tetap `w-14`. Chip `Semua` hanya dirender saat baris itu terfilter; klik chip aktif = lepas filter. Satu tombol `Reset filter` (selalu memesan lebar, `invisible` saat bersih) mengosongkan keempatnya. Urutan chip tier ikut `TIER_ORDER`; tier tanpa artist tidak ditampilkan.
 
 **Input pencarian** — ikon SVG di kiri (`pl-9`), border fokus `focus:border-brand/60`.
 
