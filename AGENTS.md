@@ -31,6 +31,8 @@ app/
   [locale]/
     layout.tsx      root layout: validasi locale + <html lang>, metadata per locale
     page.tsx        server: loadArtists() -> <TeamBuilder artists locale />, revalidate 300
+    info/
+      page.tsx      server: penjelasan rumus rank, bobot, dan tier (tanpa fetch DB)
     manage/
       page.tsx      server: gate login admin + <ArtistEditor locale />
       actions.ts    server actions: login, logout, saveArtist, uploadPhoto (param locale)
@@ -74,6 +76,7 @@ Alur data: Supabase → `lib/artists.ts` → server component (props) → client
 | Ukuran tim | `TEAM_SIZE` di `lib/team.ts` |
 | Filter/sort/summary | `components/artists-tab.tsx` (filter + roster), `components/team-tab.tsx` (ringkasan tim) |
 | Bobot skor / ambang tier | `SCORE` per kategori + `BANDS` di `lib/score.ts` |
+| Teks halaman info rank | `app/[locale]/info/page.tsx` + `info` di `lib/dict/*.ts` |
 | Warna, font, radius, bayangan | `@theme` di `app/globals.css` |
 | Metadata/SEO/`lang` | `app/layout.tsx` |
 

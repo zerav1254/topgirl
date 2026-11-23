@@ -103,12 +103,20 @@ export function TeamBuilder({ artists, locale }: { artists: Artist[]; locale: Lo
         </div>
         <div className="flex w-full flex-col items-end gap-2 sm:w-auto">
           <LocaleSwitcher locale={locale} />
-          <Link
-            href={`/${locale}/manage`}
-            className="inline-flex min-h-11 items-center rounded-xl border border-white/10 bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
-          >
-            {C.header.manage}
-          </Link>
+          <div className="flex flex-wrap justify-end gap-2">
+            <Link
+              href={`/${locale}/info`}
+              className="inline-flex min-h-11 items-center rounded-xl border border-white/10 bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
+            >
+              {C.header.info}
+            </Link>
+            <Link
+              href={`/${locale}/manage`}
+              className="inline-flex min-h-11 items-center rounded-xl border border-white/10 bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
+            >
+              {C.header.manage}
+            </Link>
+          </div>
         </div>
       </header>
 
