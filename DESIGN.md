@@ -59,7 +59,7 @@ Badge tier: `border-<warna>/45 bg-<warna>/15 text-<warna>-300` (S+ pakai `text-g
 
 **Input pencarian** — ikon SVG di kiri (`pl-9`), border fokus `focus:border-brand/60`.
 
-**Language switcher** — satu `<select>` berisi semua bahasa (`LANG_NAME`), `h-11 rounded-lg border-white/10 bg-panel/80 text-xs`, chevron SVG absolut di kanan. Ganti bahasa = `router.push` path yang sama dengan segmen locale diganti. Di header utama mobile ia satu baris dengan tombol "Kelola data" (`justify-between`); `sm` ke atas kembali sebaris dengan judul. Di halaman login/manage posisinya di kanan atas kartu.
+**Language switcher** — tombol pemicu `h-11 rounded-lg border-white/10 bg-panel/80` berisi bendera SVG (`public/assets/flags/<locale>.svg`, 20×14, `rounded-[2px]`) + chevron; menu `role="listbox"` muncul di bawah (kanan), tiap opsi `min-h-11` dengan bendera + `LANG_NAME`, opsi aktif `bg-gold/10 text-gold`. Keyboard: Enter/Space buka, ArrowUp/Down pindah, Escape tutup dan fokus balik ke tombol; klik di luar menutup. Ganti bahasa = `router.push` path sama dengan segmen locale diganti, query dipertahankan.
 
 ## Gerak
 
