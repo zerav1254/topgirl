@@ -242,6 +242,16 @@ export function TeamTab({ artists, team, picked, locale, category, state, onTogg
                       <span className="tabular block truncate text-xs text-zinc-400">
                         {a.genre} · {formatStat(a.scores[category], locale)}
                       </span>
+                      <span className="mt-1 flex flex-col gap-0.5">
+                        {a.skills.map((s, i) => (
+                          <span key={i} className="flex items-baseline justify-between gap-2 text-xs">
+                            <span className="truncate text-zinc-400">{EFFECT_LABEL[s.effect][locale]}</span>
+                            <span className="tabular shrink-0 font-semibold text-zinc-200">
+                              {s.value === null ? "—" : `${formatStat(s.value, locale)}${isPercent(s.effect) ? "%" : ""}`}
+                            </span>
+                          </span>
+                        ))}
+                      </span>
                     </span>
                     <span
                       aria-hidden="true"
