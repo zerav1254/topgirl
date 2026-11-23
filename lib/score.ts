@@ -63,18 +63,18 @@ export type Category = (typeof CATEGORIES)[number];
 
 // detail_skill.md: 50% basic_atk = 20% skill_dmg = 10% fan.
 // Jadi bobot per 1%: basic 0.5, skill 1.25, fan 2.5.
-// Urutan tiap kategori ditentukan pemilik data; player_dmg bisa beda bobot
-// antar kategori (SOLO di atas fan, RALLY di bawah fan_rally).
+// player_dmg menambah basic_atk DAN skill_dmg, jadi bobotnya 0.5 + 1.25 = 1.75.
+// fan_rally memakai bobot sendiri; RALLY sengaja di atas player_dmg.
 const SCORE: Record<Category, Partial<Record<Effect, number>>> = {
   solo: {
-    player_dmg: 2.6,
+    player_dmg: 1.75,
     fan: 2.5,
     skill_dmg: 1.25,
     basic_atk: 0.5,
   },
   rally: {
     fan_rally: 7.5,
-    player_dmg: 2.4,
+    player_dmg: 1.75,
     skill_dmg: 1.25,
     basic_atk: 0.5,
     dps_atk_rally: 0.1,
@@ -82,7 +82,7 @@ const SCORE: Record<Category, Partial<Record<Effect, number>>> = {
     wbg_dmg: 1,
   },
   defense: {
-    player_dmg: 2.6,
+    player_dmg: 1.75,
     basic_atk_red: 0.8,
     skill_dmg_red: 0.6,
     dps_def: 0.1,
@@ -101,7 +101,7 @@ const FLAT_SCALE: Partial<Record<Effect, number>> = {
   dps_atk_rally: 1 / 2.4,
 };
 
-const SCALE = 0.6;
+const SCALE = 0.96;
 const BANDS: [Tier, number][] = [
   ["S+", 85],
   ["S", 60],

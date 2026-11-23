@@ -16,7 +16,7 @@ for (const name of ["Ayaka", "Moana"]) {
 }
 
 const orders = {
-  solo: ["player_dmg", "fan", "skill_dmg", "basic_atk"],
+  solo: ["fan", "player_dmg", "skill_dmg", "basic_atk"],
   rally: ["fan_rally", "player_dmg", "skill_dmg", "basic_atk"],
   defense: ["player_dmg", "basic_atk_red", "skill_dmg_red"],
   economy: ["gold", "drive"],
@@ -27,6 +27,12 @@ for (const [category, order] of Object.entries(orders)) {
     assert.ok(scores[i] < scores[i - 1], `priority ${category}: ${order[i]} must rank below ${order[i - 1]}`);
   }
 }
+// player_dmg menambah basic_atk DAN skill_dmg: skill 30 + player 30 == skill 60 + basic 30.
+assert.equal(
+  scoreArtist([{ effect: "skill_dmg", value: 30 }, { effect: "player_dmg", value: 30 }], "solo"),
+  scoreArtist([{ effect: "skill_dmg", value: 60 }, { effect: "basic_atk", value: 30 }], "solo"),
+  "player_dmg harus dihitung di kanal basic dan skill",
+);
 for (const a of artists) {
   for (const category of CATEGORIES) {
     assert.ok(a.scores[category] >= 0 && a.scores[category] <= 100, `${a.name} ${category} score out of range`);
