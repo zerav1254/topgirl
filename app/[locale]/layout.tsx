@@ -67,6 +67,12 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} className={`${inter.variable} ${sora.variable} ${notoKo.variable}`}>
       <body className="min-h-dvh text-zinc-100 antialiased">
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:inline-flex focus:min-h-11 focus:items-center focus:rounded-lg focus:border focus:border-gold/45 focus:bg-panel focus:px-4 focus:text-sm focus:font-semibold focus:text-gold"
+        >
+          {DICT[locale].common.skip}
+        </a>
         {children}
         <Analytics />
       </body>

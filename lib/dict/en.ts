@@ -19,6 +19,7 @@ export const en: Dict = {
   },
   common: {
     reset: "Reset",
+    skip: "Skip to content",
     all: "All",
     searchPlaceholder: "Search name, genre, or skill…",
     searchArtist: "Search artists",

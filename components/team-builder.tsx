@@ -58,7 +58,7 @@ export function TeamBuilder({ artists, locale }: { artists: Artist[]; locale: Lo
   }
 
   return (
-    <div className="mx-auto flex max-w-4xl flex-col gap-4 px-4 pt-4 pb-28 sm:px-6 sm:pt-6">
+    <div id="main" className="mx-auto flex max-w-4xl flex-col gap-4 px-4 pt-4 pb-28 sm:px-6 sm:pt-6">
       <header className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
         <div className="flex min-w-0 items-center gap-3">
           <Image

@@ -17,6 +17,7 @@ export const id = {
   },
   common: {
     reset: "Reset",
+    skip: "Langsung ke konten",
     all: "Semua",
     searchPlaceholder: "Cari nama, genre, atau skill…",
     searchArtist: "Cari artist",

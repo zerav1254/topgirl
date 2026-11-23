@@ -19,6 +19,7 @@ export const ko: Dict = {
   },
   common: {
     reset: "초기화",
+    skip: "본문으로 건너뛰기",
     all: "전체",
     searchPlaceholder: "이름, 장르, 스킬 검색…",
     searchArtist: "아티스트 검색",
