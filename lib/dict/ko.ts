@@ -82,6 +82,8 @@ export const ko: Dict = {
     pick: "목록에서 아티스트를 선택하세요.",
     photo: "사진 (jpg/png/webp, 최대 10MB)",
     upload: "사진 업로드",
+    uploading: "업로드 중…",
+    photoFailed: "사진을 처리할 수 없습니다. jpg/png/webp를 사용하세요.",
     photoHint: "자동으로 320×320으로 자르고 WebP로 변환합니다.",
   },
   isi: {

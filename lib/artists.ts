@@ -27,13 +27,14 @@ type Row = {
   origin: string | null;
   season: number | null;
   photo_path: string | null;
+  updated_at: string;
   artist_skills: { slot: number; effect: string; value: number | null }[];
 };
 
 export async function loadArtists(): Promise<Artist[]> {
   const { data, error } = await supabase
     .from("artists")
-    .select("id, slug, name, genre, origin, season, photo_path, artist_skills(slot, effect, value)")
+    .select("id, slug, name, genre, origin, season, photo_path, updated_at, artist_skills(slot, effect, value)")
     .order("id");
 
   if (error) throw new Error(`Gagal memuat artist: ${error.message}`);
@@ -53,7 +54,10 @@ export async function loadArtists(): Promise<Artist[]> {
         origin: r.origin,
         season: r.season,
         skills,
-        photoUrl: r.photo_path ? `${SUPABASE_URL}/storage/v1/object/public/${PHOTO_BUCKET}/${r.photo_path}` : null,
+        // ?v=updated_at: path foto tetap, jadi tanpa query ini CDN/optimizer menyajikan gambar lama.
+        photoUrl: r.photo_path
+          ? `${SUPABASE_URL}/storage/v1/object/public/${PHOTO_BUCKET}/${r.photo_path}?v=${new Date(r.updated_at).getTime()}`
+          : null,
         score,
         tier: tierFromScore(score),
       };

@@ -80,6 +80,8 @@ export const id = {
     pick: "Pilih artist di daftar.",
     photo: "Foto (jpg/png/webp, maks 10 MB)",
     upload: "Unggah foto",
+    uploading: "Mengunggah…",
+    photoFailed: "Foto gagal diproses. Coba jpg/png/webp.",
     photoHint: "Otomatis dipotong 320×320 dan dikonversi ke WebP.",
   },
   isi: {

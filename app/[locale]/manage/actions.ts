@@ -82,14 +82,19 @@ export async function saveArtist(locale: Locale, fd: FormData): Promise<SaveResu
   return { ok: true, error: "" };
 }
 
-export async function uploadPhoto(locale: Locale, fd: FormData): Promise<void> {
+export type UploadResult = { ok: boolean; error: string };
+
+// Tidak redirect: hasil dikembalikan supaya klien bisa tampilkan error upload
+// (Vercel menolak body >4,5 MB sebelum action ini jalan; foto dikompres di klien).
+export async function uploadPhoto(locale: Locale, fd: FormData): Promise<UploadResult> {
   const l = safeLocale(locale);
+  const E = DICT[l].isi.errors;
   const slug = txt(fd, "slug");
-  if (!(await isAdmin())) redirect(`/${l}/manage`);
+  if (!(await isAdmin())) return { ok: false, error: DICT[l].actions.session };
 
   const file = fd.get("photo");
-  if (!slug || !(file instanceof File) || file.size === 0) redirect(`/${l}/manage?a=${slug}&error=foto`);
-  if (file.size > 10 * 1024 * 1024) redirect(`/${l}/manage?a=${slug}&error=ukur`);
+  if (!slug || !(file instanceof File) || file.size === 0) return { ok: false, error: E.foto };
+  if (file.size > 10 * 1024 * 1024) return { ok: false, error: E.ukur };
 
   let webp: Buffer;
   try {
@@ -98,16 +103,18 @@ export async function uploadPhoto(locale: Locale, fd: FormData): Promise<void> {
       .webp({ quality: 80 })
       .toBuffer();
   } catch {
-    redirect(`/${l}/manage?a=${slug}&error=format`);
+    return { ok: false, error: E.format };
   }
 
   const sb = adminClient();
   const path = `${slug}.webp`;
   const up = await sb.storage.from(PHOTO_BUCKET).upload(path, webp, { contentType: "image/webp", upsert: true });
-  if (up.error) redirect(`/${l}/manage?a=${slug}&error=upload`);
+  if (up.error) return { ok: false, error: E.upload };
 
-  await sb.from("artists").update({ photo_path: path, updated_at: new Date().toISOString() }).eq("slug", slug);
+  const upd = await sb.from("artists").update({ photo_path: path, updated_at: new Date().toISOString() }).eq("slug", slug);
+  if (upd.error) return { ok: false, error: upd.error.message };
+
   revalidatePath(`/${l}`);
   revalidatePath(`/${l}/manage`);
-  redirect(`/${l}/manage?a=${slug}`);
+  return { ok: true, error: "" };
 }

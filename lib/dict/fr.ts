@@ -82,6 +82,8 @@ export const fr: Dict = {
     pick: "Choisissez un artiste dans la liste.",
     photo: "Photo (jpg/png/webp, max 10 Mo)",
     upload: "Envoyer la photo",
+    uploading: "Envoi…",
+    photoFailed: "Photo non traitée. Essayez jpg/png/webp.",
     photoHint: "Recadrée automatiquement en 320×320 et convertie en WebP.",
   },
   isi: {

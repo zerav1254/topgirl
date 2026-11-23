@@ -22,6 +22,8 @@ npm run seed     # isi DB + upload thumb dari CSV (butuh service_role key)
 npm start
 ```
 
+Jangan pernah menjalankan `next start` atau `npm start`, termasuk untuk uji lokal. Verifikasi cukup lewat `npm run dev` dan `npm run build`.
+
 ## Struktur
 
 ```

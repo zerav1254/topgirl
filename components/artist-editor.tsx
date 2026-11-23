@@ -3,6 +3,7 @@
 import { useMemo, useState, useTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type { Artist } from "@/lib/artists";
 import { DICT, t, type Locale } from "@/lib/i18n";
 import type { Lookups } from "@/lib/lookups";
@@ -21,6 +22,22 @@ type Draft = {
 };
 
 const digits = (v: string) => v.replace(/\D/g, "");
+
+// Kompres di browser: batas body Vercel 4,5 MB, jadi foto HP tidak dikirim mentah.
+const MAX_SIDE = 1280;
+
+async function compressPhoto(file: File): Promise<File> {
+  const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+  const scale = Math.min(1, MAX_SIDE / Math.max(bitmap.width, bitmap.height));
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+  canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+  canvas.getContext("2d")?.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  bitmap.close();
+  const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/webp", 0.85));
+  if (!blob) throw new Error("compress");
+  return new File([blob], `${file.name.replace(/\.[^.]+$/, "") || "photo"}.webp`, { type: "image/webp" });
+}
 
 function draftFromArtist(a: Artist): Draft {
   const skill = (i: number): SkillDraft => ({
@@ -65,6 +82,7 @@ export function ArtistEditor({
   locale: Locale;
 }) {
   const C = DICT[locale].editor;
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState(
     () =>
@@ -75,7 +93,9 @@ export function ArtistEditor({
   );
   const [draft, setDraft] = useState<Draft | null>(null);
   const [status, setStatus] = useState("");
+  const [photoStatus, setPhotoStatus] = useState("");
   const [saving, startSaving] = useTransition();
+  const [uploading, startUploading] = useTransition();
 
   const current = artists.find((a) => a.slug === selected);
   const form = draft?.slug === selected ? draft : current ? draftFromArtist(current) : null;
@@ -118,6 +138,30 @@ export function ArtistEditor({
     startSaving(async () => {
       const result = await saveArtist(locale, toFormData(form, current));
       setStatus(result.ok ? C.saved : result.error);
+    });
+  }
+
+  function submitPhoto(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const input = form.elements.namedItem("photo");
+    const file = input instanceof HTMLInputElement ? input.files?.[0] : undefined;
+    if (!current || !file) return;
+    setPhotoStatus("");
+    startUploading(async () => {
+      try {
+        const fd = new FormData();
+        fd.set("slug", current.slug);
+        fd.set("photo", await compressPhoto(file));
+        const result = await uploadPhoto(locale, fd);
+        setPhotoStatus(result.ok ? C.saved : result.error);
+        if (result.ok) {
+          form.reset();
+          router.refresh();
+        }
+      } catch {
+        setPhotoStatus(C.photoFailed);
+      }
     });
   }
 
@@ -316,7 +360,7 @@ export function ArtistEditor({
           )}
 
           {current ? (
-            <form action={uploadPhoto.bind(null, locale)} className="mt-5 flex flex-wrap items-end gap-3 border-t border-white/10 pt-4">
+            <form onSubmit={submitPhoto} className="mt-5 flex flex-wrap items-end gap-3 border-t border-white/10 pt-4">
               <input type="hidden" name="slug" value={current.slug} />
               <span className="grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-lg bg-panel-2 text-lg font-semibold text-zinc-300">
                 {current.photoUrl ? (
@@ -330,17 +374,23 @@ export function ArtistEditor({
                 <input
                   type="file"
                   name="photo"
-                  accept="image/*"
+                  accept="image/jpeg,image/png,image/webp"
                   required
                   className="cursor-pointer rounded-lg border border-white/10 bg-ink/60 px-3 py-2 text-sm text-zinc-300 file:mr-3 file:cursor-pointer file:rounded-md file:border-0 file:bg-panel-2 file:px-3 file:py-1 file:text-zinc-200"
                 />
               </label>
               <button
                 type="submit"
-                className="inline-flex min-h-11 cursor-pointer items-center rounded-lg border border-white/15 bg-panel-2 px-4 text-sm font-semibold text-zinc-200 transition-colors duration-200 hover:border-white/30"
+                disabled={uploading}
+                className="inline-flex min-h-11 cursor-pointer items-center rounded-lg border border-white/15 bg-panel-2 px-4 text-sm font-semibold text-zinc-200 transition-colors duration-200 hover:border-white/30 disabled:cursor-wait disabled:opacity-60"
               >
-                {C.upload}
+                {uploading ? C.uploading : C.upload}
               </button>
+              {photoStatus ? (
+                <p aria-live="polite" className={`w-full text-sm ${photoStatus === C.saved ? "text-emerald-300" : "text-red-300"}`}>
+                  {photoStatus}
+                </p>
+              ) : null}
               <p className="w-full text-xs text-zinc-400">{C.photoHint}</p>
             </form>
           ) : null}
