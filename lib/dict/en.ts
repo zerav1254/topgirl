@@ -91,6 +91,7 @@ export const en: Dict = {
     subtitle: "This page is for the data owner only.",
     password: "Password",
     submit: "Sign in",
+    home: "Back to home",
     errors: {
       login: "Wrong password.",
       foto: "Pick a photo file first.",

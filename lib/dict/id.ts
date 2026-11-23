@@ -89,6 +89,7 @@ export const id = {
     subtitle: "Halaman ini hanya untuk pemilik data.",
     password: "Password",
     submit: "Masuk",
+    home: "Kembali ke beranda",
     errors: {
       login: "Password salah.",
       foto: "Pilih file foto dulu.",

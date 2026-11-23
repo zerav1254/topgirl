@@ -91,6 +91,7 @@ export const ko: Dict = {
     subtitle: "이 페이지는 데이터 소유자 전용입니다.",
     password: "비밀번호",
     submit: "로그인",
+    home: "홈으로 돌아가기",
     errors: {
       login: "비밀번호가 틀렸습니다.",
       foto: "먼저 사진 파일을 선택하세요.",

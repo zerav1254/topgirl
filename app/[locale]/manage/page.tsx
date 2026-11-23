@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { loadArtists } from "@/lib/artists";
 import { isAdmin } from "@/lib/auth";
@@ -68,6 +69,12 @@ export default async function Page({
               {C.isi.submit}
             </button>
           </form>
+          <Link
+            href={`/${locale}`}
+            className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-white/10 px-4 text-sm font-semibold text-zinc-400 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
+          >
+            {C.isi.home}
+          </Link>
         </section>
       </main>
     );
