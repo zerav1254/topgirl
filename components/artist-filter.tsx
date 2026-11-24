@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useSyncExternalStore } from "react";
 import type { Artist } from "@/lib/artists";
 import { DICT, type Locale } from "@/lib/i18n";
 import { CATEGORIES, EFFECTS, EFFECT_LABEL, type Category, type Effect } from "@/lib/score";
@@ -12,6 +12,26 @@ const ALL = "all";
 export type ArtistFilter = { genre: string; origin: string; specialty: string; skill: string };
 const EMPTY: ArtistFilter = { genre: ALL, origin: ALL, specialty: ALL, skill: ALL };
 
+// Store filter di level modul: tetap hidup saat pindah rute /{locale} <-> /{locale}/team
+// (client navigation tidak me-reset modul), kembali kosong saat reload penuh.
+type FilterState = { query: string; filter: ArtistFilter };
+const INITIAL: FilterState = { query: "", filter: EMPTY };
+let current = INITIAL;
+const listeners = new Set<() => void>();
+const emit = () => listeners.forEach((l) => l());
+function subscribe(listener: () => void) {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
+}
+const getSnapshot = () => current;
+const getServerSnapshot = () => INITIAL;
+function setState(next: FilterState) {
+  current = next;
+  emit();
+}
+
 export const isCategory = (value: string): value is Category => (CATEGORIES as readonly string[]).includes(value);
 
 // Spesialis = kategori dengan skor tertinggi; seri dimenangkan urutan CATEGORIES (solo dulu).
@@ -20,8 +40,7 @@ export function specialtyOf(a: Artist): Category {
 }
 
 export function useArtistFilter(artists: Artist[], locale: Locale) {
-  const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState<ArtistFilter>(EMPTY);
+  const { query, filter } = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   const q = query.trim().toLowerCase();
   const visible = useMemo(
     () =>
@@ -38,6 +57,9 @@ export function useArtistFilter(artists: Artist[], locale: Locale) {
       ),
     [artists, filter, q, locale],
   );
+  const setQuery = (value: string) => setState({ ...current, query: value });
+  const setFilter = (next: ArtistFilter | ((f: ArtistFilter) => ArtistFilter)) =>
+    setState({ ...current, filter: typeof next === "function" ? next(current.filter) : next });
   return {
     query,
     setQuery,

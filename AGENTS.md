@@ -31,7 +31,9 @@ Jangan pernah menjalankan `next start` atau `npm start`, termasuk untuk uji loka
 app/
   [locale]/
     layout.tsx      root layout: validasi locale + <html lang>, metadata per locale
-    page.tsx        server: loadArtists() -> <TeamBuilder artists locale />, revalidate 300
+    page.tsx        server: loadArtists() -> <TeamBuilder tab="artists" />, revalidate 300
+    team/
+      page.tsx      server: loadArtists() -> <TeamBuilder tab="team" /> + metadata OG, revalidate 300
     loading.tsx     skeleton saat route dimuat
     error.tsx       error boundary per locale (wajib "use client")
     not-found.tsx   halaman 404 (locale tidak tersedia, pakai DICT.id)
@@ -42,7 +44,7 @@ app/
       actions.ts    server actions: login, logout, saveArtist (RPC atomik), uploadPhoto (param locale)
   globals.css       @import "tailwindcss" + @theme tokens + base rules
 components/
-  team-builder.tsx  client ("use client") — shell: state tim + tab + nav bawah
+  team-builder.tsx  client ("use client") — shell bersama /{locale} dan /{locale}/team: state tim + header
   artists-tab.tsx   client — tab Artists: cari + filter + roster per tier
   artist-filter.tsx client — hook + bar filter bersama (genre/asal/spesialis/skill), dipakai kedua tab
   team-tab.tsx      client — tab Team Builder: slot tim (klik slot buka dialog pilih artist), ringkasan
@@ -54,7 +56,7 @@ lib/
   artists.ts        query Supabase -> tipe Artist/Effect
   score.ts          bobot skor, tier, label effect
   team.ts           TEAM_SIZE, STAT_ORDER, GENRE_BONUS
-  team-store.ts     store tim di localStorage + query tab (BottomNav & TeamBuilder)
+  team-store.ts     store tim di localStorage (BottomNav & TeamBuilder)
   supabase.ts       read client (anon) + adminClient() (service_role)
   lookups.ts        opsi dropdown dari tabel genres/origins/effects
   auth.ts           cookie admin HMAC

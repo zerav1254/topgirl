@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useSyncExternalStore } from "react";
+import { useMemo, useSyncExternalStore } from "react";
 import Image from "next/image";
 import type { Artist } from "@/lib/artists";
 import { DICT, type Locale } from "@/lib/i18n";
 import type { Category } from "@/lib/score";
 import { TEAM_SIZE } from "@/lib/team";
-import { getServerTeam, getServerUrl, readTeam, readUrl, subscribeTeam, subscribeUrl, writeTeam } from "@/lib/team-store";
+import { getServerTeam, readTeam, subscribeTeam, writeTeam } from "@/lib/team-store";
 import { isCategory, useArtistFilter } from "./artist-filter";
 import { ArtistsTab } from "./artists-tab";
 import { LocaleSwitcher } from "./locale-switcher";
@@ -14,11 +14,9 @@ import { TeamTab } from "./team-tab";
 
 type Tab = "artists" | "team";
 
-export function TeamBuilder({ artists, locale }: { artists: Artist[]; locale: Locale }) {
+// Shell dipakai dua rute: /{locale} (artists) dan /{locale}/team. Tab dari route, bukan query.
+export function TeamBuilder({ artists, locale, tab }: { artists: Artist[]; locale: Locale; tab: Tab }) {
   const C = DICT[locale];
-  // Tab ikut ?tab=team: refresh tidak selalu kembali ke Artists, dan back/forward ikut tersinkron.
-  const search = useSyncExternalStore(subscribeUrl, readUrl, getServerUrl);
-  const tab: Tab = new URLSearchParams(search).get("tab") === "team" ? "team" : "artists";
   // Tidak ada bar kategori terpisah: filter "Spesialis" menentukan kategori skor/tier.
   const state = useArtistFilter(artists, locale);
   const category: Category = isCategory(state.filter.specialty) ? state.filter.specialty : "solo";
@@ -33,10 +31,6 @@ export function TeamBuilder({ artists, locale }: { artists: Artist[]; locale: Lo
       return [];
     }
   }, [saved, bySlug]);
-
-  useEffect(() => {
-    document.title = tab === "team" ? C.header.docTeam : C.header.docArtists;
-  }, [tab, C]);
 
   const team = picked.map((slug) => bySlug.get(slug)).filter((a): a is Artist => Boolean(a));
 

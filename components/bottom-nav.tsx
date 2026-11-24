@@ -2,13 +2,11 @@
 
 import { useMemo, useSyncExternalStore } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { DICT, t, type Locale } from "@/lib/i18n";
 import { TEAM_SIZE } from "@/lib/team";
-import { URL_EVENT, getServerTeam, getServerUrl, readTeam, readUrl, subscribeTeam, subscribeUrl } from "@/lib/team-store";
+import { getServerTeam, readTeam, subscribeTeam } from "@/lib/team-store";
 import { ICONS, Icon } from "./artist-ui";
-
-type Tab = "artists" | "team";
 
 const ITEM = "flex min-h-14 flex-col items-center justify-center gap-1 rounded-lg text-center text-xs font-semibold leading-tight transition-colors duration-200";
 const IDLE = "text-zinc-400 hover:text-zinc-200";
@@ -18,8 +16,6 @@ export function BottomNav({ locale }: { locale: Locale }) {
   const C = DICT[locale];
   const base = `/${locale}`;
   const pathname = usePathname() ?? base;
-  const router = useRouter();
-  const search = useSyncExternalStore(subscribeUrl, readUrl, getServerUrl);
   const saved = useSyncExternalStore(subscribeTeam, readTeam, getServerTeam);
 
   const count = useMemo(() => {
@@ -31,22 +27,9 @@ export function BottomNav({ locale }: { locale: Locale }) {
     }
   }, [saved]);
 
-  const onHome = pathname === base || pathname === `${base}/`;
-  const tab: Tab = new URLSearchParams(search).get("tab") === "team" ? "team" : "artists";
+  const onArtists = pathname === base || pathname === `${base}/`;
+  const onTeam = pathname === `${base}/team`;
   const full = count >= TEAM_SIZE;
-
-  // Tab beranda diganti tanpa reload supaya state tim + scroll tetap; halaman lain pakai router.
-  function go(next: Tab) {
-    if (!onHome) {
-      router.push(next === "team" ? `${base}?tab=team` : base);
-      return;
-    }
-    const url = new URL(window.location.href);
-    if (next === "team") url.searchParams.set("tab", "team");
-    else url.searchParams.delete("tab");
-    window.history.replaceState(null, "", url);
-    window.dispatchEvent(new Event(URL_EVENT));
-  }
 
   return (
     <nav
@@ -55,20 +38,18 @@ export function BottomNav({ locale }: { locale: Locale }) {
       style={{ paddingBottom: "max(0.25rem, env(safe-area-inset-bottom))" }}
     >
       <div className="mx-auto grid max-w-lg grid-cols-4 gap-1 px-2 pt-1">
-        <button
-          type="button"
-          onClick={() => go("artists")}
-          aria-current={onHome && tab === "artists" ? "true" : undefined}
-          className={`${ITEM} cursor-pointer ${onHome && tab === "artists" ? ACTIVE : IDLE}`}
+        <Link
+          href={base}
+          aria-current={onArtists ? "page" : undefined}
+          className={`${ITEM} ${onArtists ? ACTIVE : IDLE}`}
         >
           <Icon d={ICONS.list} className="h-5 w-5" />
           {C.header.artists}
-        </button>
-        <button
-          type="button"
-          onClick={() => go("team")}
-          aria-current={onHome && tab === "team" ? "true" : undefined}
-          className={`${ITEM} relative cursor-pointer ${onHome && tab === "team" ? ACTIVE : IDLE}`}
+        </Link>
+        <Link
+          href={`${base}/team`}
+          aria-current={onTeam ? "page" : undefined}
+          className={`${ITEM} relative ${onTeam ? ACTIVE : IDLE}`}
         >
           <span className="relative">
             <Icon d={ICONS.users} className="h-5 w-5" />
@@ -85,7 +66,7 @@ export function BottomNav({ locale }: { locale: Locale }) {
             {C.header.team}
             <span className="sr-only"> {t(C.header.tabCount, { n: count, size: TEAM_SIZE })}</span>
           </span>
-        </button>
+        </Link>
         <Link
           href={`${base}/info`}
           aria-current={pathname === `${base}/info` ? "page" : undefined}

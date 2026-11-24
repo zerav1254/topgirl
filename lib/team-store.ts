@@ -1,4 +1,4 @@
-// Store bersama untuk tim di localStorage dan query tab; dipakai BottomNav + TeamBuilder.
+// Store bersama untuk tim di localStorage; dipakai BottomNav + TeamBuilder.
 const STORAGE_KEY = "topgirl.team.v1";
 
 const teamListeners = new Set<() => void>();
@@ -29,17 +29,3 @@ export function writeTeam(next: string[]) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
   notify();
 }
-
-export const URL_EVENT = "topgirl:url";
-
-export const subscribeUrl = (listener: () => void) => {
-  window.addEventListener("popstate", listener);
-  window.addEventListener(URL_EVENT, listener);
-  return () => {
-    window.removeEventListener("popstate", listener);
-    window.removeEventListener(URL_EVENT, listener);
-  };
-};
-
-export const readUrl = () => window.location.search;
-export const getServerUrl = () => "";

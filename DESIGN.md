@@ -43,7 +43,7 @@ Badge tier: `border-<warna>/45 bg-<warna>/15 text-<warna>-300` (S+ pakai `text-g
 
 ## Spasi & layout
 
-- Satu kolom: shell `mx-auto flex max-w-4xl flex-col gap-4 px-4 pt-4 pb-28 sm:px-6 sm:pt-6`. Tab Artists/Team dipilih lewat bottom nav (`?tab=team`), bukan bar tab di dalam halaman.
+- Satu kolom: shell `mx-auto flex max-w-4xl flex-col gap-4 px-4 pt-4 pb-28 sm:px-6 sm:pt-6`. Halaman Artists (`/{locale}`) dan Team (`/{locale}/team`) dipilih lewat bottom nav, bukan bar tab di dalam halaman.
 - Roster: 2 kolom < 640px, 3 kolom `sm`, 4 kolom `md`.
 - Radius: kartu besar `rounded-2xl`, kartu artist/slot `rounded-xl`, badge/tombol kecil `rounded-lg`/`rounded-md`.
 - Border pemisah: `border-white/10`; hover `border-white/25`.
