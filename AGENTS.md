@@ -58,7 +58,9 @@ lib/
   supabase.ts       read client (anon) + adminClient() (service_role)
   lookups.ts        opsi dropdown dari tabel genres/origins/effects
   auth.ts           cookie admin HMAC
-  i18n.ts           LOCALES, Locale, DICT, LANG_NAME, t() interpolasi, numberLocale
+  i18n.ts           LOCALES, Locale, DICT, LANG_NAME, t() interpolasi, numberLocale, localeOr
+  seo.ts            chunk metadata bersama (canonical/hreflang/OG/Twitter) + SITE_ICON
+  image-client.ts   kompres foto di browser (createImageBitmap/canvas), klien saja
   dict/id.ts        sumber string UI (tipe Dict)
   dict/en|fr|ko.ts  terjemahan, wajib lengkap sesuai Dict
 supabase/
@@ -86,7 +88,7 @@ Alur data: Supabase → `lib/artists.ts` → server component (props) → client
 | Bobot skor / ambang tier | `SCORE` per kategori + `BANDS` di `lib/score.ts` |
 | Teks halaman info rank | `app/[locale]/info/page.tsx` + `info` di `lib/dict/*.ts` |
 | Warna, font, radius, bayangan | `@theme` di `app/globals.css` |
-| Metadata/SEO/`lang` | `app/layout.tsx` |
+| Metadata/SEO/`lang` | `app/[locale]/layout.tsx` + `lib/seo.ts` |
 
 `TIER_ORDER` di `lib/score.ts` menentukan urutan tier di roster. Tier dihitung per kategori (`CATEGORIES`/`SCORE`) di `lib/score.ts`; menambah tier baru berarti mengubah `TIER_ORDER`, `BANDS` **dan** `TIER_STYLE`/`AVATAR_STYLE` pada `components/artist-ui.tsx`. Menambah kategori berarti mengisi `CATEGORIES`, `SCORE`, label di `lib/dict/*.ts`, dan pemilih di `components/team-builder.tsx`. `EFFECTS`/`EFFECT_LABEL` juga di `lib/score.ts` (dipakai DB constraint lewat server action).
 

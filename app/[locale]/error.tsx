@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { DICT, isLocale } from "@/lib/i18n";
+import { DICT, localeOr } from "@/lib/i18n";
 
 // Error boundary wajib client di Next; satu-satunya "use client" di luar komponen interaktif.
 export default function Error({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
   const params = useParams<{ locale?: string }>();
-  const locale = typeof params.locale === "string" && isLocale(params.locale) ? params.locale : "id";
+  const locale = typeof params.locale === "string" ? localeOr(params.locale) : "id";
   const C = DICT[locale].error;
   return (
     <main id="main" className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center px-4 pt-10 pb-28">

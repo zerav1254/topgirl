@@ -1,8 +1,15 @@
-import { CATEGORIES, EFFECTS, TIER_ORDER, scoreArtist, tierFromScore, type Category, type Effect, type Skill, type Tier } from "./score.ts";
+import {
+  CATEGORIES,
+  EFFECT_SET,
+  TIER_ORDER,
+  scoreArtist,
+  tierFromScore,
+  type Category,
+  type Effect,
+  type Skill,
+  type Tier,
+} from "./score.ts";
 import { PHOTO_BUCKET, SUPABASE_URL, supabase } from "./supabase.ts";
-
-export { CATEGORIES, TIER_ORDER, tierFromScore } from "./score.ts";
-export type { Category, Effect, Skill, Tier } from "./score.ts";
 
 export type Artist = {
   id: number;
@@ -12,14 +19,9 @@ export type Artist = {
   origin: string | null;
   skills: Skill[];
   photoUrl: string | null;
-  // SOLO tetap disimpan terpisah supaya sort server dan editor tidak perlu kategori.
-  score: number;
-  tier: Tier;
   scores: Record<Category, number>;
   tiers: Record<Category, Tier>;
 };
-
-const EFFECT_SET = new Set<string>(EFFECTS);
 
 type Row = {
   id: number;
@@ -59,16 +61,14 @@ export async function loadArtists(): Promise<Artist[]> {
         photoUrl: r.photo_path
           ? `${SUPABASE_URL}/storage/v1/object/public/${PHOTO_BUCKET}/${r.photo_path}?v=${new Date(r.photo_updated_at).getTime()}`
           : null,
-        score: scores.solo,
-        tier: tiers.solo,
         scores,
         tiers,
       };
     })
     .sort(
       (a, b) =>
-        TIER_ORDER.indexOf(a.tier) - TIER_ORDER.indexOf(b.tier) ||
-        b.score - a.score ||
+        TIER_ORDER.indexOf(a.tiers.solo) - TIER_ORDER.indexOf(b.tiers.solo) ||
+        b.scores.solo - a.scores.solo ||
         a.name.localeCompare(b.name),
     );
 }

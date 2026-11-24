@@ -108,6 +108,8 @@ export const SCORE: Record<Category, Partial<Record<Effect, number>>> = {
   },
 };
 
+export const EFFECT_SET: ReadonlySet<string> = new Set(EFFECTS);
+
 // Nilai "flat" (DPS) diskalakan ke skala persen. Efek baru dengan unit flat
 // wajib ditambahkan di sini, kalau tidak skornya dihitung sebagai persen.
 const FLAT_SCALE: Partial<Record<Effect, number>> = {
@@ -115,6 +117,9 @@ const FLAT_SCALE: Partial<Record<Effect, number>> = {
   dps_atk_company: 1 / 2.4,
   dps_atk_rally: 1 / 2.4,
 };
+
+// Turunan FLAT_SCALE supaya tampilan (%) dan skor memakai sumber yang sama.
+export const FLAT_EFFECTS: ReadonlySet<Effect> = new Set(Object.keys(FLAT_SCALE) as Effect[]);
 
 export const SCALE = 0.96;
 export const BANDS: [Tier, number][] = [

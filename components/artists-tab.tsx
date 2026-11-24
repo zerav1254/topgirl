@@ -2,11 +2,11 @@
 
 import { useMemo } from "react";
 import Image from "next/image";
-import type { Artist, Category } from "@/lib/artists";
+import type { Artist } from "@/lib/artists";
 import { DICT, t, type Locale } from "@/lib/i18n";
-import { EFFECT_LABEL, TIER_ORDER } from "@/lib/score";
+import { TIER_ORDER, type Category } from "@/lib/score";
 import { ArtistFilterBar, type ArtistFilterState } from "./artist-filter";
-import { GenreIcon, ICONS, Icon, TierBadge, formatStat, isPercent } from "./artist-ui";
+import { GenreIcon, ICONS, Icon, SkillList, TierBadge, formatStat } from "./artist-ui";
 
 type Props = {
   artists: Artist[];
@@ -89,16 +89,7 @@ export function ArtistsTab({ artists, picked, locale, category, state }: Props) 
                           </span>
                           <span className="truncate text-zinc-300">{a.origin ?? "—"}</span>
                         </span>
-                        <span className="mt-1 flex flex-col gap-0.5 border-t border-white/10 pt-1">
-                          {a.skills.map((s, i) => (
-                            <span key={i} className="flex items-baseline justify-between gap-2 text-xs">
-                              <span className="truncate text-zinc-400">{EFFECT_LABEL[s.effect][locale]}</span>
-                              <span className="tabular shrink-0 font-semibold text-zinc-200">
-                                {s.value === null ? "—" : `${formatStat(s.value, locale)}${isPercent(s.effect) ? "%" : ""}`}
-                              </span>
-                            </span>
-                          ))}
-                        </span>
+                        <SkillList skills={a.skills} locale={locale} className="mt-1 border-t border-white/10 pt-1" />
                       </span>
                     </div>
                   </li>

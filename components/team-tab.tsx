@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { Artist, Category, Effect } from "@/lib/artists";
+import type { Artist } from "@/lib/artists";
 import { DICT, t, type Locale } from "@/lib/i18n";
-import { EFFECT_LABEL } from "@/lib/score";
+import { EFFECT_LABEL, type Category, type Effect } from "@/lib/score";
 import { GENRE_BONUS, STAT_ORDER, TEAM_SIZE } from "@/lib/team";
 import { ArtistFilterBar, type ArtistFilterState } from "./artist-filter";
-import { Avatar, GenreIcon, ICONS, Icon, TierBadge, formatStat, isPercent } from "./artist-ui";
+import { Avatar, GenreIcon, ICONS, Icon, SkillList, TierBadge, formatStat, isPercent } from "./artist-ui";
 
 type Props = {
   artists: Artist[];
@@ -242,16 +242,7 @@ export function TeamTab({ artists, team, picked, locale, category, state, onTogg
                       <span className="tabular block truncate text-xs text-zinc-400">
                         {a.genre} · {formatStat(a.scores[category], locale)}
                       </span>
-                      <span className="mt-1 flex flex-col gap-0.5">
-                        {a.skills.map((s, i) => (
-                          <span key={i} className="flex items-baseline justify-between gap-2 text-xs">
-                            <span className="truncate text-zinc-400">{EFFECT_LABEL[s.effect][locale]}</span>
-                            <span className="tabular shrink-0 font-semibold text-zinc-200">
-                              {s.value === null ? "—" : `${formatStat(s.value, locale)}${isPercent(s.effect) ? "%" : ""}`}
-                            </span>
-                          </span>
-                        ))}
-                      </span>
+                      <SkillList skills={a.skills} locale={locale} className="mt-1" />
                     </span>
                     <span
                       aria-hidden="true"

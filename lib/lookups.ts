@@ -1,7 +1,5 @@
-import { EFFECTS } from "./score.ts";
+import { EFFECT_SET } from "./score.ts";
 import { supabase } from "./supabase.ts";
-
-const EFFECT_SET = new Set<string>(EFFECTS);
 
 export type Option = { id: string; label: string };
 

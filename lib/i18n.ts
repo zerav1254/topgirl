@@ -17,6 +17,9 @@ export const LANG_CODE: Record<Locale, string> = { id: "ID", en: "EN", fr: "FR",
 
 export const isLocale = (value: string): value is Locale => (LOCALES as readonly string[]).includes(value);
 
+// Locale dari URL yang tidak dikenal jatuh ke default (id), bukan 404.
+export const localeOr = (value: string): Locale => (isLocale(value) ? value : "id");
+
 export const t = (text: string, vars?: Record<string, string | number>) =>
   vars ? text.replace(/\{(\w+)\}/g, (_, key: string) => String(vars[key] ?? `{${key}}`)) : text;
 

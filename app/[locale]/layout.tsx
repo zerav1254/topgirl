@@ -2,7 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Noto_Sans_KR, Sora } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { BottomNav } from "@/components/bottom-nav";
-import { DICT, LOCALES, isLocale, type Locale } from "@/lib/i18n";
+import { DICT, LOCALES, localeOr } from "@/lib/i18n";
+import { SITE_ICON, pageMetadata } from "@/lib/seo";
 import "../globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
@@ -17,40 +18,18 @@ export function generateStaticParams() {
 // Vercel menyetel VERCEL_PROJECT_PRODUCTION_URL di production; lokal pakai localhost.
 const SITE_URL = `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL ?? process.env.VERCEL_URL ?? "localhost:3000"}`;
 
-const OG_LOCALE: Record<Locale, string> = { id: "id_ID", en: "en_US", fr: "fr_FR", ko: "ko_KR" };
-const ICON = "/assets/icon-topgirl.webp";
-
 export const viewport: Viewport = { themeColor: "#0b0b0f", colorScheme: "dark" };
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
-  const l: Locale = isLocale(locale) ? locale : "id";
+  const l = localeOr(locale);
   const meta = DICT[l].meta;
   return {
     metadataBase: new URL(SITE_URL),
     title: meta.title,
     description: meta.description,
-    icons: { icon: ICON, apple: "/assets/apple-icon.png" },
-    alternates: {
-      canonical: `/${l}`,
-      languages: { ...Object.fromEntries(LOCALES.map((x) => [x, `/${x}`])), "x-default": "/id" },
-    },
-    openGraph: {
-      type: "website",
-      siteName: "TopGirl",
-      title: meta.title,
-      description: meta.description,
-      url: `/${l}`,
-      locale: OG_LOCALE[l],
-      alternateLocale: LOCALES.filter((x) => x !== l).map((x) => OG_LOCALE[x]),
-      images: [{ url: ICON, width: 512, height: 512, alt: "TopGirl" }],
-    },
-    twitter: {
-      card: "summary",
-      title: meta.title,
-      description: meta.description,
-      images: [ICON],
-    },
+    icons: { icon: SITE_ICON, apple: "/assets/apple-icon.png" },
+    ...pageMetadata({ locale: l, title: meta.title, description: meta.description }),
   };
 }
 
@@ -64,7 +43,7 @@ export default async function LocaleLayout({
   const { locale: raw } = await params;
   // Jangan notFound() di layout: Next memakai 404 default, bukan [locale]/not-found.
   // Halaman di bawah segmen ini yang memvalidasi lalu memanggil notFound().
-  const locale: Locale = isLocale(raw) ? raw : "id";
+  const locale = localeOr(raw);
 
   return (
     <html lang={locale} className={`${inter.variable} ${sora.variable} ${notoKo.variable}`}>

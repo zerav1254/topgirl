@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import type { Artist } from "@/lib/artists";
 import { DICT, t, type Locale } from "@/lib/i18n";
 import type { Lookups } from "@/lib/lookups";
+import { compressPhoto } from "@/lib/image-client";
 import { scoreArtist, tierFromScore, type Effect, type Skill } from "@/lib/score";
 import { logout, saveArtist, uploadPhoto } from "@/app/[locale]/manage/actions";
 import { Avatar, SearchInput, formatStat } from "./artist-ui";
@@ -21,22 +22,6 @@ type Draft = {
 };
 
 const digits = (v: string) => v.replace(/\D/g, "");
-
-// Kompres di browser: batas body Vercel 4,5 MB, jadi foto HP tidak dikirim mentah.
-const MAX_SIDE = 1280;
-
-async function compressPhoto(file: File): Promise<File> {
-  const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
-  const scale = Math.min(1, MAX_SIDE / Math.max(bitmap.width, bitmap.height));
-  const canvas = document.createElement("canvas");
-  canvas.width = Math.max(1, Math.round(bitmap.width * scale));
-  canvas.height = Math.max(1, Math.round(bitmap.height * scale));
-  canvas.getContext("2d")?.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-  bitmap.close();
-  const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/webp", 0.85));
-  if (!blob) throw new Error("compress");
-  return new File([blob], `${file.name.replace(/\.[^.]+$/, "") || "photo"}.webp`, { type: "image/webp" });
-}
 
 function draftFromArtist(a: Artist): Draft {
   const skill = (i: number): SkillDraft => ({

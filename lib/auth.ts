@@ -9,7 +9,9 @@ const password = () => process.env.ADMIN_PASSWORD ?? "";
 
 // Sertakan fingerprint password: ganti ADMIN_PASSWORD -> cookie lama otomatis tidak valid.
 function token(): string {
-  return createHmac("sha256", secret()).update("admin:v1").update(password()).digest("base64url");
+  const s = secret();
+  if (!s) throw new Error("AUTH_SECRET belum diset.");
+  return createHmac("sha256", s).update("admin:v1").update(password()).digest("base64url");
 }
 
 // Hash dulu supaya panjang input tidak bocor lewat timing/length, lalu banding konstan.

@@ -1,7 +1,7 @@
 import Image from "next/image";
-import type { Artist, Effect } from "@/lib/artists";
+import type { Artist } from "@/lib/artists";
 import { DICT, numberLocale, type Locale } from "@/lib/i18n";
-import { EFFECT_LABEL } from "@/lib/score";
+import { EFFECT_LABEL, FLAT_EFFECTS, type Effect } from "@/lib/score";
 
 const TIER_STYLE: Record<string, string> = {
   "S+": "border-gold/45 bg-gold/15 text-gold",
@@ -29,22 +29,33 @@ const GENRE_IMAGE: Record<string, string> = {
   "R&B": "rnb",
 };
 
-export const isPercent = (effect: Effect) => !effect.startsWith("dps");
-
-const skillText = (s: Artist["skills"][number], locale: Locale) =>
-  `${EFFECT_LABEL[s.effect][locale]}${s.value !== null ? ` ${s.value}${isPercent(s.effect) ? "%" : ""}` : ""}`;
-
-// Dua slot boleh berisi efek sama; ringkas jadi "… ×2" supaya tidak terbaca bug.
-export const skillList = (skills: Artist["skills"], locale: Locale) => {
-  const counts = new Map<string, number>();
-  for (const s of skills) {
-    const text = skillText(s, locale);
-    counts.set(text, (counts.get(text) ?? 0) + 1);
-  }
-  return [...counts].map(([t, n]) => (n > 1 ? `${t} ×${n}` : t)).join(" / ");
-};
+export const isPercent = (effect: Effect) => !FLAT_EFFECTS.has(effect);
 
 export const formatStat = (v: number, locale: Locale) => v.toLocaleString(numberLocale(locale), { maximumFractionDigits: 1 });
+
+// Daftar skill berangka dipakai di kartu artist dan dialog picker.
+export function SkillList({
+  skills,
+  locale,
+  className = "",
+}: {
+  skills: Artist["skills"];
+  locale: Locale;
+  className?: string;
+}) {
+  return (
+    <span className={`flex flex-col gap-0.5 ${className}`}>
+      {skills.map((s, i) => (
+        <span key={i} className="flex items-baseline justify-between gap-2 text-xs">
+          <span className="truncate text-zinc-400">{EFFECT_LABEL[s.effect][locale]}</span>
+          <span className="tabular shrink-0 font-semibold text-zinc-200">
+            {s.value === null ? "—" : `${formatStat(s.value, locale)}${isPercent(s.effect) ? "%" : ""}`}
+          </span>
+        </span>
+      ))}
+    </span>
+  );
+}
 
 export function Icon({ d, className = "h-4 w-4" }: { d: string; className?: string }) {
   return (
@@ -74,7 +85,7 @@ export function TierBadge({ tier, className = "" }: { tier: string; className?: 
   );
 }
 
-export function Avatar({ artist, size = "h-12 w-12", tier = artist.tier }: { artist: Artist; size?: string; tier?: string }) {
+export function Avatar({ artist, size = "h-12 w-12", tier = artist.tiers.solo }: { artist: Artist; size?: string; tier?: string }) {
   return (
     <span className={`block shrink-0 overflow-hidden rounded-lg bg-gradient-to-br ${AVATAR_STYLE[tier] ?? AVATAR_STYLE.D} ${size}`}>
       {artist.photoUrl ? (

@@ -1,9 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { Artist, Category } from "@/lib/artists";
+import type { Artist } from "@/lib/artists";
 import { DICT, type Locale } from "@/lib/i18n";
-import { CATEGORIES, EFFECTS, EFFECT_LABEL, type Effect } from "@/lib/score";
+import { CATEGORIES, EFFECTS, EFFECT_LABEL, type Category, type Effect } from "@/lib/score";
 import { SearchInput } from "./artist-ui";
 
 // Sentinel filter, bukan teks tampil: label "Semua" datang dari dict.
