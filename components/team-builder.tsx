@@ -53,8 +53,8 @@ export function TeamBuilder({ artists, locale }: { artists: Artist[]; locale: Lo
   }
 
   return (
-    <div id="main" className="mx-auto flex max-w-4xl flex-col gap-4 px-4 pt-4 pb-28 sm:px-6 sm:pt-6">
-      <header className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+    <div id="main" className="mx-auto flex max-w-4xl flex-col gap-3 px-4 pt-3 pb-28 sm:px-6 sm:pt-6">
+      <header className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
         <div className="flex min-w-0 items-center gap-3">
           <Image
             src="/assets/icon-topgirl.webp"
@@ -63,11 +63,11 @@ export function TeamBuilder({ artists, locale }: { artists: Artist[]; locale: Lo
             height={96}
             sizes="40px"
             priority
-            className="h-10 w-10 shrink-0 rounded-xl border border-white/10 object-cover"
+            className="h-9 w-9 shrink-0 rounded-xl border border-white/10 object-cover"
           />
           <div className="min-w-0">
             <p className="font-display text-[11px] font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
-            <h1 className="font-display truncate text-xl font-bold tracking-tight sm:text-2xl">
+            <h1 className="font-display truncate text-lg font-bold tracking-tight sm:text-2xl">
               {tab === "artists" ? C.header.artists : C.header.team}
             </h1>
           </div>
