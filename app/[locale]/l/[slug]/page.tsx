@@ -7,7 +7,7 @@ import { DICT, isLocale, t, type Locale } from "@/lib/i18n";
 import { loadShared } from "@/lib/lineups";
 import { GENRE_BONUS, TEAM_SIZE } from "@/lib/team";
 import { TIER_ORDER } from "@/lib/score";
-import { Avatar, GenreIcon, SkillList, TierBadge, formatStat } from "@/components/artist-ui";
+import { Avatar, GenreIcon, ICONS, Icon, SkillList, TierBadge, formatStat } from "@/components/artist-ui";
 
 export const dynamic = "force-dynamic";
 
@@ -147,8 +147,9 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
 
       <Link
         href={`/${locale}/team`}
-        className="inline-flex min-h-11 items-center justify-center rounded-lg border border-gold/45 bg-gold/15 px-4 text-sm font-semibold text-gold transition-colors duration-200 hover:bg-gold/25"
+        className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-gold/45 bg-gold/15 px-4 text-sm font-semibold text-gold transition-colors duration-200 hover:bg-gold/25"
       >
+        <Icon d={ICONS.plus} className="h-4 w-4 shrink-0" />
         {C.lineup.buildOwn}
       </Link>
     </main>

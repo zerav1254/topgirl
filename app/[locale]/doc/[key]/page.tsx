@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { LocaleSwitcher } from "@/components/locale-switcher";
+import { ICONS, Icon } from "@/components/artist-ui";
 import { DOCS, DOC_KEYS, type DocKey } from "@/lib/docs";
 import { DICT, isLocale, type Locale } from "@/lib/i18n";
 
@@ -51,8 +52,9 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
           <Link
             key={k}
             href={`/${locale}/doc/${k}`}
-            className="inline-flex min-h-11 items-center rounded-lg border border-white/10 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
+            className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-white/10 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
           >
+            <Icon d={k === "privacy" ? ICONS.shield : k === "legal" ? ICONS.file : ICONS.info} className="h-4 w-4 shrink-0" />
             {DOCS[locale][k].title}
           </Link>
         ))}
@@ -60,8 +62,9 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
 
       <Link
         href={`/${locale}`}
-        className="inline-flex min-h-11 items-center justify-center rounded-lg border border-white/10 px-4 text-sm font-semibold text-zinc-400 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
+        className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/10 px-4 text-sm font-semibold text-zinc-400 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
       >
+        <Icon d={ICONS.home} className="h-4 w-4 shrink-0" />
         {C.isi.home}
       </Link>
     </main>

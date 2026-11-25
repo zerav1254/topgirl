@@ -116,8 +116,9 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
 
       <Link
         href={`/${locale}`}
-        className="inline-flex min-h-11 items-center justify-center rounded-lg border border-white/10 px-4 text-sm font-semibold text-zinc-400 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
+        className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/10 px-4 text-sm font-semibold text-zinc-400 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
       >
+        <Icon d={ICONS.home} className="h-4 w-4 shrink-0" />
         {C.isi.home}
       </Link>
     </main>

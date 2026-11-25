@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { uploadAvatar } from "@/app/[locale]/profile/actions";
 import { DICT, type Locale } from "@/lib/i18n";
 import { compressPhoto } from "@/lib/image-client";
+import { ICONS, Icon } from "@/components/artist-ui";
 
 export function AvatarForm({ locale }: { locale: Locale }) {
   const C = DICT[locale].profile;
@@ -49,8 +50,9 @@ export function AvatarForm({ locale }: { locale: Locale }) {
       <button
         type="submit"
         disabled={pending}
-        className="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-lg border border-white/10 px-4 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100 disabled:opacity-60"
+        className="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-lg border border-white/10 px-4 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100 disabled:opacity-60"
       >
+        <Icon d={ICONS.upload} className="h-4 w-4 shrink-0" />
         {pending ? C.saving : C.avatarUpload}
       </button>
       {message ? (

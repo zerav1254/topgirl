@@ -5,6 +5,7 @@ import { loadArtists } from "@/lib/artists";
 import { isAdmin } from "@/lib/auth";
 import { DICT, isLocale, type Locale } from "@/lib/i18n";
 import { LocaleSwitcher } from "@/components/locale-switcher";
+import { ICONS, Icon } from "@/components/artist-ui";
 import { ArtistEditor } from "@/components/artist-editor";
 
 type ErrorKey = keyof (typeof DICT)["id"]["isi"]["errors"];
@@ -51,14 +52,16 @@ export default async function Page({
           ) : null}
           <Link
             href={`/${locale}/login`}
-            className="mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-gold/45 bg-gold/15 px-4 text-sm font-semibold text-gold transition-colors duration-200 hover:bg-gold/25"
+            className="mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-gold/45 bg-gold/15 px-4 text-sm font-semibold text-gold transition-colors duration-200 hover:bg-gold/25"
           >
+            <Icon d={ICONS.user} className="h-4 w-4 shrink-0" />
             {C.auth.login}
           </Link>
           <Link
             href={`/${locale}`}
-            className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-white/10 px-4 text-sm font-semibold text-zinc-400 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
+            className="mt-3 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-white/10 px-4 text-sm font-semibold text-zinc-400 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
           >
+            <Icon d={ICONS.home} className="h-4 w-4 shrink-0" />
             {C.isi.home}
           </Link>
         </section>

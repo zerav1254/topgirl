@@ -113,6 +113,7 @@ export const fr: Dict = {
   profile: {
     title: "Profil",
     subtitle: "Votre nom et votre ID de jeu apparaissent sur les compositions partagées.",
+    editTitle: "Modifier le profil",
     name: "Nom affiché",
     ingameId: "ID de jeu",
     ingameServer: "Serveur",

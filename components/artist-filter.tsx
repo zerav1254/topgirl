@@ -177,8 +177,9 @@ export function ArtistFilterBar({
             onClick={() => setOpen((o) => !o)}
             aria-expanded={open}
             aria-controls="artist-filter-panel"
-            className="flex min-h-11 shrink-0 cursor-pointer items-center rounded-xl border border-white/10 bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100 sm:hidden"
+            className="flex min-h-11 shrink-0 cursor-pointer items-center gap-1.5 rounded-xl border border-white/10 bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100 sm:hidden"
           >
+            <Icon d={ICONS.sliders} className="h-4 w-4 shrink-0" />
             {C.artists.filters}
             {activeCount > 0 && <span className="tabular text-gold"> {activeCount}</span>}
           </button>

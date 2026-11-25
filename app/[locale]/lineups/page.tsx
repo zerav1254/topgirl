@@ -8,6 +8,7 @@ import { loadLineups } from "@/lib/lineups";
 import { SITE_URL } from "@/lib/site";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { LineupsTab } from "@/components/lineups-tab";
+import { ICONS, Icon } from "@/components/artist-ui";
 
 export const dynamic = "force-dynamic";
 
@@ -38,8 +39,9 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
         <p className="text-sm text-zinc-400">{C.lineup.loginHint}</p>
         <Link
           href={`/${locale}/login`}
-          className="inline-flex min-h-11 items-center justify-center rounded-lg border border-gold/45 bg-gold/15 px-4 text-sm font-semibold text-gold transition-colors duration-200 hover:bg-gold/25"
+          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-gold/45 bg-gold/15 px-4 text-sm font-semibold text-gold transition-colors duration-200 hover:bg-gold/25"
         >
+          <Icon d={ICONS.user} className="h-4 w-4 shrink-0" />
           {C.auth.login}
         </Link>
       </main>
@@ -61,8 +63,9 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
       <LineupsTab lineups={lineups} preview={preview} locale={locale} signedIn siteUrl={SITE_URL} />
       <Link
         href={`/${locale}/team`}
-        className="inline-flex min-h-11 items-center justify-center rounded-lg border border-white/10 px-4 text-sm font-semibold text-zinc-400 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
+        className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/10 px-4 text-sm font-semibold text-zinc-400 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
       >
+        <Icon d={ICONS.users} className="h-4 w-4 shrink-0" />
         {C.header.team}
       </Link>
     </main>

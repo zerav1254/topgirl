@@ -53,7 +53,7 @@ export function LineupsTab({
 
   if (!signedIn) return <p className="text-sm text-zinc-400">{C.loginHint}</p>;
 
-  const btn = "min-h-11 cursor-pointer rounded-lg border px-3 text-sm font-semibold transition-colors duration-200";
+  const btn = "inline-flex min-h-11 cursor-pointer items-center justify-center gap-1.5 rounded-lg border px-3 text-sm font-semibold transition-colors duration-200";
 
   return (
     <div className="flex flex-col gap-4">
@@ -102,6 +102,7 @@ export function LineupsTab({
           disabled={pending || slugs.length === 0}
           className={`${btn} w-full border-gold/45 bg-gold/15 text-gold hover:bg-gold/25 disabled:cursor-not-allowed disabled:opacity-60`}
         >
+          <Icon d={ICONS.save} className="h-4 w-4 shrink-0" />
           {C.save}
         </button>
       </form>
@@ -155,6 +156,7 @@ export function LineupsTab({
                     onClick={() => run(() => toggleShare(locale, l.id, !l.shareSlug))}
                     className={`${btn} border-white/10 text-zinc-300 hover:border-white/25 hover:text-zinc-100`}
                   >
+                    <Icon d={l.shareSlug ? ICONS.unlink : ICONS.share} className="h-4 w-4 shrink-0" />
                     {l.shareSlug ? C.unshare : C.share}
                   </button>
                   {l.shareSlug && (
@@ -171,9 +173,11 @@ export function LineupsTab({
                         }}
                         className={`${btn} border-white/10 text-zinc-300 hover:border-white/25 hover:text-zinc-100`}
                       >
+                        <Icon d={ICONS.copy} className="h-4 w-4 shrink-0" />
                         {copied === l.id ? C.copied : C.copy}
                       </button>
                       <a href={link} target="_blank" rel="noreferrer" className={`${btn} inline-flex items-center border-white/10 text-zinc-300 hover:border-white/25 hover:text-zinc-100`}>
+                        <Icon d={ICONS.external} className="h-4 w-4 shrink-0" />
                         {C.open}
                       </a>
                     </>
@@ -186,6 +190,7 @@ export function LineupsTab({
                     }}
                     className={`${btn} ml-auto border-white/10 text-zinc-400 hover:border-red-400/40 hover:text-red-300`}
                   >
+                    <Icon d={ICONS.trash} className="h-4 w-4 shrink-0" />
                     {C.delete}
                   </button>
                 </div>

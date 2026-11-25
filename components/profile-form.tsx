@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import type { Profile } from "@/lib/auth";
 import { DICT, type Locale } from "@/lib/i18n";
 import { saveProfile } from "@/app/[locale]/profile/actions";
+import { ICONS, Icon } from "@/components/artist-ui";
 
 const FIELD = "rounded-lg border border-white/10 bg-panel/80 px-3 py-2 text-base text-zinc-100 focus:border-brand/60";
 
@@ -46,8 +47,9 @@ export function ProfileForm({ profile, locale }: { profile: Profile; locale: Loc
       <button
         type="submit"
         disabled={pending}
-        className="inline-flex min-h-11 w-full cursor-pointer items-center justify-center rounded-lg border border-gold/45 bg-gold/15 px-4 text-sm font-semibold text-gold transition-colors duration-200 hover:bg-gold/25 disabled:opacity-60"
+        className="inline-flex min-h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-gold/45 bg-gold/15 px-4 text-sm font-semibold text-gold transition-colors duration-200 hover:bg-gold/25 disabled:opacity-60"
       >
+        <Icon d={ICONS.save} className="h-4 w-4 shrink-0" />
         {pending ? C.saving : C.save}
       </button>
       {message ? (

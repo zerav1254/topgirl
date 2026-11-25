@@ -7,6 +7,7 @@ import { DOCS, DOC_KEYS } from "@/lib/docs";
 import { DICT, isLocale, type Locale } from "@/lib/i18n";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { DiscordMark, GoogleMark } from "@/components/provider-mark";
+import { ICONS, Icon } from "@/components/artist-ui";
 import { signIn, signOut } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -64,16 +65,19 @@ export default async function Page({
                 href={`/${locale}/profile`}
                 className={`${providerButton} border-white/10 font-normal text-zinc-300 hover:border-white/25 hover:text-zinc-100`}
               >
+                <Icon d={ICONS.user} className="h-4 w-4 shrink-0" />
                 {C.profile.title}
               </Link>
               <Link
                 href={`/${locale}/lineups`}
                 className={`${providerButton} border-white/10 font-normal text-zinc-300 hover:border-white/25 hover:text-zinc-100`}
               >
+                <Icon d={ICONS.layers} className="h-4 w-4 shrink-0" />
                 {C.lineup.title}
               </Link>
               <form action={signOut.bind(null, locale)}>
                 <button type="submit" className={`${providerButton} border-white/10 font-normal text-zinc-400 hover:border-red-500/40 hover:text-red-300`}>
+                  <Icon d={ICONS.logout} className="h-4 w-4 shrink-0" />
                   {C.auth.signOut}
                 </button>
               </form>
@@ -108,14 +112,20 @@ export default async function Page({
 
         <Link
           href={`/${locale}`}
-          className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-white/10 px-4 text-sm font-semibold text-zinc-400 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
+          className="mt-3 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-white/10 px-4 text-sm font-semibold text-zinc-400 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
         >
+          <Icon d={ICONS.home} className="h-4 w-4 shrink-0" />
           {C.isi.home}
         </Link>
 
         <nav aria-label={C.profile.links} className="mt-3 flex flex-wrap justify-center gap-x-3 gap-y-1 text-xs">
           {DOC_KEYS.map((k) => (
-            <Link key={k} href={`/${locale}/doc/${k}`} className="text-zinc-400 underline-offset-2 transition-colors duration-200 hover:text-zinc-200 hover:underline">
+            <Link
+              key={k}
+              href={`/${locale}/doc/${k}`}
+              className="inline-flex items-center gap-1 text-zinc-400 underline-offset-2 transition-colors duration-200 hover:text-zinc-200 hover:underline"
+            >
+              <Icon d={k === "privacy" ? ICONS.shield : k === "legal" ? ICONS.file : ICONS.info} className="h-4 w-4 shrink-0" />
               {DOCS[locale][k].title}
             </Link>
           ))}

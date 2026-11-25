@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isPercent, TierBadge } from "@/components/artist-ui";
+import { ICONS, Icon, isPercent, TierBadge } from "@/components/artist-ui";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { DICT, isLocale, localeOr, numberLocale, t } from "@/lib/i18n";
 import { pageMetadata } from "@/lib/seo";
@@ -50,8 +50,9 @@ export default async function InfoPage({ params }: { params: Promise<{ locale: s
       <div className="flex flex-wrap items-center justify-between gap-2">
         <Link
           href={`/${locale}`}
-          className="inline-flex min-h-11 items-center rounded-xl border border-white/10 bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
+          className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-white/10 bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
         >
+          <Icon d={ICONS.arrowLeft} className="h-4 w-4 shrink-0" />
           {C.back}
         </Link>
         <LocaleSwitcher locale={locale} />

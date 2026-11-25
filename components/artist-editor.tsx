@@ -9,7 +9,7 @@ import { DICT, t, type Locale } from "@/lib/i18n";
 import { compressPhoto } from "@/lib/image-client";
 import { uploadPhoto } from "@/app/[locale]/manage/actions";
 import { signOut } from "@/app/[locale]/login/actions";
-import { Avatar, SearchInput } from "./artist-ui";
+import { Avatar, ICONS, Icon, SearchInput } from "./artist-ui";
 import { LocaleSwitcher } from "./locale-switcher";
 
 const cardClass = "rounded-2xl border border-white/10 bg-panel/60";
@@ -100,15 +100,17 @@ export function ArtistEditor({
             <LocaleSwitcher locale={locale} />
             <Link
               href={`/${locale}`}
-              className="inline-flex min-h-11 items-center rounded-lg border border-white/10 bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
+              className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-white/10 bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
             >
+              <Icon d={ICONS.users} className="h-4 w-4 shrink-0" />
               {C.teamLink}
             </Link>
             <form action={signOut.bind(null, locale)}>
               <button
                 type="submit"
-                className="inline-flex min-h-11 cursor-pointer items-center rounded-lg border border-white/10 px-3 text-sm font-semibold text-zinc-400 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
+                className="inline-flex min-h-11 cursor-pointer items-center gap-1.5 rounded-lg border border-white/10 px-3 text-sm font-semibold text-zinc-400 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
               >
+                <Icon d={ICONS.logout} className="h-4 w-4 shrink-0" />
                 {C.logout}
               </button>
             </form>
@@ -204,8 +206,9 @@ export function ArtistEditor({
                 <button
                   type="submit"
                   disabled={uploading}
-                  className="inline-flex min-h-11 cursor-pointer items-center rounded-lg border border-white/15 bg-panel-2 px-4 text-sm font-semibold text-zinc-200 transition-colors duration-200 hover:border-white/30 disabled:cursor-wait disabled:opacity-60"
+                  className="inline-flex min-h-11 cursor-pointer items-center gap-1.5 rounded-lg border border-white/15 bg-panel-2 px-4 text-sm font-semibold text-zinc-200 transition-colors duration-200 hover:border-white/30 disabled:cursor-wait disabled:opacity-60"
                 >
+                  <Icon d={ICONS.upload} className="h-4 w-4 shrink-0" />
                   {uploading ? C.uploading : C.upload}
                 </button>
                 {photoStatus ? (
