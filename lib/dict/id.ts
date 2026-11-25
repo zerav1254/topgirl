@@ -84,15 +84,12 @@ export const id = {
     empty: "Tidak ada artist yang cocok dengan filter.",
   },
   pool: {
-    label: "Pool saya",
-    hintAll: "Semua origin ditampilkan. Pilih origin servermu untuk melihat peringkat relatif.",
-    hint: "Peringkat dihitung dari artis di pool ini saja, bukan seluruh database.",
-    rank: "Peringkat #{n} dari {total} di pool ini",
-    best: "Susun tim terbaik dari pool",
-    bestHint: "Mengisi 5 slot dengan kombinasi skor tertinggi dari pool ini.",
     season: "Season server",
     seasonAll: "Semua season ditampilkan.",
     seasonHint: "Artis di atas season ini ditandai belum bisa diperoleh.",
+    rank: "Peringkat #{n} dari {total} di season ini",
+    best: "Susun tim terbaik dari season ini",
+    bestHint: "Mengisi 5 slot dengan kombinasi skor tertinggi yang bisa diperoleh.",
     blocked: "Belum bisa diperoleh",
   },
   auth: {

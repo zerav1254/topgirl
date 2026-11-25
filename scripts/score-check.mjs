@@ -62,30 +62,15 @@ for (const a of artists) {
   }
 }
 
-// Pool: filter origin, peringkat relatif, dan lineup terbaik.
-const origin = [...new Set(artists.map((a) => a.origin).filter(Boolean))][0];
-if (origin) {
-  const pool = { origins: [origin], season: null };
-  const scoped = poolOf(artists, pool);
-  assert.ok(scoped.length > 0, "pool satu origin tidak boleh kosong");
-  assert.ok(scoped.every((a) => a.origin === origin), "pool harus hanya berisi origin terpilih");
-  assert.equal(poolOf(artists, EMPTY_POOL).length, artists.length, "pool kosong = semua artis");
-  for (const category of CATEGORIES) {
-    const rank = rankInPool(artists, pool, category);
-    assert.equal(rank.size, scoped.length, "ukuran peringkat = ukuran pool");
-    const maxScore = Math.max(...scoped.map((a) => a.scores[category]));
-    const first = scoped.find((a) => rank.get(a.slug)?.rank === 1);
-    assert.equal(first?.scores[category], maxScore, `rank 1 ${category} = skor tertinggi pool`);
-  }
-}
-
-// Season: batas atas artis aboard yang bisa diperoleh.
+// Pool: hanya season server — batas atas artis yang bisa diperoleh.
+assert.equal(poolOf(artists, EMPTY_POOL).length, artists.length, "tanpa season cap semua artis ikut");
+assert.equal(blockedOf(artists, EMPTY_POOL).length, 0, "tanpa season cap tidak ada yang terblokir");
 const aboard = artists.filter((a) => ["Tokyo", "Bali", "Rome"].includes(a.origin ?? ""));
 assert.ok(aboard.length > 0, "harus ada artis aboard");
 assert.equal(aboard.filter((a) => a.season === null).length, 0, "semua artis aboard harus punya season");
-assert.equal(blockedOf(artists, EMPTY_POOL).length, 0, "tanpa season cap tidak ada yang terblokir");
+
 const cap = 4;
-const capped = { origins: [], season: cap };
+const capped = { season: cap };
 const allowed = poolOf(artists, capped);
 assert.ok(allowed.every((a) => a.season === null || a.season <= cap), "cap 4 membuang season 5+");
 assert.ok(allowed.some((a) => a.season !== null && a.season <= cap), "cap 4 tetap menyisakan season 1-4");
@@ -94,6 +79,14 @@ const blockedSeason = blockedOf(artists, capped);
 assert.equal(blockedSeason.length, artists.filter((a) => a.season !== null && a.season > cap).length, "blocked = season di atas cap");
 assert.ok(blockedSeason.every((a) => a.season !== null && a.season > cap), "blocked semua di atas cap");
 assert.equal(allowed.length + blockedSeason.length, artists.length, "artis hanya di satu sisi cap");
+
+for (const category of CATEGORIES) {
+  const rank = rankInPool(artists, capped, category);
+  assert.equal(rank.size, allowed.length, "ukuran peringkat = artis yang bisa diperoleh");
+  const maxScore = Math.max(...allowed.map((a) => a.scores[category]));
+  const first = allowed.find((a) => rank.get(a.slug)?.rank === 1);
+  assert.equal(first?.scores[category], maxScore, `rank 1 ${category} = skor tertinggi season`);
+}
 
 for (const category of CATEGORIES) {
   const lineup = bestLineup(artists, category);

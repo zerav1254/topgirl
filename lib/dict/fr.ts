@@ -86,15 +86,12 @@ export const fr: Dict = {
     empty: "Aucun artiste ne correspond aux filtres.",
   },
   pool: {
-    label: "Mon pool",
-    hintAll: "Toutes les origines sont affichées. Choisissez celles de votre serveur pour voir un classement relatif.",
-    hint: "Le classement ne compte que les artistes de ce pool, pas toute la base.",
-    rank: "Rang #{n} sur {total} dans ce pool",
-    best: "Composer la meilleure équipe de ce pool",
-    bestHint: "Remplit les 5 emplacements avec la meilleure combinaison de score disponible ici.",
     season: "Saison du serveur",
     seasonAll: "Toutes les saisons sont affichées.",
     seasonHint: "Les artistes au-dessus de cette saison sont marqués comme non disponibles.",
+    rank: "Rang #{n} sur {total} dans cette saison",
+    best: "Composer la meilleure équipe de cette saison",
+    bestHint: "Remplit les 5 emplacements avec la meilleure combinaison disponible.",
     blocked: "Pas encore disponible",
   },
   auth: {

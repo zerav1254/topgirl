@@ -1,9 +1,9 @@
 import { EMPTY_POOL, type Pool } from "./pool.ts";
 
-// Store pool (origin + season server) di localStorage; terpisah dari topgirl.team.v1.
-const STORAGE_KEY = "topgirl.pool.v2";
-// Format lama: array origin saja. Dibaca sekali supaya pilihan origin tidak hilang.
-const LEGACY_KEY = "topgirl.pool.v1";
+// Store pool (season server) di localStorage; terpisah dari topgirl.team.v1.
+const STORAGE_KEY = "topgirl.pool.v3";
+// Format lama menyimpan origin: dibaca supaya season tidak hilang saat upgrade.
+const LEGACY_KEYS = ["topgirl.pool.v2", "topgirl.pool.v1"];
 
 const poolListeners = new Set<() => void>();
 
@@ -14,7 +14,15 @@ const onStorage = (e: StorageEvent) => {
   if (e.key === STORAGE_KEY) notify();
 };
 
-export const readPool = () => localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem(LEGACY_KEY);
+export const readPool = () => {
+  const current = localStorage.getItem(STORAGE_KEY);
+  if (current !== null) return current;
+  for (const key of LEGACY_KEYS) {
+    const legacy = localStorage.getItem(key);
+    if (legacy !== null) return legacy;
+  }
+  return null;
+};
 export const getServerPool = () => null;
 
 export function subscribePool(listener: () => void) {
@@ -41,16 +49,12 @@ export function writePool(next: Pool) {
 export function parsePool(raw: string | null): Pool {
   try {
     const parsed: unknown = JSON.parse(raw ?? "null");
-    // Bentuk lama: ["Tokyo", ...] tanpa season.
-    if (Array.isArray(parsed)) {
-      return { origins: parsed.filter((v): v is string => typeof v === "string"), season: null };
-    }
+    // Bentuk lama: array origin (v1) atau { origins, season } (v2). Origin diabaikan.
+    if (Array.isArray(parsed)) return EMPTY_POOL;
+    if (typeof parsed === "number" && Number.isInteger(parsed)) return { season: parsed };
     if (parsed && typeof parsed === "object") {
-      const { origins, season } = parsed as { origins?: unknown; season?: unknown };
-      return {
-        origins: Array.isArray(origins) ? origins.filter((v): v is string => typeof v === "string") : [],
-        season: typeof season === "number" && Number.isInteger(season) ? season : null,
-      };
+      const { season } = parsed as { season?: unknown };
+      return { season: typeof season === "number" && Number.isInteger(season) ? season : null };
     }
     return EMPTY_POOL;
   } catch {

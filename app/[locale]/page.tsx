@@ -4,7 +4,6 @@ import { loadArtists } from "@/lib/artists";
 import { getProfile } from "@/lib/auth";
 import { loadOwned } from "@/lib/collection";
 import { DICT, isLocale, localeOr } from "@/lib/i18n";
-import { loadLookups } from "@/lib/lookups";
 import { TeamBuilder } from "@/components/team-builder";
 
 export const revalidate = 300;
@@ -18,7 +17,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
 
-  const [artists, profile, lookups] = await Promise.all([loadArtists(), getProfile(), loadLookups()]);
+  const [artists, profile] = await Promise.all([loadArtists(), getProfile()]);
   const owned = profile ? await loadOwned(profile.userId) : null;
   return (
     <TeamBuilder
@@ -28,7 +27,6 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
       owned={owned}
       user={profile?.name ?? profile?.email ?? null}
       avatarUrl={profile?.avatarUrl ?? null}
-      originOrder={lookups.origins.map((o) => o.id)}
     />
   );
 }

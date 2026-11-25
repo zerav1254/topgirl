@@ -52,8 +52,7 @@ lib/
   team.ts         TEAM_SIZE, STAT_ORDER, GENRE_BONUS
   team-store.ts   store tim di localStorage
   supabase.ts     read client (anon) + adminClient() (service_role)
-  lookups.ts      opsi dropdown genres/origins/effects
-  auth.ts         cookie admin HMAC
+  auth.ts         session Supabase: getUser/getProfile/requireAdmin/isAdmin
   i18n.ts         LOCALES, Locale, DICT, LANG_NAME, t() interpolasi, numberLocale, localeOr
   seo.ts          metadata bersama (canonical/hreflang/OG/Twitter) + SITE_ICON
   image-client.ts kompres foto di browser (createImageBitmap/canvas)

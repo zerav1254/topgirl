@@ -86,15 +86,12 @@ export const en: Dict = {
     empty: "No artists match the filters.",
   },
   pool: {
-    label: "My pool",
-    hintAll: "Showing every origin. Pick the origins on your server to see relative ranks.",
-    hint: "Rank counts only artists in this pool, not the whole database.",
-    rank: "Rank #{n} of {total} in this pool",
-    best: "Build the best team from this pool",
-    bestHint: "Fills the 5 slots with the highest-scoring combination available here.",
     season: "Server season",
     seasonAll: "Showing every season.",
     seasonHint: "Artists above this season are marked as not obtainable yet.",
+    rank: "Rank #{n} of {total} in this season",
+    best: "Build the best team from this season",
+    bestHint: "Fills the 5 slots with the highest-scoring combination you can obtain.",
     blocked: "Not obtainable yet",
   },
   auth: {
