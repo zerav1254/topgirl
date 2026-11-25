@@ -1,11 +1,16 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import { DICT, localeOr, type Locale } from "@/lib/i18n";
+import { SITE_URL } from "@/lib/site";
 import { adminClient } from "@/lib/supabase";
+import { createSupabaseServer } from "@/lib/supabase/server";
 
 export type ProfileResult = { ok: boolean; error: string };
+
+type Provider = "google" | "discord";
 
 // Kosong = null (hapus nilai). Bukan angka bulat positif = NaN (tolak).
 const num = (fd: FormData, key: string): number | null => {
@@ -40,4 +45,32 @@ export async function saveProfile(locale: Locale, fd: FormData): Promise<Profile
 
   revalidatePath(`/${localeOr(locale)}/profile`);
   return { ok: true, error: "" };
+}
+
+// Bind provider kedua ke akun yang sedang login. Butuh "manual linking" aktif di Supabase.
+export async function linkProvider(locale: Locale, provider: Provider): Promise<void> {
+  const l = localeOr(locale);
+  const supabase = await createSupabaseServer();
+  const { data, error } = await supabase.auth.linkIdentity({
+    provider,
+    options: { redirectTo: `${SITE_URL}/auth/callback?next=/${l}/profile` },
+  });
+  if (error || !data?.url) redirect(`/${l}/profile?error=link`);
+  redirect(data.url);
+}
+
+// Lepas provider; identitas terakhir tidak boleh dilepas (akun jadi tidak bisa masuk).
+export async function unlinkProvider(locale: Locale, provider: Provider): Promise<void> {
+  const l = localeOr(locale);
+  const supabase = await createSupabaseServer();
+  const { data } = await supabase.auth.getUserIdentities();
+  const identities = data?.identities ?? [];
+  const target = identities.find((i) => i.provider === provider);
+  if (!target || identities.length < 2) redirect(`/${l}/profile?error=unlink`);
+
+  const { error } = await supabase.auth.unlinkIdentity(target);
+  if (error) redirect(`/${l}/profile?error=unlink`);
+
+  revalidatePath(`/${l}/profile`);
+  redirect(`/${l}/profile`);
 }

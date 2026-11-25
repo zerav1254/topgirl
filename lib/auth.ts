@@ -56,6 +56,16 @@ export const getProfile = cache(async (): Promise<Profile | null> => {
   return toProfile(data as Row);
 });
 
+export type Identity = { id: string; provider: string };
+
+// Identitas provider yang terhubung ke akun (untuk daftar bind di halaman profil).
+export const getIdentities = cache(async (): Promise<Identity[]> => {
+  const supabase = await createSupabaseServer();
+  const { data, error } = await supabase.auth.getUserIdentities();
+  if (error || !data) return [];
+  return data.identities.map((i) => ({ id: i.id, provider: i.provider }));
+});
+
 export class UnauthenticatedError extends Error {
   constructor() {
     super("unauthenticated");
