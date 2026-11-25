@@ -40,6 +40,9 @@ export const en: Dict = {
     calculation: "Calculation",
     tiers: "Tier thresholds",
     tiersNote: "Each category has its own tier using the same thresholds.",
+    tierPool: "Tier with a season pool",
+    tierPoolNote:
+      "Pools use relative tiers: about 7% S+, 15% S, 31% A, 26% B, 11% C, the rest D. Public lineups still use absolute tiers.",
     effect: "Effect",
     weight: "Weight",
     tier: "Tier",

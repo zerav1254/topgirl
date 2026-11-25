@@ -167,6 +167,9 @@ export default async function InfoPage({ params }: { params: Promise<{ locale: s
             {C.tiers}
           </h2>
           <p className="mt-1 text-sm text-zinc-400">{C.tiersNote}</p>
+          <p className="mt-1 text-sm text-zinc-400">
+            <span className="font-semibold text-zinc-300">{C.tierPool}.</span> {C.tierPoolNote}
+          </p>
         </div>
         <div className="overflow-x-auto rounded-xl border border-white/10 bg-panel/60">
           <table className="w-full text-sm">

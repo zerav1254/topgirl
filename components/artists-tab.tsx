@@ -5,7 +5,7 @@ import Image from "next/image";
 import type { Artist } from "@/lib/artists";
 import { DICT, t, type Locale } from "@/lib/i18n";
 import type { Rank } from "@/lib/pool";
-import { TIER_ORDER, type Category } from "@/lib/score";
+import { TIER_ORDER, type Category, type Tier } from "@/lib/score";
 import { TEAM_SIZE } from "@/lib/team";
 import { ArtistFilterBar, type ArtistFilterState } from "./artist-filter";
 import { GenreIcon, ICONS, Icon, RankBadge, SkillList, TierBadge, formatStat } from "./artist-ui";
@@ -17,6 +17,8 @@ type Props = {
   // Artis di atas season server: section terpisah, tetap bisa dilihat.
   blocked: Set<string>;
   rank: Map<string, Rank> | null;
+  // Tier relatif pool (null saat pool tidak aktif): skor absolut tidak cocok untuk server baru.
+  seasonTiers: Map<string, Tier> | null;
   // null = belum login: tombol koleksi disembunyikan.
   owned: Set<string> | null;
   onOwned: (slug: string, owned: boolean) => void;
@@ -31,17 +33,18 @@ type Props = {
 };
 
 // Season hanya bermakna untuk artist dari kota tuan rumah; origin lain tidak menampilkannya.
-export function ArtistsTab({ artists, scoped, blocked, rank, owned, onOwned, onToggle, ownedError, pendingSlug, picked, locale, category, state }: Props) {
+export function ArtistsTab({ artists, scoped, blocked, rank, seasonTiers, owned, onOwned, onToggle, ownedError, pendingSlug, picked, locale, category, state }: Props) {
   const C = DICT[locale];
+  const tierOf = (a: Artist) => seasonTiers?.get(a.slug) ?? a.tiers[category];
   // Section tier hanya untuk artis di pool, jadi tier yang tak bisa dicapai tidak muncul.
   const inPool = useMemo(() => new Set(scoped.map((a) => a.slug)), [scoped]);
   const visible = useMemo(() => state.visible.filter((a) => inPool.has(a.slug)), [state.visible, inPool]);
   const unavailable = useMemo(() => state.visible.filter((a) => blocked.has(a.slug)), [state.visible, blocked]);
   // Urutan chip ikut TIER_ORDER, bukan urutan data; tier tanpa artist tidak ditampilkan.
   const tiers = useMemo(() => {
-    const present = new Set(scoped.map((a) => a.tiers[category]));
+    const present = new Set(scoped.map((a) => seasonTiers?.get(a.slug) ?? a.tiers[category]));
     return TIER_ORDER.filter((tier) => present.has(tier));
-  }, [scoped, category]);
+  }, [scoped, category, seasonTiers]);
   const sortValue = (a: Artist) => rank?.get(a.slug)?.rank ?? -a.scores[category];
 
   return (
@@ -67,11 +70,10 @@ export function ArtistsTab({ artists, scoped, blocked, rank, owned, onOwned, onT
       )}
 
       {tiers
-        .map((tier) => [tier, visible.filter((a) => a.tiers[category] === tier).sort((a, b) => sortValue(a) - sortValue(b))] as const)
+        .map((tier) => [tier, visible.filter((a) => tierOf(a) === tier).sort((a, b) => sortValue(a) - sortValue(b))] as const)
         .filter(([, list]) => list.length > 0)
         .map(([tier, list]) => {
-          // Saat pool aktif, heading menampilkan rentang peringkat, bukan tier absolut:
-          // dua skala bercampur membingungkan.
+          // Saat pool aktif, heading menampilkan rentang peringkat di tier pool.
           const ranks = rank ? list.map((a) => rank.get(a.slug)?.rank ?? 0).filter((n) => n > 0) : [];
           const range = ranks.length > 0 ? `#${Math.min(...ranks)}–#${Math.max(...ranks)}` : "";
           return (
@@ -91,6 +93,7 @@ export function ArtistsTab({ artists, scoped, blocked, rank, owned, onOwned, onT
                   key={a.slug}
                   artist={a}
                   rank={rank?.get(a.slug)}
+                  tier={tierOf(a)}
                   owned={owned}
                   onOwned={onOwned}
                   onToggle={onToggle}
@@ -124,6 +127,7 @@ export function ArtistsTab({ artists, scoped, blocked, rank, owned, onOwned, onT
                 key={a.slug}
                 artist={a}
                 blocked
+                tier={tierOf(a)}
                 owned={owned}
                 onOwned={onOwned}
                 onToggle={onToggle}
@@ -144,6 +148,7 @@ export function ArtistsTab({ artists, scoped, blocked, rank, owned, onOwned, onT
 function ArtistCard({
   artist: a,
   rank: r,
+  tier,
   blocked = false,
   owned,
   onOwned,
@@ -156,6 +161,7 @@ function ArtistCard({
 }: {
   artist: Artist;
   rank?: Rank;
+  tier: Tier;
   blocked?: boolean;
   owned: Set<string> | null;
   onOwned: (slug: string, owned: boolean) => void;
@@ -193,7 +199,7 @@ function ArtistCard({
           )}
           <span className="absolute top-1.5 left-1.5 flex flex-col items-start gap-1 rounded-md bg-ink/70 p-0.5 backdrop-blur-sm">
             {r && <RankBadge rank={r.rank} size={r.size} label={t(C.pool.rank, { n: r.rank, total: r.size })} />}
-            <TierBadge tier={a.tiers[category]} />
+            <TierBadge tier={tier} />
           </span>
           {blocked ? (
             <span className="absolute inset-x-1.5 bottom-1.5 rounded-md border border-amber-500/40 bg-ink/85 px-1.5 py-0.5 text-center text-[11px] font-semibold text-amber-300">

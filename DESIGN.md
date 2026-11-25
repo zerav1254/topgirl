@@ -54,7 +54,7 @@ Badge tier: `border-<warna>/45 bg-<warna>/15 text-<warna>-300` (S+ pakai `text-g
 
 Saat login, kartu menambah satu tombol koleksi selebar kartu di bawah skill: `min-h-11 rounded-lg` (`rounded-none` mengikuti sudut kartu), `border-t`. Belum punya: `border-white/10 text-zinc-400 hover:text-zinc-200`. Sudah punya: `border-emerald-500/30 bg-emerald-500/10 text-emerald-300`. Status `aria-pressed`, `aria-label` memakai `collection.markOwned`/`markMissing` + nama artist. Tombol ini tidak membuka dialog; ia hanya menandai kepemilikan.
 
-**Rank badge** (mode pool) — pengganti `TierBadge` di pojok kartu: `tabular` `#n` tebal + `/{total}` `zinc-400`, `aria-label` "Peringkat n dari total". Tier badge tetap dipakai saat pool kosong (skala absolut).
+**Rank badge** (mode pool) — pengganti `TierBadge` di pojok kartu: `tabular` `#n` tebal + `/{total}` `zinc-400`, `aria-label` "Peringkat n dari total". Tier badge tetap dipakai saat pool kosong (skala absolut). Saat pool aktif, tier yang tampil dihitung relatif terhadap pool (`poolTiers`: sekitar 7% S+, 15% S, 31% A, 26% B, 11% C, sisanya D), sehingga server season awal tetap punya sebaran tier lengkap. Tier absolut hanya dipakai di halaman Info dan lineup publik.
 
 **Pool chips** — satu baris chip season (`Semua` + angka season) single-select. Urutan season menaik. Aktif: `border-gold/50 bg-gold/10 text-gold`; idle: `border-white/10 bg-panel/80 text-zinc-300`. `min-h-11`, `aria-pressed`.
 

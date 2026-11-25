@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { Artist } from "@/lib/artists";
 import { DICT, t, type Locale } from "@/lib/i18n";
 import type { Rank } from "@/lib/pool";
-import { EFFECT_LABEL, type Category } from "@/lib/score";
+import { EFFECT_LABEL, type Category, type Tier } from "@/lib/score";
 import { GENRE_BONUS, TEAM_SIZE, teamSkillTotals } from "@/lib/team";
 import { ArtistFilterBar, type ArtistFilterState } from "./artist-filter";
 import { Avatar, GenreIcon, ICONS, Icon, RankBadge, SkillList, TierBadge, formatStat, isPercent } from "./artist-ui";
@@ -15,6 +15,8 @@ type Props = {
   scoped: Artist[];
   blocked: Set<string>;
   rank: Map<string, Rank> | null;
+  // Tier relatif pool (null saat pool tidak aktif).
+  seasonTiers: Map<string, Tier> | null;
   team: Artist[];
   picked: string[];
   locale: Locale;
@@ -26,8 +28,9 @@ type Props = {
   onReset: () => void;
 };
 
-export function TeamTab({ artists, scoped, blocked, rank, team, picked, locale, category, state, onToggle, onAssign, onAuto, onReset }: Props) {
+export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, picked, locale, category, state, onToggle, onAssign, onAuto, onReset }: Props) {
   const C = DICT[locale];
+  const tierOf = (a: Artist) => seasonTiers?.get(a.slug) ?? a.tiers[category];
   // Slot yang sedang dipilih; null = dialog tertutup. Picker menggantikan daftar panjang di bawah.
   const [slot, setSlot] = useState<number | null>(null);
   const dialog = useRef<HTMLDialogElement>(null);
@@ -66,9 +69,9 @@ export function TeamTab({ artists, scoped, blocked, rank, team, picked, locale, 
       topGenre,
       topCount,
       genreBonus: GENRE_BONUS[topCount] ?? 0,
-      tiers: team.map((a) => a.tiers[category]).join(" · "),
+      tiers: team.map((a) => seasonTiers?.get(a.slug) ?? a.tiers[category]).join(" · "),
     };
-  }, [team, category]);
+  }, [team, category, seasonTiers]);
 
   function open(index: number) {
     setSlot(index);
@@ -130,11 +133,11 @@ export function TeamTab({ artists, scoped, blocked, rank, team, picked, locale, 
                     onClick={() => open(i)}
                     className="flex min-h-11 min-w-0 flex-1 cursor-pointer items-center gap-3 rounded-lg text-left transition-colors duration-200 hover:bg-white/5"
                   >
-                    <Avatar artist={a} tier={a.tiers[category]} size="h-10 w-10" />
+                    <Avatar artist={a} tier={tierOf(a)} size="h-10 w-10" />
                     <span className="min-w-0 flex-1">
                       <span className="flex items-center gap-1.5">
                         <span className="truncate text-base font-semibold">{a.name}</span>
-                        <TierBadge tier={a.tiers[category]} />
+                        <TierBadge tier={tierOf(a)} />
                         <span className="tabular text-xs text-zinc-400">{formatStat(a.scores[category], locale)}</span>
                       </span>
                       <span className="block truncate text-sm text-zinc-400">{a.genre}</span>
@@ -268,12 +271,12 @@ export function TeamTab({ artists, scoped, blocked, rank, team, picked, locale, 
                       active ? "border-gold/45 bg-gold/10" : "border-white/10 bg-panel/70 hover:border-white/25 hover:bg-panel-2"
                     }`}
                   >
-                    <Avatar artist={a} tier={a.tiers[category]} size="h-9 w-9" />
+                    <Avatar artist={a} tier={tierOf(a)} size="h-9 w-9" />
                     <span className="min-w-0 flex-1">
                       <span className="flex items-center gap-1.5">
                         <span className="truncate text-sm font-semibold">{a.name}</span>
                         {r && <RankBadge rank={r.rank} size={r.size} label={t(C.pool.rank, { n: r.rank, total: r.size })} />}
-                        <TierBadge tier={a.tiers[category]} />
+                        <TierBadge tier={tierOf(a)} />
                       </span>
                       <span className="tabular block truncate text-xs text-zinc-400">
                         {a.genre} · {formatStat(a.scores[category], locale)}

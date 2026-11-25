@@ -40,6 +40,9 @@ export const fr: Dict = {
     calculation: "Calcul",
     tiers: "Seuils de tier",
     tiersNote: "Chaque catégorie a son propre tier avec les mêmes seuils.",
+    tierPool: "Tier avec un pool de saison",
+    tierPoolNote:
+      "Les pools utilisent des tiers relatifs : environ 7 % S+, 15 % S, 31 % A, 26 % B, 11 % C, le reste D. Les compositions publiques gardent les tiers absolus.",
     effect: "Effet",
     weight: "Poids",
     tier: "Tier",

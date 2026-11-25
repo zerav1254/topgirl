@@ -38,6 +38,9 @@ export const id = {
     calculation: "Perhitungan",
     tiers: "Ambang tier",
     tiersNote: "Setiap kategori punya tier sendiri dengan ambang yang sama.",
+    tierPool: "Tier saat pool season aktif",
+    tierPoolNote:
+      "Pool memakai tier relatif: sekitar 7% S+, 15% S, 31% A, 26% B, 11% C, sisanya D. Tier absolut tetap dipakai di lineup publik.",
     effect: "Efek",
     weight: "Bobot",
     tier: "Tier",

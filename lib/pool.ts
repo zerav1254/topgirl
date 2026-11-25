@@ -1,5 +1,5 @@
 import type { Artist } from "./artists.ts";
-import type { Category } from "./score.ts";
+import type { Category, Tier } from "./score.ts";
 
 // Pool = batas atas season server pemain. null = semua season.
 export type Pool = { season: number | null };
@@ -34,3 +34,33 @@ export function rankInPool(artists: Artist[], pool: Pool, category: Category): M
 }
 
 export type Rank = { rank: number; size: number };
+
+// Kuota tier relatif per pool, diturunkan dari distribusi 94 artis endgame:
+// 7 S+, 14 S, 29 A, 24 B, 10 C, 10 D.
+const TIER_CUTOFFS: [Tier, number][] = [
+  ["S+", 0.07],
+  ["S", 0.22],
+  ["A", 0.53],
+  ["B", 0.79],
+  ["C", 0.9],
+];
+
+// Pool kecil (server baru) tetap dapat sebaran tier lengkap tanpa mengubah skor absolut.
+// Skor sama selalu mendapat tier sama supaya seri tidak terbelah alfabet nama.
+export function poolTiers(artists: Artist[], pool: Pool, category: Category): Map<string, Tier> {
+  const list = [...poolOf(artists, pool)].sort(
+    (a, b) => b.scores[category] - a.scores[category] || a.name.localeCompare(b.name),
+  );
+  const out = new Map<string, Tier>();
+  let prevScore = Number.NaN;
+  let prevTier: Tier = "S+";
+  list.forEach((a, i) => {
+    const pct = (i + 1) / list.length;
+    const share = TIER_CUTOFFS.find(([, max]) => pct <= max)?.[0] ?? "D";
+    const tier = i > 0 && a.scores[category] === prevScore ? prevTier : share;
+    out.set(a.slug, tier);
+    prevScore = a.scores[category];
+    prevTier = tier;
+  });
+  return out;
+}

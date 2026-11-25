@@ -40,6 +40,9 @@ export const ko: Dict = {
     calculation: "계산",
     tiers: "티어 기준",
     tiersNote: "각 카테고리는 같은 기준으로 별도의 티어를 계산합니다.",
+    tierPool: "시즌 풀 기준 티어",
+    tierPoolNote:
+      "풀에서는 상대 티어를 사용합니다: 약 7% S+, 15% S, 31% A, 26% B, 11% C, 나머지 D. 공개 라인업은 절대 티어를 유지합니다.",
     effect: "효과",
     weight: "가중치",
     tier: "티어",

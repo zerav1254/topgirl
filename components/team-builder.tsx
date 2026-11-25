@@ -7,7 +7,7 @@ import { toggleOwned } from "@/app/[locale]/collection/actions";
 import type { Artist } from "@/lib/artists";
 import { DICT, type Locale } from "@/lib/i18n";
 import { parsePool, getServerPool, readPool, subscribePool, writePool } from "@/lib/pool-store";
-import { blockedOf, poolActive, poolOf, rankInPool } from "@/lib/pool";
+import { blockedOf, poolActive, poolOf, poolTiers, rankInPool } from "@/lib/pool";
 import type { Category } from "@/lib/score";
 import { bestLineup, TEAM_SIZE } from "@/lib/team";
 import { getServerTeam, readTeam, subscribeTeam, writeTeam } from "@/lib/team-store";
@@ -58,6 +58,10 @@ export function TeamBuilder({
   const blocked = useMemo(() => new Set(blockedOf(artists, pool).map((a) => a.slug)), [artists, pool]);
   const rank = useMemo(
     () => (poolActive(pool) ? rankInPool(artists, pool, category) : null),
+    [artists, pool, category],
+  );
+  const seasonTiers = useMemo(
+    () => (poolActive(pool) ? poolTiers(artists, pool, category) : null),
     [artists, pool, category],
   );
 
@@ -155,6 +159,7 @@ export function TeamBuilder({
           scoped={scoped}
           blocked={blocked}
           rank={rank}
+          seasonTiers={seasonTiers}
           owned={ownedSet}
           onOwned={markOwned}
           onToggle={toggle}
@@ -171,6 +176,7 @@ export function TeamBuilder({
           scoped={scoped}
           blocked={blocked}
           rank={rank}
+          seasonTiers={seasonTiers}
           team={team}
           picked={picked}
           locale={locale}
