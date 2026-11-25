@@ -75,14 +75,6 @@ export function BottomNav({ locale, admin }: { locale: Locale; admin: boolean })
           <Icon d={ICONS.layers} className="h-5 w-5" />
           {C.header.lineups}
         </Link>
-        <Link
-          href={`${base}/profile`}
-          aria-current={pathname === `${base}/profile` ? "page" : undefined}
-          className={`${ITEM} ${pathname === `${base}/profile` ? ACTIVE : IDLE}`}
-        >
-          <Icon d={ICONS.user} className="h-5 w-5" />
-          {C.profile.title}
-        </Link>
         {admin && (
           <Link
             href={`${base}/manage`}
@@ -93,6 +85,14 @@ export function BottomNav({ locale, admin }: { locale: Locale; admin: boolean })
             {C.header.manage}
           </Link>
         )}
+        <Link
+          href={`${base}/profile`}
+          aria-current={pathname === `${base}/profile` ? "page" : undefined}
+          className={`${ITEM} ${pathname === `${base}/profile` ? ACTIVE : IDLE}`}
+        >
+          <Icon d={ICONS.user} className="h-5 w-5" />
+          {C.profile.title}
+        </Link>
       </div>
     </nav>
   );
