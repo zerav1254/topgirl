@@ -9,7 +9,8 @@ import { DICT, t, type Locale } from "@/lib/i18n";
 import type { Lookups } from "@/lib/lookups";
 import { compressPhoto } from "@/lib/image-client";
 import { scoreArtist, tierFromScore, type Effect, type Skill } from "@/lib/score";
-import { logout, saveArtist, uploadPhoto } from "@/app/[locale]/manage/actions";
+import { saveArtist, uploadPhoto } from "@/app/[locale]/manage/actions";
+import { signOut } from "@/app/[locale]/login/actions";
 import { Avatar, SearchInput, formatStat } from "./artist-ui";
 import { LocaleSwitcher } from "./locale-switcher";
 
@@ -183,7 +184,7 @@ export function ArtistEditor({
             >
               {C.teamLink}
             </Link>
-            <form action={logout.bind(null, locale)}>
+            <form action={signOut.bind(null, locale)}>
               <button
                 type="submit"
                 className="inline-flex min-h-11 cursor-pointer items-center rounded-lg border border-white/10 px-3 text-sm font-semibold text-zinc-400 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"

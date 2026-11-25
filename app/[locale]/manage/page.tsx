@@ -7,7 +7,6 @@ import { DICT, isLocale, type Locale } from "@/lib/i18n";
 import { loadLookups } from "@/lib/lookups";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { ArtistEditor } from "@/components/artist-editor";
-import { login } from "./actions";
 
 type ErrorKey = keyof (typeof DICT)["id"]["isi"]["errors"];
 
@@ -46,29 +45,17 @@ export default async function Page({
           </div>
           <h1 className="font-display mt-3 text-2xl font-bold tracking-tight">{C.isi.title}</h1>
           <p className="mt-1.5 text-sm text-zinc-400">{C.isi.subtitle}</p>
-          <form action={login.bind(null, locale)} className="mt-5 flex flex-col gap-3">
-            <label className="flex flex-col gap-1 text-sm text-zinc-400">
-              {C.isi.password}
-              <input
-                type="password"
-                name="password"
-                autoComplete="current-password"
-                required
-                className="rounded-lg border border-white/10 bg-ink/60 px-3 py-2 text-base text-zinc-100 focus:border-brand/60"
-              />
-            </label>
-            {errorText ? (
-              <p role="alert" className="text-sm text-red-300">
-                {errorText}
-              </p>
-            ) : null}
-            <button
-              type="submit"
-              className="inline-flex min-h-11 w-full cursor-pointer items-center justify-center rounded-lg border border-gold/45 bg-gold/15 px-4 text-sm font-semibold text-gold transition-colors duration-200 hover:bg-gold/25"
-            >
-              {C.isi.submit}
-            </button>
-          </form>
+          {errorText ? (
+            <p role="alert" className="mt-3 text-sm text-red-300">
+              {errorText}
+            </p>
+          ) : null}
+          <Link
+            href={`/${locale}/login`}
+            className="mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-gold/45 bg-gold/15 px-4 text-sm font-semibold text-gold transition-colors duration-200 hover:bg-gold/25"
+          >
+            {C.auth.login}
+          </Link>
           <Link
             href={`/${locale}`}
             className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-white/10 px-4 text-sm font-semibold text-zinc-400 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"

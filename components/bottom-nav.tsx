@@ -37,7 +37,7 @@ export function BottomNav({ locale }: { locale: Locale }) {
       className="fixed inset-x-0 bottom-0 z-30 border-t border-white/10 bg-panel/95 backdrop-blur"
       style={{ paddingBottom: "max(0.25rem, env(safe-area-inset-bottom))" }}
     >
-      <div className="mx-auto grid max-w-lg grid-cols-4 gap-1 px-2 pt-1">
+      <div className="mx-auto grid max-w-lg grid-cols-5 gap-1 px-2 pt-1">
         <Link
           href={base}
           aria-current={onArtists ? "page" : undefined}
@@ -74,6 +74,14 @@ export function BottomNav({ locale }: { locale: Locale }) {
         >
           <Icon d={ICONS.info} className="h-5 w-5" />
           {C.header.info}
+        </Link>
+        <Link
+          href={`${base}/lineups`}
+          aria-current={pathname === `${base}/lineups` ? "page" : undefined}
+          className={`${ITEM} ${pathname === `${base}/lineups` ? ACTIVE : IDLE}`}
+        >
+          <Icon d={ICONS.check} className="h-5 w-5" />
+          {C.lineup.title}
         </Link>
         <Link
           href={`${base}/manage`}

@@ -4,12 +4,19 @@ import { useMemo } from "react";
 import Image from "next/image";
 import type { Artist } from "@/lib/artists";
 import { DICT, t, type Locale } from "@/lib/i18n";
+import type { Rank } from "@/lib/pool";
 import { TIER_ORDER, type Category } from "@/lib/score";
 import { ArtistFilterBar, type ArtistFilterState } from "./artist-filter";
-import { GenreIcon, ICONS, Icon, SkillList, TierBadge, formatStat } from "./artist-ui";
+import { GenreIcon, ICONS, Icon, RankBadge, SkillList, TierBadge, formatStat } from "./artist-ui";
 
 type Props = {
   artists: Artist[];
+  // scoped = artis yang masuk pool (semua artis kalau pool kosong).
+  scoped: Artist[];
+  rank: Map<string, Rank> | null;
+  // null = belum login: tombol koleksi disembunyikan.
+  owned: Set<string> | null;
+  onOwned: (slug: string, owned: boolean) => void;
   picked: string[];
   locale: Locale;
   category: Category;
@@ -17,19 +24,28 @@ type Props = {
 };
 
 // Season hanya bermakna untuk artist dari kota tuan rumah; origin lain tidak menampilkannya.
-export function ArtistsTab({ artists, picked, locale, category, state }: Props) {
+export function ArtistsTab({ artists, scoped, rank, owned, onOwned, picked, locale, category, state }: Props) {
   const C = DICT[locale];
-  const visible = state.visible;
+  // Section tier hanya untuk artis di pool, jadi tier yang tak bisa dicapai tidak muncul.
+  const inPool = useMemo(() => new Set(scoped.map((a) => a.slug)), [scoped]);
+  const visible = useMemo(() => state.visible.filter((a) => inPool.has(a.slug)), [state.visible, inPool]);
   // Urutan chip ikut TIER_ORDER, bukan urutan data; tier tanpa artist tidak ditampilkan.
   const tiers = useMemo(() => {
-    const present = new Set(artists.map((a) => a.tiers[category]));
+    const present = new Set(scoped.map((a) => a.tiers[category]));
     return TIER_ORDER.filter((tier) => present.has(tier));
-  }, [artists, category]);
+  }, [scoped, category]);
+  const sortValue = (a: Artist) => rank?.get(a.slug)?.rank ?? -a.scores[category];
 
   return (
     <section aria-label={C.artists.section} className="flex min-w-0 flex-col">
       <div className="sm:sticky sm:top-0">
-        <ArtistFilterBar artists={artists} locale={locale} state={state} />
+        <ArtistFilterBar
+          artists={artists}
+          locale={locale}
+          state={state}
+          ownedTotal={owned ? artists.length : undefined}
+          ownedCount={owned ? artists.filter((a) => owned.has(a.slug)).length : 0}
+        />
       </div>
 
       <p aria-live="polite" className="sr-only">
@@ -37,7 +53,7 @@ export function ArtistsTab({ artists, picked, locale, category, state }: Props) 
       </p>
 
       {tiers
-        .map((tier) => [tier, visible.filter((a) => a.tiers[category] === tier)] as const)
+        .map((tier) => [tier, visible.filter((a) => a.tiers[category] === tier).sort((a, b) => sortValue(a) - sortValue(b))] as const)
         .filter(([, list]) => list.length > 0)
         .map(([tier, list]) => (
           <section key={tier} className="mt-4">
@@ -48,6 +64,7 @@ export function ArtistsTab({ artists, picked, locale, category, state }: Props) 
             <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
               {list.map((a) => {
                 const inTeam = picked.includes(a.slug);
+                const r = rank?.get(a.slug);
                 return (
                   <li key={a.slug}>
                     {/* Kartu hanya info: pemilihan artist dilakukan di tab Team Builder. */}
@@ -65,7 +82,11 @@ export function ArtistsTab({ artists, picked, locale, category, state }: Props) 
                           </span>
                         )}
                         <span className="absolute top-1.5 left-1.5 rounded-md bg-ink/70 p-0.5 backdrop-blur-sm">
-                          <TierBadge tier={a.tiers[category]} />
+                          {r ? (
+                            <RankBadge rank={r.rank} size={r.size} label={t(C.pool.rank, { n: r.rank, total: r.size })} />
+                          ) : (
+                            <TierBadge tier={a.tiers[category]} />
+                          )}
                         </span>
                         {inTeam && (
                           <span className="absolute top-1.5 right-1.5 grid h-7 w-7 place-items-center rounded-md border border-gold/45 bg-ink/80 text-gold">
@@ -91,6 +112,21 @@ export function ArtistsTab({ artists, picked, locale, category, state }: Props) 
                         </span>
                         <SkillList skills={a.skills} locale={locale} className="mt-1 border-t border-white/10 pt-1" />
                       </span>
+                      {owned && (
+                        <button
+                          type="button"
+                          onClick={() => onOwned(a.slug, !owned.has(a.slug))}
+                          aria-pressed={owned.has(a.slug)}
+                          aria-label={owned.has(a.slug) ? t(C.collection.markMissing, { name: a.name }) : t(C.collection.markOwned, { name: a.name })}
+                          className={`min-h-11 cursor-pointer border-t px-2 text-xs font-semibold transition-colors duration-200 ${
+                            owned.has(a.slug)
+                              ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
+                              : "border-white/10 text-zinc-400 hover:text-zinc-200"
+                          }`}
+                        >
+                          {owned.has(a.slug) ? C.collection.owned : C.collection.missing}
+                        </button>
+                      )}
                     </div>
                   </li>
                 );

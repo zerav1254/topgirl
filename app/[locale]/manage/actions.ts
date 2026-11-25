@@ -2,9 +2,7 @@
 
 import sharp from "sharp";
 import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import { clearAdminCookie, isAdmin, sameSecret, setAdminCookie } from "@/lib/auth";
+import { requireAdmin } from "@/lib/auth";
 import { DICT, LOCALES, localeOr, type Locale } from "@/lib/i18n";
 import { EFFECT_SET } from "@/lib/score";
 import { PHOTO_BUCKET, adminClient } from "@/lib/supabase";
@@ -12,16 +10,6 @@ import { PHOTO_BUCKET, adminClient } from "@/lib/supabase";
 export type SaveResult = { ok: boolean; error: string };
 
 const SLUG_RE = /^[a-z0-9-]+$/;
-
-// ponytail: throttle login in-memory per instance. Ganti ke store bersama kalau butuh batas lintas instance.
-const WINDOW = 5 * 60_000;
-const MAX_TRIES = 5;
-const tries = new Map<string, { n: number; at: number }>();
-
-async function clientKey() {
-  const h = await headers();
-  return h.get("x-forwarded-for")?.split(",")[0]?.trim() || h.get("x-real-ip") || "local";
-}
 
 // Revalidasi semua locale: foto/stat dipakai di setiap halaman bahasa.
 function revalidateAll() {
@@ -40,31 +28,19 @@ const pos = (fd: FormData, key: string) => {
 
 const safeLocale = localeOr;
 
-export async function login(locale: Locale, fd: FormData): Promise<void> {
-  const l = safeLocale(locale);
-  const key = await clientKey();
-  const now = Date.now();
-  // Buang jendela kedaluwarsa tiap percobaan supaya map tidak tumbuh tanpa batas.
-  for (const [k, v] of tries) if (now - v.at >= WINDOW) tries.delete(k);
-  const prev = tries.get(key);
-  const blocked = Boolean(prev && prev.n >= MAX_TRIES);
-  if (blocked || !sameSecret(String(fd.get("password") ?? ""), process.env.ADMIN_PASSWORD ?? "")) {
-    tries.set(key, { n: (prev?.n ?? 0) + 1, at: now });
-    redirect(`/${l}/manage?error=login`);
+// Semua action tulis wajib lewat gate role; gagal = sesi habis, bukan pesan internal.
+async function hasAdmin(): Promise<boolean> {
+  try {
+    await requireAdmin();
+    return true;
+  } catch {
+    return false;
   }
-  tries.delete(key);
-  await setAdminCookie();
-  redirect(`/${l}/manage`);
-}
-
-export async function logout(locale: Locale): Promise<void> {
-  await clearAdminCookie();
-  redirect(`/${safeLocale(locale)}/manage`);
 }
 
 export async function saveArtist(locale: Locale, fd: FormData): Promise<SaveResult> {
   const C = DICT[safeLocale(locale)].actions;
-  if (!(await isAdmin())) return { ok: false, error: C.session };
+  if (!(await hasAdmin())) return { ok: false, error: C.session };
 
   const slug = txt(fd, "slug");
   const name = txt(fd, "name");
@@ -106,7 +82,7 @@ export async function uploadPhoto(locale: Locale, fd: FormData): Promise<UploadR
   const l = safeLocale(locale);
   const E = DICT[l].isi.errors;
   const slug = txt(fd, "slug");
-  if (!(await isAdmin())) return { ok: false, error: DICT[l].actions.session };
+  if (!(await hasAdmin())) return { ok: false, error: DICT[l].actions.session };
 
   const file = fd.get("photo");
   if (!slug || !SLUG_RE.test(slug) || !(file instanceof File) || file.size === 0) return { ok: false, error: E.foto };

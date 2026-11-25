@@ -3,13 +3,17 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Artist } from "@/lib/artists";
 import { DICT, t, type Locale } from "@/lib/i18n";
+import type { Rank } from "@/lib/pool";
 import { EFFECT_LABEL, type Category, type Effect } from "@/lib/score";
 import { GENRE_BONUS, STAT_ORDER, TEAM_SIZE } from "@/lib/team";
 import { ArtistFilterBar, type ArtistFilterState } from "./artist-filter";
-import { Avatar, GenreIcon, ICONS, Icon, SkillList, TierBadge, formatStat, isPercent } from "./artist-ui";
+import { Avatar, GenreIcon, ICONS, Icon, RankBadge, SkillList, TierBadge, formatStat, isPercent } from "./artist-ui";
 
 type Props = {
   artists: Artist[];
+  // scoped = artis di pool; rank = peringkat relatif (null saat pool kosong).
+  scoped: Artist[];
+  rank: Map<string, Rank> | null;
   team: Artist[];
   picked: string[];
   locale: Locale;
@@ -17,10 +21,11 @@ type Props = {
   state: ArtistFilterState;
   onToggle: (slug: string) => void;
   onAssign: (index: number, slug: string) => void;
+  onAuto: () => void;
   onReset: () => void;
 };
 
-export function TeamTab({ artists, team, picked, locale, category, state, onToggle, onAssign, onReset }: Props) {
+export function TeamTab({ artists, scoped, rank, team, picked, locale, category, state, onToggle, onAssign, onAuto, onReset }: Props) {
   const C = DICT[locale];
   // Slot yang sedang dipilih; null = dialog tertutup. Picker menggantikan daftar panjang di bawah.
   const [slot, setSlot] = useState<number | null>(null);
@@ -35,9 +40,19 @@ export function TeamTab({ artists, team, picked, locale, category, state, onTogg
 
   const current = slot === null ? undefined : team[slot];
   // Artist di slot aktif tetap tampil supaya bisa dibatalkan; yang lain sudah dipakai disembunyikan.
-  const candidates = state.visible
-    .filter((a) => a.slug === current?.slug || !picked.includes(a.slug))
-    .sort((a, b) => b.scores[category] - a.scores[category]);
+  // Pool membatasi kandidat: artis di luar pool tidak bisa dipilih saat pool aktif.
+  const inPool = useMemo(() => new Set(scoped.map((a) => a.slug)), [scoped]);
+  const sortValue = (a: Artist) => rank?.get(a.slug)?.rank ?? -a.scores[category];
+  const candidates = useMemo(
+    () =>
+      state.visible
+        .filter((a) => inPool.has(a.slug))
+        .filter((a) => a.slug === current?.slug || !picked.includes(a.slug))
+        .sort((a, b) => sortValue(a) - sortValue(b)),
+    // sortValue hanya bergantung pada rank/category; dimasukkan lewat deps di bawah.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [state.visible, inPool, current?.slug, picked, rank, category],
+  );
 
   const summary = useMemo(() => {
     const genreCount = new Map<string, number>();
@@ -75,18 +90,31 @@ export function TeamTab({ artists, team, picked, locale, category, state, onTogg
 
   return (
     <section aria-label={C.team.section} className="flex flex-col gap-4">
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="font-display text-sm font-semibold uppercase tracking-wide text-zinc-300">{C.team.title}</h2>
-        {team.length > 0 && (
-          <button
-            type="button"
-            onClick={onReset}
-            className="flex min-h-11 cursor-pointer items-center gap-1 rounded-md px-2 py-1 text-sm text-zinc-400 transition-colors duration-200 hover:bg-white/5 hover:text-red-300"
-          >
-            <Icon d={ICONS.trash} className="h-4 w-4" />
-            {C.common.reset}
-          </button>
-        )}
+        <div className="flex items-center gap-1">
+          {scoped.length > 0 && (
+            <button
+              type="button"
+              onClick={onAuto}
+              title={C.pool.bestHint}
+              className="flex min-h-11 cursor-pointer items-center gap-1 rounded-md border border-brand/40 bg-brand/10 px-2 py-1 text-sm font-semibold text-zinc-100 transition-colors duration-200 hover:border-brand/60"
+            >
+              <Icon d={ICONS.sliders} className="h-4 w-4" />
+              {C.pool.best}
+            </button>
+          )}
+          {team.length > 0 && (
+            <button
+              type="button"
+              onClick={onReset}
+              className="flex min-h-11 cursor-pointer items-center gap-1 rounded-md px-2 py-1 text-sm text-zinc-400 transition-colors duration-200 hover:bg-white/5 hover:text-red-300"
+            >
+              <Icon d={ICONS.trash} className="h-4 w-4" />
+              {C.common.reset}
+            </button>
+          )}
+        </div>
       </div>
 
       <ol className="flex flex-col gap-2">
@@ -223,6 +251,7 @@ export function TeamTab({ artists, team, picked, locale, category, state, onTogg
           <ul className="flex flex-col gap-2 overflow-y-auto px-3 pb-3">
             {candidates.map((a) => {
               const active = a.slug === current?.slug;
+              const r = rank?.get(a.slug);
               return (
                 <li key={a.slug}>
                   <button
@@ -237,6 +266,7 @@ export function TeamTab({ artists, team, picked, locale, category, state, onTogg
                     <span className="min-w-0 flex-1">
                       <span className="flex items-center gap-1.5">
                         <span className="truncate text-sm font-semibold">{a.name}</span>
+                        {r && <RankBadge rank={r.rank} size={r.size} label={t(C.pool.rank, { n: r.rank, total: r.size })} />}
                         <TierBadge tier={a.tiers[category]} />
                       </span>
                       <span className="tabular block truncate text-xs text-zinc-400">

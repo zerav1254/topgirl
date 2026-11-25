@@ -1,25 +1,53 @@
 "use client";
 
-import { useMemo, useSyncExternalStore } from "react";
+import { useMemo, useSyncExternalStore, useTransition } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { toggleOwned } from "@/app/[locale]/collection/actions";
 import type { Artist } from "@/lib/artists";
 import { DICT, type Locale } from "@/lib/i18n";
+import { parsePool, getServerPool, readPool, subscribePool, writePool } from "@/lib/pool-store";
+import { poolOf, rankInPool } from "@/lib/pool";
 import type { Category } from "@/lib/score";
-import { TEAM_SIZE } from "@/lib/team";
+import { bestLineup, TEAM_SIZE } from "@/lib/team";
 import { getServerTeam, readTeam, subscribeTeam, writeTeam } from "@/lib/team-store";
 import { isCategory, useArtistFilter } from "./artist-filter";
 import { ArtistsTab } from "./artists-tab";
 import { LocaleSwitcher } from "./locale-switcher";
+import { PoolPicker } from "./pool-picker";
 import { TeamTab } from "./team-tab";
 
 type Tab = "artists" | "team";
 
 // Shell dipakai dua rute: /{locale} (artists) dan /{locale}/team. Tab dari route, bukan query.
-export function TeamBuilder({ artists, locale, tab }: { artists: Artist[]; locale: Locale; tab: Tab }) {
+export function TeamBuilder({
+  artists,
+  locale,
+  tab,
+  owned,
+  user,
+}: {
+  artists: Artist[];
+  locale: Locale;
+  tab: Tab;
+  // null = belum login; array (boleh kosong) = sudah login.
+  owned: string[] | null;
+  user: string | null;
+}) {
   const C = DICT[locale];
+  const router = useRouter();
+  const [, startOwn] = useTransition();
+  const ownedSet = useMemo(() => (owned ? new Set(owned) : null), [owned]);
   // Tidak ada bar kategori terpisah: filter "Spesialis" menentukan kategori skor/tier.
-  const state = useArtistFilter(artists, locale);
+  const state = useArtistFilter(artists, locale, ownedSet ?? undefined);
   const category: Category = isCategory(state.filter.specialty) ? state.filter.specialty : "solo";
+
+  const poolRaw = useSyncExternalStore(subscribePool, readPool, getServerPool);
+  const pool = useMemo(() => parsePool(poolRaw), [poolRaw]);
+  // Pool kosong = seluruh database: peringkat tidak ditampilkan supaya skala tetap absolut.
+  const scoped = useMemo(() => poolOf(artists, pool), [artists, pool]);
+  const rank = useMemo(() => (pool.length === 0 ? null : rankInPool(artists, pool, category)), [artists, pool, category]);
 
   const bySlug = useMemo(() => new Map(artists.map((a) => [a.slug, a])), [artists]);
   const saved = useSyncExternalStore(subscribeTeam, readTeam, getServerTeam);
@@ -46,6 +74,19 @@ export function TeamBuilder({ artists, locale, tab }: { artists: Artist[]; local
     writeTeam(next.slice(0, TEAM_SIZE));
   }
 
+  // Eksplisit lewat tombol: jangan menimpa tim yang sedang disusun tanpa klik.
+  function autoLineup() {
+    const best = bestLineup(scoped, category);
+    if (best.length > 0) writeTeam(best.map((a) => a.slug));
+  }
+
+  function markOwned(slug: string, next: boolean) {
+    startOwn(async () => {
+      await toggleOwned(locale, slug, next);
+      router.refresh();
+    });
+  }
+
   return (
     <div id="main" className="mx-auto flex max-w-4xl flex-col gap-3 px-4 pt-3 pb-28 sm:px-6 sm:pt-6">
       <header className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
@@ -66,16 +107,36 @@ export function TeamBuilder({ artists, locale, tab }: { artists: Artist[]; local
             </h1>
           </div>
         </div>
-        <div className="flex w-full items-center justify-end sm:w-auto">
+        <div className="flex w-full items-center justify-end gap-2 sm:w-auto">
+          <Link
+            href={`/${locale}/login`}
+            className="flex min-h-11 max-w-40 items-center truncate rounded-lg border border-white/10 px-3 text-xs font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
+          >
+            {user ? user : C.auth.login}
+          </Link>
           <LocaleSwitcher locale={locale} />
         </div>
       </header>
 
+      <PoolPicker artists={artists} pool={pool} locale={locale} onChange={writePool} />
+
       {tab === "artists" ? (
-        <ArtistsTab artists={artists} picked={picked} locale={locale} category={category} state={state} />
+        <ArtistsTab
+          artists={artists}
+          scoped={scoped}
+          rank={rank}
+          owned={ownedSet}
+          onOwned={markOwned}
+          picked={picked}
+          locale={locale}
+          category={category}
+          state={state}
+        />
       ) : (
         <TeamTab
           artists={artists}
+          scoped={scoped}
+          rank={rank}
           team={team}
           picked={picked}
           locale={locale}
@@ -83,6 +144,7 @@ export function TeamBuilder({ artists, locale, tab }: { artists: Artist[]; local
           state={state}
           onToggle={toggle}
           onAssign={assign}
+          onAuto={autoLineup}
           onReset={() => writeTeam([])}
         />
       )}

@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { BottomNav } from "@/components/bottom-nav";
 import { DICT, LOCALES, localeOr } from "@/lib/i18n";
 import { SITE_ICON, pageMetadata } from "@/lib/seo";
+import { SITE_URL } from "@/lib/site";
 import "../globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
@@ -14,9 +15,6 @@ const notoKo = Noto_Sans_KR({ variable: "--font-ko", display: "swap", preload: f
 export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }));
 }
-
-// Vercel menyetel VERCEL_PROJECT_PRODUCTION_URL di production; lokal pakai localhost.
-const SITE_URL = `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL ?? process.env.VERCEL_URL ?? "localhost:3000"}`;
 
 export const viewport: Viewport = { themeColor: "#0b0b0f", colorScheme: "dark" };
 

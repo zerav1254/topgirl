@@ -1,42 +1,80 @@
-import { createHash, createHmac, timingSafeEqual } from "node:crypto";
-import { cookies } from "next/headers";
+import { cache } from "react";
+import type { User } from "@supabase/supabase-js";
+import { adminClient } from "./supabase.ts";
+import { createSupabaseServer } from "./supabase/server.ts";
 
-const COOKIE = "topgirl_admin";
-const MAX_AGE = 60 * 60 * 24 * 30;
+export type Role = "admin" | "user";
 
-const secret = () => process.env.AUTH_SECRET ?? "";
-const password = () => process.env.ADMIN_PASSWORD ?? "";
+export type Profile = {
+  userId: string;
+  email: string | null;
+  name: string | null;
+  avatarUrl: string | null;
+  ingameId: number | null;
+  ingameServer: number | null;
+  ingameNickname: string | null;
+  role: Role;
+};
 
-// Sertakan fingerprint password: ganti ADMIN_PASSWORD -> cookie lama otomatis tidak valid.
-function token(): string {
-  const s = secret();
-  if (!s) throw new Error("AUTH_SECRET belum diset.");
-  return createHmac("sha256", s).update("admin:v1").update(password()).digest("base64url");
+type Row = {
+  user_id: string;
+  email: string | null;
+  name: string | null;
+  avatar_url: string | null;
+  ingame_id: number | null;
+  ingame_server: number | null;
+  ingame_nickname: string | null;
+  role: Role;
+};
+
+const COLUMNS = "user_id,email,name,avatar_url,ingame_id,ingame_server,ingame_nickname,role";
+
+const toProfile = (r: Row): Profile => ({
+  userId: r.user_id,
+  email: r.email,
+  name: r.name,
+  avatarUrl: r.avatar_url,
+  ingameId: r.ingame_id,
+  ingameServer: r.ingame_server,
+  ingameNickname: r.ingame_nickname,
+  role: r.role,
+});
+
+// cache(): layout + page + action dalam satu request berbagi hasil, bukan bolak-balik ke Supabase.
+export const getUser = cache(async (): Promise<User | null> => {
+  const supabase = await createSupabaseServer();
+  const { data } = await supabase.auth.getUser();
+  return data.user ?? null;
+});
+
+// profiles punya RLS tanpa policy: baca lewat service_role, bukan session client.
+export const getProfile = cache(async (): Promise<Profile | null> => {
+  const user = await getUser();
+  if (!user) return null;
+  const { data, error } = await adminClient().from("profiles").select(COLUMNS).eq("user_id", user.id).maybeSingle();
+  if (error || !data) return null;
+  return toProfile(data as Row);
+});
+
+export class UnauthenticatedError extends Error {
+  constructor() {
+    super("unauthenticated");
+    this.name = "UnauthenticatedError";
+  }
 }
 
-// Hash dulu supaya panjang input tidak bocor lewat timing/length, lalu banding konstan.
-export function sameSecret(given: string, expected: string): boolean {
-  if (!expected) return false;
-  const a = createHash("sha256").update(given).digest();
-  const b = createHash("sha256").update(expected).digest();
-  return timingSafeEqual(a, b);
+export async function requireUser(): Promise<User> {
+  const user = await getUser();
+  if (!user) throw new UnauthenticatedError();
+  return user;
+}
+
+export async function requireAdmin(): Promise<Profile> {
+  const profile = await getProfile();
+  if (!profile || profile.role !== "admin") throw new UnauthenticatedError();
+  return profile;
 }
 
 export async function isAdmin(): Promise<boolean> {
-  const value = (await cookies()).get(COOKIE)?.value;
-  return Boolean(value) && Boolean(secret()) && sameSecret(value as string, token());
-}
-
-export async function setAdminCookie(): Promise<void> {
-  (await cookies()).set(COOKIE, token(), {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    path: "/",
-    maxAge: MAX_AGE,
-  });
-}
-
-export async function clearAdminCookie(): Promise<void> {
-  (await cookies()).delete(COOKIE);
+  return (await getProfile())?.role === "admin";
 }

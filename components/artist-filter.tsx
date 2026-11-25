@@ -2,15 +2,17 @@
 
 import { useMemo, useSyncExternalStore } from "react";
 import type { Artist } from "@/lib/artists";
-import { DICT, type Locale } from "@/lib/i18n";
+import { DICT, t, type Locale } from "@/lib/i18n";
 import { CATEGORIES, EFFECTS, EFFECT_LABEL, type Category, type Effect } from "@/lib/score";
 import { SearchInput } from "./artist-ui";
 
 // Sentinel filter, bukan teks tampil: label "Semua" datang dari dict.
 const ALL = "all";
 
-export type ArtistFilter = { genre: string; origin: string; specialty: string; skill: string };
-const EMPTY: ArtistFilter = { genre: ALL, origin: ALL, specialty: ALL, skill: ALL };
+export type ArtistFilter = { genre: string; origin: string; specialty: string; skill: string; scope: string };
+const EMPTY: ArtistFilter = { genre: ALL, origin: ALL, specialty: ALL, skill: ALL, scope: ALL };
+const OWNED = "owned";
+const MISSING = "missing";
 
 // Store filter di level modul: tetap hidup saat pindah rute /{locale} <-> /{locale}/team
 // (client navigation tidak me-reset modul), kembali kosong saat reload penuh.
@@ -39,7 +41,7 @@ export function specialtyOf(a: Artist): Category {
   return CATEGORIES.reduce((best, c) => (a.scores[c] > a.scores[best] ? c : best), CATEGORIES[0]);
 }
 
-export function useArtistFilter(artists: Artist[], locale: Locale) {
+export function useArtistFilter(artists: Artist[], locale: Locale, owned?: Set<string>) {
   const { query, filter } = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   const q = query.trim().toLowerCase();
   const visible = useMemo(
@@ -50,12 +52,15 @@ export function useArtistFilter(artists: Artist[], locale: Locale) {
           (filter.origin === ALL || a.origin === filter.origin) &&
           (filter.specialty === ALL || specialtyOf(a) === filter.specialty) &&
           (filter.skill === ALL || a.skills.some((s) => s.effect === filter.skill)) &&
+          (!owned ||
+            filter.scope === ALL ||
+            (filter.scope === OWNED ? owned.has(a.slug) : !owned.has(a.slug))) &&
           (q === "" ||
             a.name.toLowerCase().includes(q) ||
             a.genre.toLowerCase().includes(q) ||
             a.skills.some((s) => EFFECT_LABEL[s.effect][locale].toLowerCase().includes(q))),
       ),
-    [artists, filter, q, locale],
+    [artists, filter, q, locale, owned],
   );
   const setQuery = (value: string) => setState({ ...current, query: value });
   const setFilter = (next: ArtistFilter | ((f: ArtistFilter) => ArtistFilter)) =>
@@ -115,11 +120,16 @@ export function ArtistFilterBar({
   locale,
   state,
   bare = false,
+  ownedTotal,
+  ownedCount = 0,
 }: {
   artists: Artist[];
   locale: Locale;
   state: ArtistFilterState;
   bare?: boolean;
+  // undefined = belum login: chip koleksi disembunyikan.
+  ownedTotal?: number;
+  ownedCount?: number;
 }) {
   const C = DICT[locale];
   const set = (key: keyof ArtistFilter) => (id: string) => state.setFilter((f) => ({ ...f, [key]: id }));
@@ -157,6 +167,31 @@ export function ArtistFilterBar({
           {C.artists.resetFilter}
         </button>
       </div>
+
+      {ownedTotal !== undefined && (
+        <div className="flex flex-wrap items-center gap-1.5">
+          {[
+            [ALL, C.common.all],
+            [OWNED, C.collection.owned],
+            [MISSING, C.collection.missing],
+          ].map(([id, label]) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => set("scope")(id)}
+              aria-pressed={state.filter.scope === id}
+              className={`min-h-11 cursor-pointer rounded-lg border px-3 text-sm font-semibold transition-colors duration-200 ${
+                state.filter.scope === id
+                  ? "border-gold/50 bg-gold/10 text-gold"
+                  : "border-white/10 bg-panel/80 text-zinc-300 hover:border-white/25 hover:text-zinc-100"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+          <span className="tabular text-xs text-zinc-400">{t(C.collection.count, { n: ownedCount, total: ownedTotal })}</span>
+        </div>
+      )}
 
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         <Select

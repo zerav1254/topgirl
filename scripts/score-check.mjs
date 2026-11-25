@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import { loadArtists } from "../lib/artists.ts";
+import { poolOf, rankInPool } from "../lib/pool.ts";
 import { CATEGORIES, scoreArtist } from "../lib/score.ts";
+import { TEAM_SIZE, bestLineup } from "../lib/team.ts";
 
 const artists = await loadArtists();
 assert.ok(artists.length > 0, "expected at least one artist");
@@ -58,5 +60,31 @@ for (const a of artists) {
     assert.ok(a.scores[category] >= 0 && a.scores[category] <= 100, `${a.name} ${category} score out of range`);
     assert.ok(["S+", "S", "A", "B", "C", "D"].includes(a.tiers[category]), `${a.name} ${category} bad tier`);
   }
+}
+
+// Pool: filter origin, peringkat relatif, dan lineup terbaik.
+const origin = [...new Set(artists.map((a) => a.origin).filter(Boolean))][0];
+if (origin) {
+  const scoped = poolOf(artists, [origin]);
+  assert.ok(scoped.length > 0, "pool satu origin tidak boleh kosong");
+  assert.ok(scoped.every((a) => a.origin === origin), "pool harus hanya berisi origin terpilih");
+  assert.equal(poolOf(artists, []).length, artists.length, "pool kosong = semua artis");
+  for (const category of CATEGORIES) {
+    const rank = rankInPool(artists, [origin], category);
+    assert.equal(rank.size, scoped.length, "ukuran peringkat = ukuran pool");
+    const maxScore = Math.max(...scoped.map((a) => a.scores[category]));
+    const first = scoped.find((a) => rank.get(a.slug)?.rank === 1);
+    assert.equal(first?.scores[category], maxScore, `rank 1 ${category} = skor tertinggi pool`);
+  }
+}
+
+for (const category of CATEGORIES) {
+  const lineup = bestLineup(artists, category);
+  assert.ok(lineup.length <= TEAM_SIZE, "lineup maksimal TEAM_SIZE");
+  assert.equal(new Set(lineup.map((a) => a.slug)).size, lineup.length, "lineup tidak boleh duplikat");
+  if (artists.length > TEAM_SIZE) assert.equal(lineup.length, TEAM_SIZE, "lineup penuh kalau data cukup");
+  const naive = [...artists].sort((a, b) => b.scores[category] - a.scores[category]).slice(0, TEAM_SIZE);
+  const sum = (list) => list.reduce((n, a) => n + a.scores[category], 0);
+  assert.ok(sum(lineup) >= sum(naive) - 1e-9, `lineup ${category} minimal sebaik top-${TEAM_SIZE} naif`);
 }
 console.log("score-check ok:", artists.length, "artists x", CATEGORIES.length, "categories");

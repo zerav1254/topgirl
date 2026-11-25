@@ -85,6 +85,20 @@ export function TierBadge({ tier, className = "" }: { tier: string; className?: 
   );
 }
 
+// Peringkat relatif pool. Label dibaca screen reader; "#3" sendiri ambigu tanpa konteks.
+export function RankBadge({ rank, size, label, className = "" }: { rank: number; size: number; label: string; className?: string }) {
+  return (
+    <span
+      aria-label={label}
+      title={label}
+      className={`tabular inline-flex items-center rounded-md border border-white/15 bg-white/5 px-1.5 py-0.5 font-display text-xs font-semibold text-zinc-100 ${className}`}
+    >
+      #{rank}
+      <span className="text-zinc-500">/{size}</span>
+    </span>
+  );
+}
+
 export function Avatar({ artist, size = "h-12 w-12", tier = artist.tiers.solo }: { artist: Artist; size?: string; tier?: string }) {
   return (
     <span className={`block shrink-0 overflow-hidden rounded-lg bg-gradient-to-br ${AVATAR_STYLE[tier] ?? AVATAR_STYLE.D} ${size}`}>

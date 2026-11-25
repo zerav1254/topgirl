@@ -123,3 +123,86 @@ on conflict (id) do nothing;
 
 -- catatan: pgvector dipasang Supabase di schema extensions, bukan public.
 -- helper public.rls_auto_enable() milik Supabase; execute-nya dicabut dari anon/authenticated.
+
+-- ── Auth: profil, koleksi, lineup ────────────────────────────────────────────
+-- RLS aktif tanpa policy = deny all untuk anon/authenticated. Semua akses lewat
+-- server action dengan service_role; user_id selalu dari session, bukan input.
+
+create table public.profiles (
+  user_id uuid primary key references auth.users on delete cascade,
+  email text,                                    -- opsional: Discord bisa tanpa email
+  name text,
+  avatar_url text,
+  provider text,                                 -- 'google' | 'discord'
+  provider_id text,                              -- id stabil provider, bukan username
+  ingame_id bigint check (ingame_id > 0),
+  ingame_server smallint check (ingame_server > 0),
+  ingame_nickname text check (char_length(ingame_nickname) <= 40),
+  role text not null default 'user' check (role in ('admin', 'user')),
+  created_at timestamptz not null default now()
+);
+
+create table public.user_artists (
+  user_id uuid not null references auth.users on delete cascade,
+  artist_slug text not null references public.artists (slug) on update cascade on delete cascade,
+  created_at timestamptz not null default now(),
+  primary key (user_id, artist_slug)
+);
+
+create table public.lineups (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users on delete cascade,
+  name text not null check (char_length(name) between 1 and 60),
+  -- 5 = TEAM_SIZE di lib/team.ts; SQL tidak bisa membaca konstanta TS.
+  slugs text[] not null check (cardinality(slugs) between 0 and 5),
+  share_slug text unique,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index user_artists_user_idx on public.user_artists (user_id);
+create index user_artists_slug_idx on public.user_artists (artist_slug);
+create index lineups_user_idx on public.lineups (user_id);
+
+alter table public.profiles enable row level security;
+alter table public.user_artists enable row level security;
+alter table public.lineups enable row level security;
+
+-- Memakai fungsi set_updated_at() yang sudah ada di atas.
+drop trigger if exists lineups_touch on public.lineups;
+create trigger lineups_touch
+  before update on public.lineups
+  for each row execute function public.set_updated_at();
+
+-- Profil dibuat otomatis saat auth.users bertambah.
+-- security definer + search_path kosong: cegah search_path injection.
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  insert into public.profiles (user_id, email, name, avatar_url, provider, provider_id)
+  values (
+    new.id,
+    new.email,
+    coalesce(
+      new.raw_user_meta_data ->> 'full_name',
+      new.raw_user_meta_data ->> 'name',
+      new.raw_user_meta_data ->> 'user_name',
+      pg_catalog.split_part(coalesce(new.email, ''), '@', 1)
+    ),
+    new.raw_user_meta_data ->> 'avatar_url',
+    new.raw_app_meta_data ->> 'provider',
+    new.raw_app_meta_data ->> 'provider_id'
+  )
+  on conflict (user_id) do nothing;
+  return new;
+end;
+$$;
+
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute function public.handle_new_user();

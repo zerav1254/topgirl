@@ -10,6 +10,7 @@ if (!url || !publishable) {
 }
 
 export const SUPABASE_URL = url;
+export const SUPABASE_ANON_KEY = publishable;
 
 // Read client (RLS: select-only for anon). Safe to use in server components.
 export const supabase = createClient(url, publishable, { auth: { persistSession: false } });

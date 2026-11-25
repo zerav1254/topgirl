@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { loadArtists } from "@/lib/artists";
+import { getProfile } from "@/lib/auth";
+import { loadOwned } from "@/lib/collection";
 import { DICT, isLocale, localeOr } from "@/lib/i18n";
 import { pageMetadata } from "@/lib/seo";
 import { TeamBuilder } from "@/components/team-builder";
@@ -22,6 +24,7 @@ export default async function TeamPage({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
 
-  const artists = await loadArtists();
-  return <TeamBuilder artists={artists} locale={locale} tab="team" />;
+  const [artists, profile] = await Promise.all([loadArtists(), getProfile()]);
+  const owned = profile ? await loadOwned(profile.userId) : null;
+  return <TeamBuilder artists={artists} locale={locale} tab="team" owned={owned} user={profile?.name ?? profile?.email ?? null} />;
 }
