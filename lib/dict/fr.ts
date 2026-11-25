@@ -123,6 +123,7 @@ export const fr: Dict = {
     publicHint: "Seules les compositions partagées apparaissent ici.",
     sharedLineups: "Compositions partagées",
     noShared: "Aucune composition partagée.",
+    links: "Aide et conditions",
   },
   collection: {
     label: "Collection",

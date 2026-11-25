@@ -123,6 +123,7 @@ export const ko: Dict = {
     publicHint: "공유한 라인업만 여기에 표시됩니다.",
     sharedLineups: "공유된 라인업",
     noShared: "공유된 라인업이 없습니다.",
+    links: "도움말 및 약관",
   },
   collection: {
     label: "컬렉션",

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProfile } from "@/lib/auth";
+import { DOCS, DOC_KEYS } from "@/lib/docs";
 import { DICT, isLocale, type Locale } from "@/lib/i18n";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { signIn, signOut } from "./actions";
@@ -92,6 +93,14 @@ export default async function Page({
         >
           {C.isi.home}
         </Link>
+
+        <nav aria-label={C.profile.links} className="mt-3 flex flex-wrap justify-center gap-x-3 gap-y-1 text-xs">
+          {DOC_KEYS.map((k) => (
+            <Link key={k} href={`/${locale}/doc/${k}`} className="text-zinc-400 underline-offset-2 transition-colors duration-200 hover:text-zinc-200 hover:underline">
+              {DOCS[locale][k].title}
+            </Link>
+          ))}
+        </nav>
       </section>
     </main>
   );

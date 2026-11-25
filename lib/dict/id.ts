@@ -121,6 +121,7 @@ export const id = {
     publicHint: "Hanya lineup yang dibagikan yang tampil.",
     sharedLineups: "Lineup dibagikan",
     noShared: "Belum ada lineup yang dibagikan.",
+    links: "Bantuan dan ketentuan",
   },
   collection: {
     label: "Koleksi",

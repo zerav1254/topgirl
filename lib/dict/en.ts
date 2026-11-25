@@ -123,6 +123,7 @@ export const en: Dict = {
     publicHint: "Only lineups you share appear here.",
     sharedLineups: "Shared lineups",
     noShared: "No shared lineups yet.",
+    links: "Help and terms",
   },
   collection: {
     label: "Collection",

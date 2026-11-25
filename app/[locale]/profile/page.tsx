@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getProfile } from "@/lib/auth";
+import { DOCS, DOC_KEYS } from "@/lib/docs";
 import { DICT, isLocale, type Locale } from "@/lib/i18n";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { ProfileForm } from "@/components/profile-form";
@@ -82,6 +83,21 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
         <p className="mb-3 text-sm text-zinc-400">{C.profile.subtitle}</p>
         <ProfileForm profile={profile} locale={locale} />
       </section>
+
+      <nav aria-label={C.profile.links} className="grid grid-cols-2 gap-2">
+        {[
+          { href: `/${locale}/info`, label: C.header.info },
+          ...DOC_KEYS.map((k) => ({ href: `/${locale}/doc/${k}`, label: DOCS[locale][k].title })),
+        ].map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className="inline-flex min-h-11 items-center justify-center rounded-lg border border-white/10 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
+          >
+            {item.label}
+          </Link>
+        ))}
+      </nav>
 
       <Link
         href={`/${locale}`}
