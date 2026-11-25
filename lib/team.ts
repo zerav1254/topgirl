@@ -19,6 +19,7 @@ export const STAT_ORDER: Effect[] = [
   "dps_atk_rally",
   "fan",
   "fan_rally",
+  "fan_gain",
   "basic_atk_red",
   "skill_dmg_red",
   "wbg_dmg",

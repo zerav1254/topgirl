@@ -11,6 +11,7 @@ export type Effect =
   | "skill_dmg_red"
   | "fan"
   | "fan_rally"
+  | "fan_gain"
   | "dps_def"
   | "dps_atk_company"
   | "dps_atk_rally"
@@ -31,6 +32,7 @@ export const EFFECTS: Effect[] = [
   "skill_dmg_red",
   "fan",
   "fan_rally",
+  "fan_gain",
   "dps_def",
   "dps_atk_company",
   "dps_atk_rally",
@@ -95,6 +97,16 @@ export const EFFECT_LABEL: Record<Effect, Record<Locale, string>> = {
     ja: "ファン応援",
     de: "Fan-Rallye",
   },
+  // Pendapatan fan (koleksi pasukan), bukan efek tempur.
+  fan_gain: {
+    id: "Fan gain",
+    en: "Fan gain",
+    fr: "Gain de fans",
+    ko: "팬 획득",
+    zh: "粉丝获取",
+    ja: "ファン獲得",
+    de: "Fan-Gewinn",
+  },
   dps_def: {
     id: "DPS defend",
     en: "DPS defend",
@@ -151,12 +163,14 @@ export const SCORE: Record<Category, Record<Effect, number>> = {
     gold: 0.01,
     drive: 0.01,
     fan_rally: 0.01,
+    fan_gain: 0.01,
     dps_def: 0.05,
     dps_atk_rally: 0.01,
     dps_atk_company: 0.01,
   },
   rally: {
     fan_rally: 6,
+    fan_gain: 0.01,
     player_dmg: 1.75,
     skill_dmg: 1.25,
     wbg_dmg: 1,
@@ -178,6 +192,7 @@ export const SCORE: Record<Category, Record<Effect, number>> = {
     skill_dmg: 0.25,
     fan: 0.3,
     fan_rally: 0.5,
+    fan_gain: 0.01,
     wbg_dmg: 0.2,
     gold: 0.2,
     drive: 0.2,
@@ -192,6 +207,7 @@ export const SCORE: Record<Category, Record<Effect, number>> = {
     skill_dmg: 0.01,
     fan: 0.01,
     fan_rally: 0.01,
+    fan_gain: 0.01,
     basic_atk: 0.01,
     basic_atk_red: 0.01,
     skill_dmg_red: 0.01,
@@ -208,6 +224,7 @@ export const SCORE: Record<Category, Record<Effect, number>> = {
     fan: 1,
     basic_atk: 0.5,
     fan_rally: 0.5,
+    fan_gain: 0.01,
     basic_atk_red: 0.2,
     skill_dmg_red: 0.2,
     dps_atk_rally: 0.1,
@@ -225,6 +242,7 @@ export const SCORE: Record<Category, Record<Effect, number>> = {
     skill_dmg: 0.5,
     basic_atk: 0.3,
     fan_rally: 0.2,
+    fan_gain: 0.01,
     wbg_dmg: 0.2,
     gold: 0.1,
     drive: 0.1,
