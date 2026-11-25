@@ -50,7 +50,15 @@ Badge tier: `border-<warna>/45 bg-<warna>/15 text-<warna>-300` (S+ pakai `text-g
 
 ## Komponen
 
-**Artist card** — kartu baca-saja (bukan tombol): pemilihan artist hanya di tab Team Builder. Normal: `border-white/10 bg-panel/70`. Artist yang sudah masuk tim: `border-gold/30 bg-gold/5` + ikon centang di pojok kanan-atas (`sr-only` "Dalam tim"). Isi kartu: nama + skor sebaris, genre (ikon + teks), baris label **Asal** (`text-[11px]` uppercase `text-zinc-400`, nilai `text-zinc-300`), baris label **Season** hanya untuk origin `Tokyo`/`Bali`/`Rome`, lalu dua baris skill dipisah border atas — nama efek kiri (`text-zinc-400`), nilai kanan (`tabular font-semibold text-zinc-200`, `—` bila kosong). Tiap slot skill tampil sendiri (tidak digabung `×2`).
+**Artist card** — kartu info (bukan tombol): pemilihan artist hanya di tab Team Builder. Normal: `border-white/10 bg-panel/70`. Artist yang sudah masuk tim: `border-gold/30 bg-gold/5` + ikon centang di pojok kanan-atas (`sr-only` "Dalam tim"). Isi kartu: nama + skor sebaris, genre (ikon + teks), baris label **Asal** (`text-[11px]` uppercase `text-zinc-400`, nilai `text-zinc-300`), baris label **Season** hanya untuk origin `Tokyo`/`Bali`/`Rome`, lalu dua baris skill dipisah border atas — nama efek kiri (`text-zinc-400`), nilai kanan (`tabular font-semibold text-zinc-200`, `—` bila kosong). Tiap slot skill tampil sendiri (tidak digabung `×2`).
+
+Saat login, kartu menambah satu tombol koleksi selebar kartu di bawah skill: `min-h-11 rounded-lg` (`rounded-none` mengikuti sudut kartu), `border-t`. Belum punya: `border-white/10 text-zinc-400 hover:text-zinc-200`. Sudah punya: `border-emerald-500/30 bg-emerald-500/10 text-emerald-300`. Status `aria-pressed`, `aria-label` memakai `collection.markOwned`/`markMissing` + nama artist. Tombol ini tidak membuka dialog; ia hanya menandai kepemilikan.
+
+**Rank badge** (mode pool) — pengganti `TierBadge` di pojok kartu: `tabular` `#n` tebal + `/{total}` `zinc-400`, `aria-label` "Peringkat n dari total". Tier badge tetap dipakai saat pool kosong (skala absolut).
+
+**Pool chips** — satu baris chip origin yang bisa multi-pilih + chip `Semua`. Urutan mengikuti kolom `sort` tabel `origins` (bukan alfabet). Aktif: `border-gold/50 bg-gold/10 text-gold`; idle: `border-white/10 bg-panel/80 text-zinc-300`. `min-h-11`, `aria-pressed`.
+
+**Lineup list** — kartu `rounded-xl border-white/10 bg-panel/70 p-3` per lineup: nama (truncate) + `n/5` (`tabular`, `TEAM_SIZE`), status tautan (`shared`/`private`), lalu baris tombol `min-h-11`: Bagikan/Cabut, Salin, Buka, dan Hapus (`ml-auto`, hover merah). Hapus wajib konfirmasi `window.confirm`. Salin mengumumkan hasil lewat `role="status"`.
 
 **Slot tim** — daftar `<ol>` 5 baris `min-h-[4rem]`. Kosong: `border-dashed border-white/10` + label "Slot n kosong". Terisi: `border-white/15 bg-panel-2`, avatar, nama, badge tier, genre, skor kategori aktif, tombol hapus. Baris terisi bisa diklik membuka dialog pemilih slot (`<dialog>` `w-[min(100%-2rem,32rem)]` berisi filter bersama + daftar kandidat dengan detail skill).
 

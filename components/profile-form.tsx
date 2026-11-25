@@ -5,7 +5,7 @@ import type { Profile } from "@/lib/auth";
 import { DICT, type Locale } from "@/lib/i18n";
 import { saveProfile } from "@/app/[locale]/profile/actions";
 
-const FIELD = "rounded-lg border border-white/10 bg-ink/60 px-3 py-2 text-base text-zinc-100 focus:border-brand/60";
+const FIELD = "rounded-lg border border-white/10 bg-panel/80 px-3 py-2 text-base text-zinc-100 focus:border-brand/60";
 
 export function ProfileForm({ profile, locale }: { profile: Profile; locale: Locale }) {
   const C = DICT[locale].profile;

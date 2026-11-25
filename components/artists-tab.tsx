@@ -38,13 +38,13 @@ export function ArtistsTab({ artists, scoped, rank, owned, onOwned, picked, loca
 
   return (
     <section aria-label={C.artists.section} className="flex min-w-0 flex-col">
-      <div className="sm:sticky sm:top-0">
+      <div className="lg:sticky lg:top-0">
         <ArtistFilterBar
           artists={artists}
           locale={locale}
           state={state}
-          ownedTotal={owned ? artists.length : undefined}
-          ownedCount={owned ? artists.filter((a) => owned.has(a.slug)).length : 0}
+          ownedTotal={owned ? scoped.length : undefined}
+          ownedCount={owned ? scoped.filter((a) => owned.has(a.slug)).length : 0}
         />
       </div>
 
@@ -55,10 +55,21 @@ export function ArtistsTab({ artists, scoped, rank, owned, onOwned, picked, loca
       {tiers
         .map((tier) => [tier, visible.filter((a) => a.tiers[category] === tier).sort((a, b) => sortValue(a) - sortValue(b))] as const)
         .filter(([, list]) => list.length > 0)
-        .map(([tier, list]) => (
+        .map(([tier, list]) => {
+          // Saat pool aktif, heading menampilkan rentang peringkat, bukan tier absolut:
+          // dua skala bercampur membingungkan.
+          const ranks = rank ? list.map((a) => rank.get(a.slug)?.rank ?? 0).filter((n) => n > 0) : [];
+          const range = ranks.length > 0 ? `#${Math.min(...ranks)}–#${Math.max(...ranks)}` : "";
+          return (
           <section key={tier} className="mt-4">
             <h2 className="mb-2 flex items-center gap-2">
-              <TierBadge tier={tier} />
+              {rank ? (
+                <span className="tabular rounded-md border border-white/15 bg-white/5 px-2 py-0.5 font-display text-sm font-semibold text-zinc-100">
+                  {range}
+                </span>
+              ) : (
+                <TierBadge tier={tier} />
+              )}
               <span className="text-xs font-normal text-zinc-400">{t(C.artists.tierCount, { n: list.length })}</span>
             </h2>
             <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
@@ -133,7 +144,8 @@ export function ArtistsTab({ artists, scoped, rank, owned, onOwned, picked, loca
               })}
             </ul>
           </section>
-        ))}
+          );
+        })}
 
       {visible.length === 0 && <p className="mt-6 text-base text-zinc-400">{C.artists.empty}</p>}
     </section>

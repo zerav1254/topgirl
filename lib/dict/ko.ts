@@ -17,6 +17,7 @@ export const ko: Dict = {
     docTeam: "팀 빌더 — TopGirl",
     tabCount: "({size}명 중 {n}명)",
     info: "랭크 정보",
+    lineups: "라인업",
   },
   info: {
     metaTitle: "랭크 계산 방법 — TopGirl",
@@ -136,6 +137,8 @@ export const ko: Dict = {
     share: "공유",
     unshare: "링크 취소",
     copy: "링크 복사",
+    copied: "복사됨",
+    confirmDelete: "이 라인업을 삭제할까요? 되돌릴 수 없습니다.",
     open: "열기",
     empty: "저장된 라인업이 없습니다.",
     saved: "라인업이 저장되었습니다.",

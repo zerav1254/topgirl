@@ -81,7 +81,7 @@ export function BottomNav({ locale }: { locale: Locale }) {
           className={`${ITEM} ${pathname === `${base}/lineups` ? ACTIVE : IDLE}`}
         >
           <Icon d={ICONS.check} className="h-5 w-5" />
-          {C.lineup.title}
+          {C.header.lineups}
         </Link>
         <Link
           href={`${base}/manage`}

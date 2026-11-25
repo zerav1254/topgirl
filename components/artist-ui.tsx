@@ -94,7 +94,7 @@ export function RankBadge({ rank, size, label, className = "" }: { rank: number;
       className={`tabular inline-flex items-center rounded-md border border-white/15 bg-white/5 px-1.5 py-0.5 font-display text-xs font-semibold text-zinc-100 ${className}`}
     >
       #{rank}
-      <span className="text-zinc-500">/{size}</span>
+      <span className="text-zinc-400">/{size}</span>
     </span>
   );
 }

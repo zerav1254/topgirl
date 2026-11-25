@@ -4,6 +4,7 @@ import { loadArtists } from "@/lib/artists";
 import { getProfile } from "@/lib/auth";
 import { loadOwned } from "@/lib/collection";
 import { DICT, isLocale, localeOr } from "@/lib/i18n";
+import { loadLookups } from "@/lib/lookups";
 import { pageMetadata } from "@/lib/seo";
 import { TeamBuilder } from "@/components/team-builder";
 
@@ -24,7 +25,16 @@ export default async function TeamPage({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
 
-  const [artists, profile] = await Promise.all([loadArtists(), getProfile()]);
+  const [artists, profile, lookups] = await Promise.all([loadArtists(), getProfile(), loadLookups()]);
   const owned = profile ? await loadOwned(profile.userId) : null;
-  return <TeamBuilder artists={artists} locale={locale} tab="team" owned={owned} user={profile?.name ?? profile?.email ?? null} />;
+  return (
+    <TeamBuilder
+      artists={artists}
+      locale={locale}
+      tab="team"
+      owned={owned}
+      user={profile?.name ?? profile?.email ?? null}
+      originOrder={lookups.origins.map((o) => o.id)}
+    />
+  );
 }

@@ -15,6 +15,7 @@ export const id = {
     docTeam: "Team Builder — TopGirl",
     tabCount: "({n} dari {size})",
     info: "Info rank",
+    lineups: "Lineup",
   },
   info: {
     metaTitle: "Cara Menghitung Rank — TopGirl",
@@ -134,6 +135,8 @@ export const id = {
     share: "Bagikan",
     unshare: "Cabut tautan",
     copy: "Salin tautan",
+    copied: "Tersalin",
+    confirmDelete: "Hapus lineup ini? Tindakan tidak bisa dibatalkan.",
     open: "Buka",
     empty: "Belum ada lineup tersimpan.",
     saved: "Lineup tersimpan.",

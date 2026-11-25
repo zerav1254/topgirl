@@ -4,23 +4,25 @@ import { useMemo } from "react";
 import type { Artist } from "@/lib/artists";
 import { DICT, type Locale } from "@/lib/i18n";
 
-// Pool = origin yang ada di server pemain. Kosong berarti semua, jadi tidak ada tebakan default.
+// Urutan chip dari tabel origins (kolom sort), bukan alfabet: Tokyo sengaja lebih dulu.
 export function PoolPicker({
   artists,
+  originOrder,
   pool,
   locale,
   onChange,
 }: {
   artists: Artist[];
+  originOrder: string[];
   pool: string[];
   locale: Locale;
   onChange: (next: string[]) => void;
 }) {
   const C = DICT[locale];
-  const origins = useMemo(
-    () => [...new Set(artists.map((a) => a.origin).filter((o): o is string => Boolean(o)))].sort(),
-    [artists],
-  );
+  const origins = useMemo(() => {
+    const present = new Set(artists.map((a) => a.origin).filter((o): o is string => Boolean(o)));
+    return originOrder.filter((id) => present.has(id));
+  }, [artists, originOrder]);
 
   const toggle = (id: string) => onChange(pool.includes(id) ? pool.filter((o) => o !== id) : [...pool, id]);
 

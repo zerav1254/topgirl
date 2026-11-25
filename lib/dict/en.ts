@@ -17,6 +17,7 @@ export const en: Dict = {
     docTeam: "Team Builder — TopGirl",
     tabCount: "({n} of {size})",
     info: "Rank info",
+    lineups: "Lineups",
   },
   info: {
     metaTitle: "How Rank Is Calculated — TopGirl",
@@ -136,6 +137,8 @@ export const en: Dict = {
     share: "Share",
     unshare: "Revoke link",
     copy: "Copy link",
+    copied: "Copied",
+    confirmDelete: "Delete this lineup? This cannot be undone.",
     open: "Open",
     empty: "No saved lineups yet.",
     saved: "Lineup saved.",

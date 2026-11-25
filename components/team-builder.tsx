@@ -27,6 +27,7 @@ export function TeamBuilder({
   tab,
   owned,
   user,
+  originOrder,
 }: {
   artists: Artist[];
   locale: Locale;
@@ -34,6 +35,8 @@ export function TeamBuilder({
   // null = belum login; array (boleh kosong) = sudah login.
   owned: string[] | null;
   user: string | null;
+  // Urutan chip pool dari tabel origins (kolom sort).
+  originOrder: string[];
 }) {
   const C = DICT[locale];
   const router = useRouter();
@@ -118,7 +121,7 @@ export function TeamBuilder({
         </div>
       </header>
 
-      <PoolPicker artists={artists} pool={pool} locale={locale} onChange={writePool} />
+      <PoolPicker artists={artists} originOrder={originOrder} pool={pool} locale={locale} onChange={writePool} />
 
       {tab === "artists" ? (
         <ArtistsTab

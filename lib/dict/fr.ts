@@ -17,6 +17,7 @@ export const fr: Dict = {
     docTeam: "Team Builder — TopGirl",
     tabCount: "({n} sur {size})",
     info: "Info rang",
+    lineups: "Comps",
   },
   info: {
     metaTitle: "Calcul du rang — TopGirl",
@@ -136,6 +137,8 @@ export const fr: Dict = {
     share: "Partager",
     unshare: "Révoquer le lien",
     copy: "Copier le lien",
+    copied: "Copié",
+    confirmDelete: "Supprimer cette composition ? Action irréversible.",
     open: "Ouvrir",
     empty: "Aucune composition enregistrée.",
     saved: "Composition enregistrée.",

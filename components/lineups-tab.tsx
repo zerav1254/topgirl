@@ -5,11 +5,22 @@ import { useRouter } from "next/navigation";
 import { createLineup, remove, toggleShare } from "@/app/[locale]/lineup/actions";
 import { DICT, type Locale } from "@/lib/i18n";
 import type { Lineup } from "@/lib/lineups";
+import { TEAM_SIZE } from "@/lib/team";
 import { getServerTeam, readTeam, subscribeTeam } from "@/lib/team-store";
 
 type Result = { ok: boolean; error: string; link?: string };
 
-export function LineupsTab({ lineups, locale, signedIn }: { lineups: Lineup[]; locale: Locale; signedIn: boolean }) {
+export function LineupsTab({
+  lineups,
+  locale,
+  signedIn,
+  siteUrl,
+}: {
+  lineups: Lineup[];
+  locale: Locale;
+  signedIn: boolean;
+  siteUrl: string;
+}) {
   const C = DICT[locale].lineup;
   const router = useRouter();
   const saved = useSyncExternalStore(subscribeTeam, readTeam, getServerTeam);
@@ -55,11 +66,11 @@ export function LineupsTab({ lineups, locale, signedIn }: { lineups: Lineup[]; l
             required
             maxLength={60}
             defaultValue=""
-            className="rounded-lg border border-white/10 bg-ink/60 px-3 py-2 text-base text-zinc-100 focus:border-brand/60"
+            className="rounded-lg border border-white/10 bg-panel/80 px-3 py-2 text-base text-zinc-100 focus:border-brand/60"
           />
         </label>
         <p className="text-xs text-zinc-400">
-          {slugs.length}/5 · {C.subtitle}
+          {slugs.length}/{TEAM_SIZE} · {C.subtitle}
         </p>
         <button type="submit" disabled={pending} className={`${btn} border-gold/45 bg-gold/15 text-gold hover:bg-gold/25 disabled:opacity-60`}>
           {C.save}
@@ -71,13 +82,13 @@ export function LineupsTab({ lineups, locale, signedIn }: { lineups: Lineup[]; l
       ) : (
         <ul className="flex flex-col gap-2">
           {lineups.map((l) => {
-            const link = l.shareSlug ? `${typeof window === "undefined" ? "" : window.location.origin}/${locale}/l/${l.shareSlug}` : "";
+            const link = l.shareSlug ? `${siteUrl}/${locale}/l/${l.shareSlug}` : "";
             return (
               <li key={l.id} className="rounded-xl border border-white/10 bg-panel/70 p-3">
                 <div className="flex items-baseline justify-between gap-2">
                   <span className="min-w-0 truncate text-sm font-semibold">{l.name}</span>
                   <span className="tabular shrink-0 text-xs text-zinc-400">
-                    {l.slugs.length}/{5}
+                    {l.slugs.length}/{TEAM_SIZE}
                   </span>
                 </div>
                 <p className="mt-0.5 text-xs text-zinc-400">{l.shareSlug ? C.shared : C.private}</p>
@@ -104,7 +115,10 @@ export function LineupsTab({ lineups, locale, signedIn }: { lineups: Lineup[]; l
                         }}
                         className={`${btn} border-white/10 text-zinc-300 hover:border-white/25 hover:text-zinc-100`}
                       >
-                        {copied === l.id ? "✓" : C.copy}
+                        {copied === l.id ? C.copied : C.copy}
+                        <span className="sr-only" role="status">
+                          {copied === l.id ? C.copied : ""}
+                        </span>
                       </button>
                       <a href={link} target="_blank" rel="noreferrer" className={`${btn} inline-flex items-center border-white/10 text-zinc-300 hover:border-white/25 hover:text-zinc-100`}>
                         {C.open}
@@ -114,7 +128,9 @@ export function LineupsTab({ lineups, locale, signedIn }: { lineups: Lineup[]; l
                   <button
                     type="button"
                     disabled={pending}
-                    onClick={() => run(() => remove(locale, l.id))}
+                    onClick={() => {
+                      if (window.confirm(C.confirmDelete)) run(() => remove(locale, l.id));
+                    }}
                     className={`${btn} ml-auto border-white/10 text-zinc-400 hover:border-red-400/40 hover:text-red-300`}
                   >
                     {C.delete}
