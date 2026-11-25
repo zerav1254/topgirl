@@ -1,10 +1,10 @@
 "use client";
 
-import { useMemo, useSyncExternalStore } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
 import type { Artist } from "@/lib/artists";
 import { DICT, t, type Locale } from "@/lib/i18n";
 import { CATEGORIES, EFFECTS, EFFECT_LABEL, type Category, type Effect } from "@/lib/score";
-import { SearchInput } from "./artist-ui";
+import { ICONS, Icon, SearchInput } from "./artist-ui";
 
 // Sentinel filter, bukan teks tampil: label "Semua" datang dari dict.
 const ALL = "all";
@@ -132,7 +132,9 @@ export function ArtistFilterBar({
   ownedCount?: number;
 }) {
   const C = DICT[locale];
+  const [open, setOpen] = useState(false);
   const set = (key: keyof ArtistFilter) => (id: string) => state.setFilter((f) => ({ ...f, [key]: id }));
+  const activeCount = Object.values(state.filter).filter((v) => v !== ALL).length;
 
   const genres = useMemo(() => [...new Set(artists.map((a) => a.genre).filter(Boolean))].sort(), [artists]);
   const origins = useMemo(
@@ -160,69 +162,86 @@ export function ArtistFilterBar({
         <button
           type="button"
           onClick={state.reset}
-          className={`flex min-h-11 shrink-0 cursor-pointer items-center rounded-xl border border-white/10 bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100 ${
+          aria-label={C.artists.resetFilter}
+          title={C.artists.resetFilter}
+          className={`flex min-h-11 min-w-11 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-panel/80 px-2 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100 sm:px-3 ${
             state.active ? "" : "invisible"
           }`}
         >
-          {C.artists.resetFilter}
+          <Icon d={ICONS.close} className="h-4 w-4 sm:hidden" />
+          <span className="hidden sm:inline">{C.artists.resetFilter}</span>
         </button>
+        {!bare && (
+          <button
+            type="button"
+            onClick={() => setOpen((o) => !o)}
+            aria-expanded={open}
+            aria-controls="artist-filter-panel"
+            className="flex min-h-11 shrink-0 cursor-pointer items-center rounded-xl border border-white/10 bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100 sm:hidden"
+          >
+            {C.artists.filters}
+            {activeCount > 0 && <span className="tabular text-gold"> {activeCount}</span>}
+          </button>
+        )}
       </div>
 
-      {ownedTotal !== undefined && (
-        <div className="flex flex-wrap items-center gap-1.5">
-          {[
-            [ALL, C.common.all],
-            [OWNED, C.collection.owned],
-            [MISSING, C.collection.missing],
-          ].map(([id, label]) => (
-            <button
-              key={id}
-              type="button"
-              onClick={() => set("scope")(id)}
-              aria-pressed={state.filter.scope === id}
-              className={`min-h-11 cursor-pointer rounded-lg border px-3 text-sm font-semibold transition-colors duration-200 ${
-                state.filter.scope === id
-                  ? "border-gold/50 bg-gold/10 text-gold"
-                  : "border-white/10 bg-panel/80 text-zinc-300 hover:border-white/25 hover:text-zinc-100"
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-          <span className="tabular text-xs text-zinc-400">{t(C.collection.count, { n: ownedCount, total: ownedTotal })}</span>
-        </div>
-      )}
+      <div id="artist-filter-panel" className={`flex flex-col gap-1.5 ${bare || open ? "" : "hidden sm:flex"}`}>
+        {ownedTotal !== undefined && (
+          <div className="flex flex-wrap items-center gap-1.5">
+            {[
+              [ALL, C.common.all],
+              [OWNED, C.collection.owned],
+              [MISSING, C.collection.missing],
+            ].map(([id, label]) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => set("scope")(id)}
+                aria-pressed={state.filter.scope === id}
+                className={`min-h-11 cursor-pointer rounded-lg border px-3 text-sm font-semibold transition-colors duration-200 ${
+                  state.filter.scope === id
+                    ? "border-gold/50 bg-gold/10 text-gold"
+                    : "border-white/10 bg-panel/80 text-zinc-300 hover:border-white/25 hover:text-zinc-100"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+            <span className="tabular text-xs text-zinc-400">{t(C.collection.count, { n: ownedCount, total: ownedTotal })}</span>
+          </div>
+        )}
 
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-        <Select
-          label={C.artists.genre}
-          value={state.filter.genre}
-          onChange={set("genre")}
-          options={genres.map((g) => ({ id: g, text: g }))}
-          locale={locale}
-        />
-        <Select
-          label={C.artists.origin}
-          value={state.filter.origin}
-          onChange={set("origin")}
-          options={origins.map((r) => ({ id: r, text: r }))}
-          locale={locale}
-        />
-        <Select
-          label={C.artists.specialty}
-          value={state.filter.specialty}
-          onChange={set("specialty")}
-          options={CATEGORIES.map((c) => ({ id: c, text: C.categories[c] }))}
-          locale={locale}
-          tone="gold"
-        />
-        <Select
-          label={C.artists.skill}
-          value={state.filter.skill}
-          onChange={set("skill")}
-          options={skills.map((e) => ({ id: e, text: EFFECT_LABEL[e as Effect][locale] }))}
-          locale={locale}
-        />
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <Select
+            label={C.artists.genre}
+            value={state.filter.genre}
+            onChange={set("genre")}
+            options={genres.map((g) => ({ id: g, text: g }))}
+            locale={locale}
+          />
+          <Select
+            label={C.artists.origin}
+            value={state.filter.origin}
+            onChange={set("origin")}
+            options={origins.map((r) => ({ id: r, text: r }))}
+            locale={locale}
+          />
+          <Select
+            label={C.artists.specialty}
+            value={state.filter.specialty}
+            onChange={set("specialty")}
+            options={CATEGORIES.map((c) => ({ id: c, text: C.categories[c] }))}
+            locale={locale}
+            tone="gold"
+          />
+          <Select
+            label={C.artists.skill}
+            value={state.filter.skill}
+            onChange={set("skill")}
+            options={skills.map((e) => ({ id: e, text: EFFECT_LABEL[e as Effect][locale] }))}
+            locale={locale}
+          />
+        </div>
       </div>
     </div>
   );

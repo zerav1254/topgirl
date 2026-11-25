@@ -6,6 +6,7 @@ import type { Artist } from "@/lib/artists";
 import { DICT, t, type Locale } from "@/lib/i18n";
 import type { Rank } from "@/lib/pool";
 import { TIER_ORDER, type Category } from "@/lib/score";
+import { TEAM_SIZE } from "@/lib/team";
 import { ArtistFilterBar, type ArtistFilterState } from "./artist-filter";
 import { GenreIcon, ICONS, Icon, RankBadge, SkillList, TierBadge, formatStat } from "./artist-ui";
 
@@ -19,6 +20,7 @@ type Props = {
   // null = belum login: tombol koleksi disembunyikan.
   owned: Set<string> | null;
   onOwned: (slug: string, owned: boolean) => void;
+  onToggle: (slug: string) => void;
   // Pesan gagal simpan koleksi; kosong = tidak ada error.
   ownedError?: string;
   pendingSlug?: string | null;
@@ -29,7 +31,7 @@ type Props = {
 };
 
 // Season hanya bermakna untuk artist dari kota tuan rumah; origin lain tidak menampilkannya.
-export function ArtistsTab({ artists, scoped, blocked, rank, owned, onOwned, ownedError, pendingSlug, picked, locale, category, state }: Props) {
+export function ArtistsTab({ artists, scoped, blocked, rank, owned, onOwned, onToggle, ownedError, pendingSlug, picked, locale, category, state }: Props) {
   const C = DICT[locale];
   // Section tier hanya untuk artis di pool, jadi tier yang tak bisa dicapai tidak muncul.
   const inPool = useMemo(() => new Set(scoped.map((a) => a.slug)), [scoped]);
@@ -91,8 +93,10 @@ export function ArtistsTab({ artists, scoped, blocked, rank, owned, onOwned, own
                   rank={rank?.get(a.slug)}
                   owned={owned}
                   onOwned={onOwned}
+                  onToggle={onToggle}
                   busy={pendingSlug === a.slug}
                   inTeam={picked.includes(a.slug)}
+                  teamFull={picked.length >= TEAM_SIZE}
                   locale={locale}
                   category={category}
                 />
@@ -122,8 +126,10 @@ export function ArtistsTab({ artists, scoped, blocked, rank, owned, onOwned, own
                 blocked
                 owned={owned}
                 onOwned={onOwned}
+                onToggle={onToggle}
                 busy={pendingSlug === a.slug}
                 inTeam={picked.includes(a.slug)}
+                teamFull={picked.length >= TEAM_SIZE}
                 locale={locale}
                 category={category}
               />
@@ -141,8 +147,10 @@ function ArtistCard({
   blocked = false,
   owned,
   onOwned,
+  onToggle,
   busy = false,
   inTeam,
+  teamFull,
   locale,
   category,
 }: {
@@ -151,9 +159,11 @@ function ArtistCard({
   blocked?: boolean;
   owned: Set<string> | null;
   onOwned: (slug: string, owned: boolean) => void;
+  onToggle: (slug: string) => void;
   // Aksi simpan untuk kartu ini masih berjalan.
   busy?: boolean;
   inTeam: boolean;
+  teamFull: boolean;
   locale: Locale;
   category: Category;
 }) {
@@ -177,7 +187,7 @@ function ArtistCard({
               className={`object-cover ${blocked ? "opacity-60 grayscale" : ""}`}
             />
           ) : (
-            <span aria-hidden="true" className="grid h-full w-full place-items-center font-display text-2xl font-bold text-white/25">
+            <span aria-hidden="true" className="grid h-full w-full place-items-center font-display text-2xl font-bold text-white/50">
               {a.name.slice(0, 2).toUpperCase()}
             </span>
           )}
@@ -216,23 +226,41 @@ function ArtistCard({
           </span>
           <SkillList skills={a.skills} locale={locale} className="mt-1 border-t border-white/10 pt-1" />
         </span>
-        {owned && (
+        <div className="mt-auto flex flex-col">
           <button
             type="button"
-            onClick={() => onOwned(a.slug, !isOwned)}
-            aria-pressed={isOwned}
-            disabled={busy}
-            aria-label={isOwned ? t(C.collection.markMissing, { name: a.name }) : t(C.collection.markOwned, { name: a.name })}
-            className={`mt-auto flex min-h-11 cursor-pointer items-center justify-center gap-1.5 border-t px-2 text-xs font-semibold transition-colors duration-200 disabled:cursor-wait disabled:opacity-60 ${
-              isOwned
-                ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/15"
+            onClick={() => onToggle(a.slug)}
+            aria-pressed={inTeam}
+            disabled={!inTeam && teamFull}
+            title={!inTeam && teamFull ? C.team.full : undefined}
+            aria-label={inTeam ? t(C.artists.removeFromTeamLabel, { name: a.name }) : t(C.artists.addToTeamLabel, { name: a.name })}
+            className={`flex min-h-11 cursor-pointer items-center justify-center gap-1.5 border-t px-2 text-xs font-semibold transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-50 ${
+              inTeam
+                ? "border-gold/30 bg-gold/10 text-gold hover:bg-gold/15"
                 : "border-white/10 text-zinc-300 hover:bg-white/5 hover:text-zinc-100"
             }`}
           >
-            <Icon d={isOwned ? ICONS.check : ICONS.plus} className="h-3.5 w-3.5" />
-            {busy ? C.collection.saving : isOwned ? C.collection.saved : C.collection.save}
+            <Icon d={inTeam ? ICONS.check : ICONS.plus} className="h-3.5 w-3.5" />
+            {inTeam ? C.artists.removeFromTeam : C.artists.addToTeam}
           </button>
-        )}
+          {owned && (
+            <button
+              type="button"
+              onClick={() => onOwned(a.slug, !isOwned)}
+              aria-pressed={isOwned}
+              disabled={busy}
+              aria-label={isOwned ? t(C.collection.markMissing, { name: a.name }) : t(C.collection.markOwned, { name: a.name })}
+              className={`flex min-h-11 cursor-pointer items-center justify-center gap-1.5 border-t px-2 text-xs font-semibold transition-colors duration-200 disabled:cursor-wait disabled:opacity-60 ${
+                isOwned
+                  ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/15"
+                  : "border-white/10 text-zinc-300 hover:bg-white/5 hover:text-zinc-100"
+              }`}
+            >
+              <Icon d={isOwned ? ICONS.check : ICONS.plus} className="h-3.5 w-3.5" />
+              {busy ? C.collection.saving : isOwned ? C.collection.saved : C.collection.save}
+            </button>
+          )}
+        </div>
       </div>
     </li>
   );

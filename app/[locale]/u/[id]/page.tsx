@@ -38,7 +38,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
           {data.avatarUrl ? (
             <Image src={data.avatarUrl} alt="" width={112} height={112} sizes="56px" className="h-full w-full object-cover" />
           ) : (
-            <span aria-hidden="true" className="grid h-full w-full place-items-center font-display text-lg font-bold text-white/25">
+            <span aria-hidden="true" className="grid h-full w-full place-items-center font-display text-lg font-bold text-white/50">
               {name.slice(0, 2).toUpperCase()}
             </span>
           )}

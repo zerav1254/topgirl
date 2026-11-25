@@ -104,7 +104,7 @@ export function Avatar({ artist, size = "h-12 w-12", tier = artist.tiers.solo }:
   return (
     <span className={`block shrink-0 overflow-hidden rounded-lg bg-gradient-to-br ${AVATAR_STYLE[tier] ?? AVATAR_STYLE.D} ${size}`}>
       {artist.photoUrl ? (
-        <Image src={artist.photoUrl} alt="" width={96} height={96} sizes="96px" className="h-full w-full object-cover" />
+        <Image src={artist.photoUrl} alt="" width={96} height={96} sizes="56px" className="h-full w-full object-cover" />
       ) : (
         <span aria-hidden="true" className="grid h-full w-full place-items-center font-display text-lg font-bold text-white/80">
           {artist.name.slice(0, 2).toUpperCase()}

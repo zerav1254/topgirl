@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { requireUser } from "@/lib/auth";
 import { DICT, localeOr, type Locale } from "@/lib/i18n";
-import { deleteLineup, renameLineup, saveLineup, setShare } from "@/lib/lineups";
+import { deleteLineup, saveLineup, setShare } from "@/lib/lineups";
 import { TEAM_SIZE } from "@/lib/team";
 
 export type LineupResult = { ok: boolean; error: string; link?: string };
@@ -33,20 +33,9 @@ export async function createLineup(locale: Locale, fd: FormData): Promise<Lineup
     .map((s) => s.trim())
     .filter((s) => SLUG_RE.test(s))
     .slice(0, TEAM_SIZE);
+  if (slugs.length === 0) return { ok: false, error: C.needTeam };
 
   if (!(await saveLineup(uid, name, slugs))) return { ok: false, error: C.error };
-  revalidatePath(`/${l}/lineups`);
-  return { ok: true, error: "" };
-}
-
-export async function rename(locale: Locale, id: string, fd: FormData): Promise<LineupResult> {
-  const l = localeOr(locale);
-  const C = DICT[l].lineup;
-  const uid = await userId();
-  if (!uid) return { ok: false, error: C.loginHint };
-  const name = String(fd.get("name") ?? "").trim().slice(0, 60);
-  if (!name) return { ok: false, error: C.error };
-  if (!(await renameLineup(uid, id, name))) return { ok: false, error: C.error };
   revalidatePath(`/${l}/lineups`);
   return { ok: true, error: "" };
 }

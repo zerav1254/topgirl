@@ -66,10 +66,21 @@ export function LocaleSwitcher({ locale, className = "" }: { locale: Locale; cla
   }
 
   return (
-    <div ref={box} className={`relative ${className}`}>
+    <div
+      ref={box}
+      className={`relative ${className}`}
+      onBlur={(e) => {
+        if (!box.current?.contains(e.relatedTarget as Node | null)) setOpen(false);
+      }}
+    >
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
+        onKeyDown={(e) => {
+          if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
+          e.preventDefault();
+          setOpen(true);
+        }}
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label={DICT[locale].lang.label}

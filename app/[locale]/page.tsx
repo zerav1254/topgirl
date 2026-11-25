@@ -4,13 +4,20 @@ import { loadArtists } from "@/lib/artists";
 import { getProfile } from "@/lib/auth";
 import { loadOwned } from "@/lib/collection";
 import { DICT, isLocale, localeOr } from "@/lib/i18n";
+import { pageMetadata } from "@/lib/seo";
 import { TeamBuilder } from "@/components/team-builder";
 
 export const revalidate = 300;
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
-  return { title: DICT[localeOr(locale)].header.docArtists };
+  const l = localeOr(locale);
+  const meta = DICT[l].meta;
+  return {
+    title: meta.title,
+    description: meta.description,
+    ...pageMetadata({ locale: l, title: meta.title, description: meta.description }),
+  };
 }
 
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {

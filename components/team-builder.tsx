@@ -135,7 +135,7 @@ export function TeamBuilder({
                 {avatarUrl ? (
                   <Image src={avatarUrl} alt="" width={48} height={48} sizes="24px" className="h-full w-full object-cover" />
                 ) : (
-                  <span aria-hidden="true" className="grid h-full w-full place-items-center text-[10px] font-bold text-white/40">
+                  <span aria-hidden="true" className="grid h-full w-full place-items-center text-[10px] font-bold text-white/70">
                     {user.slice(0, 2).toUpperCase()}
                   </span>
                 )}
@@ -157,6 +157,7 @@ export function TeamBuilder({
           rank={rank}
           owned={ownedSet}
           onOwned={markOwned}
+          onToggle={toggle}
           ownedError={ownedError}
           pendingSlug={pendingSlug}
           picked={picked}

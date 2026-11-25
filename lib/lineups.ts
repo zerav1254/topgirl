@@ -33,11 +33,6 @@ export async function saveLineup(userId: string, name: string, slugs: string[]):
   return !error;
 }
 
-export async function renameLineup(userId: string, id: string, name: string): Promise<boolean> {
-  const { error } = await adminClient().from("lineups").update({ name }).eq("id", id).eq("user_id", userId);
-  return !error;
-}
-
 export async function deleteLineup(userId: string, id: string): Promise<boolean> {
   const { error } = await adminClient().from("lineups").delete().eq("id", id).eq("user_id", userId);
   return !error;

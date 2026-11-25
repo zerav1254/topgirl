@@ -97,7 +97,9 @@ export function TeamTab({ artists, scoped, blocked, rank, team, picked, locale, 
           {scoped.length > 0 && (
             <button
               type="button"
-              onClick={onAuto}
+              onClick={() => {
+                if (team.length === 0 || window.confirm(C.team.confirmAuto)) onAuto();
+              }}
               title={C.pool.bestHint}
               className="flex min-h-11 cursor-pointer items-center gap-1 rounded-md border border-brand/40 bg-brand/10 px-2 py-1 text-sm font-semibold text-zinc-100 transition-colors duration-200 hover:border-brand/60"
             >
@@ -108,7 +110,9 @@ export function TeamTab({ artists, scoped, blocked, rank, team, picked, locale, 
           {team.length > 0 && (
             <button
               type="button"
-              onClick={onReset}
+              onClick={() => {
+                if (window.confirm(C.team.confirmReset)) onReset();
+              }}
               className="flex min-h-11 cursor-pointer items-center gap-1 rounded-md px-2 py-1 text-sm text-zinc-400 transition-colors duration-200 hover:bg-white/5 hover:text-red-300"
             >
               <Icon d={ICONS.trash} className="h-4 w-4" />
@@ -236,6 +240,10 @@ export function TeamTab({ artists, scoped, blocked, rank, team, picked, locale, 
         ref={dialog}
         aria-labelledby="team-picker-title"
         onClose={() => setSlot(null)}
+        onClick={(e) => {
+          // Klik backdrop jatuh ke elemen dialog sendiri, bukan isinya.
+          if (e.target === e.currentTarget) setSlot(null);
+        }}
         className="m-auto w-[min(100%-2rem,32rem)] rounded-2xl border border-white/10 bg-panel p-0 text-zinc-100 backdrop:bg-ink/80"
       >
         <div className="flex max-h-[85vh] flex-col">

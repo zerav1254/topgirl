@@ -40,7 +40,7 @@ export function LineupsTab({
   const run = (fn: () => Promise<Result>) =>
     start(async () => {
       const res = await fn();
-      setMessage(res.ok ? (res.link ? `${C.shared}: ${res.link}` : C.saved) : res.error);
+      setMessage(res.ok ? (res.link ? `${C.shared}: ${siteUrl}${res.link}` : C.saved) : res.error);
       router.refresh();
     });
 
@@ -70,9 +70,13 @@ export function LineupsTab({
           />
         </label>
         <p className="text-xs text-zinc-400">
-          {slugs.length}/{TEAM_SIZE} · {C.subtitle}
+          {slugs.length === 0 ? C.needTeam : `${slugs.length}/${TEAM_SIZE} · ${C.subtitle}`}
         </p>
-        <button type="submit" disabled={pending} className={`${btn} border-gold/45 bg-gold/15 text-gold hover:bg-gold/25 disabled:opacity-60`}>
+        <button
+          type="submit"
+          disabled={pending || slugs.length === 0}
+          className={`${btn} border-gold/45 bg-gold/15 text-gold hover:bg-gold/25 disabled:cursor-not-allowed disabled:opacity-60`}
+        >
           {C.save}
         </button>
       </form>
@@ -116,9 +120,6 @@ export function LineupsTab({
                         className={`${btn} border-white/10 text-zinc-300 hover:border-white/25 hover:text-zinc-100`}
                       >
                         {copied === l.id ? C.copied : C.copy}
-                        <span className="sr-only" role="status">
-                          {copied === l.id ? C.copied : ""}
-                        </span>
                       </button>
                       <a href={link} target="_blank" rel="noreferrer" className={`${btn} inline-flex items-center border-white/10 text-zinc-300 hover:border-white/25 hover:text-zinc-100`}>
                         {C.open}

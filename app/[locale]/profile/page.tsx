@@ -58,7 +58,7 @@ export default async function Page({
             {profile.avatarUrl ? (
               <Image src={profile.avatarUrl} alt="" width={96} height={96} sizes="48px" className="h-full w-full object-cover" />
             ) : (
-              <span aria-hidden="true" className="grid h-full w-full place-items-center font-display text-base font-bold text-white/25">
+              <span aria-hidden="true" className="grid h-full w-full place-items-center font-display text-base font-bold text-white/50">
                 {name.slice(0, 2).toUpperCase()}
               </span>
             )}
@@ -141,7 +141,7 @@ export default async function Page({
             );
           })}
         </ul>
-        <p className="mt-2 text-xs text-zinc-500">{C.profile.disconnectHint}</p>
+        <p className="mt-2 text-xs text-zinc-400">{C.profile.disconnectHint}</p>
       </section>
 
       <section className="rounded-2xl border border-white/10 bg-panel/80 p-4 sm:p-5">

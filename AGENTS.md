@@ -8,7 +8,7 @@ Baca `RULE.md` (aturan keras) + `DESIGN.md` (token visual) sebelum ubah apa pun.
 - **npm** + Node **24** (`engines`). Jangan pnpm/yarn.
 - Supabase (Postgres + Storage): artist, skill, foto. Client `@supabase/supabase-js`.
 - `sharp` resize foto upload (320×320 WebP); `@vercel/analytics`.
-- Auth admin: satu password `ADMIN_PASSWORD` + cookie HMAC `AUTH_SECRET`. Tanpa library auth.
+- Auth: Supabase OAuth (Google/Discord) via `@supabase/ssr`; role admin dari tabel `profiles`. Tanpa library auth tambahan.
 
 ## Perintah
 
@@ -30,19 +30,32 @@ app/[locale]/
   layout.tsx        validasi locale + <html lang> + metadata per locale
   page.tsx          loadArtists() -> <TeamBuilder tab="artists">, revalidate 300
   team/page.tsx     loadArtists() -> <TeamBuilder tab="team"> + OG, revalidate 300
-  loading.tsx       skeleton route
+  loading.tsx       skeleton route (client, locale dari useParams)
   error.tsx         error boundary per locale (wajib "use client")
-  not-found.tsx     404 locale tidak tersedia (pakai DICT.id)
+  not-found.tsx     404; locale dibaca dari segmen URL (client)
   info/page.tsx     rumus rank/bobot/tier, tanpa fetch DB
+  login/page.tsx    OAuth Google/Discord + gate profil
+  profile/page.tsx  profil, tautkan/lepas provider, form nama & ID game
+  lineups/page.tsx  daftar lineup + buat/bagikan/hapus
+  lineup/actions.ts createLineup/toggleShare/remove
+  l/[slug]/page.tsx halaman lineup publik (unlisted)
+  u/[id]/page.tsx   profil publik + lineup yang dibagikan
+  doc/[key]/page.tsx halaman bantuan/privasi/legal
   manage/page.tsx   gate login admin + <ArtistEditor locale />
   manage/actions.ts uploadPhoto(locale)
 app/globals.css     @import "tailwindcss" + @theme + base rules
-components/         semua client
+app/sitemap.ts      sitemap halaman publik per locale
+app/robots.ts       robots + sitemap
+proxy.ts            redirect "/" sesuai Accept-Language + refresh sesi Supabase
+components/
   team-builder.tsx  shell /{locale} + /{locale}/team: state tim + header; sumber `Icon` inline SVG
-  artists-tab.tsx   tab Artists: cari + filter + roster per tier
-  artist-filter.tsx hook + bar filter (genre/asal/spesialis/skill), dipakai kedua tab
+  artists-tab.tsx   tab Artists: cari + filter + roster per tier + tombol tim/koleksi
+  artist-filter.tsx hook + bar filter (genre/asal/spesialis/skill), dilipat di mobile
   team-tab.tsx      slot tim (klik slot -> dialog pilih) + ringkasan
-  bottom-nav.tsx    nav 4 menu (Artists/Team/Info/Kelola), dirender root layout
+  lineups-tab.tsx   form simpan lineup + daftar (bagikan/salin/buka/hapus)
+  pool-picker.tsx   chip season server (single-select)
+  profile-form.tsx  form profil (nama, ID/server, nickname)
+  bottom-nav.tsx    nav Artists/Team/Lineup/Info (+ Kelola untuk admin), dirender root layout
   artist-ui.tsx     atom: Icon, TierBadge, Avatar, GenreIcon, SearchInput
   artist-editor.tsx upload foto (stat/skill/genre/origin dikunci)
   locale-switcher.tsx ganti segmen locale di path
@@ -51,7 +64,14 @@ lib/
   score.ts        bobot skor, tier, label effect
   team.ts         TEAM_SIZE, STAT_ORDER, GENRE_BONUS
   team-store.ts   store tim di localStorage
+  pool.ts         scoping season + peringkat relatif
+  pool-store.ts   store season aktif di localStorage
+  collection.ts   daftar artist yang dimiliki user
+  lineups.ts      query lineup + share slug + profil publik
+  docs.ts         isi halaman bantuan/privasi/legal
+  site.ts         SITE_URL dari env
   supabase.ts     read client (anon) + adminClient() (service_role)
+  supabase/server.ts client SSR untuk sesi OAuth
   auth.ts         session Supabase: getUser/getProfile/requireAdmin/isAdmin
   i18n.ts         LOCALES, Locale, DICT, LANG_NAME, t() interpolasi, numberLocale, localeOr
   seo.ts          metadata bersama (canonical/hreflang/OG/Twitter) + SITE_ICON
