@@ -1,79 +1,69 @@
 # AGENTS.md
 
-Panduan kerja untuk agent/AI di repo ini. Baca `RULE.md` (aturan keras) dan `DESIGN.md` (token visual) sebelum mengubah apa pun.
+Baca `RULE.md` (aturan keras) + `DESIGN.md` (token visual) sebelum ubah apa pun.
 
 ## Stack
 
-- Next.js 16 App Router, React 19, TypeScript strict
-- Tailwind CSS v4 via `@tailwindcss/postcss` (tanpa `tailwind.config`)
-- Package manager: **npm**, Node **24** (`engines` di `package.json`). Jangan pakai pnpm/yarn.
-- Supabase (Postgres + Storage) untuk artist, skill, dan foto. Client: `@supabase/supabase-js`.
-- `sharp` untuk resize foto upload (320×320 WebP). `@vercel/analytics` untuk Web Analytics.
-- Auth admin: satu password (`ADMIN_PASSWORD`) + cookie HMAC (`AUTH_SECRET`). Tanpa library auth.
+- Next.js 16 App Router, React 19, TypeScript strict, Tailwind v4 (`@tailwindcss/postcss`, tanpa `tailwind.config`)
+- **npm** + Node **24** (`engines`). Jangan pnpm/yarn.
+- Supabase (Postgres + Storage): artist, skill, foto. Client `@supabase/supabase-js`.
+- `sharp` resize foto upload (320×320 WebP); `@vercel/analytics`.
+- Auth admin: satu password `ADMIN_PASSWORD` + cookie HMAC `AUTH_SECRET`. Tanpa library auth.
 
 ## Perintah
 
 ```bash
 npm install
-npm run dev      # http://localhost:3000
-npm run lint     # eslint (next/core-web-vitals + typescript)
-npm run build    # wajib lulus sebelum commit (butuh env Supabase)
-npm run check:scores  # assert bobot/tier terhadap DB (baca .env.local)
-npm run seed     # isi DB + upload thumb dari CSV (butuh service_role key)
-npm start
+npm run dev            # localhost:3000
+npm run lint           # eslint next/core-web-vitals + typescript
+npm run build          # wajib lulus sebelum commit (butuh env Supabase)
+npm run check:scores   # assert bobot/tier vs DB (baca .env.local)
+npm run seed           # isi DB + upload thumb dari CSV (butuh service_role key)
 ```
 
-Jangan pernah menjalankan `next start` atau `npm start`, termasuk untuk uji lokal. Verifikasi cukup lewat `npm run dev` dan `npm run build`.
+Jangan jalankan `next start`/`npm start`, termasuk uji lokal. Verifikasi lewat `npm run dev` + `npm run build` saja.
 
 ## Struktur
 
 ```
-app/
-  [locale]/
-    layout.tsx      root layout: validasi locale + <html lang>, metadata per locale
-    page.tsx        server: loadArtists() -> <TeamBuilder tab="artists" />, revalidate 300
-    team/
-      page.tsx      server: loadArtists() -> <TeamBuilder tab="team" /> + metadata OG, revalidate 300
-    loading.tsx     skeleton saat route dimuat
-    error.tsx       error boundary per locale (wajib "use client")
-    not-found.tsx   halaman 404 (locale tidak tersedia, pakai DICT.id)
-    info/
-      page.tsx      server: penjelasan rumus rank, bobot, dan tier (tanpa fetch DB)
-    manage/
-      page.tsx      server: gate login admin + <ArtistEditor locale />
-      actions.ts    server actions: login, logout, saveArtist (RPC atomik), uploadPhoto (param locale)
-  globals.css       @import "tailwindcss" + @theme tokens + base rules
-components/
-  team-builder.tsx  client ("use client") — shell bersama /{locale} dan /{locale}/team: state tim + header
-  artists-tab.tsx   client — tab Artists: cari + filter + roster per tier
-  artist-filter.tsx client — hook + bar filter bersama (genre/asal/spesialis/skill), dipakai kedua tab
-  team-tab.tsx      client — tab Team Builder: slot tim (klik slot buka dialog pilih artist), ringkasan
-  bottom-nav.tsx    client — bottom nav 4 menu (Artists/Team/Info/Kelola), dirender root layout
-  artist-ui.tsx     atom bersama (Icon, TierBadge, Avatar, GenreIcon, SearchInput)
-  artist-editor.tsx client ("use client") — form stat + upload foto
-  locale-switcher.tsx client — link ganti bahasa (ganti segmen locale di path)
+app/[locale]/
+  layout.tsx        validasi locale + <html lang> + metadata per locale
+  page.tsx          loadArtists() -> <TeamBuilder tab="artists">, revalidate 300
+  team/page.tsx     loadArtists() -> <TeamBuilder tab="team"> + OG, revalidate 300
+  loading.tsx       skeleton route
+  error.tsx         error boundary per locale (wajib "use client")
+  not-found.tsx     404 locale tidak tersedia (pakai DICT.id)
+  info/page.tsx     rumus rank/bobot/tier, tanpa fetch DB
+  manage/page.tsx   gate login admin + <ArtistEditor locale />
+  manage/actions.ts login, logout, saveArtist (RPC atomik), uploadPhoto(locale)
+app/globals.css     @import "tailwindcss" + @theme + base rules
+components/         semua client
+  team-builder.tsx  shell /{locale} + /{locale}/team: state tim + header; sumber `Icon` inline SVG
+  artists-tab.tsx   tab Artists: cari + filter + roster per tier
+  artist-filter.tsx hook + bar filter (genre/asal/spesialis/skill), dipakai kedua tab
+  team-tab.tsx      slot tim (klik slot -> dialog pilih) + ringkasan
+  bottom-nav.tsx    nav 4 menu (Artists/Team/Info/Kelola), dirender root layout
+  artist-ui.tsx     atom: Icon, TierBadge, Avatar, GenreIcon, SearchInput
+  artist-editor.tsx form stat + upload foto
+  locale-switcher.tsx ganti segmen locale di path
 lib/
-  artists.ts        query Supabase -> tipe Artist/Effect
-  score.ts          bobot skor, tier, label effect
-  team.ts           TEAM_SIZE, STAT_ORDER, GENRE_BONUS
-  team-store.ts     store tim di localStorage (BottomNav & TeamBuilder)
-  supabase.ts       read client (anon) + adminClient() (service_role)
-  lookups.ts        opsi dropdown dari tabel genres/origins/effects
-  auth.ts           cookie admin HMAC
-  i18n.ts           LOCALES, Locale, DICT, LANG_NAME, t() interpolasi, numberLocale, localeOr
-  seo.ts            chunk metadata bersama (canonical/hreflang/OG/Twitter) + SITE_ICON
-  image-client.ts   kompres foto di browser (createImageBitmap/canvas), klien saja
-  dict/id.ts        sumber string UI (tipe Dict)
-  dict/en|fr|ko.ts  terjemahan, wajib lengkap sesuai Dict
-supabase/
-  schema.sql        skema tabel + bucket + RLS
-scripts/
-  seed-supabase.mjs seed sekali jalan dari CSV + thumb lokal
-data/
-  artists.csv       bahan seed (bukan sumber runtime)
+  artists.ts      query Supabase -> tipe Artist/Effect
+  score.ts        bobot skor, tier, label effect
+  team.ts         TEAM_SIZE, STAT_ORDER, GENRE_BONUS
+  team-store.ts   store tim di localStorage
+  supabase.ts     read client (anon) + adminClient() (service_role)
+  lookups.ts      opsi dropdown genres/origins/effects
+  auth.ts         cookie admin HMAC
+  i18n.ts         LOCALES, Locale, DICT, LANG_NAME, t() interpolasi, numberLocale, localeOr
+  seo.ts          metadata bersama (canonical/hreflang/OG/Twitter) + SITE_ICON
+  image-client.ts kompres foto di browser (createImageBitmap/canvas)
+  dict/id.ts      sumber string UI (tipe Dict); en|fr|ko wajib lengkap
+supabase/schema.sql  tabel + bucket + RLS
+scripts/seed-supabase.mjs
+data/artists.csv     bahan seed, bukan sumber runtime
 ```
 
-Alur data: Supabase → `lib/artists.ts` → server component (props) → client component. Tulis data hanya lewat `app/[locale]/manage/actions.ts` (admin cookie + service_role). Tidak ada fetch data dari browser.
+Alur data: Supabase → `lib/artists.ts` → server component (props) → client component. Tulis data hanya lewat `app/[locale]/manage/actions.ts` (cookie admin + service_role). Tidak ada fetch data dari browser.
 
 ## Di mana mengubah apa
 
@@ -92,24 +82,24 @@ Alur data: Supabase → `lib/artists.ts` → server component (props) → client
 | Warna, font, radius, bayangan | `@theme` di `app/globals.css` |
 | Metadata/SEO/`lang` | `app/[locale]/layout.tsx` + `lib/seo.ts` |
 
-`TIER_ORDER` di `lib/score.ts` menentukan urutan tier di roster. Tier dihitung per kategori (`CATEGORIES`/`SCORE`) di `lib/score.ts`; menambah tier baru berarti mengubah `TIER_ORDER`, `BANDS` **dan** `TIER_STYLE`/`AVATAR_STYLE` pada `components/artist-ui.tsx`. Menambah kategori berarti mengisi `CATEGORIES`, `SCORE`, label di `lib/dict/*.ts`, dan pemilih di `components/team-builder.tsx`. `EFFECTS`/`EFFECT_LABEL` juga di `lib/score.ts` (dipakai DB constraint lewat server action).
+`TIER_ORDER` (`lib/score.ts`) = urutan tier di roster. Tier dihitung per kategori (`CATEGORIES`/`SCORE`). Tier baru: ubah `TIER_ORDER`, `BANDS`, **dan** `TIER_STYLE`/`AVATAR_STYLE` di `components/artist-ui.tsx`. Kategori baru: isi `CATEGORIES`, `SCORE`, label di `lib/dict/*.ts`, pemilih di `components/team-builder.tsx`. `EFFECTS`/`EFFECT_LABEL` juga di `lib/score.ts` (dipakai DB constraint lewat server action).
 
 ## Konvensi kode
 
-- TypeScript strict; hindari `any`. Tipe data ada di `lib/artists.ts`.
-- `lib/supabase.ts`/`lib/auth.ts` server-only; client hanya boleh impor server action. Akses `fs` hanya di `scripts/`.
+- TypeScript strict; hindari `any`. Tipe data di `lib/artists.ts`.
+- `lib/supabase.ts`/`lib/auth.ts` server-only; client hanya impor server action. `fs` hanya di `scripts/`.
 - State persisten: `localStorage` key `topgirl.team.v1` (bump versi kalau bentuk data berubah).
-- Komponen baru: default server. Tambahkan `"use client"` hanya bila butuh state/effect/event.
-- Ikuti pola yang ada: fungsi 1 layar, nama `camelCase`, komponen `PascalCase`, kelas Tailwind urut layout → warna → state.
-- Jangan menambah dependency UI/icon library; ikon = inline SVG (`Icon` di `team-builder.tsx`).
+- Komponen baru default server; `"use client"` hanya bila butuh state/effect/event.
+- Ikuti pola: fungsi 1 layar, `camelCase`/`PascalCase`, kelas Tailwind urut layout → warna → state.
+- Tanpa dependency UI/icon library; ikon inline SVG (`Icon` di `team-builder.tsx`).
 - Komentar hanya untuk hal non-obvious (mis. alasan `ponytail:` pada simplifikasi sengaja).
 
 ## Definition of done
 
-1. `npm run build` lulus (type-check + lint Next).
-2. Cek 375 / 768 / 1024 / 1440 px, tanpa scroll horizontal.
+1. `npm run build` lulus (type-check + lint).
+2. Responsif 375 / 768 / 1024 / 1440 px, tanpa scroll horizontal.
 3. Keyboard: Tab ke semua kontrol, focus ring terlihat, `aria-pressed` benar.
-4. Tidak ada emoji sebagai ikon; tidak ada teks kontras rendah.
+4. Tanpa emoji sebagai ikon, tanpa teks kontras rendah.
 5. Commit kecil, pesan imperatif (`Add ...`, `Fix ...`). Push hanya setelah tanya + izin pemilik repo (lihat `RULE.md`).
 
 <!-- BEGIN:nextjs-agent-rules -->
