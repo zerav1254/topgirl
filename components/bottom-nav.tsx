@@ -43,7 +43,7 @@ export function BottomNav({ locale, admin }: { locale: Locale; admin: boolean })
           aria-current={onArtists ? "page" : undefined}
           className={`${ITEM} ${onArtists ? ACTIVE : IDLE}`}
         >
-          <Icon d={ICONS.list} className="h-5 w-5" />
+          <Icon d={ICONS.mic} className="h-5 w-5" />
           {C.header.artists}
         </Link>
         <Link
@@ -81,7 +81,7 @@ export function BottomNav({ locale, admin }: { locale: Locale; admin: boolean })
             aria-current={pathname === `${base}/manage` ? "page" : undefined}
             className={`${ITEM} ${pathname === `${base}/manage` ? ACTIVE : IDLE}`}
           >
-            <Icon d={ICONS.sliders} className="h-5 w-5" />
+            <Icon d={ICONS.edit} className="h-5 w-5" />
             {C.header.manage}
           </Link>
         )}
