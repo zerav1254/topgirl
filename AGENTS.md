@@ -110,6 +110,7 @@ Alur data: Supabase → `lib/artists.ts` → server component (props) → client
 - State persisten: `localStorage` key `topgirl.team.v1` (bump versi kalau bentuk data berubah).
 - Komponen baru default server; `"use client"` hanya bila butuh state/effect/event.
 - Ikuti pola: fungsi 1 layar, `camelCase`/`PascalCase`, kelas Tailwind urut layout → warna → state.
+- Cari di repo pakai `rg` (isi file) dan `fd` (nama file); jangan `grep -r`/`find`.
 - Tanpa dependency UI/icon library; ikon inline SVG (`Icon` di `team-builder.tsx`).
 - Komentar hanya untuk hal non-obvious (mis. alasan `ponytail:` pada simplifikasi sengaja).
 
