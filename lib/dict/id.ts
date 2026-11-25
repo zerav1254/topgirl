@@ -115,6 +115,7 @@ export const id = {
     title: "Profil",
     subtitle: "Nama dan ID game tampil di lineup yang kamu bagikan.",
     editTitle: "Edit profil",
+    back: "Kembali",
     name: "Nama panggilan",
     ingameId: "ID game",
     ingameServer: "Server",

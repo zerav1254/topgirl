@@ -7,8 +7,6 @@ import { DOCS, DOC_KEYS } from "@/lib/docs";
 import { DICT, isLocale, type Locale } from "@/lib/i18n";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { ICONS, Icon } from "@/components/artist-ui";
-import { AvatarForm } from "@/components/avatar-form";
-import { ProfileForm } from "@/components/profile-form";
 import { DiscordMark, GoogleMark } from "@/components/provider-mark";
 import { signOut } from "@/app/[locale]/login/actions";
 import { linkProvider, unlinkProvider } from "./actions";
@@ -124,6 +122,20 @@ export default async function Page({
         </div>
       </section>
 
+      <section aria-label={C.profile.editTitle}>
+        <Link
+          href={`/${locale}/profile/edit`}
+          className="flex min-h-14 items-center gap-3 rounded-2xl border border-gold/45 bg-gold/15 px-4 py-3 text-gold transition-colors duration-200 hover:bg-gold/25"
+        >
+          <Icon d={ICONS.edit} className="h-5 w-5 shrink-0" />
+          <span className="min-w-0 flex-1">
+            <span className="block font-display font-semibold">{C.profile.editTitle}</span>
+            <span className="block text-xs text-zinc-300">{C.profile.subtitle}</span>
+          </span>
+          <Icon d={ICONS.chevronRight} className="h-4 w-4 shrink-0" />
+        </Link>
+      </section>
+
       <section aria-labelledby="profile-accounts" className="rounded-2xl border border-white/10 bg-panel/80 p-4 sm:p-5">
         <h2 id="profile-accounts" className="font-display text-sm font-semibold uppercase tracking-wide text-zinc-300">
           {C.profile.accountsTitle}
@@ -176,21 +188,11 @@ export default async function Page({
         <p className="mt-2 text-xs text-zinc-400">{C.profile.disconnectHint}</p>
       </section>
 
-      <section aria-labelledby="profile-edit" className="rounded-2xl border border-white/10 bg-panel/80 p-4 sm:p-5">
-        <h2 id="profile-edit" className="font-display text-sm font-semibold uppercase tracking-wide text-zinc-300">
-          {C.profile.editTitle}
-        </h2>
-        <p className="mt-1 mb-3 text-sm text-zinc-400">{C.profile.subtitle}</p>
-        <AvatarForm locale={locale} />
-        <div className="my-4 border-t border-white/10" />
-        <ProfileForm profile={profile} locale={locale} />
-      </section>
-
       <section aria-labelledby="profile-links" className="flex flex-col gap-2">
         <h2 id="profile-links" className="font-display text-sm font-semibold uppercase tracking-wide text-zinc-300">
           {C.profile.links}
         </h2>
-        <nav aria-label={C.profile.links} className="grid grid-cols-2 gap-2">
+        <nav aria-label={C.profile.links} className="grid grid-cols-1 gap-2">
           {[
             { href: `/${locale}/info`, label: C.header.info, icon: ICONS.info },
             ...DOC_KEYS.map((k) => ({

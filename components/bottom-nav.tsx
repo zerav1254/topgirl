@@ -29,6 +29,7 @@ export function BottomNav({ locale, admin }: { locale: Locale; admin: boolean })
 
   const onArtists = pathname === base || pathname === `${base}/`;
   const onTeam = pathname === `${base}/team`;
+  const onProfile = pathname.startsWith(`${base}/profile`);
   const full = count >= TEAM_SIZE;
 
   return (
@@ -87,8 +88,8 @@ export function BottomNav({ locale, admin }: { locale: Locale; admin: boolean })
         )}
         <Link
           href={`${base}/profile`}
-          aria-current={pathname === `${base}/profile` ? "page" : undefined}
-          className={`${ITEM} ${pathname === `${base}/profile` ? ACTIVE : IDLE}`}
+          aria-current={onProfile ? "page" : undefined}
+          className={`${ITEM} ${onProfile ? ACTIVE : IDLE}`}
         >
           <Icon d={ICONS.user} className="h-5 w-5" />
           {C.profile.title}

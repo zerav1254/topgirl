@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import type { Profile } from "@/lib/auth";
 import { DICT, type Locale } from "@/lib/i18n";
 import { saveProfile } from "@/app/[locale]/profile/actions";
@@ -10,6 +11,7 @@ const FIELD = "rounded-lg border border-white/10 bg-panel/80 px-3 py-2 text-base
 
 export function ProfileForm({ profile, locale }: { profile: Profile; locale: Locale }) {
   const C = DICT[locale].profile;
+  const router = useRouter();
   const [message, setMessage] = useState("");
   const [pending, start] = useTransition();
 
@@ -21,7 +23,8 @@ export function ProfileForm({ profile, locale }: { profile: Profile; locale: Loc
         const fd = new FormData(e.currentTarget);
         start(async () => {
           const res = await saveProfile(locale, fd);
-          setMessage(res.ok ? C.saved : res.error);
+          if (res.ok) router.push(`/${locale}/profile`);
+          else setMessage(res.error);
         });
       }}
     >

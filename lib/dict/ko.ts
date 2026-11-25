@@ -117,6 +117,7 @@ export const ko: Dict = {
     title: "프로필",
     subtitle: "이름과 게임 ID는 공유한 라인업에 표시됩니다.",
     editTitle: "프로필 수정",
+    back: "뒤로",
     name: "표시 이름",
     ingameId: "게임 ID",
     ingameServer: "서버",

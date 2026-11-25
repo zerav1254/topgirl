@@ -117,6 +117,7 @@ export const en: Dict = {
     title: "Profile",
     subtitle: "Your name and game ID appear on lineups you share.",
     editTitle: "Edit profile",
+    back: "Back",
     name: "Display name",
     ingameId: "Game ID",
     ingameServer: "Server",
