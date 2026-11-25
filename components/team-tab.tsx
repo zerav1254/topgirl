@@ -11,8 +11,9 @@ import { Avatar, GenreIcon, ICONS, Icon, RankBadge, SkillList, TierBadge, format
 
 type Props = {
   artists: Artist[];
-  // scoped = artis di pool; rank = peringkat relatif (null saat pool kosong).
+  // scoped = artis yang bisa diperoleh di pool; blocked = di atas season server.
   scoped: Artist[];
+  blocked: Set<string>;
   rank: Map<string, Rank> | null;
   team: Artist[];
   picked: string[];
@@ -25,7 +26,7 @@ type Props = {
   onReset: () => void;
 };
 
-export function TeamTab({ artists, scoped, rank, team, picked, locale, category, state, onToggle, onAssign, onAuto, onReset }: Props) {
+export function TeamTab({ artists, scoped, blocked, rank, team, picked, locale, category, state, onToggle, onAssign, onAuto, onReset }: Props) {
   const C = DICT[locale];
   // Slot yang sedang dipilih; null = dialog tertutup. Picker menggantikan daftar panjang di bawah.
   const [slot, setSlot] = useState<number | null>(null);
@@ -40,18 +41,18 @@ export function TeamTab({ artists, scoped, rank, team, picked, locale, category,
 
   const current = slot === null ? undefined : team[slot];
   // Artist di slot aktif tetap tampil supaya bisa dibatalkan; yang lain sudah dipakai disembunyikan.
-  // Pool membatasi kandidat: artis di luar pool tidak bisa dipilih saat pool aktif.
+  // Kandidat = artis pool; artis di atas season server tetap boleh dipilih tapi diberi peringatan.
   const inPool = useMemo(() => new Set(scoped.map((a) => a.slug)), [scoped]);
   const sortValue = (a: Artist) => rank?.get(a.slug)?.rank ?? -a.scores[category];
   const candidates = useMemo(
     () =>
       state.visible
-        .filter((a) => inPool.has(a.slug))
+        .filter((a) => inPool.has(a.slug) || blocked.has(a.slug))
         .filter((a) => a.slug === current?.slug || !picked.includes(a.slug))
         .sort((a, b) => sortValue(a) - sortValue(b)),
     // sortValue hanya bergantung pada rank/category; dimasukkan lewat deps di bawah.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [state.visible, inPool, current?.slug, picked, rank, category],
+    [state.visible, inPool, blocked, current?.slug, picked, rank, category],
   );
 
   const summary = useMemo(() => {
@@ -142,6 +143,12 @@ export function TeamTab({ artists, scoped, rank, team, picked, locale, category,
                         <span className="tabular text-xs text-zinc-400">{formatStat(a.scores[category], locale)}</span>
                       </span>
                       <span className="block truncate text-sm text-zinc-400">{a.genre}</span>
+                      {blocked.has(a.slug) && (
+                        <span className="mt-0.5 flex items-center gap-1 text-xs font-semibold text-amber-300">
+                          <Icon d={ICONS.info} className="h-3.5 w-3.5 shrink-0" />
+                          {C.pool.blocked}
+                        </span>
+                      )}
                     </span>
                   </button>
                   <button
@@ -273,6 +280,12 @@ export function TeamTab({ artists, scoped, rank, team, picked, locale, category,
                         {a.genre} · {formatStat(a.scores[category], locale)}
                       </span>
                       <SkillList skills={a.skills} locale={locale} className="mt-1" />
+                      {blocked.has(a.slug) && (
+                        <span className="mt-1 flex items-center gap-1 text-xs font-semibold text-amber-300">
+                          <Icon d={ICONS.info} className="h-3.5 w-3.5 shrink-0" />
+                          {C.pool.blocked}
+                        </span>
+                      )}
                     </span>
                     <span
                       aria-hidden="true"

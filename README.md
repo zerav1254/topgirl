@@ -1,6 +1,6 @@
 # topgirl
 
-Team builder + editor stat artist. Next.js 16, data di Supabase (Postgres + Storage).
+Team builder + galeri foto artist. Next.js 16, data di Supabase (Postgres + Storage).
 
 ## Setup lokal
 
@@ -34,8 +34,8 @@ where i.user_id = p.user_id and i.provider in ('google', 'discord') and i.provid
 ## Halaman
 
 - `/` — redirect ke `/id`.
-- `/id`, `/en`, `/fr`, `/ko` — team builder (revalidate 5 menit; di-refresh langsung setelah simpan). Pilih **pool** origin servermu untuk melihat peringkat relatif dan menyusun tim terbaik dari yang tersedia.
-- `/{locale}/manage` — isi base stat, skill, dan foto 320×320 WebP (butuh role admin).
+- `/id`, `/en`, `/fr`, `/ko` — team builder (revalidate 5 menit; di-refresh langsung setelah simpan). Pilih **pool** origin servermu dan **season server** untuk melihat peringkat relatif dan menyusun tim terbaik dari yang tersedia. Artis di atas season server tetap tampil di section "Belum bisa diperoleh" dan tetap boleh dipilih, dengan peringatan.
+- `/{locale}/manage` — unggah/ganti foto 320×320 WebP (butuh role admin). Stat, skill, genre, dan origin dikunci supaya data tetap konsisten; ubah lewat migration Supabase.
 - `/{locale}/login` — masuk dengan Google/Discord.
 - `/{locale}/profile` — nama dan ID game.
 - `/{locale}/lineups` — simpan dan bagikan tim.

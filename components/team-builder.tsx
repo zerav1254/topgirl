@@ -8,7 +8,7 @@ import { toggleOwned } from "@/app/[locale]/collection/actions";
 import type { Artist } from "@/lib/artists";
 import { DICT, type Locale } from "@/lib/i18n";
 import { parsePool, getServerPool, readPool, subscribePool, writePool } from "@/lib/pool-store";
-import { poolOf, rankInPool } from "@/lib/pool";
+import { blockedOf, poolActive, poolOf, rankInPool } from "@/lib/pool";
 import type { Category } from "@/lib/score";
 import { bestLineup, TEAM_SIZE } from "@/lib/team";
 import { getServerTeam, readTeam, subscribeTeam, writeTeam } from "@/lib/team-store";
@@ -50,7 +50,12 @@ export function TeamBuilder({
   const pool = useMemo(() => parsePool(poolRaw), [poolRaw]);
   // Pool kosong = seluruh database: peringkat tidak ditampilkan supaya skala tetap absolut.
   const scoped = useMemo(() => poolOf(artists, pool), [artists, pool]);
-  const rank = useMemo(() => (pool.length === 0 ? null : rankInPool(artists, pool, category)), [artists, pool, category]);
+  // Artis di atas season server: tetap tampil, tapi tidak masuk peringkat/lineup otomatis.
+  const blocked = useMemo(() => new Set(blockedOf(artists, pool).map((a) => a.slug)), [artists, pool]);
+  const rank = useMemo(
+    () => (poolActive(pool) ? rankInPool(artists, pool, category) : null),
+    [artists, pool, category],
+  );
 
   const bySlug = useMemo(() => new Map(artists.map((a) => [a.slug, a])), [artists]);
   const saved = useSyncExternalStore(subscribeTeam, readTeam, getServerTeam);
@@ -127,6 +132,7 @@ export function TeamBuilder({
         <ArtistsTab
           artists={artists}
           scoped={scoped}
+          blocked={blocked}
           rank={rank}
           owned={ownedSet}
           onOwned={markOwned}
@@ -139,6 +145,7 @@ export function TeamBuilder({
         <TeamTab
           artists={artists}
           scoped={scoped}
+          blocked={blocked}
           rank={rank}
           team={team}
           picked={picked}

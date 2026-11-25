@@ -4,10 +4,7 @@ import sharp from "sharp";
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth";
 import { DICT, LOCALES, localeOr, type Locale } from "@/lib/i18n";
-import { EFFECT_SET } from "@/lib/score";
 import { PHOTO_BUCKET, adminClient } from "@/lib/supabase";
-
-export type SaveResult = { ok: boolean; error: string };
 
 const SLUG_RE = /^[a-z0-9-]+$/;
 
@@ -21,11 +18,6 @@ function revalidateAll() {
 
 const txt = (fd: FormData, key: string) => String(fd.get(key) ?? "").trim();
 
-const pos = (fd: FormData, key: string) => {
-  const n = Number(txt(fd, key));
-  return Number.isFinite(n) && n > 0 ? Math.round(n) : null;
-};
-
 const safeLocale = localeOr;
 
 // Semua action tulis wajib lewat gate role; gagal = sesi habis, bukan pesan internal.
@@ -36,42 +28,6 @@ async function hasAdmin(): Promise<boolean> {
   } catch {
     return false;
   }
-}
-
-export async function saveArtist(locale: Locale, fd: FormData): Promise<SaveResult> {
-  const C = DICT[safeLocale(locale)].actions;
-  if (!(await hasAdmin())) return { ok: false, error: C.session };
-
-  const slug = txt(fd, "slug");
-  const name = txt(fd, "name");
-  const genre = txt(fd, "genre");
-  const origin = txt(fd, "origin") || null;
-  if (!slug || !name) return { ok: false, error: C.nameRequired };
-
-  const skills = [1, 2].flatMap((slot) => {
-    const effect = txt(fd, `s${slot}_effect`);
-    return effect ? [{ slot, effect, value: pos(fd, `s${slot}_value`) }] : [];
-  });
-  // Efek yang tidak dikenal kode tidak boleh masuk DB: akan hilang saat loadArtists memfilter.
-  if (skills.some((s) => !EFFECT_SET.has(s.effect))) return { ok: false, error: C.unknownRef };
-
-  const fail = (e: { code?: string; message: string }) => ({
-    ok: false,
-    error: e.code === "23503" ? C.unknownRef : e.message,
-  });
-
-  // Satu transaksi di DB: update baris + ganti skill; gagal di tengah tidak menghapus data lama.
-  const { error } = await adminClient().rpc("save_artist_stats", {
-    p_slug: slug,
-    p_name: name,
-    p_genre: genre,
-    p_origin: origin ?? "",
-    p_skills: skills,
-  });
-  if (error) return fail(error);
-
-  revalidateAll();
-  return { ok: true, error: "" };
 }
 
 export type UploadResult = { ok: boolean; error: string };

@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import { loadArtists } from "@/lib/artists";
 import { isAdmin } from "@/lib/auth";
 import { DICT, isLocale, type Locale } from "@/lib/i18n";
-import { loadLookups } from "@/lib/lookups";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { ArtistEditor } from "@/components/artist-editor";
 
@@ -67,7 +66,7 @@ export default async function Page({
     );
   }
 
-  const [artists, lookups] = await Promise.all([loadArtists(), loadLookups()]);
+  const artists = await loadArtists();
 
   return (
     <>
@@ -76,7 +75,7 @@ export default async function Page({
           {errorText}
         </p>
       ) : null}
-      <ArtistEditor artists={artists} lookups={lookups} defaultSlug={query.a} locale={locale} />
+      <ArtistEditor artists={artists} defaultSlug={query.a} locale={locale} />
     </>
   );
 }

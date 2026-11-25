@@ -6,67 +6,23 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { Artist } from "@/lib/artists";
 import { DICT, t, type Locale } from "@/lib/i18n";
-import type { Lookups } from "@/lib/lookups";
 import { compressPhoto } from "@/lib/image-client";
-import { scoreArtist, tierFromScore, type Effect, type Skill } from "@/lib/score";
-import { saveArtist, uploadPhoto } from "@/app/[locale]/manage/actions";
+import { uploadPhoto } from "@/app/[locale]/manage/actions";
 import { signOut } from "@/app/[locale]/login/actions";
-import { Avatar, SearchInput, formatStat } from "./artist-ui";
+import { Avatar, SearchInput } from "./artist-ui";
 import { LocaleSwitcher } from "./locale-switcher";
 
-type SkillDraft = { effect: Effect | ""; value: string };
-type Draft = {
-  slug: string;
-  genre: string;
-  origin: string;
-  skills: [SkillDraft, SkillDraft];
-};
-
-const digits = (v: string) => v.replace(/\D/g, "");
-
-function draftFromArtist(a: Artist): Draft {
-  const skill = (i: number): SkillDraft => ({
-    effect: a.skills[i]?.effect ?? "",
-    value: a.skills[i]?.value?.toString() ?? "",
-  });
-  return {
-    slug: a.slug,
-    genre: a.genre,
-    origin: a.origin ?? "",
-    skills: [skill(0), skill(1)],
-  };
-}
-
-// Kedua slot wajib terisi effect: semua artist punya 2 skill di DB.
-const isComplete = (d: Draft) => d.skills.every((s) => s.effect !== "");
-
-// ponytail: draft hanya menyimpan stat; name/genre belum bisa diedit dari web.
-function toFormData(d: Draft, a: Artist): FormData {
-  const fd = new FormData();
-  fd.set("slug", d.slug);
-  fd.set("name", a.name);
-  fd.set("genre", d.genre);
-  fd.set("origin", d.origin);
-  d.skills.forEach((s, i) => {
-    fd.set(`s${i + 1}_effect`, s.effect);
-    fd.set(`s${i + 1}_value`, s.effect ? s.value : "");
-  });
-  return fd;
-}
-
-const inputClass =
-  "min-h-11 rounded-lg border border-white/10 bg-ink/60 px-3 py-2 text-base text-zinc-100 placeholder:text-zinc-400 focus:border-brand/60";
 const cardClass = "rounded-2xl border border-white/10 bg-panel/60";
 
+// Halaman ini sengaja hanya mengurus foto. Stat, skill, genre, dan origin dikunci
+// supaya skor dan pool tetap konsisten; ubah lewat SQL/migration kalau perlu.
 export function ArtistEditor({
   artists,
   defaultSlug,
-  lookups,
   locale,
 }: {
   artists: Artist[];
   defaultSlug?: string;
-  lookups: Lookups;
   locale: Locale;
 }) {
   const C = DICT[locale].editor;
@@ -75,19 +31,15 @@ export function ArtistEditor({
   const [selected, setSelected] = useState(
     () =>
       (defaultSlug && artists.some((a) => a.slug === defaultSlug) ? defaultSlug : null) ??
-      artists.find((a) => !isComplete(draftFromArtist(a)))?.slug ??
+      artists.find((a) => !a.photoUrl)?.slug ??
       artists[0]?.slug ??
       "",
   );
-  const [draft, setDraft] = useState<Draft | null>(null);
-  const [status, setStatus] = useState("");
   const [photoStatus, setPhotoStatus] = useState("");
-  const [saving, startSaving] = useTransition();
   const [uploading, startUploading] = useTransition();
 
   const current = artists.find((a) => a.slug === selected);
-  const form = draft?.slug === selected ? draft : current ? draftFromArtist(current) : null;
-  const done = artists.filter((a) => isComplete(draftFromArtist(a))).length;
+  const done = artists.filter((a) => a.photoUrl).length;
   const pct = artists.length ? Math.round((done / artists.length) * 100) : 0;
 
   const visible = useMemo(
@@ -100,38 +52,6 @@ export function ArtistEditor({
       ),
     [artists, query],
   );
-
-  const preview = useMemo(() => {
-    if (!form) return null;
-    const skills: Skill[] = form.skills
-      .filter((s) => s.effect !== "")
-      .map((s) => ({ effect: s.effect as Effect, value: s.value === "" ? null : Number(s.value) }));
-    const score = scoreArtist(skills);
-    return { score, tier: tierFromScore(score) };
-  }, [form]);
-
-  function update(patch: Partial<Draft>) {
-    if (!form) return;
-    setDraft({ ...form, ...patch });
-    setStatus("");
-  }
-
-  function updateSkill(i: number, patch: Partial<SkillDraft>) {
-    if (!form) return;
-    const skills = form.skills.map((s, idx) => (idx === i ? { ...s, ...patch } : s)) as [SkillDraft, SkillDraft];
-    update({ skills });
-  }
-
-  function submit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (!form || !current) return;
-    startSaving(async () => {
-      const result = await saveArtist(locale, toFormData(form, current));
-      setStatus(result.ok ? C.saved : result.error);
-      // Progress bar dan titik "lengkap" di daftar dihitung dari props server.
-      if (result.ok) router.refresh();
-    });
-  }
 
   function submitPhoto(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -220,7 +140,7 @@ export function ArtistEditor({
           <SearchInput value={query} onChange={setQuery} locale={locale} placeholder={C.searchPlaceholder} />
           <ul className="mt-2 flex max-h-[42dvh] flex-col gap-1 overflow-y-auto pr-1 lg:max-h-[calc(100dvh-17rem)]">
             {visible.map((a) => {
-              const complete = isComplete(draftFromArtist(a));
+              const hasPhoto = Boolean(a.photoUrl);
               const active = a.slug === selected;
               return (
                 <li key={a.slug}>
@@ -228,7 +148,6 @@ export function ArtistEditor({
                     type="button"
                     onClick={() => {
                       setSelected(a.slug);
-                      setStatus("");
                       setPhotoStatus("");
                     }}
                     aria-pressed={active}
@@ -241,14 +160,12 @@ export function ArtistEditor({
                     <Avatar artist={a} size="h-9 w-9" />
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-sm font-semibold">{a.name}</span>
-                      <span className="block truncate text-xs text-zinc-400">
-                        {a.origin || C.noOrigin}
-                      </span>
+                      <span className="block truncate text-xs text-zinc-400">{a.origin || C.noOrigin}</span>
                     </span>
                     <span
                       role="img"
-                      aria-label={complete ? C.complete : C.incomplete}
-                      className={`h-2 w-2 shrink-0 rounded-full ${complete ? "bg-emerald-400" : "bg-zinc-600"}`}
+                      aria-label={hasPhoto ? C.complete : C.incomplete}
+                      className={`h-2 w-2 shrink-0 rounded-full ${hasPhoto ? "bg-emerald-400" : "bg-zinc-600"}`}
                     />
                   </button>
                 </li>
@@ -259,112 +176,19 @@ export function ArtistEditor({
         </section>
 
         <section aria-label={C.formLabel} className={`${cardClass} flex min-w-0 flex-col gap-4 p-4 sm:p-5`}>
-          {current && form ? (
+          {current ? (
             <>
-              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3">
-                <div className="flex min-w-0 items-center gap-3">
-                  <Avatar artist={current} size="h-12 w-12" />
-                  <div className="min-w-0">
-                    <h2 className="font-display truncate text-xl font-semibold">{current.name}</h2>
-                    <p className="truncate text-xs text-zinc-400">
-                      {[current.genre, current.origin ?? C.noOrigin].filter(Boolean).join(" · ")}
-                    </p>
-                  </div>
+              <div className="flex min-w-0 items-center gap-3 border-b border-white/10 pb-3">
+                <Avatar artist={current} size="h-12 w-12" />
+                <div className="min-w-0">
+                  <h2 className="font-display truncate text-xl font-semibold">{current.name}</h2>
+                  <p className="truncate text-xs text-zinc-400">
+                    {[current.genre, current.origin ?? C.noOrigin].filter(Boolean).join(" · ")}
+                  </p>
                 </div>
-                {preview && (
-                  <span className="tabular rounded-lg border border-white/10 bg-ink/40 px-2.5 py-1.5 text-sm text-zinc-300">
-                    {C.score} <strong className="text-gold">{formatStat(preview.score, locale)}</strong>
-                    <span className="mx-1.5 text-zinc-400">·</span>
-                    {C.tier} <strong>{preview.tier}</strong>
-                  </span>
-                )}
               </div>
 
-              <form className="flex flex-col gap-4" onSubmit={submit}>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <label className="flex flex-col gap-1 text-sm text-zinc-400">
-                    {C.genre}
-                    <select value={form.genre} onChange={(e) => update({ genre: e.target.value })} className={inputClass}>
-                      {lookups.genres.map((g) => (
-                        <option key={g.id} value={g.id}>
-                          {g.label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <label className="flex flex-col gap-1 text-sm text-zinc-400">
-                    {C.origin}
-                    <select value={form.origin} onChange={(e) => update({ origin: e.target.value })} className={inputClass}>
-                      <option value="">—</option>
-                      {lookups.origins.map((r) => (
-                        <option key={r.id} value={r.id}>
-                          {r.label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                </div>
-
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {form.skills.map((skill, i) => {
-                    const unit = lookups.effects.find((e) => e.id === skill.effect)?.unit ?? "percent";
-                    return (
-                      <fieldset key={i} className="flex flex-col gap-3 rounded-xl border border-white/10 bg-ink/30 p-3">
-                        <legend className="px-1 text-[11px] font-semibold uppercase tracking-wide text-zinc-400">
-                          {t(C.skill, { n: i + 1 })}
-                        </legend>
-                        <label className="flex flex-col gap-1 text-sm text-zinc-400">
-                          {C.effect}
-                          <select
-                            value={skill.effect}
-                            onChange={(e) =>
-                              updateSkill(i, { effect: e.target.value as Effect | "", value: e.target.value ? skill.value : "" })
-                            }
-                            className={inputClass}
-                          >
-                            <option value="">—</option>
-                            {lookups.effects.map((effect) => (
-                              <option key={effect.id} value={effect.id}>
-                                {effect.label}
-                              </option>
-                            ))}
-                          </select>
-                        </label>
-                        <label className="flex flex-col gap-1 text-sm text-zinc-400">
-                          <span className="flex items-center justify-between">
-                            {C.value} <span className="text-xs text-zinc-400">{unit === "flat" ? C.flat : C.percent}</span>
-                          </span>
-                          <input
-                            value={skill.value}
-                            onChange={(e) => updateSkill(i, { value: digits(e.target.value) })}
-                            inputMode="numeric"
-                            disabled={skill.effect === ""}
-                            placeholder={unit === "flat" ? "200/240" : "12"}
-                            className={`${inputClass} disabled:opacity-40`}
-                          />
-                        </label>
-                      </fieldset>
-                    );
-                  })}
-                </div>
-
-                <div className="flex flex-wrap items-center gap-2 border-t border-white/10 pt-3">
-                  <button
-                    type="submit"
-                    disabled={saving}
-                    className="inline-flex min-h-11 cursor-pointer items-center rounded-lg border border-gold/45 bg-gold/15 px-4 text-sm font-semibold text-gold transition-colors duration-200 hover:bg-gold/25 disabled:cursor-wait disabled:opacity-60"
-                  >
-                    {saving ? C.saving : C.save}
-                  </button>
-                  {status ? (
-                    <p aria-live="polite" className={`text-sm ${status === C.saved ? "text-emerald-300" : "text-red-300"}`}>
-                      {status}
-                    </p>
-                  ) : null}
-                </div>
-              </form>
-
-              <form onSubmit={submitPhoto} className="flex flex-wrap items-end gap-3 border-t border-white/10 pt-4">
+              <form onSubmit={submitPhoto} className="flex flex-wrap items-end gap-3">
                 <input type="hidden" name="slug" value={current.slug} />
                 <Avatar artist={current} size="h-14 w-14" />
                 <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm text-zinc-400">

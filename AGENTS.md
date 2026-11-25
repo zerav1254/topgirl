@@ -35,7 +35,7 @@ app/[locale]/
   not-found.tsx     404 locale tidak tersedia (pakai DICT.id)
   info/page.tsx     rumus rank/bobot/tier, tanpa fetch DB
   manage/page.tsx   gate login admin + <ArtistEditor locale />
-  manage/actions.ts login, logout, saveArtist (RPC atomik), uploadPhoto(locale)
+  manage/actions.ts uploadPhoto(locale)
 app/globals.css     @import "tailwindcss" + @theme + base rules
 components/         semua client
   team-builder.tsx  shell /{locale} + /{locale}/team: state tim + header; sumber `Icon` inline SVG
@@ -44,7 +44,7 @@ components/         semua client
   team-tab.tsx      slot tim (klik slot -> dialog pilih) + ringkasan
   bottom-nav.tsx    nav 4 menu (Artists/Team/Info/Kelola), dirender root layout
   artist-ui.tsx     atom: Icon, TierBadge, Avatar, GenreIcon, SearchInput
-  artist-editor.tsx form stat + upload foto
+  artist-editor.tsx upload foto (stat/skill/genre/origin dikunci)
   locale-switcher.tsx ganti segmen locale di path
 lib/
   artists.ts      query Supabase -> tipe Artist/Effect
@@ -69,9 +69,9 @@ Alur data: Supabase → `lib/artists.ts` → server component (props) → client
 
 | Kebutuhan | File |
 | --- | --- |
-| Tambah/ubah artist, stat, skill | halaman `/{locale}/manage` (DB), bukan CSV |
+| Tambah/ubah artist, stat, skill | migration Supabase (halaman manage hanya foto) |
 | Ubah skema DB | migration Supabase + `supabase/schema.sql` + `lib/artists.ts` |
-| Simpan stat atomik | RPC `save_artist_stats` di `supabase/schema.sql`, dipanggil `app/[locale]/manage/actions.ts` |
+| Simpan stat atomik | RPC `save_artist_stats` di `supabase/schema.sql`, dipakai lewat migration/SQL (bukan UI) |
 | Seed ulang dari CSV/thumb lama | `scripts/seed-supabase.mjs` (`npm run seed`) |
 | Auth/login admin | `lib/auth.ts` + `app/[locale]/manage/actions.ts` |
 | Teks UI / bahasa baru | `lib/dict/*.ts` (+ `LOCALES`/`LANG_NAME` di `lib/i18n.ts`) |
