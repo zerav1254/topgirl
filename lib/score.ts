@@ -16,8 +16,7 @@ export type Effect =
   | "dps_atk_rally"
   | "wbg_dmg"
   | "gold"
-  | "drive"
-  | "noncombat";
+  | "drive";
 
 export type Skill = {
   effect: Effect;
@@ -38,7 +37,6 @@ export const EFFECTS: Effect[] = [
   "wbg_dmg",
   "gold",
   "drive",
-  "noncombat",
 ];
 
 export const EFFECT_LABEL: Record<Effect, Record<Locale, string>> = {
@@ -127,15 +125,6 @@ export const EFFECT_LABEL: Record<Effect, Record<Locale, string>> = {
   wbg_dmg: { id: "Dmg WBG", en: "WBG DMG", fr: "Dégâts WBG", ko: "WBG 피해", zh: "WBG 伤害", ja: "WBGダメージ", de: "WBG-Schaden" },
   gold: { id: "Gold", en: "Gold", fr: "Or", ko: "골드", zh: "金币", ja: "ゴールド", de: "Gold" },
   drive: { id: "Drive", en: "Drive", fr: "Drive", ko: "드라이브", zh: "Drive", ja: "ドライブ", de: "Drive" },
-  noncombat: {
-    id: "Non-tempur",
-    en: "Non-combat",
-    fr: "Non-combat",
-    ko: "비전투",
-    zh: "非战斗",
-    ja: "非戦闘",
-    de: "Nicht-Kampf",
-  },
 };
 
 export const CATEGORIES = ["solo", "rally", "defense", "economy"] as const;
