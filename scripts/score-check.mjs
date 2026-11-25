@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { loadArtists } from "../lib/artists.ts";
 import { EMPTY_POOL, blockedOf, poolOf, rankInPool } from "../lib/pool.ts";
-import { CATEGORIES, scoreArtist } from "../lib/score.ts";
+import { CATEGORIES, EFFECTS, SCORE, scoreArtist } from "../lib/score.ts";
 import { TEAM_SIZE, bestLineup } from "../lib/team.ts";
 
 const artists = await loadArtists();
@@ -9,6 +9,12 @@ assert.ok(artists.length > 0, "expected at least one artist");
 assert.equal(new Set(artists.map((a) => a.slug)).size, artists.length, "slugs must be unique");
 
 const byName = new Map(artists.map((a) => [a.name, a]));
+// Setiap efek wajib punya bobot > 0 di setiap kategori.
+for (const category of CATEGORIES) {
+  for (const effect of EFFECTS) {
+    assert.ok(SCORE[category][effect] > 0, `bobot ${category}.${effect} harus > 0`);
+  }
+}
 // Satu artist bisa beda tier per kategori; ini mengunci contoh yang disepakati.
 assert.equal(byName.get("Monica").tiers.solo, "S+");
 assert.equal(byName.get("Rhea").tiers.rally, "S+");
@@ -23,8 +29,9 @@ for (const name of ["Ayaka", "Moana"]) {
     `${name} defensif harus di bawah damage murni`,
   );
 }
-// Ekonomi murni tidak memberi nilai di SOLO.
-assert.equal(byName.get("Kesnia").scores.solo, 0, "Kesnia gold-only harus 0 di SOLO");
+// Ekonomi murni hanya dapat bobot pinggiran di SOLO (tidak nol, tapi tetap D).
+assert.ok(byName.get("Kesnia").scores.solo < 1, "Kesnia gold-only hanya bobot pinggiran di SOLO");
+assert.equal(byName.get("Kesnia").tiers.solo, "D", "Kesnia gold-only tetap D di SOLO");
 // DEFENSE: semua efek punya bobot kecil, jadi tidak ada artist berskor 0.
 for (const a of artists) {
   assert.ok(a.scores.defense > 0, `${a.name} tanpa efek defense tetap harus dapat poin`);

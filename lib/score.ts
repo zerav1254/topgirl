@@ -136,7 +136,9 @@ export type Category = (typeof CATEGORIES)[number];
 // fan_rally memakai bobot sendiri; RALLY sengaja di atas player_dmg.
 // SOLO tetap damage-first, tapi bertahan hidup diberi bobot kecil supaya unit
 // defensif tidak mentok 0 (dps_def ikut FLAT_SCALE).
-export const SCORE: Record<Category, Partial<Record<Effect, number>>> = {
+// Semua efek wajib punya bobot > 0 di setiap kategori (tipe Record total).
+// Efek pinggiran tetap diberi bobot kecil supaya tidak ada yang diam-diam 0.
+export const SCORE: Record<Category, Record<Effect, number>> = {
   solo: {
     player_dmg: 1.75,
     fan: 2.5,
@@ -145,16 +147,27 @@ export const SCORE: Record<Category, Partial<Record<Effect, number>>> = {
     basic_atk_red: 0.25,
     skill_dmg_red: 0.2,
     wbg_dmg: 0.2,
+    gold: 0.01,
+    drive: 0.01,
+    fan_rally: 0.01,
     dps_def: 0.05,
+    dps_atk_rally: 0.01,
+    dps_atk_company: 0.01,
   },
   rally: {
     fan_rally: 6,
     player_dmg: 1.75,
     skill_dmg: 1.25,
+    wbg_dmg: 1,
     basic_atk: 0.5,
+    fan: 0.01,
     dps_atk_rally: 0.1,
     dps_atk_company: 0.1,
-    wbg_dmg: 1,
+    gold: 0.01,
+    drive: 0.01,
+    basic_atk_red: 0.01,
+    skill_dmg_red: 0.01,
+    dps_def: 0.01,
   },
   defense: {
     player_dmg: 1.2,
@@ -174,6 +187,17 @@ export const SCORE: Record<Category, Partial<Record<Effect, number>>> = {
   economy: {
     gold: 2,
     drive: 1,
+    player_dmg: 0.01,
+    skill_dmg: 0.01,
+    fan: 0.01,
+    fan_rally: 0.01,
+    basic_atk: 0.01,
+    basic_atk_red: 0.01,
+    skill_dmg_red: 0.01,
+    wbg_dmg: 0.01,
+    dps_def: 0.01,
+    dps_atk_rally: 0.01,
+    dps_atk_company: 0.01,
   },
 };
 
@@ -207,7 +231,7 @@ export function scoreArtist(skills: Skill[], category: Category = "solo"): numbe
     if (s.value === null) continue;
     // dps values are flat (200/240); the scale maps them onto the percent scale.
     const v = s.value * (FLAT_SCALE[s.effect] ?? 1);
-    total += (weights[s.effect] ?? 0) * v;
+    total += weights[s.effect] * v;
   }
   return Math.min(100, Math.round(total * SCALE * 10) / 10);
 }
