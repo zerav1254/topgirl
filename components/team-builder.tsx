@@ -1,9 +1,8 @@
 "use client";
 
-import { useMemo, useSyncExternalStore, useTransition } from "react";
+import { useMemo, useOptimistic, useState, useSyncExternalStore, useTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { toggleOwned } from "@/app/[locale]/collection/actions";
 import type { Artist } from "@/lib/artists";
 import { DICT, type Locale } from "@/lib/i18n";
@@ -39,9 +38,14 @@ export function TeamBuilder({
   avatarUrl: string | null;
 }) {
   const C = DICT[locale];
-  const router = useRouter();
   const [, startOwn] = useTransition();
-  const ownedSet = useMemo(() => (owned ? new Set(owned) : null), [owned]);
+  const [ownedError, setOwnedError] = useState("");
+  const [pendingSlug, setPendingSlug] = useState<string | null>(null);
+  // Optimistic: tombol langsung berubah, dikembalikan ke data server kalau aksi gagal.
+  const [ownedSlugs, addOwned] = useOptimistic<string[], [string, boolean]>(owned ?? [], (list, [slug, next]) =>
+    next ? (list.includes(slug) ? list : [...list, slug]) : list.filter((s) => s !== slug),
+  );
+  const ownedSet = useMemo(() => (owned ? new Set(ownedSlugs) : null), [owned, ownedSlugs]);
   // Tidak ada bar kategori terpisah: filter "Spesialis" menentukan kategori skor/tier.
   const state = useArtistFilter(artists, locale, ownedSet ?? undefined);
   const category: Category = isCategory(state.filter.specialty) ? state.filter.specialty : "solo";
@@ -89,9 +93,15 @@ export function TeamBuilder({
   }
 
   function markOwned(slug: string, next: boolean) {
+    if (!owned) return;
+    setOwnedError("");
+    setPendingSlug(slug);
     startOwn(async () => {
-      await toggleOwned(locale, slug, next);
-      router.refresh();
+      addOwned([slug, next]);
+      const result = await toggleOwned(locale, slug, next);
+      // Aksi server sudah me-revalidate rute; tidak perlu router.refresh().
+      if (!result.ok) setOwnedError(result.error || C.collection.error);
+      setPendingSlug(null);
     });
   }
 
@@ -147,6 +157,8 @@ export function TeamBuilder({
           rank={rank}
           owned={ownedSet}
           onOwned={markOwned}
+          ownedError={ownedError}
+          pendingSlug={pendingSlug}
           picked={picked}
           locale={locale}
           category={category}

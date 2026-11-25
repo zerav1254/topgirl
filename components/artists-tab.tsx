@@ -19,6 +19,9 @@ type Props = {
   // null = belum login: tombol koleksi disembunyikan.
   owned: Set<string> | null;
   onOwned: (slug: string, owned: boolean) => void;
+  // Pesan gagal simpan koleksi; kosong = tidak ada error.
+  ownedError?: string;
+  pendingSlug?: string | null;
   picked: string[];
   locale: Locale;
   category: Category;
@@ -26,7 +29,7 @@ type Props = {
 };
 
 // Season hanya bermakna untuk artist dari kota tuan rumah; origin lain tidak menampilkannya.
-export function ArtistsTab({ artists, scoped, blocked, rank, owned, onOwned, picked, locale, category, state }: Props) {
+export function ArtistsTab({ artists, scoped, blocked, rank, owned, onOwned, ownedError, pendingSlug, picked, locale, category, state }: Props) {
   const C = DICT[locale];
   // Section tier hanya untuk artis di pool, jadi tier yang tak bisa dicapai tidak muncul.
   const inPool = useMemo(() => new Set(scoped.map((a) => a.slug)), [scoped]);
@@ -55,6 +58,12 @@ export function ArtistsTab({ artists, scoped, blocked, rank, owned, onOwned, pic
         {t(C.artists.results, { n: visible.length })}
       </p>
 
+      {ownedError !== "" && (
+        <p role="alert" className="mt-3 rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm font-semibold text-red-300">
+          {ownedError}
+        </p>
+      )}
+
       {tiers
         .map((tier) => [tier, visible.filter((a) => a.tiers[category] === tier).sort((a, b) => sortValue(a) - sortValue(b))] as const)
         .filter(([, list]) => list.length > 0)
@@ -82,6 +91,7 @@ export function ArtistsTab({ artists, scoped, blocked, rank, owned, onOwned, pic
                   rank={rank?.get(a.slug)}
                   owned={owned}
                   onOwned={onOwned}
+                  busy={pendingSlug === a.slug}
                   inTeam={picked.includes(a.slug)}
                   locale={locale}
                   category={category}
@@ -112,6 +122,7 @@ export function ArtistsTab({ artists, scoped, blocked, rank, owned, onOwned, pic
                 blocked
                 owned={owned}
                 onOwned={onOwned}
+                busy={pendingSlug === a.slug}
                 inTeam={picked.includes(a.slug)}
                 locale={locale}
                 category={category}
@@ -130,6 +141,7 @@ function ArtistCard({
   blocked = false,
   owned,
   onOwned,
+  busy = false,
   inTeam,
   locale,
   category,
@@ -139,11 +151,14 @@ function ArtistCard({
   blocked?: boolean;
   owned: Set<string> | null;
   onOwned: (slug: string, owned: boolean) => void;
+  // Aksi simpan untuk kartu ini masih berjalan.
+  busy?: boolean;
   inTeam: boolean;
   locale: Locale;
   category: Category;
 }) {
   const C = DICT[locale];
+  const isOwned = owned?.has(a.slug) ?? false;
   return (
     <li>
       {/* Kartu hanya info: pemilihan artist dilakukan di tab Team Builder. */}
@@ -204,16 +219,18 @@ function ArtistCard({
         {owned && (
           <button
             type="button"
-            onClick={() => onOwned(a.slug, !owned.has(a.slug))}
-            aria-pressed={owned.has(a.slug)}
-            aria-label={owned.has(a.slug) ? t(C.collection.markMissing, { name: a.name }) : t(C.collection.markOwned, { name: a.name })}
-            className={`mt-auto min-h-11 cursor-pointer border-t px-2 text-xs font-semibold transition-colors duration-200 ${
-              owned.has(a.slug)
-                ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
-                : "border-white/10 text-zinc-400 hover:text-zinc-200"
+            onClick={() => onOwned(a.slug, !isOwned)}
+            aria-pressed={isOwned}
+            disabled={busy}
+            aria-label={isOwned ? t(C.collection.markMissing, { name: a.name }) : t(C.collection.markOwned, { name: a.name })}
+            className={`mt-auto flex min-h-11 cursor-pointer items-center justify-center gap-1.5 border-t px-2 text-xs font-semibold transition-colors duration-200 disabled:cursor-wait disabled:opacity-60 ${
+              isOwned
+                ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/15"
+                : "border-white/10 text-zinc-300 hover:bg-white/5 hover:text-zinc-100"
             }`}
           >
-            {owned.has(a.slug) ? C.collection.owned : C.collection.missing}
+            <Icon d={isOwned ? ICONS.check : ICONS.plus} className="h-3.5 w-3.5" />
+            {busy ? C.collection.saving : isOwned ? C.collection.saved : C.collection.save}
           </button>
         )}
       </div>
