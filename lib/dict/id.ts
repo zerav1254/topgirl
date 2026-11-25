@@ -118,6 +118,12 @@ export const id = {
     saved: "Tersimpan.",
     hint: "ID dan server berupa angka. Kosongkan kalau belum tahu.",
     error: "Profil gagal disimpan. Periksa angka ID dan server.",
+    adminRole: "Admin",
+    userRole: "Pengguna",
+    publicProfile: "Profil publik",
+    publicHint: "Hanya lineup yang dibagikan yang tampil.",
+    sharedLineups: "Lineup dibagikan",
+    noShared: "Belum ada lineup yang dibagikan.",
   },
   collection: {
     label: "Koleksi",

@@ -27,6 +27,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
       tab="artists"
       owned={owned}
       user={profile?.name ?? profile?.email ?? null}
+      avatarUrl={profile?.avatarUrl ?? null}
       originOrder={lookups.origins.map((o) => o.id)}
     />
   );

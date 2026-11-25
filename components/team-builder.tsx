@@ -27,6 +27,7 @@ export function TeamBuilder({
   tab,
   owned,
   user,
+  avatarUrl,
   originOrder,
 }: {
   artists: Artist[];
@@ -35,6 +36,8 @@ export function TeamBuilder({
   // null = belum login; array (boleh kosong) = sudah login.
   owned: string[] | null;
   user: string | null;
+  // Avatar akun (Google/Discord); null = pakai inisial.
+  avatarUrl: string | null;
   // Urutan chip pool dari tabel origins (kolom sort).
   originOrder: string[];
 }) {
@@ -117,10 +120,21 @@ export function TeamBuilder({
         </div>
         <div className="flex w-full items-center justify-end gap-2 sm:w-auto">
           <Link
-            href={`/${locale}/login`}
-            className="flex min-h-11 max-w-40 items-center truncate rounded-lg border border-white/10 px-3 text-xs font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
+            href={`/${locale}${user ? "/profile" : "/login"}`}
+            className="flex min-h-11 max-w-40 items-center gap-1.5 truncate rounded-lg border border-white/10 px-2 text-xs font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
           >
-            {user ? user : C.auth.login}
+            {user && (
+              <span className="block h-6 w-6 shrink-0 overflow-hidden rounded-md border border-white/10 bg-panel-2">
+                {avatarUrl ? (
+                  <Image src={avatarUrl} alt="" width={48} height={48} sizes="24px" className="h-full w-full object-cover" />
+                ) : (
+                  <span aria-hidden="true" className="grid h-full w-full place-items-center text-[10px] font-bold text-white/40">
+                    {user.slice(0, 2).toUpperCase()}
+                  </span>
+                )}
+              </span>
+            )}
+            <span className="truncate">{user ? user : C.auth.login}</span>
           </Link>
           <LocaleSwitcher locale={locale} />
         </div>

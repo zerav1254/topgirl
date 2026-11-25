@@ -15,9 +15,12 @@ const nextConfig: NextConfig = {
     serverActions: { bodySizeLimit: "10mb" },
   },
   images: {
-    remotePatterns: supabaseHost
-      ? [{ protocol: "https", hostname: supabaseHost, pathname: "/storage/v1/object/public/**" }]
-      : [],
+    remotePatterns: [
+      ...(supabaseHost ? [{ protocol: "https" as const, hostname: supabaseHost, pathname: "/storage/v1/object/public/**" }] : []),
+      // Avatar akun dari provider OAuth (Google/Discord).
+      { protocol: "https" as const, hostname: "lh3.googleusercontent.com" },
+      { protocol: "https" as const, hostname: "cdn.discordapp.com" },
+    ],
   },
 };
 

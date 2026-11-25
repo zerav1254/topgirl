@@ -34,6 +34,7 @@ export default async function TeamPage({ params }: { params: Promise<{ locale: s
       tab="team"
       owned={owned}
       user={profile?.name ?? profile?.email ?? null}
+      avatarUrl={profile?.avatarUrl ?? null}
       originOrder={lookups.origins.map((o) => o.id)}
     />
   );

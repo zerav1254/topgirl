@@ -120,6 +120,12 @@ export const fr: Dict = {
     saved: "Enregistré.",
     hint: "L'ID et le serveur sont des nombres. Laissez vide si vous ne savez pas.",
     error: "Profil non enregistré. Vérifiez les nombres d'ID et de serveur.",
+    adminRole: "Admin",
+    userRole: "Membre",
+    publicProfile: "Profil public",
+    publicHint: "Seules les compositions partagées apparaissent ici.",
+    sharedLineups: "Compositions partagées",
+    noShared: "Aucune composition partagée.",
   },
   collection: {
     label: "Collection",

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Noto_Sans_KR, Sora } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { BottomNav } from "@/components/bottom-nav";
+import { isAdmin } from "@/lib/auth";
 import { DICT, LOCALES, localeOr } from "@/lib/i18n";
 import { SITE_ICON, pageMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
@@ -42,6 +43,8 @@ export default async function LocaleLayout({
   // Jangan notFound() di layout: Next memakai 404 default, bukan [locale]/not-found.
   // Halaman di bawah segmen ini yang memvalidasi lalu memanggil notFound().
   const locale = localeOr(raw);
+  // Tab "Kelola data" hanya untuk admin; halaman manage tetap punya gate sendiri.
+  const admin = await isAdmin();
 
   return (
     <html lang={locale} className={`${inter.variable} ${sora.variable} ${notoKo.variable}`}>
@@ -53,7 +56,7 @@ export default async function LocaleLayout({
           {DICT[locale].common.skip}
         </a>
         {children}
-        <BottomNav locale={locale} />
+        <BottomNav locale={locale} admin={admin} />
         <Analytics />
       </body>
     </html>

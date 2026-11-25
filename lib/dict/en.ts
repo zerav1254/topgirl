@@ -120,6 +120,12 @@ export const en: Dict = {
     saved: "Saved.",
     hint: "ID and server are numbers. Leave empty if unsure.",
     error: "Could not save profile. Check the ID and server numbers.",
+    adminRole: "Admin",
+    userRole: "Member",
+    publicProfile: "Public profile",
+    publicHint: "Only lineups you share appear here.",
+    sharedLineups: "Shared lineups",
+    noShared: "No shared lineups yet.",
   },
   collection: {
     label: "Collection",

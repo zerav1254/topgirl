@@ -59,8 +59,7 @@ export async function setShare(userId: string, id: string, share: boolean): Prom
   return null;
 }
 
-export async function loadShared(shareSlug: string): Promise<{ lineup: Lineup; ownerName: string | null; ownerServer: number | null } | null> {
-  const sb = adminClient();
+export async function loadShared(shareSlug: string): Promise<{ lineup: Lineup; ownerName: string | null; ownerServer: number | null } | null> {  const sb = adminClient();
   const { data, error } = await sb.from("lineups").select(`${COLS},user_id`).eq("share_slug", shareSlug).maybeSingle();
   if (error || !data) return null;
 
@@ -77,5 +76,37 @@ export async function loadShared(shareSlug: string): Promise<{ lineup: Lineup; o
     // Koleksi tidak ditampilkan di halaman share: status milik penonton, bukan pemilik lineup.
     ownerName: owner?.ingame_nickname ?? owner?.name ?? null,
     ownerServer: owner?.ingame_server ?? null,
+  };
+}
+
+export type PublicProfile = {
+  name: string | null;
+  ingameNickname: string | null;
+  ingameServer: number | null;
+  avatarUrl: string | null;
+  lineups: Lineup[];
+};
+
+// Profil publik = user_id (uuid). Hanya lineup ber-share_slug yang ikut, jadi isi profil
+// tidak bisa dipakai mengintip lineup privat.
+export async function loadPublicProfile(userId: string): Promise<PublicProfile | null> {
+  const sb = adminClient();
+  const [profile, rows] = await Promise.all([
+    sb.from("profiles").select("name,ingame_nickname,ingame_server,avatar_url").eq("user_id", userId).maybeSingle(),
+    sb.from("lineups").select(COLS).eq("user_id", userId).not("share_slug", "is", null).order("updated_at", { ascending: false }),
+  ]);
+  if (profile.error || !profile.data) return null;
+  const p = profile.data as {
+    name: string | null;
+    ingame_nickname: string | null;
+    ingame_server: number | null;
+    avatar_url: string | null;
+  };
+  return {
+    name: p.name,
+    ingameNickname: p.ingame_nickname,
+    ingameServer: p.ingame_server,
+    avatarUrl: p.avatar_url,
+    lineups: rows.error ? [] : (rows.data as Row[]).map(toLineup),
   };
 }

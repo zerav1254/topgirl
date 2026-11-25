@@ -120,6 +120,12 @@ export const ko: Dict = {
     saved: "저장됨.",
     hint: "ID와 서버는 숫자입니다. 모르면 비워 두세요.",
     error: "프로필을 저장하지 못했습니다. ID와 서버 숫자를 확인하세요.",
+    adminRole: "관리자",
+    userRole: "회원",
+    publicProfile: "공개 프로필",
+    publicHint: "공유한 라인업만 여기에 표시됩니다.",
+    sharedLineups: "공유된 라인업",
+    noShared: "공유된 라인업이 없습니다.",
   },
   collection: {
     label: "컬렉션",
