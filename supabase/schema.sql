@@ -206,3 +206,22 @@ drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
+
+-- ── Season artis aboard ─────────────────────────────────────────────────────
+-- Hanya artis origin Tokyo/Bali/Rome. Baris tidak ada = season belum diketahui.
+-- Sumber awal: note CSV 2025; DB tetap sumber data terbaru untuk skill/origin.
+
+create table public.artist_seasons (
+  artist_slug text primary key references public.artists (slug) on update cascade on delete cascade,
+  season smallint not null check (season between 1 and 12),
+  updated_at timestamptz not null default now()
+);
+
+alter table public.artist_seasons enable row level security;
+
+drop trigger if exists artist_seasons_touch on public.artist_seasons;
+create trigger artist_seasons_touch
+  before update on public.artist_seasons
+  for each row execute function public.set_updated_at();
+
+create policy "read artist seasons" on public.artist_seasons for select to anon, authenticated using (true);
