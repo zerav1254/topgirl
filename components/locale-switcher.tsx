@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
+import { ICONS, Icon } from "@/components/artist-ui";
 import { DICT, LANG_CODE, LANG_NAME, LOCALES, type Locale } from "@/lib/i18n";
 
 const FLAG: Record<Locale, string> = { id: "id", en: "en", fr: "fr", ko: "ko" };
@@ -88,18 +89,7 @@ export function LocaleSwitcher({ locale, className = "" }: { locale: Locale; cla
       >
         <Flag locale={locale} />
         <span className="text-xs font-semibold text-zinc-300">{LANG_CODE[locale]}</span>
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden="true"
-          className="h-3.5 w-3.5 text-zinc-400"
-        >
-          <path d="m6 9 6 6 6-6" />
-        </svg>
+        <Icon d={ICONS.chevronDown} className="h-3.5 w-3.5 text-zinc-400" />
       </button>
 
       {open && (

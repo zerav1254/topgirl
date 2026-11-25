@@ -79,7 +79,7 @@ export function LineupsTab({
       >
         <div className="flex items-center gap-2">
           <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-gold/30 bg-gold/10 text-gold">
-            <Icon d={ICONS.layers} className="h-4 w-4" />
+            <Icon d={ICONS.layers} className="h-4 w-4 shrink-0" />
           </span>
           <h2 className="min-w-0 flex-1 truncate text-sm font-semibold">{C.saveTitle}</h2>
           <span className="tabular shrink-0 rounded-md border border-white/15 bg-white/5 px-2 py-0.5 text-xs font-semibold text-zinc-100">

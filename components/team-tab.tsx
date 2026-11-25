@@ -97,7 +97,7 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
               title={C.pool.bestHint}
               className="flex min-h-11 cursor-pointer items-center gap-1 rounded-md border border-brand/40 bg-brand/10 px-2 py-1 text-sm font-semibold text-zinc-100 transition-colors duration-200 hover:border-brand/60"
             >
-              <Icon d={ICONS.sliders} className="h-4 w-4" />
+              <Icon d={ICONS.sliders} className="h-4 w-4 shrink-0" />
               {C.pool.best}
             </button>
           )}
@@ -109,7 +109,7 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
               }}
               className="flex min-h-11 cursor-pointer items-center gap-1 rounded-md px-2 py-1 text-sm text-zinc-400 transition-colors duration-200 hover:bg-white/5 hover:text-red-300"
             >
-              <Icon d={ICONS.trash} className="h-4 w-4" />
+              <Icon d={ICONS.trash} className="h-4 w-4 shrink-0" />
               {C.common.reset}
             </button>
           )}
@@ -187,7 +187,7 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
               <dd className="mt-1 flex flex-wrap gap-1">
                 {summary.genreList.map(([g, n]) => (
                   <span key={g} className="inline-flex items-center gap-1 rounded-md bg-white/5 px-2 py-0.5 text-zinc-300">
-                    <GenreIcon genre={g} className="h-3 w-3" />
+                    <GenreIcon genre={g} className="h-3 w-3 shrink-0" />
                     {g} <span className="text-zinc-400">×{n}</span>
                   </span>
                 ))}
@@ -295,7 +295,7 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
                         active ? "border-gold/45 bg-gold/20 text-gold" : "border-white/15 text-zinc-300"
                       }`}
                     >
-                      <Icon d={active ? ICONS.check : ICONS.plus} className="h-4 w-4" />
+                      <Icon d={active ? ICONS.check : ICONS.plus} className="h-4 w-4 shrink-0" />
                     </span>
                   </button>
                 </li>

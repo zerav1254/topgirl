@@ -79,6 +79,7 @@ export const ICONS = {
   sliders: "M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6",
   edit: "M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z",
   chevronRight: "M9 18l6-6-6-6",
+  chevronDown: "m6 9 6 6 6-6",
   arrowLeft: "M19 12H5M12 19l-7-7 7-7",
   home: "M3 11l9-8 9 8M5 9v11a1 1 0 0 0 1 1h4v-7h4v7h4a1 1 0 0 0 1-1V9",
   upload: "M12 16V4M7 9l5-5 5 5M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3",

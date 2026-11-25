@@ -115,7 +115,7 @@ export function ArtistsTab({ artists, scoped, blocked, rank, seasonTiers, owned,
         <section className="mt-6 border-t border-white/10 pt-4">
           <h2 className="mb-1 flex items-center gap-2">
             <span className="inline-flex items-center gap-1 rounded-md border border-amber-500/40 bg-amber-500/10 px-2 py-0.5 text-sm font-semibold text-amber-300">
-              <Icon d={ICONS.info} className="h-4 w-4" />
+              <Icon d={ICONS.info} className="h-4 w-4 shrink-0" />
               {C.pool.blocked}
             </span>
             <span className="text-xs font-normal text-zinc-400">{t(C.artists.tierCount, { n: unavailable.length })}</span>
@@ -209,7 +209,7 @@ function ArtistCard({
             inTeam && (
               <span className="absolute top-1.5 right-1.5 grid h-7 w-7 place-items-center rounded-md border border-gold/45 bg-ink/80 text-gold">
                 <span className="sr-only">{C.artists.inTeam}</span>
-                <Icon d={ICONS.check} className="h-4 w-4" />
+                <Icon d={ICONS.check} className="h-4 w-4 shrink-0" />
               </span>
             )
           )}
@@ -246,7 +246,7 @@ function ArtistCard({
                 : "border-white/10 text-zinc-300 hover:bg-white/5 hover:text-zinc-100"
             }`}
           >
-            <Icon d={inTeam ? ICONS.check : ICONS.plus} className="h-3.5 w-3.5" />
+            <Icon d={inTeam ? ICONS.check : ICONS.plus} className="h-3.5 w-3.5 shrink-0" />
             {inTeam ? C.artists.removeFromTeam : C.artists.addToTeam}
           </button>
           {owned && (
@@ -262,7 +262,7 @@ function ArtistCard({
                   : "border-white/10 text-zinc-300 hover:bg-white/5 hover:text-zinc-100"
               }`}
             >
-              <Icon d={isOwned ? ICONS.check : ICONS.plus} className="h-3.5 w-3.5" />
+              <Icon d={isOwned ? ICONS.check : ICONS.plus} className="h-3.5 w-3.5 shrink-0" />
               {busy ? C.collection.saving : isOwned ? C.collection.saved : C.collection.save}
             </button>
           )}
