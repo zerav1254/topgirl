@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 
 export const PHOTO_BUCKET = "artist-thumb";
+export const AVATAR_BUCKET = "avatar";
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 const publishable = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";

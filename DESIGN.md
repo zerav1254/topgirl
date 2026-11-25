@@ -66,7 +66,7 @@ Saat login, kartu menambah satu tombol koleksi selebar kartu di bawah skill: `mi
 
 **Input pencarian** — ikon SVG di kiri (`pl-9`), border fokus `focus:border-brand/60`.
 
-**Bottom nav** — 4 menu untuk pengguna (Artists/Team/Lineup/Info) + Kelola untuk admin (`grid-cols-4`/`grid-cols-5`), item `min-h-14`, status aktif `text-gold` + `aria-current="page"`, badge jumlah tim memakai `sr-only` untuk angka.
+**Bottom nav** — 4 menu untuk pengguna (Artists/Team/Lineup/Profil) + Kelola untuk admin (`grid-cols-4`/`grid-cols-5`, Profil di kiri Kelola), item `min-h-14`, status aktif `text-gold` + `aria-current="page"`, badge jumlah tim memakai `sr-only` untuk angka.
 
 **Language switcher** — tombol pemicu `h-11 rounded-lg border-white/10 bg-panel/80` berisi bendera SVG (`public/assets/flags/<locale>.svg`, 20×14) + singkatan (`LANG_CODE`: ID/EN/FR/KO) + chevron; menu `role="listbox"` muncul di bawah (rata kanan), tiap opsi `min-h-11` berisi bendera + singkatan (`aria-label` = `LANG_NAME`), opsi aktif `bg-gold/10 text-gold`. Berada di header, rata kanan. Tombol "Kelola" ada di bottom nav, bukan di header. Keyboard: Enter/Space/ArrowUp/ArrowDown buka, ArrowUp/Down pindah opsi, Escape tutup dan fokus balik ke tombol; fokus keluar dari grup atau klik di luar menutup. Ganti bahasa = `router.push` path sama dengan segmen locale diganti, query dipertahankan.
 

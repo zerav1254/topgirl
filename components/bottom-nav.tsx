@@ -76,12 +76,12 @@ export function BottomNav({ locale, admin }: { locale: Locale; admin: boolean })
           {C.header.lineups}
         </Link>
         <Link
-          href={`${base}/info`}
-          aria-current={pathname === `${base}/info` ? "page" : undefined}
-          className={`${ITEM} ${pathname === `${base}/info` ? ACTIVE : IDLE}`}
+          href={`${base}/profile`}
+          aria-current={pathname === `${base}/profile` ? "page" : undefined}
+          className={`${ITEM} ${pathname === `${base}/profile` ? ACTIVE : IDLE}`}
         >
-          <Icon d={ICONS.info} className="h-5 w-5" />
-          {C.header.info}
+          <Icon d={ICONS.user} className="h-5 w-5" />
+          {C.profile.title}
         </Link>
         {admin && (
           <Link

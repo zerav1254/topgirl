@@ -6,6 +6,7 @@ import { getIdentities, getProfile } from "@/lib/auth";
 import { DOCS, DOC_KEYS } from "@/lib/docs";
 import { DICT, isLocale, type Locale } from "@/lib/i18n";
 import { LocaleSwitcher } from "@/components/locale-switcher";
+import { AvatarForm } from "@/components/avatar-form";
 import { ProfileForm } from "@/components/profile-form";
 import { DiscordMark, GoogleMark } from "@/components/provider-mark";
 import { signOut } from "@/app/[locale]/login/actions";
@@ -146,6 +147,8 @@ export default async function Page({
 
       <section className="rounded-2xl border border-white/10 bg-panel/80 p-4 sm:p-5">
         <p className="mb-3 text-sm text-zinc-400">{C.profile.subtitle}</p>
+        <AvatarForm locale={locale} />
+        <div className="my-4 border-t border-white/10" />
         <ProfileForm profile={profile} locale={locale} />
       </section>
 

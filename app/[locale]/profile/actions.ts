@@ -1,11 +1,12 @@
 "use server";
 
+import sharp from "sharp";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import { DICT, localeOr, type Locale } from "@/lib/i18n";
 import { SITE_URL } from "@/lib/site";
-import { adminClient } from "@/lib/supabase";
+import { AVATAR_BUCKET, SUPABASE_URL, adminClient } from "@/lib/supabase";
 import { createSupabaseServer } from "@/lib/supabase/server";
 
 export type ProfileResult = { ok: boolean; error: string };
@@ -44,6 +45,45 @@ export async function saveProfile(locale: Locale, fd: FormData): Promise<Profile
   if (error) return { ok: false, error: C.error };
 
   revalidatePath(`/${localeOr(locale)}/profile`);
+  return { ok: true, error: "" };
+}
+
+// Avatar user: path tetap <user_id>.webp + upsert, jadi satu file per akun, tanpa orphan.
+export async function uploadAvatar(locale: Locale, fd: FormData): Promise<ProfileResult> {
+  const l = localeOr(locale);
+  const C = DICT[l].profile;
+  let userId: string;
+  try {
+    userId = (await requireUser()).id;
+  } catch {
+    return { ok: false, error: DICT[l].actions.session };
+  }
+
+  const file = fd.get("avatar");
+  if (!(file instanceof File) || file.size === 0 || file.size > 10 * 1024 * 1024) return { ok: false, error: C.avatarError };
+
+  let webp: Buffer;
+  try {
+    webp = await sharp(Buffer.from(await file.arrayBuffer()))
+      .resize(320, 320, { fit: "cover" })
+      .webp({ quality: 82 })
+      .toBuffer();
+  } catch {
+    return { ok: false, error: C.avatarError };
+  }
+
+  const sb = adminClient();
+  const path = `${userId}.webp`;
+  const upload = await sb.storage.from(AVATAR_BUCKET).upload(path, webp, { contentType: "image/webp", upsert: true });
+  if (upload.error) return { ok: false, error: C.avatarError };
+
+  // Query versi: path tetap, tanpa ini browser/CDN menyajikan avatar lama.
+  const url = `${SUPABASE_URL}/storage/v1/object/public/${AVATAR_BUCKET}/${path}?v=${Date.now()}`;
+  const { error } = await sb.from("profiles").update({ avatar_url: url }).eq("user_id", userId);
+  if (error) return { ok: false, error: C.avatarError };
+
+  revalidatePath(`/${l}/profile`);
+  revalidatePath(`/${l}/u/${userId}`);
   return { ok: true, error: "" };
 }
 

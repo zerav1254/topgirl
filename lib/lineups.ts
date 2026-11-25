@@ -84,6 +84,7 @@ export type PublicProfile = {
 
 // Profil publik = user_id (uuid). Hanya lineup ber-share_slug yang ikut, jadi isi profil
 // tidak bisa dipakai mengintip lineup privat.
+
 export async function loadPublicProfile(userId: string): Promise<PublicProfile | null> {
   const sb = adminClient();
   const [profile, rows] = await Promise.all([

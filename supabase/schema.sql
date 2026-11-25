@@ -121,6 +121,11 @@ insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_typ
 values ('artist-thumb', 'artist-thumb', true, 5242880, array['image/webp'])
 on conflict (id) do nothing;
 
+-- Avatar user: publik (dipakai halaman profil), satu file per akun (<user_id>.webp).
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('avatar', 'avatar', true, 5242880, array['image/webp'])
+on conflict (id) do nothing;
+
 -- catatan: pgvector dipasang Supabase di schema extensions, bukan public.
 -- helper public.rls_auto_enable() milik Supabase; execute-nya dicabut dari anon/authenticated.
 
