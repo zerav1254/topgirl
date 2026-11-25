@@ -80,7 +80,7 @@ export function BottomNav({ locale, admin }: { locale: Locale; admin: boolean })
           aria-current={pathname === `${base}/lineups` ? "page" : undefined}
           className={`${ITEM} ${pathname === `${base}/lineups` ? ACTIVE : IDLE}`}
         >
-          <Icon d={ICONS.check} className="h-5 w-5" />
+          <Icon d={ICONS.layers} className="h-5 w-5" />
           {C.header.lineups}
         </Link>
         {admin && (
