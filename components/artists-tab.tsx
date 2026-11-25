@@ -66,13 +66,12 @@ export function ArtistsTab({ artists, scoped, blocked, rank, owned, onOwned, pic
           return (
           <section key={tier} className="mt-4">
             <h2 className="mb-2 flex items-center gap-2">
-              {rank ? (
+              <TierBadge tier={tier} />
+              {rank && range ? (
                 <span className="tabular rounded-md border border-white/15 bg-white/5 px-2 py-0.5 font-display text-sm font-semibold text-zinc-100">
                   {range}
                 </span>
-              ) : (
-                <TierBadge tier={tier} />
-              )}
+              ) : null}
               <span className="text-xs font-normal text-zinc-400">{t(C.artists.tierCount, { n: list.length })}</span>
             </h2>
             <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
@@ -167,12 +166,9 @@ function ArtistCard({
               {a.name.slice(0, 2).toUpperCase()}
             </span>
           )}
-          <span className="absolute top-1.5 left-1.5 rounded-md bg-ink/70 p-0.5 backdrop-blur-sm">
-            {r ? (
-              <RankBadge rank={r.rank} size={r.size} label={t(C.pool.rank, { n: r.rank, total: r.size })} />
-            ) : (
-              <TierBadge tier={a.tiers[category]} />
-            )}
+          <span className="absolute top-1.5 left-1.5 flex flex-col items-start gap-1 rounded-md bg-ink/70 p-0.5 backdrop-blur-sm">
+            {r && <RankBadge rank={r.rank} size={r.size} label={t(C.pool.rank, { n: r.rank, total: r.size })} />}
+            <TierBadge tier={a.tiers[category]} />
           </span>
           {blocked ? (
             <span className="absolute inset-x-1.5 bottom-1.5 rounded-md border border-amber-500/40 bg-ink/85 px-1.5 py-0.5 text-center text-[11px] font-semibold text-amber-300">
