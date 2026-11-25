@@ -1,5 +1,6 @@
 import {
   CATEGORIES,
+  DEFAULT_CATEGORY,
   EFFECT_SET,
   TIER_ORDER,
   scoreArtist,
@@ -74,8 +75,8 @@ export async function loadArtists(): Promise<Artist[]> {
     })
     .sort(
       (a, b) =>
-        TIER_ORDER.indexOf(a.tiers.solo) - TIER_ORDER.indexOf(b.tiers.solo) ||
-        b.scores.solo - a.scores.solo ||
+        TIER_ORDER.indexOf(a.tiers[DEFAULT_CATEGORY]) - TIER_ORDER.indexOf(b.tiers[DEFAULT_CATEGORY]) ||
+        b.scores[DEFAULT_CATEGORY] - a.scores[DEFAULT_CATEGORY] ||
         a.name.localeCompare(b.name),
     );
 }

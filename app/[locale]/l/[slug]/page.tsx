@@ -6,7 +6,7 @@ import { loadArtists } from "@/lib/artists";
 import { DICT, isLocale, t, type Locale } from "@/lib/i18n";
 import { loadShared } from "@/lib/lineups";
 import { GENRE_BONUS, TEAM_SIZE, teamSkillTotals } from "@/lib/team";
-import { EFFECT_LABEL, TIER_ORDER } from "@/lib/score";
+import { DEFAULT_CATEGORY, EFFECT_LABEL, TIER_ORDER } from "@/lib/score";
 import { Avatar, GenreIcon, ICONS, Icon, SkillList, TierBadge, formatStat, isPercent } from "@/components/artist-ui";
 
 export const dynamic = "force-dynamic";
@@ -33,9 +33,9 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
   const bySlug = new Map(artists.map((a) => [a.slug, a]));
   const team = shared.lineup.slugs.map((s) => bySlug.get(s)).filter((a) => a !== undefined);
 
-  const totalScore = team.reduce((sum, a) => sum + a.scores.solo, 0);
+  const totalScore = team.reduce((sum, a) => sum + a.scores[DEFAULT_CATEGORY], 0);
   const avgScore = team.length > 0 ? totalScore / team.length : 0;
-  const tierCounts = TIER_ORDER.map((tier) => [tier, team.filter((a) => a.tiers.solo === tier).length] as const).filter(([, n]) => n > 0);
+  const tierCounts = TIER_ORDER.map((tier) => [tier, team.filter((a) => a.tiers[DEFAULT_CATEGORY] === tier).length] as const).filter(([, n]) => n > 0);
   const genreCount = new Map<string, number>();
   for (const a of team) genreCount.set(a.genre, (genreCount.get(a.genre) ?? 0) + 1);
   const genres = [...genreCount.entries()].sort((a, b) => b[1] - a[1]);
@@ -155,7 +155,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
               className="flex items-center gap-3 rounded-xl border border-white/10 bg-panel/70 p-2.5 transition-colors duration-200 hover:border-white/25"
             >
               <span className="tabular w-4 shrink-0 text-center text-xs text-zinc-400">{i + 1}</span>
-              <Avatar artist={a} tier={a.tiers.solo} size="h-11 w-11" />
+              <Avatar artist={a} tier={a.tiers[DEFAULT_CATEGORY]} size="h-11 w-11" />
               <span className="min-w-0 flex-1">
                 <span className="flex items-center gap-1 text-sm text-zinc-400">
                   <GenreIcon genre={a.genre} className="h-3 w-3 shrink-0" />
@@ -165,8 +165,8 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
                 <SkillList skills={a.skills} locale={locale} className="mt-1" />
               </span>
               <span className="flex shrink-0 flex-col items-end gap-1">
-                <span className="tabular font-display text-base font-semibold text-zinc-100">{formatStat(a.scores.solo, locale)}</span>
-                <TierBadge tier={a.tiers.solo} />
+                <span className="tabular font-display text-base font-semibold text-zinc-100">{formatStat(a.scores[DEFAULT_CATEGORY], locale)}</span>
+                <TierBadge tier={a.tiers[DEFAULT_CATEGORY]} />
               </span>
             </li>
           ))}

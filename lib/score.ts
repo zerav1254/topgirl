@@ -127,7 +127,8 @@ export const EFFECT_LABEL: Record<Effect, Record<Locale, string>> = {
   drive: { id: "Drive", en: "Drive", fr: "Drive", ko: "드라이브", zh: "Drive", ja: "ドライブ", de: "Drive" },
 };
 
-export const CATEGORIES = ["solo", "rally", "defense", "economy"] as const;
+export const CATEGORIES = ["solo", "rally", "defense", "economy", "global", "sustain"] as const;
+export const DEFAULT_CATEGORY: Category = "global";
 export type Category = (typeof CATEGORIES)[number];
 
 // detail_skill.md: 50% basic_atk = 20% skill_dmg = 10% fan.
@@ -199,6 +200,38 @@ export const SCORE: Record<Category, Record<Effect, number>> = {
     dps_atk_rally: 0.01,
     dps_atk_company: 0.01,
   },
+  // GLOBAL: player_dmg bobot tertinggi mutlak.
+  global: {
+    player_dmg: 3,
+    wbg_dmg: 2,
+    skill_dmg: 1.25,
+    fan: 1,
+    basic_atk: 0.5,
+    fan_rally: 0.5,
+    basic_atk_red: 0.2,
+    skill_dmg_red: 0.2,
+    dps_atk_rally: 0.1,
+    dps_atk_company: 0.1,
+    dps_def: 0.1,
+    gold: 0.01,
+    drive: 0.01,
+  },
+  // SUSTAIN: reduksi serangan tertinggi, lalu player_dmg, fan, skill, basic.
+  sustain: {
+    basic_atk_red: 4,
+    skill_dmg_red: 3.5,
+    player_dmg: 1.5,
+    fan: 1,
+    skill_dmg: 0.5,
+    basic_atk: 0.3,
+    fan_rally: 0.2,
+    wbg_dmg: 0.2,
+    gold: 0.1,
+    drive: 0.1,
+    dps_def: 0.1,
+    dps_atk_rally: 0.05,
+    dps_atk_company: 0.05,
+  },
 };
 
 export const EFFECT_SET: ReadonlySet<string> = new Set(EFFECTS);
@@ -224,7 +257,7 @@ export const BANDS: [Tier, number][] = [
 ];
 
 // Score from skills only; base stats are no longer part of ranking.
-export function scoreArtist(skills: Skill[], category: Category = "solo"): number {
+export function scoreArtist(skills: Skill[], category: Category = DEFAULT_CATEGORY): number {
   const weights = SCORE[category];
   let total = 0;
   for (const s of skills) {

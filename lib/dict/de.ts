@@ -28,7 +28,7 @@ export const de: Dict = {
       "Der Rank wird aus den Artist-Skills berechnet, nicht aus den Basiswerten. Jeder Effektwert wird mit dem Gewicht seiner Kategorie multipliziert, summiert und dann auf 0–100 skaliert.",
     formula: "Formel",
     formulaText: "score = min(100, Σ(Wert × Gewicht) × {scale})",
-    formulaNote: "Der Score ist bei 100 gedeckelt. Effekte ohne Gewicht in dieser Kategorie zählen als 0.",
+    formulaNote: "Der Score ist bei 100 gedeckelt. Jeder Effekt hat in jeder Kategorie ein Gewicht; randständige Effekte ein kleines.",
     weights: "Gewicht pro 1 %",
     weightsNote:
       "Flache DPS-Werte (200/240) werden zuerst durch 2,4 geteilt, um der Prozent-Skala zu entsprechen. Die Gewichte unten gelten für jedes 1 % Skill-Wert.",
@@ -55,6 +55,8 @@ export const de: Dict = {
     rally: "PVP Rally",
     defense: "PVP Defense",
     economy: "Economy",
+    global: "PVP Global",
+    sustain: "Ausdauer",
   },
   common: {
     loading: "Lädt…",

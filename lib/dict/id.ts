@@ -26,7 +26,7 @@ export const id = {
       "Rank dihitung dari skill artist, bukan base stat. Nilai tiap efek dikali bobot kategorinya, dijumlahkan, lalu diskalakan ke 0–100.",
     formula: "Rumus",
     formulaText: "skor = min(100, Σ(nilai × bobot) × {scale})",
-    formulaNote: "Skor dibatasi 100. Efek yang tidak punya bobot di kategori tersebut dihitung 0.",
+    formulaNote: "Skor dibatasi 100. Semua efek punya bobot di setiap kategori; efek pinggiran berbobot kecil.",
     weights: "Bobot per 1%",
     weightsNote:
       "Nilai DPS flat (200/240) dibagi 2,4 lebih dulu agar setara skala persen. Bobot di bawah berlaku untuk setiap 1% nilai skill.",
@@ -53,6 +53,8 @@ export const id = {
     rally: "PVP Rally",
     defense: "PVP Defense",
     economy: "Economy",
+    global: "PVP Global",
+    sustain: "Sustain",
   },
   common: {
     loading: "Memuat…",

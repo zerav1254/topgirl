@@ -144,7 +144,7 @@ export default async function InfoPage({ params }: { params: Promise<{ locale: s
             </thead>
             <tbody>
               {EXAMPLES.map(({ name, skills }) => {
-                const score = scoreArtist(skills, "solo");
+                const score = scoreArtist(skills);
                 return (
                   <tr key={name} className="border-t border-white/5">
                     <td className="px-3 py-2 font-semibold text-zinc-100">{name}</td>

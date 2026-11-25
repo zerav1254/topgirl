@@ -28,7 +28,7 @@ export const zh: Dict = {
       "排名依据艺人技能计算，而非基础属性。每个效果值乘以所属分类权重后求和，再换算到 0–100。",
     formula: "公式",
     formulaText: "得分 = min(100, Σ(数值 × 权重) × {scale})",
-    formulaNote: "得分上限为 100。在该分类中没有权重的效果计为 0。",
+    formulaNote: "得分上限为 100。每个效果在每个分类都有权重；非主力效果使用较小权重。",
     weights: "每 1% 的权重",
     weightsNote:
       "固定 DPS 数值（200/240）先除以 2.4 以对齐百分比尺度。以下权重适用于每一 1% 的技能数值。",
@@ -55,6 +55,8 @@ export const zh: Dict = {
     rally: "PVP Rally",
     defense: "PVP Defense",
     economy: "Economy",
+    global: "PVP 全局",
+    sustain: "续航",
   },
   common: {
     loading: "加载中…",

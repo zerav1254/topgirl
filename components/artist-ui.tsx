@@ -1,7 +1,7 @@
 import Image from "next/image";
 import type { Artist } from "@/lib/artists";
 import { DICT, numberLocale, type Locale } from "@/lib/i18n";
-import { EFFECT_LABEL, FLAT_EFFECTS, type Effect } from "@/lib/score";
+import { DEFAULT_CATEGORY, EFFECT_LABEL, FLAT_EFFECTS, type Effect } from "@/lib/score";
 
 const TIER_STYLE: Record<string, string> = {
   "S+": "border-gold/45 bg-gold/15 text-gold",
@@ -117,7 +117,7 @@ export function RankBadge({ rank, size, label, className = "" }: { rank: number;
   );
 }
 
-export function Avatar({ artist, size = "h-12 w-12", tier = artist.tiers.solo }: { artist: Artist; size?: string; tier?: string }) {
+export function Avatar({ artist, size = "h-12 w-12", tier = artist.tiers[DEFAULT_CATEGORY] }: { artist: Artist; size?: string; tier?: string }) {
   return (
     <span className={`block shrink-0 overflow-hidden rounded-lg bg-gradient-to-br ${AVATAR_STYLE[tier] ?? AVATAR_STYLE.D} ${size}`}>
       {artist.photoUrl ? (

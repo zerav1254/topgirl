@@ -28,7 +28,7 @@ export const en: Dict = {
       "Rank is calculated from artist skills, not base stats. Each effect value is multiplied by its category weight, summed, then scaled to 0–100.",
     formula: "Formula",
     formulaText: "score = min(100, Σ(value × weight) × {scale})",
-    formulaNote: "Score is capped at 100. Effects with no weight in that category count as 0.",
+    formulaNote: "Score is capped at 100. Every effect has a weight in every category; off-category effects use a small weight.",
     weights: "Weight per 1%",
     weightsNote:
       "Flat DPS values (200/240) are divided by 2.4 first to match the percent scale. The weights below apply to every 1% of skill value.",
@@ -55,6 +55,8 @@ export const en: Dict = {
     rally: "PVP Rally",
     defense: "PVP Defense",
     economy: "Economy",
+    global: "PVP Global",
+    sustain: "Sustain",
   },
   common: {
     loading: "Loading…",

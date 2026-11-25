@@ -44,6 +44,8 @@ const orders = {
   rally: ["fan_rally", "player_dmg", "skill_dmg", "basic_atk"],
   defense: ["basic_atk_red", "skill_dmg_red", "player_dmg"],
   economy: ["gold", "drive"],
+  global: ["player_dmg", "wbg_dmg", "skill_dmg", "fan", "basic_atk"],
+  sustain: ["basic_atk_red", "skill_dmg_red", "player_dmg", "fan", "skill_dmg", "basic_atk"],
 };
 for (const [category, order] of Object.entries(orders)) {
   const scores = order.map((effect) => scoreArtist([{ effect, value: 20 }], category));
@@ -51,6 +53,15 @@ for (const [category, order] of Object.entries(orders)) {
     assert.ok(scores[i] < scores[i - 1], `priority ${category}: ${order[i]} must rank below ${order[i - 1]}`);
   }
 }
+// GLOBAL: player_dmg bobot tertinggi mutlak.
+const globalTop = Object.entries(SCORE.global).sort((a, b) => b[1] - a[1])[0];
+assert.equal(globalTop[0], "player_dmg", "GLOBAL: player_dmg harus bobot tertinggi");
+// SUSTAIN: dua reduksi tertinggi, lalu player_dmg.
+assert.deepEqual(
+  Object.entries(SCORE.sustain).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([effect]) => effect),
+  ["basic_atk_red", "skill_dmg_red", "player_dmg"],
+  "SUSTAIN: reduksi serangan lalu player_dmg",
+);
 // Bobot kecil SOLO tidak boleh mengalahkan damage murni.
 assert.ok(
   scoreArtist([{ effect: "wbg_dmg", value: 20 }], "solo") > scoreArtist([{ effect: "dps_def", value: 20 }], "solo"),

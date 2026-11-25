@@ -8,7 +8,7 @@ import type { Artist } from "@/lib/artists";
 import { DICT, type Locale } from "@/lib/i18n";
 import { parsePool, getServerPool, readPool, subscribePool, writePool } from "@/lib/pool-store";
 import { blockedOf, poolActive, poolOf, poolTiers, rankInPool } from "@/lib/pool";
-import type { Category } from "@/lib/score";
+import { DEFAULT_CATEGORY, type Category } from "@/lib/score";
 import { bestLineup, TEAM_SIZE } from "@/lib/team";
 import { getServerTeam, readTeam, subscribeTeam, writeTeam } from "@/lib/team-store";
 import { isCategory, useArtistFilter } from "./artist-filter";
@@ -48,7 +48,7 @@ export function TeamBuilder({
   const ownedSet = useMemo(() => (owned ? new Set(ownedSlugs) : null), [owned, ownedSlugs]);
   // Tidak ada bar kategori terpisah: filter "Spesialis" menentukan kategori skor/tier.
   const state = useArtistFilter(artists, locale, ownedSet ?? undefined);
-  const category: Category = isCategory(state.filter.specialty) ? state.filter.specialty : "solo";
+  const category: Category = isCategory(state.filter.specialty) ? state.filter.specialty : DEFAULT_CATEGORY;
 
   const poolRaw = useSyncExternalStore(subscribePool, readPool, getServerPool);
   const pool = useMemo(() => parsePool(poolRaw), [poolRaw]);

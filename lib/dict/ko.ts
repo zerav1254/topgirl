@@ -28,7 +28,7 @@ export const ko: Dict = {
       "랭크는 기본 스탯이 아니라 아티스트 스킬로 계산합니다. 각 효과 값에 카테고리 가중치를 곱해 더한 뒤 0–100으로 환산합니다.",
     formula: "공식",
     formulaText: "점수 = min(100, Σ(값 × 가중치) × {scale})",
-    formulaNote: "점수는 100에서 제한됩니다. 해당 카테고리에 가중치가 없는 효과는 0으로 계산합니다.",
+    formulaNote: "점수는 100에서 제한됩니다. 모든 효과는 모든 카테고리에 가중치가 있으며, 주력이 아닌 효과는 작은 가중치를 씁니다.",
     weights: "1%당 가중치",
     weightsNote:
       "고정 DPS 값(200/240)은 퍼센트 스케일과 맞추기 위해 먼저 2.4로 나눕니다. 아래 가중치는 스킬 값 1%마다 적용됩니다.",
@@ -55,6 +55,8 @@ export const ko: Dict = {
     rally: "PVP 랠리",
     defense: "PVP 방어",
     economy: "경제",
+    global: "PVP 글로벌",
+    sustain: "지속력",
   },
   common: {
     loading: "불러오는 중…",

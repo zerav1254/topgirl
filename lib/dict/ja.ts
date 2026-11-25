@@ -28,7 +28,7 @@ export const ja: Dict = {
       "ランクは基礎ステータスではなくアーティストの skill から計算されます。各効果値にカテゴリの重みを掛けて合計し、0〜100 にスケールします。",
     formula: "計算式",
     formulaText: "score = min(100, Σ(値 × 重み) × {scale})",
-    formulaNote: "スコアは 100 が上限です。そのカテゴリで重みのない効果は 0 として扱います。",
+    formulaNote: "スコアは 100 が上限です。すべての効果が各カテゴリに重みを持ち、主力でない効果は小さな重みになります。",
     weights: "1% あたりの重み",
     weightsNote:
       "フラットな DPS 値 (200/240) はまず 2.4 で割ってパーセント尺度に合わせます。以下の重みは skill 値の 1% ごとに適用されます。",
@@ -55,6 +55,8 @@ export const ja: Dict = {
     rally: "PVP Rally",
     defense: "PVP Defense",
     economy: "Economy",
+    global: "PVP Global",
+    sustain: "継戦",
   },
   common: {
     loading: "読み込み中…",

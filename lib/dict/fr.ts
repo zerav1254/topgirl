@@ -28,7 +28,7 @@ export const fr: Dict = {
       "Le rang est calculé à partir des compétences de l'artiste, pas des stats de base. Chaque valeur d'effet est multipliée par le poids de sa catégorie, additionnée, puis ramenée sur 0–100.",
     formula: "Formule",
     formulaText: "score = min(100, Σ(valeur × poids) × {scale})",
-    formulaNote: "Le score est plafonné à 100. Les effets sans poids dans cette catégorie comptent 0.",
+    formulaNote: "Le score est plafonné à 100. Chaque effet a un poids dans chaque catégorie ; les effets hors catégorie ont un poids faible.",
     weights: "Poids par 1 %",
     weightsNote:
       "Les valeurs DPS fixes (200/240) sont d'abord divisées par 2,4 pour correspondre à l'échelle en pourcentage. Les poids ci-dessous s'appliquent à chaque 1 % de compétence.",
@@ -55,6 +55,8 @@ export const fr: Dict = {
     rally: "PVP Rally",
     defense: "PVP Défense",
     economy: "Économie",
+    global: "PVP Global",
+    sustain: "Résistance",
   },
   common: {
     loading: "Chargement…",
