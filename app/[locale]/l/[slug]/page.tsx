@@ -5,9 +5,9 @@ import { notFound } from "next/navigation";
 import { loadArtists } from "@/lib/artists";
 import { DICT, isLocale, t, type Locale } from "@/lib/i18n";
 import { loadShared } from "@/lib/lineups";
-import { GENRE_BONUS, TEAM_SIZE } from "@/lib/team";
-import { TIER_ORDER } from "@/lib/score";
-import { Avatar, GenreIcon, ICONS, Icon, SkillList, TierBadge, formatStat } from "@/components/artist-ui";
+import { GENRE_BONUS, TEAM_SIZE, teamSkillTotals } from "@/lib/team";
+import { EFFECT_LABEL, TIER_ORDER } from "@/lib/score";
+import { Avatar, GenreIcon, ICONS, Icon, SkillList, TierBadge, formatStat, isPercent } from "@/components/artist-ui";
 
 export const dynamic = "force-dynamic";
 
@@ -41,6 +41,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
   const genres = [...genreCount.entries()].sort((a, b) => b[1] - a[1]);
   const [topGenre, topCount] = genres[0] ?? ["", 0];
   const genreBonus = GENRE_BONUS[topCount] ?? 0;
+  const { playerDmg, stats } = teamSkillTotals(team);
 
   return (
     <main id="main" className="mx-auto flex w-full max-w-2xl flex-col gap-4 px-4 pt-3 pb-28 sm:pt-6">
@@ -113,6 +114,33 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
                 <span className="text-xs text-zinc-400">{t(C.team.synergyNeed, { n: topCount, genre: topGenre })}</span>
               )}
             </div>
+          </section>
+
+          <section className="rounded-xl border border-white/10 bg-panel/70 p-3">
+            <h2 className="text-[11px] font-semibold uppercase tracking-wide text-zinc-400">{C.team.stats}</h2>
+            {stats.length === 0 ? (
+              <p className="mt-1.5 text-sm text-zinc-400">{C.team.noStats}</p>
+            ) : (
+              <dl className="mt-1.5 flex flex-col gap-1.5 text-sm">
+                {stats.map(([effect, value]) => {
+                  const boosted = (effect === "skill_dmg" || effect === "basic_atk") && playerDmg > 0;
+                  return (
+                    <div key={effect} className="flex items-baseline justify-between gap-2">
+                      <dt className="min-w-0 truncate text-zinc-400">{EFFECT_LABEL[effect][locale]}</dt>
+                      <dd className="tabular shrink-0 whitespace-nowrap font-semibold text-zinc-200">
+                        {formatStat(value, locale)}
+                        {isPercent(effect) && "%"}
+                        {boosted && (
+                          <span className="ml-1 font-normal text-emerald-300">
+                            +{formatStat(playerDmg, locale)}% = {formatStat(value + playerDmg, locale)}%
+                          </span>
+                        )}
+                      </dd>
+                    </div>
+                  );
+                })}
+              </dl>
+            )}
           </section>
         </>
       )}

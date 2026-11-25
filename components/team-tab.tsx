@@ -4,8 +4,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { Artist } from "@/lib/artists";
 import { DICT, t, type Locale } from "@/lib/i18n";
 import type { Rank } from "@/lib/pool";
-import { EFFECT_LABEL, type Category, type Effect } from "@/lib/score";
-import { GENRE_BONUS, STAT_ORDER, TEAM_SIZE } from "@/lib/team";
+import { EFFECT_LABEL, type Category } from "@/lib/score";
+import { GENRE_BONUS, TEAM_SIZE, teamSkillTotals } from "@/lib/team";
 import { ArtistFilterBar, type ArtistFilterState } from "./artist-filter";
 import { Avatar, GenreIcon, ICONS, Icon, RankBadge, SkillList, TierBadge, formatStat, isPercent } from "./artist-ui";
 
@@ -57,21 +57,12 @@ export function TeamTab({ artists, scoped, blocked, rank, team, picked, locale, 
 
   const summary = useMemo(() => {
     const genreCount = new Map<string, number>();
-    const statTotal = new Map<Effect, number>();
-    for (const a of team) {
-      genreCount.set(a.genre, (genreCount.get(a.genre) ?? 0) + 1);
-      for (const s of a.skills) {
-        if (s.value !== null) statTotal.set(s.effect, (statTotal.get(s.effect) ?? 0) + s.value);
-      }
-    }
+    for (const a of team) genreCount.set(a.genre, (genreCount.get(a.genre) ?? 0) + 1);
     const genreList = [...genreCount.entries()].sort((a, b) => b[1] - a[1]);
     const [topGenre, topCount] = genreList[0] ?? ["", 0];
-    const playerDmg = statTotal.get("player_dmg") ?? 0;
-    const isBoosted = (e: Effect) => e === "skill_dmg" || e === "basic_atk";
     return {
       genreList,
-      stats: STAT_ORDER.filter((e) => statTotal.has(e) || (isBoosted(e) && playerDmg > 0)).map((e) => [e, statTotal.get(e) ?? 0] as const),
-      playerDmg,
+      ...teamSkillTotals(team),
       topGenre,
       topCount,
       genreBonus: GENRE_BONUS[topCount] ?? 0,

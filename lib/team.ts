@@ -26,6 +26,23 @@ export const STAT_ORDER: Effect[] = [
   "drive",
 ];
 
+// Akumulasi skill seluruh tim. Baris skill_dmg/basic_atk tetap muncul saat player_dmg > 0
+// supaya hasil boost (info saja, bukan skor) bisa ditampilkan.
+export function teamSkillTotals(team: Artist[]) {
+  const totals = new Map<Effect, number>();
+  for (const a of team) {
+    for (const s of a.skills) {
+      if (s.value !== null) totals.set(s.effect, (totals.get(s.effect) ?? 0) + s.value);
+    }
+  }
+  const playerDmg = totals.get("player_dmg") ?? 0;
+  const boosted = (e: Effect) => e === "skill_dmg" || e === "basic_atk";
+  return {
+    playerDmg,
+    stats: STAT_ORDER.filter((e) => totals.has(e) || (boosted(e) && playerDmg > 0)).map((e) => [e, totals.get(e) ?? 0] as const),
+  };
+}
+
 // Tim terbaik dari sekumpulan artis. Tujuan: jumlah skor, lalu bonus synergy sebagai
 // tie-break. Brute force karena 5 slot tetap dan pool sudah dipangkas BEST_POOL_LIMIT.
 export function bestLineup(artists: Artist[], category: Category, size = TEAM_SIZE): Artist[] {
