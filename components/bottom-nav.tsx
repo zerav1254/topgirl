@@ -43,7 +43,7 @@ export function BottomNav({ locale, admin }: { locale: Locale; admin: boolean })
           aria-current={onArtists ? "page" : undefined}
           className={`${ITEM} ${onArtists ? ACTIVE : IDLE}`}
         >
-          <Icon d={ICONS.mic} className="h-5 w-5" />
+          <Icon d={ICONS.star} className="h-5 w-5" />
           {C.header.artists}
         </Link>
         <Link
