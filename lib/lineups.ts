@@ -54,23 +54,24 @@ export async function setShare(userId: string, id: string, share: boolean): Prom
   return null;
 }
 
-export async function loadShared(shareSlug: string): Promise<{ lineup: Lineup; ownerName: string | null; ownerServer: number | null } | null> {  const sb = adminClient();
+export async function loadShared(shareSlug: string): Promise<{ lineup: Lineup; ownerName: string | null; ownerServer: number | null; ownerAvatarUrl: string | null } | null> {  const sb = adminClient();
   const { data, error } = await sb.from("lineups").select(`${COLS},user_id`).eq("share_slug", shareSlug).maybeSingle();
   if (error || !data) return null;
 
   const row = data as Row & { user_id: string };
   const { data: profile } = await sb
     .from("profiles")
-    .select("ingame_nickname,name,ingame_server")
+    .select("ingame_nickname,name,ingame_server,avatar_url")
     .eq("user_id", row.user_id)
     .maybeSingle();
 
-  const owner = profile as { ingame_nickname: string | null; name: string | null; ingame_server: number | null } | null;
+  const owner = profile as { ingame_nickname: string | null; name: string | null; ingame_server: number | null; avatar_url: string | null } | null;
   return {
     lineup: toLineup(row),
     // Koleksi tidak ditampilkan di halaman share: status milik penonton, bukan pemilik lineup.
     ownerName: owner?.ingame_nickname ?? owner?.name ?? null,
     ownerServer: owner?.ingame_server ?? null,
+    ownerAvatarUrl: owner?.avatar_url ?? null,
   };
 }
 

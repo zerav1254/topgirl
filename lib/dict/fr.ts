@@ -159,6 +159,7 @@ export const fr: Dict = {
   },
   lineup: {
     title: "Mes compositions",
+    saveTitle: "Enregistrer l'équipe actuelle",
     subtitle: "Enregistrez votre équipe et partagez-la par un lien non listé.",
     name: "Nom de la composition",
     save: "Enregistrer l'équipe",

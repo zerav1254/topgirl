@@ -58,7 +58,7 @@ Saat login, kartu menambah satu tombol koleksi selebar kartu di bawah skill: `mi
 
 **Pool chips** — satu baris chip season (`Semua` + angka season) single-select. Urutan season menaik. Aktif: `border-gold/50 bg-gold/10 text-gold`; idle: `border-white/10 bg-panel/80 text-zinc-300`. `min-h-11`, `aria-pressed`.
 
-**Lineup list** — kartu `rounded-xl border-white/10 bg-panel/70 p-3` per lineup: nama (truncate) + `n/5` (`tabular`, `TEAM_SIZE`), status tautan (`shared`/`private`), lalu baris tombol `min-h-11`: Bagikan/Cabut, Salin, Buka, dan Hapus (`ml-auto`, hover merah). Hapus wajib konfirmasi `window.confirm`. Salin mengumumkan hasil lewat `role="status"`.
+**Lineup list** — kartu `rounded-xl border-white/10 bg-panel/70 p-3` per lineup: tumpukan avatar 5 slot (slot kosong bergaris putus-putus), nama (truncate) + `n/5` (`tabular`, `TEAM_SIZE`), badge status tautan (`shared`/`private`), progress bar emas, lalu baris tombol `min-h-11`: Bagikan/Cabut, Salin, Buka, dan Hapus (`ml-auto`, hover merah). Hapus wajib konfirmasi `window.confirm`. Salin mengumumkan hasil lewat `role="status"`.
 
 **Slot tim** — daftar `<ol>` 5 baris `min-h-[4rem]`. Kosong: `border-dashed border-white/10` + label "Slot n kosong". Terisi: `border-white/15 bg-panel-2`, avatar, nama, badge tier, genre, skor kategori aktif, tombol hapus. Baris terisi bisa diklik membuka dialog pemilih slot (`<dialog>` `w-[min(100%-2rem,32rem)]` berisi filter bersama + daftar kandidat dengan detail skill).
 
@@ -66,7 +66,7 @@ Saat login, kartu menambah satu tombol koleksi selebar kartu di bawah skill: `mi
 
 **Input pencarian** — ikon SVG di kiri (`pl-9`), border fokus `focus:border-brand/60`.
 
-**Bottom nav** — 4 menu untuk pengguna (Artists/Team/Lineup/Profil) + Kelola untuk admin (`grid-cols-4`/`grid-cols-5`, Profil di kiri Kelola), item `min-h-14`, status aktif `text-gold` + `aria-current="page"`, badge jumlah tim memakai `sr-only` untuk angka.
+**Bottom nav** — 4 menu untuk pengguna (Artists/Team/Lineup/Profil) + Kelola untuk admin (`grid-cols-4`/`grid-cols-5`, Profil di kiri Kelola), item `min-h-14`, status aktif `text-gold bg-gold/10` + `aria-current="page"`, badge jumlah tim memakai `sr-only` untuk angka.
 
 **Language switcher** — tombol pemicu `h-11 rounded-lg border-white/10 bg-panel/80` berisi bendera SVG (`public/assets/flags/<locale>.svg`, 20×14) + singkatan (`LANG_CODE`: ID/EN/FR/KO) + chevron; menu `role="listbox"` muncul di bawah (rata kanan), tiap opsi `min-h-11` berisi bendera + singkatan (`aria-label` = `LANG_NAME`), opsi aktif `bg-gold/10 text-gold`. Berada di header, rata kanan. Tombol "Kelola" ada di bottom nav, bukan di header. Keyboard: Enter/Space/ArrowUp/ArrowDown buka, ArrowUp/Down pindah opsi, Escape tutup dan fokus balik ke tombol; fokus keluar dari grup atau klik di luar menutup. Ganti bahasa = `router.push` path sama dengan segmen locale diganti, query dipertahankan.
 

@@ -159,6 +159,7 @@ export const en: Dict = {
   },
   lineup: {
     title: "My lineups",
+    saveTitle: "Save current team",
     subtitle: "Save your team and share it through an unlisted link.",
     name: "Lineup name",
     save: "Save team",

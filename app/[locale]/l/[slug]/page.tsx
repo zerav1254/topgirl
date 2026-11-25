@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { loadArtists } from "@/lib/artists";
@@ -48,9 +49,13 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
         <div className="relative flex items-start gap-3">
           <span
             aria-hidden="true"
-            className="grid h-14 w-14 shrink-0 place-items-center rounded-xl border border-gold/30 bg-gradient-to-br from-gold/80 to-brand/70 font-display text-lg font-bold text-white/90"
+            className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-xl border border-gold/30 bg-gradient-to-br from-gold/80 to-brand/70 font-display text-lg font-bold text-white/90"
           >
-            {(shared.ownerName ?? "TG").slice(0, 2).toUpperCase()}
+            {shared.ownerAvatarUrl ? (
+              <Image src={shared.ownerAvatarUrl} alt="" width={112} height={112} sizes="56px" className="h-full w-full object-cover" />
+            ) : (
+              (shared.ownerName ?? "TG").slice(0, 2).toUpperCase()
+            )}
           </span>
           <div className="min-w-0 flex-1">
             <p className="font-display text-[11px] font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>

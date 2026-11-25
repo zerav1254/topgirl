@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProfile } from "@/lib/auth";
+import { loadArtists } from "@/lib/artists";
 import { DICT, isLocale, type Locale } from "@/lib/i18n";
 import { loadLineups } from "@/lib/lineups";
 import { SITE_URL } from "@/lib/site";
@@ -28,7 +29,10 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
     return (
       <main id="main" className="mx-auto flex w-full max-w-2xl flex-col gap-4 px-4 pt-3 pb-28 sm:pt-6">
         <header className="flex items-center justify-between gap-3">
-          <h1 className="font-display text-lg font-bold tracking-tight sm:text-2xl">{C.lineup.title}</h1>
+          <div className="min-w-0">
+            <p className="font-display text-[11px] font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
+            <h1 className="font-display truncate text-lg font-bold tracking-tight sm:text-2xl">{C.lineup.title}</h1>
+          </div>
           <LocaleSwitcher locale={locale} />
         </header>
         <p className="text-sm text-zinc-400">{C.lineup.loginHint}</p>
@@ -43,6 +47,9 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
   }
 
   const lineups = await loadLineups(profile.userId);
+  // Avatar mini di kartu lineup: hanya artis yang dipakai, bukan seluruh roster.
+  const used = new Set(lineups.flatMap((l) => l.slugs));
+  const preview = (await loadArtists()).filter((a) => used.has(a.slug));
 
   return (
     <main id="main" className="mx-auto flex w-full max-w-2xl flex-col gap-4 px-4 pt-3 pb-28 sm:pt-6">
@@ -51,7 +58,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
         <LocaleSwitcher locale={locale} />
       </header>
       <p className="text-sm text-zinc-400">{C.lineup.subtitle}</p>
-      <LineupsTab lineups={lineups} locale={locale} signedIn siteUrl={SITE_URL} />
+      <LineupsTab lineups={lineups} preview={preview} locale={locale} signedIn siteUrl={SITE_URL} />
       <Link
         href={`/${locale}/team`}
         className="inline-flex min-h-11 items-center justify-center rounded-lg border border-white/10 px-4 text-sm font-semibold text-zinc-400 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"

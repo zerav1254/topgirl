@@ -159,6 +159,7 @@ export const ko: Dict = {
   },
   lineup: {
     title: "내 라인업",
+    saveTitle: "현재 팀 저장",
     subtitle: "팀을 저장하고 비공개 링크로 공유하세요.",
     name: "라인업 이름",
     save: "팀 저장",

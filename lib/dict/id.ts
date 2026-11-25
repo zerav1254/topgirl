@@ -157,6 +157,7 @@ export const id = {
   },
   lineup: {
     title: "Lineup saya",
+    saveTitle: "Simpan tim saat ini",
     subtitle: "Simpan tim dan bagikan lewat tautan unlisted.",
     name: "Nama lineup",
     save: "Simpan tim",

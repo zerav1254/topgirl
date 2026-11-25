@@ -9,8 +9,8 @@ import { getServerTeam, readTeam, subscribeTeam } from "@/lib/team-store";
 import { ICONS, Icon } from "./artist-ui";
 
 const ITEM = "flex min-h-14 flex-col items-center justify-center gap-1 rounded-lg text-center text-xs font-semibold leading-tight transition-colors duration-200";
-const IDLE = "text-zinc-400 hover:text-zinc-200";
-const ACTIVE = "text-gold";
+const IDLE = "text-zinc-400 hover:bg-white/5 hover:text-zinc-200";
+const ACTIVE = "text-gold bg-gold/10";
 
 export function BottomNav({ locale, admin }: { locale: Locale; admin: boolean }) {
   const C = DICT[locale];
