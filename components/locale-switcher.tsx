@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { ICONS, Icon } from "@/components/artist-ui";
 import { DICT, LANG_CODE, LANG_NAME, LOCALES, type Locale } from "@/lib/i18n";
 
-const FLAG: Record<Locale, string> = { id: "id", en: "en", fr: "fr", ko: "ko" };
+const FLAG: Record<Locale, string> = { id: "id", en: "en", fr: "fr", ko: "ko", zh: "zh", ja: "ja", de: "de" };
 
 function Flag({ locale, className = "h-3.5 w-5" }: { locale: Locale; className?: string }) {
   return (

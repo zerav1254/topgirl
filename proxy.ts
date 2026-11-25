@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
-const LOCALES = ["id", "en", "fr", "ko"];
+const LOCALES = ["id", "en", "fr", "ko", "zh", "ja", "de"];
 
 // "/" ikut bahasa browser; locale tak dikenal jatuh ke id.
 function preferredLocale(header: string | null): string {
