@@ -204,7 +204,7 @@ export default async function Page({
             <Link
               key={item.href}
               href={item.href}
-              className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg border border-white/10 bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
+              className="inline-flex min-h-11 items-center justify-start gap-1.5 rounded-lg border border-white/10 bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
             >
               <Icon d={item.icon} className="h-4 w-4 shrink-0" />
               {item.label}
