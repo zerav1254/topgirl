@@ -66,7 +66,7 @@ export default async function Page({
 
         <div className="relative flex items-center gap-4">
           <span className="shrink-0 rounded-2xl bg-gradient-to-br from-gold/80 to-brand/70 p-0.5">
-            <span className="block h-20 w-20 overflow-hidden rounded-[14px] bg-panel-2">
+            <span className="block h-20 w-20 overflow-hidden rounded-full bg-panel-2">
               {profile.avatarUrl ? (
                 <Image src={profile.avatarUrl} alt="" width={160} height={160} sizes="80px" className="h-full w-full object-cover" />
               ) : (

@@ -135,7 +135,7 @@ export function TeamBuilder({
             className="flex min-h-11 max-w-40 items-center gap-1.5 truncate rounded-lg border border-white/10 px-2 text-xs font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
           >
             {user && (
-              <span className="block h-6 w-6 shrink-0 overflow-hidden rounded-md border border-white/10 bg-panel-2">
+              <span className="block h-6 w-6 shrink-0 overflow-hidden rounded-full border border-white/10 bg-panel-2">
                 {avatarUrl ? (
                   <Image src={avatarUrl} alt="" width={48} height={48} sizes="24px" className="h-full w-full object-cover" />
                 ) : (

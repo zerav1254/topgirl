@@ -44,7 +44,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
         <span aria-hidden="true" className="pointer-events-none absolute -top-20 -right-16 h-48 w-48 rounded-full bg-gold/15 blur-3xl" />
         <div className="relative flex items-center gap-4">
           <span className="shrink-0 rounded-2xl bg-gradient-to-br from-gold/80 to-brand/70 p-0.5">
-            <span className="block h-20 w-20 overflow-hidden rounded-[14px] bg-panel-2">
+            <span className="block h-20 w-20 overflow-hidden rounded-full bg-panel-2">
               {data.avatarUrl ? (
                 <Image src={data.avatarUrl} alt="" width={160} height={160} sizes="80px" className="h-full w-full object-cover" />
               ) : (
