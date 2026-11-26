@@ -32,6 +32,23 @@ export const ko: Dict = {
     player: "Player DMG는 두 번 계산",
     playerNote:
       "player_dmg는 basic_atk와 skill_dmg를 모두 올리므로 가중치는 0.5 + 1.25 = 1.75입니다. 30% 스킬은 basic 30%와 skill 30%를 동시에 주는 것과 같습니다.",
+    battle: "인게임 피해량",
+    battleIntro:
+      "아래 수치는 게임 클라이언트 설정(v1.0.158)에서 직접 읽은 값입니다. 스킬 동작을 이해하기 위한 자료이며, 랭크 점수는 퍼센트 기준이라 이 값을 사용하지 않습니다.",
+    battleFormulaText: "라운드당 = 200 × (1 + atk%) + skill × (1 + skill%) / 10",
+    battleFormulaNote:
+      "스킬은 10라운드마다 발동하며 발동 횟수는 전투 길이에 따라 달라집니다. 그래서 피해량은 라운드당으로 비교합니다. 한쪽 병력이 먼저 소진되면 전투가 끝납니다.",
+    battleConst: "상수",
+    battleValue: "값",
+    battleMeaning: "의미",
+    battleNormalAttack: "라운드당 기본 일반 공격",
+    battleSkillRound: "스킬 발동 간 라운드",
+    battleAttrFactor: "병력에 적용되는 속성 계수",
+    battleFansPower: "팬 파워 지수",
+    battlePowerReduction: "최종 전투력 지수",
+    battleSkillOne: "스킬 1",
+    battleSkillOneValue: "10라운드마다 1800 피해 (벨라: 1500)",
+    battleSkillOneNote: "스킬 1은 모든 아티스트가 동일하므로 순위에 쓰지 않고 카드에만 표시합니다.",
     examples: "예시",
     exampleNote: "수치는 SOLO 가중치를 사용합니다.",
     calculation: "계산",

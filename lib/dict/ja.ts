@@ -32,6 +32,23 @@ export const ja: Dict = {
     player: "Player DMG は二重に数える",
     playerNote:
       "player_dmg は basic_atk と skill_dmg の両方に加算されるため、重みは 0.5 + 1.25 = 1.75 になります。30% の skill は 30% basic と 30% skill を同時に数えたものになります。",
+    battle: "ゲーム内ダメージ",
+    battleIntro:
+      "以下の数値はゲームクライアントの設定（v1.0.158）から直接読み取ったものです。スキルの仕組みを理解するための情報で、ランクスコアは%基準のためこの数値を使いません。",
+    battleFormulaText: "1ラウンド = 200 × (1 + atk%) + skill × (1 + skill%) / 10",
+    battleFormulaNote:
+      "スキルは10ラウンドごとに発動し、発動回数は戦闘の長さで変わります。そのためダメージは1ラウンドあたりで比較します。どちらかの兵力が先に尽きると戦闘終了です。",
+    battleConst: "定数",
+    battleValue: "値",
+    battleMeaning: "意味",
+    battleNormalAttack: "1ラウンドあたりの基本通常攻撃",
+    battleSkillRound: "スキル発動間のラウンド",
+    battleAttrFactor: "兵力にかかる属性係数",
+    battleFansPower: "ファン戦力の指数",
+    battlePowerReduction: "最終戦力の指数",
+    battleSkillOne: "スキル 1",
+    battleSkillOneValue: "10ラウンドごとに1800ダメージ（Bella: 1500）",
+    battleSkillOneNote: "スキル1は全アーティスト共通のためランキングには使わず、カードにのみ表示します。",
     examples: "例",
     exampleNote: "数値は SOLO の重みを使用。",
     calculation: "計算",

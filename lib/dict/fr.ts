@@ -32,6 +32,24 @@ export const fr: Dict = {
     player: "Player DMG compte deux fois",
     playerNote:
       "player_dmg s'ajoute à basic_atk et skill_dmg, donc son poids est 0,5 + 1,25 = 1,75. Une compétence de 30 % compte comme 30 % de basic et 30 % de skill à la fois.",
+    battle: "Dégâts en combat",
+    battleIntro:
+      "Ces chiffres proviennent directement de la config du client (v1.0.158). Ils expliquent le fonctionnement des compétences ; le score de rang reste en pourcentage et ne les utilise pas.",
+    battleFormulaText: "par round = 200 × (1 + atk%) + skill × (1 + skill%) / 10",
+    battleFormulaNote:
+      "Une compétence se déclenche tous les 10 rounds, et le nombre de déclenchements dépend de la durée du combat — les dégâts sont donc comparés par round. Le combat se termine quand une armée n'a plus de troupes.",
+    battleConst: "Constante",
+    battleValue: "Valeur",
+    battleMeaning: "Signification",
+    battleNormalAttack: "Attaque normale de base par round",
+    battleSkillRound: "Rounds entre deux compétences",
+    battleAttrFactor: "Facteur d'attribut appliqué aux troupes",
+    battleFansPower: "Exposant de puissance des fans",
+    battlePowerReduction: "Exposant de puissance final",
+    battleSkillOne: "Compétence 1",
+    battleSkillOneValue: "1800 dégâts tous les 10 rounds (Bella : 1500)",
+    battleSkillOneNote:
+      "La compétence 1 est identique pour tous les artistes : elle reste hors du classement et n'apparaît que sur la carte.",
     examples: "Exemples",
     exampleNote: "Les chiffres utilisent les poids SOLO.",
     calculation: "Calcul",

@@ -32,6 +32,23 @@ export const zh: Dict = {
     player: "玩家伤害计两次",
     playerNote:
       "player_dmg 同时计入 basic_atk 和 skill_dmg，因此权重为 0.5 + 1.25 = 1.75。一项 30% 的技能会同时算作 30% 基础与 30% 技能。",
+    battle: "战斗伤害",
+    battleIntro:
+      "以下数值直接读取自游戏客户端配置（v1.0.158）。用于理解技能机制；排名分数仍按百分比计算，不使用这些数值。",
+    battleFormulaText: "每回合 = 200 × (1 + atk%) + skill × (1 + skill%) / 10",
+    battleFormulaNote:
+      "技能每 10 回合触发一次，触发次数取决于战斗长度，因此按每回合伤害比较。一方兵力先耗尽即战斗结束。",
+    battleConst: "常量",
+    battleValue: "数值",
+    battleMeaning: "含义",
+    battleNormalAttack: "每回合基础普攻",
+    battleSkillRound: "技能触发间隔回合",
+    battleAttrFactor: "作用于兵力的属性系数",
+    battleFansPower: "粉丝战力指数",
+    battlePowerReduction: "最终战力指数",
+    battleSkillOne: "技能 1",
+    battleSkillOneValue: "每 10 回合 1800 伤害（Bella：1500）",
+    battleSkillOneNote: "技能 1 对所有艺人相同，因此不参与排名，仅显示在卡片上。",
     examples: "示例",
     exampleNote: "数值采用 SOLO 权重。",
     calculation: "计算",

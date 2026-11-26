@@ -30,6 +30,24 @@ export const id = {
     player: "Player DMG dihitung dua kanal",
     playerNote:
       "player_dmg menambah basic_atk dan skill_dmg, jadi bobotnya 0,5 + 1,25 = 1,75. Satu skill 30% dihitung seperti 30% basic dan 30% skill sekaligus.",
+    battle: "Damage di game",
+    battleIntro:
+      "Angka berikut dibaca langsung dari config client game (v1.0.158). Gunanya untuk memahami cara skill bekerja; skor rank tetap persen dan tidak memakai angka ini.",
+    battleFormulaText: "per round = 200 × (1 + atk%) + skill × (1 + skill%) / 10",
+    battleFormulaNote:
+      "Skill dipicu tiap 10 round, dan jumlah trigger tergantung panjang battle — jadi damage dibandingkan per round. Battle berakhir saat salah satu pasukan habis lebih dulu.",
+    battleConst: "Konstanta",
+    battleValue: "Nilai",
+    battleMeaning: "Arti",
+    battleNormalAttack: "Serangan normal dasar per round",
+    battleSkillRound: "Round antar trigger skill",
+    battleAttrFactor: "Faktor atribut untuk pasukan",
+    battleFansPower: "Eksponen kekuatan fans",
+    battlePowerReduction: "Eksponen power akhir",
+    battleSkillOne: "Skill 1",
+    battleSkillOneValue: "1800 damage tiap 10 round (Bella: 1500)",
+    battleSkillOneNote:
+      "Skill 1 sama untuk semua artist, jadi tidak dipakai untuk peringkat dan hanya tampil di kartu artist.",
     examples: "Contoh",
     exampleNote: "Angka memakai bobot kategori SOLO.",
     calculation: "Perhitungan",

@@ -32,6 +32,24 @@ export const en: Dict = {
     player: "Player DMG counts twice",
     playerNote:
       "player_dmg adds to both basic_atk and skill_dmg, so its weight is 0.5 + 1.25 = 1.75. A 30% skill counts as 30% basic and 30% skill at once.",
+    battle: "Battle damage in game",
+    battleIntro:
+      "These numbers were read from the game client config (v1.0.158). They explain how skills hit; the rank score stays percent-based and does not use them.",
+    battleFormulaText: "per round = 200 × (1 + atk%) + skill × (1 + skill%) / 10",
+    battleFormulaNote:
+      "A skill fires every 10 rounds, and the number of triggers depends on battle length — so damage is compared per round. A battle ends when one side runs out of troops first.",
+    battleConst: "Constant",
+    battleValue: "Value",
+    battleMeaning: "Meaning",
+    battleNormalAttack: "Base normal attack per round",
+    battleSkillRound: "Rounds between skill casts",
+    battleAttrFactor: "Attribute factor applied to troops",
+    battleFansPower: "Fans power exponent",
+    battlePowerReduction: "Final power exponent",
+    battleSkillOne: "Skill 1",
+    battleSkillOneValue: "1800 damage every 10 rounds (Bella: 1500)",
+    battleSkillOneNote:
+      "Skill 1 is identical for every artist, so it stays out of the ranking and only shows on the artist card.",
     examples: "Examples",
     exampleNote: "Numbers use SOLO weights.",
     calculation: "Calculation",

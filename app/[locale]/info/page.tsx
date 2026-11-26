@@ -22,6 +22,15 @@ const EXAMPLES: { name: string; skills: Skill[] }[] = [
   { name: "Monica", skills: [{ effect: "player_dmg", value: 30 }, { effect: "player_dmg", value: 30 }] },
 ];
 
+// Nilai dari config client v1.0.158 (lihat .topgirl-ripper/FINDINGS.md).
+const BATTLE_CONSTS = [
+  { name: "battle_normal_attack", value: "200", label: "battleNormalAttack" },
+  { name: "skill_cast_round", value: "10", label: "battleSkillRound" },
+  { name: "attr_reduction_factor", value: "0.1", label: "battleAttrFactor" },
+  { name: "fans_power_factor", value: "1.5", label: "battleFansPower" },
+  { name: "power_reduction_factor", value: "0.4", label: "battlePowerReduction" },
+] as const;
+
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   const l = localeOr(locale);
@@ -118,6 +127,47 @@ export default async function InfoPage({ params }: { params: Promise<{ locale: s
           {C.player}
         </h2>
         <p className="mt-2 text-sm text-zinc-400">{C.playerNote}</p>
+      </section>
+
+      <section aria-labelledby="info-battle" className="rounded-2xl border border-white/10 bg-panel/60 p-4 sm:p-5">
+        <h2 id="info-battle" className="font-display text-sm font-semibold uppercase tracking-wide text-zinc-300">
+          {C.battle}
+        </h2>
+        <p className="mt-2 text-sm text-zinc-400">{C.battleIntro}</p>
+        <p className="tabular mt-3 overflow-x-auto rounded-xl border border-white/10 bg-ink/60 px-3 py-3 font-mono text-sm text-zinc-100">
+          {C.battleFormulaText}
+        </p>
+        <p className="mt-3 text-sm text-zinc-400">{C.battleFormulaNote}</p>
+        <div className="mt-3 overflow-x-auto rounded-xl border border-white/10 bg-panel/60">
+          <table className="w-full text-sm">
+            <thead className="text-[11px] uppercase tracking-wide text-zinc-400">
+              <tr>
+                <th scope="col" className="px-3 py-2 text-left font-semibold">
+                  {C.battleConst}
+                </th>
+                <th scope="col" className="px-3 py-2 text-right font-semibold">
+                  {C.battleValue}
+                </th>
+                <th scope="col" className="px-3 py-2 text-left font-semibold">
+                  {C.battleMeaning}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {BATTLE_CONSTS.map((row) => (
+                <tr key={row.name} className="border-t border-white/5">
+                  <td className="px-3 py-2 font-mono text-[13px] text-zinc-300">{row.name}</td>
+                  <td className="tabular px-3 py-2 text-right font-semibold text-zinc-100">{row.value}</td>
+                  <td className="px-3 py-2 text-zinc-300">{C[row.label]}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="mt-3 text-sm text-zinc-400">
+          <span className="font-semibold text-zinc-300">{C.battleSkillOne}.</span> {C.battleSkillOneValue}.{" "}
+          {C.battleSkillOneNote}
+        </p>
       </section>
 
       <section aria-labelledby="info-examples" className="flex flex-col gap-3">

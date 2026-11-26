@@ -32,6 +32,24 @@ export const de: Dict = {
     player: "Player DMG zählt doppelt",
     playerNote:
       "player_dmg zählt sowohl zu basic_atk als auch zu skill_dmg, daher ist sein Gewicht 0,5 + 1,25 = 1,75. Ein Skill mit 30 % zählt gleichzeitig als 30 % Basis und 30 % Skill.",
+    battle: "Schaden im Kampf",
+    battleIntro:
+      "Diese Werte stammen direkt aus der Client-Konfiguration (v1.0.158). Sie erklären, wie Skills wirken; der Rang-Score bleibt prozentbasiert und nutzt sie nicht.",
+    battleFormulaText: "pro Runde = 200 × (1 + atk%) + skill × (1 + skill%) / 10",
+    battleFormulaNote:
+      "Ein Skill wird alle 10 Runden ausgelöst, und die Anzahl hängt von der Kampfdauer ab — deshalb wird Schaden pro Runde verglichen. Der Kampf endet, sobald eine Seite keine Truppen mehr hat.",
+    battleConst: "Konstante",
+    battleValue: "Wert",
+    battleMeaning: "Bedeutung",
+    battleNormalAttack: "Basis-Normalangriff pro Runde",
+    battleSkillRound: "Runden zwischen Skill-Auslösungen",
+    battleAttrFactor: "Attributfaktor für Truppen",
+    battleFansPower: "Fans-Power-Exponent",
+    battlePowerReduction: "Finaler Power-Exponent",
+    battleSkillOne: "Skill 1",
+    battleSkillOneValue: "1800 Schaden alle 10 Runden (Bella: 1500)",
+    battleSkillOneNote:
+      "Skill 1 ist für alle Artists gleich, zählt daher nicht zum Ranking und erscheint nur auf der Karte.",
     examples: "Beispiele",
     exampleNote: "Die Zahlen verwenden die SOLO-Gewichte.",
     calculation: "Berechnung",
