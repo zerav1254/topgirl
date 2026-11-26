@@ -139,6 +139,18 @@ export const EFFECT_LABEL: Record<Effect, Record<Locale, string>> = {
   drive: { id: "Drive", en: "Drive", fr: "Drive", ko: "드라이브", zh: "Drive", ja: "ドライブ", de: "Drive" },
 };
 
+// Skill 1 semua artist: damage flat, cooldown tetap, tidak ikut skor rank.
+export const BASE_SKILL_INTERVAL = 10;
+export const BASE_SKILL_LABEL: Record<Locale, string> = {
+  id: "Skill 1",
+  en: "Skill 1",
+  fr: "Compétence 1",
+  ko: "스킬 1",
+  zh: "技能 1",
+  ja: "スキル 1",
+  de: "Fähigkeit 1",
+};
+
 export const CATEGORIES = ["solo", "rally", "defense", "economy", "global", "sustain"] as const;
 export const DEFAULT_CATEGORY: Category = "global";
 export type Category = (typeof CATEGORIES)[number];

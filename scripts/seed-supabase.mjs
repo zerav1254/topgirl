@@ -52,6 +52,7 @@ for (const line of rows) {
         name: get(r, "name"),
         genre: get(r, "genre"),
         origin: get(r, "origin") || null,
+        base_dmg: num(get(r, "base_dmg")) || 1800,
       },
       { onConflict: "slug" },
     )
@@ -62,7 +63,7 @@ for (const line of rows) {
   const del = await sb.from("artist_skills").delete().eq("artist_id", data.id);
   if (del.error) throw new Error(`${slug}: ${del.error.message}`);
 
-  const skills = [1, 2]
+  const skills = [2, 3]
     .map((slot) => ({ slot, effect: get(r, `s${slot}_effect`), value: num(get(r, `s${slot}_value`)) }))
     .filter((s) => s.effect);
   if (skills.length) {

@@ -1,7 +1,7 @@
 import Image from "next/image";
 import type { Artist } from "@/lib/artists";
 import { DICT, numberLocale, type Locale } from "@/lib/i18n";
-import { DEFAULT_CATEGORY, EFFECT_LABEL, FLAT_EFFECTS, type Effect } from "@/lib/score";
+import { BASE_SKILL_INTERVAL, BASE_SKILL_LABEL, DEFAULT_CATEGORY, EFFECT_LABEL, FLAT_EFFECTS, type Effect } from "@/lib/score";
 
 const TIER_STYLE: Record<string, string> = {
   "S+": "border-gold/45 bg-gold/15 text-gold",
@@ -26,23 +26,35 @@ export const isPercent = (effect: Effect) => !FLAT_EFFECTS.has(effect);
 export const formatStat = (v: number, locale: Locale) => v.toLocaleString(numberLocale(locale), { maximumFractionDigits: 1 });
 
 // Daftar skill berangka dipakai di kartu artist dan dialog picker.
+// Baris 1 = skill dasar flat semua artist (tidak ikut rank), baris 2/3 dari tabel skill.
 export function SkillList({
+  baseDmg,
   skills,
   locale,
   className = "",
 }: {
+  baseDmg: number;
   skills: Artist["skills"];
   locale: Locale;
   className?: string;
 }) {
+  const rows = [
+    { slot: 1, label: BASE_SKILL_LABEL[locale], value: `${formatStat(baseDmg, locale)} / ${BASE_SKILL_INTERVAL}s` },
+    ...skills.map((s, i) => ({
+      slot: i + 2,
+      label: EFFECT_LABEL[s.effect][locale],
+      value: s.value === null ? "—" : `${formatStat(s.value, locale)}${isPercent(s.effect) ? "%" : ""}`,
+    })),
+  ];
   return (
     <span className={`flex flex-col gap-0.5 ${className}`}>
-      {skills.map((s, i) => (
-        <span key={i} className="flex items-baseline justify-between gap-2 text-xs">
-          <span className="truncate text-zinc-400">{EFFECT_LABEL[s.effect][locale]}</span>
-          <span className="tabular shrink-0 font-semibold text-zinc-200">
-            {s.value === null ? "—" : `${formatStat(s.value, locale)}${isPercent(s.effect) ? "%" : ""}`}
+      {rows.map((r) => (
+        <span key={r.slot} className="flex items-baseline justify-between gap-2 text-xs">
+          <span className="flex min-w-0 items-baseline gap-1.5">
+            <span className="tabular text-[10px] font-semibold text-zinc-500">{r.slot}</span>
+            <span className="truncate text-zinc-400">{r.label}</span>
           </span>
+          <span className="tabular shrink-0 font-semibold text-zinc-200">{r.value}</span>
         </span>
       ))}
     </span>

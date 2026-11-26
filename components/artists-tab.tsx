@@ -231,7 +231,7 @@ function ArtistCard({
               {C.pool.blocked}
             </p>
           )}
-          <SkillList skills={a.skills} locale={locale} className="mt-1.5 border-t border-white/10 pt-1" />
+          <SkillList baseDmg={a.baseDmg} skills={a.skills} locale={locale} className="mt-1.5 border-t border-white/10 pt-1" />
         </div>
         <div className="flex flex-col">
           <button

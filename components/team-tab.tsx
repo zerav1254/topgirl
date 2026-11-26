@@ -283,7 +283,7 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
                       <span className="tabular block truncate text-xs text-zinc-400">
                         {a.genre} · {formatStat(a.scores[category], locale)}
                       </span>
-                      <SkillList skills={a.skills} locale={locale} className="mt-1" />
+                      <SkillList baseDmg={a.baseDmg} skills={a.skills} locale={locale} className="mt-1" />
                       {blocked.has(a.slug) && (
                         <span className="mt-1 flex items-center gap-1 text-xs font-semibold text-amber-300">
                           <Icon d={ICONS.info} className="h-3.5 w-3.5 shrink-0" />

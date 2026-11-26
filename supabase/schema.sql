@@ -28,6 +28,9 @@ create table public.artists (
   name text not null,
   genre text not null references public.genres (id) on update cascade,
   origin text references public.origins (id) on update cascade,
+  -- Skill 1 semua artist: damage flat tiap BASE_SKILL_INTERVAL detik. Tidak dipakai
+  -- scoreArtist, jadi tidak memengaruhi tier.
+  base_dmg integer not null default 1800 check (base_dmg > 0),
   photo_path text,
   -- Versi cache foto, terpisah dari updated_at supaya edit stat tidak memicu unduh ulang gambar.
   photo_updated_at timestamptz not null default now(),
@@ -36,7 +39,8 @@ create table public.artists (
 
 create table public.artist_skills (
   artist_id integer not null references public.artists (id) on delete cascade,
-  slot smallint not null check (slot between 1 and 2),
+  -- Slot 1 = base_dmg di tabel artists; slot 2 & 3 = skill dari config game.
+  slot smallint not null check (slot between 2 and 3),
   effect text not null references public.effects (id) on update cascade,
   value integer check (value > 0),
   primary key (artist_id, slot)
@@ -46,7 +50,7 @@ create index artist_skills_effect_idx on public.artist_skills (effect);
 create index artists_genre_idx on public.artists (genre);
 create index artists_origin_idx on public.artists (origin);
 
--- Efek sama di slot 1 dan 2 itu sah (game memang memberi dua skill identik);
+-- Efek sama di slot 2 dan 3 itu sah (game memang memberi dua skill identik);
 -- skornya dijumlahkan, tampilannya diringkas "×2" di kartu.
 
 alter table public.artists enable row level security;

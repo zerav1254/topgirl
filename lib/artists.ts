@@ -20,6 +20,8 @@ export type Artist = {
   origin: string | null;
   // Season rilis untuk artis aboard (Tokyo/Bali/Rome); null = tidak dibatasi season.
   season: number | null;
+  // Damage skill 1 (flat, tiap BASE_SKILL_INTERVAL detik); tidak masuk perhitungan rank.
+  baseDmg: number;
   skills: Skill[];
   photoUrl: string | null;
   // Nama file ikon genre dari tabel genres; null = tanpa ikon.
@@ -34,6 +36,7 @@ type Row = {
   name: string;
   genre: string;
   origin: string | null;
+  base_dmg: number;
   photo_path: string | null;
   photo_updated_at: string;
   artist_skills: { slot: number; effect: string; value: number | null }[];
@@ -45,7 +48,7 @@ type Row = {
 export async function loadArtists(): Promise<Artist[]> {
   const { data, error } = await supabase
     .from("artists")
-    .select("id, slug, name, genre, origin, photo_path, photo_updated_at, artist_skills(slot, effect, value), artist_seasons(season), genres(image)")
+    .select("id, slug, name, genre, origin, base_dmg, photo_path, photo_updated_at, artist_skills(slot, effect, value), artist_seasons(season), genres(image)")
     .order("id");
 
   if (error) throw new Error(`Gagal memuat artist: ${error.message}`);
@@ -68,6 +71,7 @@ export async function loadArtists(): Promise<Artist[]> {
         name: r.name,
         genre: r.genre,
         origin: r.origin,
+        baseDmg: r.base_dmg,
         season,
         skills,
         genreImage,

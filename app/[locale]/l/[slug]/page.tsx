@@ -154,7 +154,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
                   <span className="truncate">{a.genre}</span>
                 </span>
                 <span className="block truncate text-base font-semibold">{a.name}</span>
-                <SkillList skills={a.skills} locale={locale} className="mt-1" />
+                <SkillList baseDmg={a.baseDmg} skills={a.skills} locale={locale} className="mt-1" />
               </span>
               <span className="flex shrink-0 flex-col items-end gap-1">
                 <span className="tabular font-display text-base font-semibold text-zinc-100">{formatStat(a.scores[DEFAULT_CATEGORY], locale)}</span>
