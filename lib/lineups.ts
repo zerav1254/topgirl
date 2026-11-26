@@ -90,6 +90,7 @@ export type PublicProfile = {
   ingameNickname: string | null;
   ingameServer: number | null;
   avatarUrl: string | null;
+  avatarFrame: string | null;
   lineups: Lineup[];
 };
 
@@ -99,24 +100,26 @@ export type PublicProfile = {
 export const loadPublicProfile = cache(async (userId: string): Promise<PublicProfile | null> => {
   const sb = adminClient();
   const [profile, rows] = await Promise.all([
-    sb.from("profiles").select("name,ingame_nickname,ingame_server,avatar_url").eq("user_id", userId).maybeSingle(),
+    sb.from("profiles").select("name,ingame_nickname,ingame_server,avatar_url,avatar_frame").eq("user_id", userId).maybeSingle(),
     sb.from("lineups").select(COLS).eq("user_id", userId).not("share_slug", "is", null).order("updated_at", { ascending: false }),
   ]);
   if (profile.error || !profile.data) return null;
   const lineups = rows.error ? [] : (rows.data as Row[]).map(toLineup);
-  if (lineups.length === 0) return { name: null, ingameNickname: null, ingameServer: null, avatarUrl: null, lineups: [] };
+  if (lineups.length === 0) return { name: null, ingameNickname: null, ingameServer: null, avatarUrl: null, avatarFrame: null, lineups: [] };
 
   const p = profile.data as {
     name: string | null;
     ingame_nickname: string | null;
     ingame_server: number | null;
     avatar_url: string | null;
+    avatar_frame: string | null;
   };
   return {
     name: p.name,
     ingameNickname: p.ingame_nickname,
     ingameServer: p.ingame_server,
     avatarUrl: p.avatar_url,
+    avatarFrame: p.avatar_frame,
     lineups,
   };
 });

@@ -6,6 +6,7 @@ import type { Profile } from "@/lib/auth";
 import { DICT, type Locale } from "@/lib/i18n";
 import { saveProfile } from "@/app/[locale]/profile/actions";
 import { ICONS, Icon } from "@/components/artist-ui";
+import { FramePicker } from "@/components/frame-picker";
 
 const FIELD = "rounded-lg border border-white/10 bg-panel/80 px-3 py-2 text-base text-zinc-100 focus:border-brand/60";
 
@@ -46,6 +47,7 @@ export function ProfileForm({ profile, locale }: { profile: Profile; locale: Loc
         {C.ingameNickname}
         <input name="ingameNickname" defaultValue={profile.ingameNickname ?? ""} maxLength={40} className={FIELD} />
       </label>
+      <FramePicker current={profile.avatarFrame} label={C.avatarFrame} noneLabel={C.frameNone} />
       <p className="text-xs text-zinc-400">{C.hint}</p>
       <button
         type="submit"

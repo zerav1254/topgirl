@@ -4,6 +4,7 @@ import sharp from "sharp";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
+import { isAvatarFrame } from "@/lib/avatar-frames";
 import { DICT, localeOr, type Locale } from "@/lib/i18n";
 import { allow } from "@/lib/rate-limit";
 import { SITE_URL } from "@/lib/site";
@@ -41,13 +42,20 @@ export async function saveProfile(locale: Locale, fd: FormData): Promise<Profile
   const nickname = String(fd.get("ingameNickname") ?? "").trim() || null;
   if ((name && name.length > 60) || (nickname && nickname.length > 40)) return { ok: false, error: C.error };
 
+  // Frame hanya id dari manifest aset; kosong = tanpa frame.
+  const frameRaw = String(fd.get("avatarFrame") ?? "").trim();
+  if (frameRaw && !isAvatarFrame(frameRaw)) return { ok: false, error: C.error };
+  const avatarFrame = frameRaw || null;
+
   const { error } = await adminClient()
     .from("profiles")
-    .update({ name, ingame_id: ingameId, ingame_server: ingameServer, ingame_nickname: nickname })
+    .update({ name, ingame_id: ingameId, ingame_server: ingameServer, ingame_nickname: nickname, avatar_frame: avatarFrame })
     .eq("user_id", userId);
   if (error) return { ok: false, error: C.error };
 
-  revalidatePath(`/${localeOr(locale)}/profile`);
+  const l = localeOr(locale);
+  revalidatePath(`/${l}/profile`);
+  revalidatePath(`/${l}/u/${userId}`);
   return { ok: true, error: "" };
 }
 

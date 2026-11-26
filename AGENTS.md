@@ -53,12 +53,15 @@ components/
   lineups-tab.tsx   form simpan lineup + daftar (bagikan/salin/buka/hapus)
   pool-picker.tsx   chip season server (single-select)
   profile-form.tsx  form profil (nama, ID/server, nickname)
+  frame-picker.tsx  pilihan frame avatar (client, hidden input avatarFrame)
+  user-avatar.tsx   avatar bulat + frame pilihan
   bottom-nav.tsx    nav Artists/Team/Lineup/Info, dirender root layout
   artist-ui.tsx     atom: Icon, TierBadge, Avatar, GenreIcon, SearchInput
   locale-switcher.tsx ganti segmen locale di path
 lib/
   artists.ts      query Supabase -> tipe Artist/Effect
   artists-cache.ts cache roster lintas request (unstable_cache 300 dtk)
+  avatar-frames.ts daftar id frame avatar (public/assets/avatars/frames) + validasi
   score.ts        bobot skor, tier, label effect
   team.ts         TEAM_SIZE, STAT_ORDER, GENRE_BONUS
   team-store.ts   store tim di localStorage

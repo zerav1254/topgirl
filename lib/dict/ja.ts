@@ -121,6 +121,8 @@ export const ja: Dict = {
     ingameId: "ゲーム ID",
     ingameServer: "サーバー",
     ingameNickname: "ゲーム内ニックネーム",
+    avatarFrame: "アバターフレーム",
+    frameNone: "フレームなし",
     save: "プロフィールを保存",
     saving: "保存中…",
     saved: "保存しました。",

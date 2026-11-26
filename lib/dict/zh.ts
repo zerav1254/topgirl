@@ -121,6 +121,8 @@ export const zh: Dict = {
     ingameId: "游戏 ID",
     ingameServer: "服务器",
     ingameNickname: "游戏内昵称",
+    avatarFrame: "头像框",
+    frameNone: "无边框",
     save: "保存资料",
     saving: "保存中…",
     saved: "已保存。",

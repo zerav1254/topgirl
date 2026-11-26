@@ -121,6 +121,8 @@ export const en: Dict = {
     ingameId: "Game ID",
     ingameServer: "Server",
     ingameNickname: "In-game nickname",
+    avatarFrame: "Avatar frame",
+    frameNone: "No frame",
     save: "Save profile",
     saving: "Saving…",
     saved: "Saved.",

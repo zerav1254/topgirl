@@ -143,6 +143,7 @@ create table public.profiles (
   email text check (char_length(email) <= 254),   -- opsional: Discord bisa tanpa email
   name text check (char_length(name) <= 80),
   avatar_url text check (char_length(avatar_url) <= 500),
+  avatar_frame text check (char_length(avatar_frame) <= 40),
   provider text,                                 -- 'google' | 'discord'
   provider_id text,                              -- id stabil provider, bukan username
   ingame_id bigint check (ingame_id > 0),

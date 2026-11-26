@@ -10,6 +10,7 @@ export type Profile = {
   email: string | null;
   name: string | null;
   avatarUrl: string | null;
+  avatarFrame: string | null;
   ingameId: number | null;
   ingameServer: number | null;
   ingameNickname: string | null;
@@ -21,19 +22,21 @@ type Row = {
   email: string | null;
   name: string | null;
   avatar_url: string | null;
+  avatar_frame: string | null;
   ingame_id: number | null;
   ingame_server: number | null;
   ingame_nickname: string | null;
   role: Role;
 };
 
-const COLUMNS = "user_id,email,name,avatar_url,ingame_id,ingame_server,ingame_nickname,role";
+const COLUMNS = "user_id,email,name,avatar_url,avatar_frame,ingame_id,ingame_server,ingame_nickname,role";
 
 const toProfile = (r: Row): Profile => ({
   userId: r.user_id,
   email: r.email,
   name: r.name,
   avatarUrl: r.avatar_url,
+  avatarFrame: r.avatar_frame,
   ingameId: r.ingame_id,
   ingameServer: r.ingame_server,
   ingameNickname: r.ingame_nickname,
