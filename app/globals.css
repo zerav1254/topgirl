@@ -32,7 +32,8 @@ body {
 .lineup-glyph,
 .profile-glyph,
 .rank-glyph,
-.logout-glyph {
+.logout-glyph,
+.public-glyph {
   background-color: currentColor;
   -webkit-mask: center / contain no-repeat;
   mask: center / contain no-repeat;
@@ -66,6 +67,11 @@ body {
 .logout-glyph {
   -webkit-mask-image: url("/assets/icons/logout.png");
   mask-image: url("/assets/icons/logout.png");
+}
+
+.public-glyph {
+  -webkit-mask-image: url("/assets/icons/public-profile.png");
+  mask-image: url("/assets/icons/public-profile.png");
 }
 
 ::selection {

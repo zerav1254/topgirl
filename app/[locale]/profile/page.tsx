@@ -107,7 +107,7 @@ export default async function Page({
             href={publicHref}
             className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-lg border border-gold/45 bg-gold/15 px-3 text-sm font-semibold text-gold transition-colors duration-200 hover:bg-gold/25"
           >
-            <Icon d={ICONS.user} className="h-4 w-4 shrink-0" />
+            <span aria-hidden="true" className="public-glyph h-4 w-4 shrink-0" />
             {C.profile.publicProfile}
           </Link>
           <form action={signOut.bind(null, locale)}>
