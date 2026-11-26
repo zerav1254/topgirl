@@ -35,8 +35,8 @@ export function MuseumPanel({
       </Select>
 
       <div className="mt-3 grid grid-cols-2 gap-3">
-        <NumberField id="cost-museum-from" text={C.levelFrom} value={from} min={MIN} max={MAX} invalid={bad} describedBy="cost-museum-error" onChange={(v) => setFrom(clamp(v, MIN, MAX))} />
-        <NumberField id="cost-museum-to" text={C.levelTo} value={to} min={MIN} max={MAX} invalid={bad} describedBy="cost-museum-error" onChange={(v) => setTo(clamp(v, MIN, MAX))} />
+        <NumberField id="cost-museum-from" text={C.levelFrom} value={from} min={MIN} max={MAX} invalid={bad} describedBy={bad ? "cost-museum-error" : undefined} onChange={(v) => setFrom(clamp(v, MIN, MAX))} />
+        <NumberField id="cost-museum-to" text={C.levelTo} value={to} min={MIN} max={MAX} invalid={bad} describedBy={bad ? "cost-museum-error" : undefined} onChange={(v) => setTo(clamp(v, MIN, MAX))} />
       </div>
 
       {bad ? (
@@ -45,9 +45,11 @@ export function MuseumPanel({
         </p>
       ) : null}
 
-      <div className={result}>
-        <Totals totals={totals} note={C.museumNote} empty={C.noCost} format={format} />
-      </div>
+      {bad ? null : (
+        <div className={result}>
+          <Totals totals={totals} note={C.museumNote} empty={C.noCost} format={format} />
+        </div>
+      )}
     </section>
   );
 }

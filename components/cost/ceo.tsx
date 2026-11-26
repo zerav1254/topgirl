@@ -22,8 +22,10 @@ export function CeoPanel({ ceo, C, format }: { ceo: CostBook["ceo"]; C: CostDict
 
   const stageAmounts = ceo.stages.map((item) => item.amount);
   const maxStage = stageAmounts.length - 1;
-  const stageItems = ceo.stages.filter((item) => item.amount > 0);
+  // Opsi select outfit memakai semua stage (stage berbiaya 0 tetap punya outfit).
   const stageTotal = expBetween(stageAmounts, stageFrom, stageTo);
+  const stageBad = stageTo <= stageFrom;
+  const sportBad = sportTo <= sportFrom;
 
   const outfits = ceo.outfits.filter((item) => item.stage === outfitStage);
   const chosenOutfit = outfits.find((item) => item.outfit === outfit) ?? outfits[0];
@@ -49,30 +51,32 @@ export function CeoPanel({ ceo, C, format }: { ceo: CostBook["ceo"]; C: CostDict
       {mode === "stage" ? (
         <>
           <div className="grid grid-cols-2 gap-3">
-            <NumberField id="cost-ceo-from" text={C.stageFrom} value={stageFrom} min={0} max={maxStage} invalid={stageTo <= stageFrom} describedBy="cost-ceo-error" onChange={(v) => setStageFrom(clamp(v, 0, maxStage))} />
-            <NumberField id="cost-ceo-to" text={C.stageTo} value={stageTo} min={0} max={maxStage} invalid={stageTo <= stageFrom} describedBy="cost-ceo-error" onChange={(v) => setStageTo(clamp(v, 0, maxStage))} />
+            <NumberField id="cost-ceo-from" text={C.stageFrom} value={stageFrom} min={0} max={maxStage} invalid={stageBad} describedBy={stageBad ? "cost-ceo-error" : undefined} onChange={(v) => setStageFrom(clamp(v, 0, maxStage))} />
+            <NumberField id="cost-ceo-to" text={C.stageTo} value={stageTo} min={0} max={maxStage} invalid={stageBad} describedBy={stageBad ? "cost-ceo-error" : undefined} onChange={(v) => setStageTo(clamp(v, 0, maxStage))} />
           </div>
 
-          {stageTo <= stageFrom ? (
+          {stageBad ? (
             <p id="cost-ceo-error" role="status" className={invalid}>
               {C.invalid}
             </p>
           ) : null}
 
-          <div className={result}>
-            <Totals
-              totals={stageTotal > 0 ? [{ name: ceo.stages[0]?.itemName ?? "", amount: stageTotal }] : []}
-              note={C.ceoStageNote}
-              empty={C.noCost}
-              format={format}
-            />
-          </div>
+          {stageBad ? null : (
+            <div className={result}>
+              <Totals
+                totals={stageTotal > 0 ? [{ name: ceo.stages[0]?.itemName ?? "", amount: stageTotal }] : []}
+                note={C.ceoStageNote}
+                empty={C.noCost}
+                format={format}
+              />
+            </div>
+          )}
         </>
       ) : mode === "outfit" ? (
         <>
           <div className="grid grid-cols-2 gap-3">
             <Select id="cost-ceo-outfit-stage" text={C.ceoStage} value={outfitStage} onChange={setOutfitStage}>
-              {stageItems.map((item) => (
+              {ceo.stages.map((item) => (
                 <option key={item.stage} value={item.stage}>
                   {item.name}
                 </option>
@@ -107,19 +111,21 @@ export function CeoPanel({ ceo, C, format }: { ceo: CostBook["ceo"]; C: CostDict
           </Select>
 
           <div className="mt-3 grid grid-cols-2 gap-3">
-            <NumberField id="cost-ceo-sport-from" text={C.levelFrom} value={sportFrom} min={SPORT_MIN} max={SPORT_MAX} invalid={sportTo <= sportFrom} describedBy="cost-ceo-sport-error" onChange={(v) => setSportFrom(clamp(v, SPORT_MIN, SPORT_MAX))} />
-            <NumberField id="cost-ceo-sport-to" text={C.levelTo} value={sportTo} min={SPORT_MIN} max={SPORT_MAX} invalid={sportTo <= sportFrom} describedBy="cost-ceo-sport-error" onChange={(v) => setSportTo(clamp(v, SPORT_MIN, SPORT_MAX))} />
+            <NumberField id="cost-ceo-sport-from" text={C.levelFrom} value={sportFrom} min={SPORT_MIN} max={SPORT_MAX} invalid={sportBad} describedBy={sportBad ? "cost-ceo-sport-error" : undefined} onChange={(v) => setSportFrom(clamp(v, SPORT_MIN, SPORT_MAX))} />
+            <NumberField id="cost-ceo-sport-to" text={C.levelTo} value={sportTo} min={SPORT_MIN} max={SPORT_MAX} invalid={sportBad} describedBy={sportBad ? "cost-ceo-sport-error" : undefined} onChange={(v) => setSportTo(clamp(v, SPORT_MIN, SPORT_MAX))} />
           </div>
 
-          {sportTo <= sportFrom ? (
+          {sportBad ? (
             <p id="cost-ceo-sport-error" role="status" className={invalid}>
               {C.invalid}
             </p>
           ) : null}
 
-          <div className={result}>
-            <Totals totals={sportTotals} note={C.ceoSportNote} empty={C.noCost} format={format} />
-          </div>
+          {sportBad ? null : (
+            <div className={result}>
+              <Totals totals={sportTotals} note={C.ceoSportNote} empty={C.noCost} format={format} />
+            </div>
+          )}
         </>
       )}
     </section>

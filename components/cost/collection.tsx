@@ -31,7 +31,12 @@ export function CollectionPanel({
   const slots = Object.keys(collection.platforms).map(Number);
   const qualities = Object.keys(collection.stars).map(Number);
   const starItems = collection.stars[quality] ?? EMPTY;
-  const starMax = Math.max(...starItems.map((item) => Object.keys(item.amounts).length), 1);
+  // Jumlah bintang beda per quality (2/3/4), jadi batas input ikut quality terpilih.
+  const starMaxOf = (qualityId: number) =>
+    Math.max(...(collection.stars[qualityId] ?? EMPTY).map((item) => Object.keys(item.amounts).length), 1);
+  const starMax = starMaxOf(quality);
+  const platformBad = platformTo <= platformFrom;
+  const starBad = starTo <= starFrom;
 
   const platformTotals = useMemo(
     () => sumLevels(collection.platforms[slot - 1] ?? [], platformFrom, platformTo),
@@ -62,23 +67,34 @@ export function CollectionPanel({
           </Select>
 
           <div className="mt-3 grid grid-cols-2 gap-3">
-            <NumberField id="cost-collection-from" text={C.levelFrom} value={platformFrom} min={PLATFORM_MIN} max={PLATFORM_MAX} invalid={platformTo <= platformFrom} describedBy="cost-collection-error" onChange={(v) => setPlatformFrom(clamp(v, PLATFORM_MIN, PLATFORM_MAX))} />
-            <NumberField id="cost-collection-to" text={C.levelTo} value={platformTo} min={PLATFORM_MIN} max={PLATFORM_MAX} invalid={platformTo <= platformFrom} describedBy="cost-collection-error" onChange={(v) => setPlatformTo(clamp(v, PLATFORM_MIN, PLATFORM_MAX))} />
+            <NumberField id="cost-collection-from" text={C.levelFrom} value={platformFrom} min={PLATFORM_MIN} max={PLATFORM_MAX} invalid={platformBad} describedBy={platformBad ? "cost-collection-error" : undefined} onChange={(v) => setPlatformFrom(clamp(v, PLATFORM_MIN, PLATFORM_MAX))} />
+            <NumberField id="cost-collection-to" text={C.levelTo} value={platformTo} min={PLATFORM_MIN} max={PLATFORM_MAX} invalid={platformBad} describedBy={platformBad ? "cost-collection-error" : undefined} onChange={(v) => setPlatformTo(clamp(v, PLATFORM_MIN, PLATFORM_MAX))} />
           </div>
 
-          {platformTo <= platformFrom ? (
+          {platformBad ? (
             <p id="cost-collection-error" role="status" className={invalid}>
               {C.invalid}
             </p>
           ) : null}
 
-          <div className={result}>
-            <Totals totals={platformTotals} note={C.collectionNote} empty={C.noCost} format={format} />
-          </div>
+          {platformBad ? null : (
+            <div className={result}>
+              <Totals totals={platformTotals} note={C.collectionNote} empty={C.noCost} format={format} />
+            </div>
+          )}
         </>
       ) : (
         <>
-          <Select id="cost-collection-quality" text={C.quality} value={quality} onChange={setQuality}>
+          <Select
+            id="cost-collection-quality"
+            text={C.quality}
+            value={quality}
+            onChange={(v) => {
+              setQuality(v);
+              setStarFrom(0);
+              setStarTo(starMaxOf(v));
+            }}
+          >
             {qualities.map((value) => (
               <option key={value} value={value}>
                 {collection.stars[value]?.[0]?.itemName ?? `${C.quality} ${value}`}
@@ -87,19 +103,21 @@ export function CollectionPanel({
           </Select>
 
           <div className="mt-3 grid grid-cols-2 gap-3">
-            <NumberField id="cost-collection-star-from" text={C.starFrom} value={starFrom} min={0} max={starMax} invalid={starTo <= starFrom} describedBy="cost-collection-star-error" onChange={(v) => setStarFrom(clamp(v, 0, starMax))} />
-            <NumberField id="cost-collection-star-to" text={C.starTo} value={starTo} min={0} max={starMax} invalid={starTo <= starFrom} describedBy="cost-collection-star-error" onChange={(v) => setStarTo(clamp(v, 0, starMax))} />
+            <NumberField id="cost-collection-star-from" text={C.starFrom} value={starFrom} min={0} max={starMax} invalid={starBad} describedBy={starBad ? "cost-collection-star-error" : undefined} onChange={(v) => setStarFrom(clamp(v, 0, starMax))} />
+            <NumberField id="cost-collection-star-to" text={C.starTo} value={starTo} min={0} max={starMax} invalid={starBad} describedBy={starBad ? "cost-collection-star-error" : undefined} onChange={(v) => setStarTo(clamp(v, 0, starMax))} />
           </div>
 
-          {starTo <= starFrom ? (
+          {starBad ? (
             <p id="cost-collection-star-error" role="status" className={invalid}>
               {C.invalid}
             </p>
           ) : null}
 
-          <div className={result}>
-            <Totals totals={starTotals} note={C.collectionStarNote} empty={C.noCost} format={format} />
-          </div>
+          {starBad ? null : (
+            <div className={result}>
+              <Totals totals={starTotals} note={C.collectionStarNote} empty={C.noCost} format={format} />
+            </div>
+          )}
         </>
       )}
     </section>

@@ -22,8 +22,11 @@ export function VillaPanel({ villa, C, format }: { villa: CostBook["villa"]; C: 
 
   const stageAmounts = villa.stages.map((item) => item.amount);
   const maxStage = stageAmounts.length - 1;
+  // Stage berbiaya 0 tetap punya suite, jadi opsi select memakai semua stage.
   const stageItems = villa.stages.filter((item) => item.amount > 0);
   const stageTotal = expBetween(stageAmounts, stageFrom, stageTo);
+  const stageBad = stageTo <= stageFrom;
+  const staffBad = staffTo <= staffFrom;
 
   const suites = villa.suites.filter((item) => item.stage === suiteStage);
   const chosenSuite = suites.find((item) => item.suite === suite) ?? suites[0];
@@ -51,11 +54,11 @@ export function VillaPanel({ villa, C, format }: { villa: CostBook["villa"]; C: 
       {mode === "stage" ? (
         <>
           <div className="grid grid-cols-2 gap-3">
-            <NumberField id="cost-villa-from" text={C.stageFrom} value={stageFrom} min={0} max={maxStage} invalid={stageTo <= stageFrom} describedBy="cost-villa-stage-error" onChange={(v) => setStageFrom(clamp(v, 0, maxStage))} />
-            <NumberField id="cost-villa-to" text={C.stageTo} value={stageTo} min={0} max={maxStage} invalid={stageTo <= stageFrom} describedBy="cost-villa-stage-error" onChange={(v) => setStageTo(clamp(v, 0, maxStage))} />
+            <NumberField id="cost-villa-from" text={C.stageFrom} value={stageFrom} min={0} max={maxStage} invalid={stageBad} describedBy={stageBad ? "cost-villa-stage-error" : undefined} onChange={(v) => setStageFrom(clamp(v, 0, maxStage))} />
+            <NumberField id="cost-villa-to" text={C.stageTo} value={stageTo} min={0} max={maxStage} invalid={stageBad} describedBy={stageBad ? "cost-villa-stage-error" : undefined} onChange={(v) => setStageTo(clamp(v, 0, maxStage))} />
           </div>
 
-          {stageTo <= stageFrom ? (
+          {stageBad ? (
             <p id="cost-villa-stage-error" role="status" className={invalid}>
               {C.invalid}
             </p>
@@ -65,20 +68,22 @@ export function VillaPanel({ villa, C, format }: { villa: CostBook["villa"]; C: 
             {C.villaStageList}: <span className="font-semibold text-zinc-200">{stageItems.map((item) => item.name).join(", ")}</span>
           </p>
 
-          <div className={result}>
-            <Totals
-              totals={stageTotal > 0 ? [{ name: villa.stages[0]?.itemName ?? "", amount: stageTotal }] : []}
-              note={C.villaStageNote}
-              empty={C.noCost}
-              format={format}
-            />
-          </div>
+          {stageBad ? null : (
+            <div className={result}>
+              <Totals
+                totals={stageTotal > 0 ? [{ name: villa.stages[0]?.itemName ?? "", amount: stageTotal }] : []}
+                note={C.villaStageNote}
+                empty={C.noCost}
+                format={format}
+              />
+            </div>
+          )}
         </>
       ) : mode === "suite" ? (
         <>
           <div className="grid grid-cols-2 gap-3">
             <Select id="cost-villa-suite-stage" text={C.villaStage} value={suiteStage} onChange={setSuiteStage}>
-              {stageItems.map((item) => (
+              {villa.stages.map((item) => (
                 <option key={item.stage} value={item.stage}>
                   {item.name}
                 </option>
@@ -113,19 +118,21 @@ export function VillaPanel({ villa, C, format }: { villa: CostBook["villa"]; C: 
           </Select>
 
           <div className="mt-3 grid grid-cols-2 gap-3">
-            <NumberField id="cost-villa-staff-from" text={C.levelFrom} value={staffFrom} min={STAFF_MIN} max={STAFF_MAX} invalid={staffTo <= staffFrom} describedBy="cost-villa-staff-error" onChange={(v) => setStaffFrom(clamp(v, STAFF_MIN, STAFF_MAX))} />
-            <NumberField id="cost-villa-staff-to" text={C.levelTo} value={staffTo} min={STAFF_MIN} max={STAFF_MAX} invalid={staffTo <= staffFrom} describedBy="cost-villa-staff-error" onChange={(v) => setStaffTo(clamp(v, STAFF_MIN, STAFF_MAX))} />
+            <NumberField id="cost-villa-staff-from" text={C.levelFrom} value={staffFrom} min={STAFF_MIN} max={STAFF_MAX} invalid={staffBad} describedBy={staffBad ? "cost-villa-staff-error" : undefined} onChange={(v) => setStaffFrom(clamp(v, STAFF_MIN, STAFF_MAX))} />
+            <NumberField id="cost-villa-staff-to" text={C.levelTo} value={staffTo} min={STAFF_MIN} max={STAFF_MAX} invalid={staffBad} describedBy={staffBad ? "cost-villa-staff-error" : undefined} onChange={(v) => setStaffTo(clamp(v, STAFF_MIN, STAFF_MAX))} />
           </div>
 
-          {staffTo <= staffFrom ? (
+          {staffBad ? (
             <p id="cost-villa-staff-error" role="status" className={invalid}>
               {C.invalid}
             </p>
           ) : null}
 
-          <div className={result}>
-            <Totals totals={staffTo > staffFrom ? staffTotals : []} note={C.villaStaffNote} empty={C.noCost} format={format} />
-          </div>
+          {staffBad ? null : (
+            <div className={result}>
+              <Totals totals={staffTotals} note={C.villaStaffNote} empty={C.noCost} format={format} />
+            </div>
+          )}
         </>
       )}
     </section>

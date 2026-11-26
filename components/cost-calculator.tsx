@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { expBetween, modTotals, starBetween, sumLevels } from "@/lib/cost-calc";
 import { DICT, numberLocale, type Locale } from "@/lib/i18n";
 import type { CarPart, CostBook } from "@/lib/costs";
@@ -47,6 +47,9 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
   const curve = artist ? (book.curves[artist.curve] ?? []) : [];
   const exp = expBetween(curve, levelFrom, levelTo);
   const starCards = starBetween(book.star.amounts, starFrom, starTo);
+  const artistBad = levelTo <= levelFrom || starTo <= starFrom;
+  const partBad = partTo <= partFrom;
+  const modBad = modTo <= modFrom;
 
   const partTotals = useMemo(
     () => sumLevels(book.costs.carPart[partId] ?? [], partFrom, partTo),
@@ -73,34 +76,12 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
   }));
   const modLabels = [C.partEngine, C.partChassis, C.partSuspension, C.partWheels];
 
-  const tabs: { id: Tab; label: string }[] = [
-    { id: "artist", label: C.tabArtist },
-    { id: "parts", label: C.tabParts },
-    { id: "mods", label: C.tabMods },
-    { id: "museum", label: C.tabMuseum },
-    { id: "hq", label: C.tabHq },
-    { id: "villa", label: C.tabVilla },
-    { id: "collection", label: C.tabCollection },
-    { id: "ceo", label: C.tabCeo },
-  ];
-
-  return (
-    <div className="flex flex-col gap-4">
-      <div role="group" aria-label={C.title} className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-        {tabs.map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            aria-pressed={tab === item.id}
-            onClick={() => setTab(item.id)}
-            className={chip(tab === item.id)}
-          >
-            {item.label}
-          </button>
-        ))}
-      </div>
-
-      {tab === "artist" ? (
+  // Semua panel tetap ter-mount (disembunyikan) supaya input tidak hilang saat ganti tab.
+  const panels: { id: Tab; label: string; node: ReactNode }[] = [
+    {
+      id: "artist",
+      label: C.tabArtist,
+      node: (
         <section aria-label={C.tabArtist} className={panel}>
           <div className="flex flex-col gap-1">
             <label htmlFor="cost-artist" className={label}>
@@ -116,41 +97,48 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
           </div>
 
           <div className="mt-3 grid grid-cols-2 gap-3">
-            <NumberField id="cost-level-from" text={C.levelFrom} value={levelFrom} min={ARTIST_MIN} max={ARTIST_MAX} invalid={levelTo <= levelFrom} describedBy="cost-artist-error" onChange={(v) => setLevelFrom(clamp(v, ARTIST_MIN, ARTIST_MAX))} />
-            <NumberField id="cost-level-to" text={C.levelTo} value={levelTo} min={ARTIST_MIN} max={ARTIST_MAX} invalid={levelTo <= levelFrom} describedBy="cost-artist-error" onChange={(v) => setLevelTo(clamp(v, ARTIST_MIN, ARTIST_MAX))} />
-            <NumberField id="cost-star-from" text={C.starFrom} value={starFrom} min={STAR_MIN} max={STAR_MAX} invalid={starTo <= starFrom} describedBy="cost-artist-error" onChange={(v) => setStarFrom(clamp(v, STAR_MIN, STAR_MAX))} />
-            <NumberField id="cost-star-to" text={C.starTo} value={starTo} min={STAR_MIN} max={STAR_MAX} invalid={starTo <= starFrom} describedBy="cost-artist-error" onChange={(v) => setStarTo(clamp(v, STAR_MIN, STAR_MAX))} />
+            <NumberField id="cost-level-from" text={C.levelFrom} value={levelFrom} min={ARTIST_MIN} max={ARTIST_MAX} invalid={artistBad} describedBy={artistBad ? "cost-artist-error" : undefined} onChange={(v) => setLevelFrom(clamp(v, ARTIST_MIN, ARTIST_MAX))} />
+            <NumberField id="cost-level-to" text={C.levelTo} value={levelTo} min={ARTIST_MIN} max={ARTIST_MAX} invalid={artistBad} describedBy={artistBad ? "cost-artist-error" : undefined} onChange={(v) => setLevelTo(clamp(v, ARTIST_MIN, ARTIST_MAX))} />
+            <NumberField id="cost-star-from" text={C.starFrom} value={starFrom} min={STAR_MIN} max={STAR_MAX} invalid={artistBad} describedBy={artistBad ? "cost-artist-error" : undefined} onChange={(v) => setStarFrom(clamp(v, STAR_MIN, STAR_MAX))} />
+            <NumberField id="cost-star-to" text={C.starTo} value={starTo} min={STAR_MIN} max={STAR_MAX} invalid={artistBad} describedBy={artistBad ? "cost-artist-error" : undefined} onChange={(v) => setStarTo(clamp(v, STAR_MIN, STAR_MAX))} />
           </div>
 
-          {levelTo <= levelFrom || starTo <= starFrom ? (
+          {artistBad ? (
             <p id="cost-artist-error" role="status" className={invalid}>
               {C.invalid}
             </p>
           ) : null}
 
-          <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
-            <div className="rounded-xl border border-gold/30 bg-gold/10 px-3 py-3">
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-zinc-300">{C.exp}</p>
-              <p className="tabular text-2xl font-bold text-gold">{format(exp)}</p>
-            </div>
-            <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-panel-2/60 px-3 py-3">
-              <div className="min-w-0 flex-1">
-                <p className="text-[11px] font-semibold uppercase tracking-wide text-zinc-300">{C.starCards}</p>
-                <p className="tabular text-2xl font-bold text-zinc-100">{format(starCards)}</p>
-                <p className="mt-1 text-xs text-zinc-400">{book.star.itemName}</p>
+          {artistBad ? null : (
+            <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <div className="rounded-xl border border-gold/30 bg-gold/10 px-3 py-3">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-zinc-300">{C.exp}</p>
+                <p className="tabular text-2xl font-bold text-gold">{format(exp)}</p>
               </div>
-              <Image
-                src="/assets/images/upgrades/UI_Item_Props_UpStar_Orange.webp"
-                alt=""
-                width={56}
-                height={56}
-                sizes="56px"
-                className="h-14 w-14 shrink-0 object-contain"
-              />
+              <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-panel-2/60 px-3 py-3">
+                <div className="min-w-0 flex-1">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-zinc-300">{C.starCards}</p>
+                  <p className="tabular text-2xl font-bold text-zinc-100">{format(starCards)}</p>
+                  <p className="mt-1 text-xs text-zinc-400">{book.star.itemName}</p>
+                </div>
+                <Image
+                  src="/assets/images/upgrades/UI_Item_Props_UpStar_Orange.webp"
+                  alt=""
+                  width={56}
+                  height={56}
+                  sizes="56px"
+                  className="h-14 w-14 shrink-0 object-contain"
+                />
+              </div>
             </div>
-          </div>
+          )}
         </section>
-      ) : tab === "parts" ? (
+      ),
+    },
+    {
+      id: "parts",
+      label: C.tabParts,
+      node: (
         <section aria-label={C.tabParts} className={panel}>
           <div className="flex flex-col gap-1">
             <label htmlFor="cost-part" className={label}>
@@ -170,21 +158,28 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
           </div>
 
           <div className="mt-3 grid grid-cols-2 gap-3">
-            <NumberField id="cost-part-from" text={C.levelFrom} value={partFrom} min={PART_MIN} max={PART_MAX} invalid={partTo <= partFrom} describedBy="cost-part-error" onChange={(v) => setPartFrom(clamp(v, PART_MIN, PART_MAX))} />
-            <NumberField id="cost-part-to" text={C.levelTo} value={partTo} min={PART_MIN} max={PART_MAX} invalid={partTo <= partFrom} describedBy="cost-part-error" onChange={(v) => setPartTo(clamp(v, PART_MIN, PART_MAX))} />
+            <NumberField id="cost-part-from" text={C.levelFrom} value={partFrom} min={PART_MIN} max={PART_MAX} invalid={partBad} describedBy={partBad ? "cost-part-error" : undefined} onChange={(v) => setPartFrom(clamp(v, PART_MIN, PART_MAX))} />
+            <NumberField id="cost-part-to" text={C.levelTo} value={partTo} min={PART_MIN} max={PART_MAX} invalid={partBad} describedBy={partBad ? "cost-part-error" : undefined} onChange={(v) => setPartTo(clamp(v, PART_MIN, PART_MAX))} />
           </div>
 
-          {partTo <= partFrom ? (
+          {partBad ? (
             <p id="cost-part-error" role="status" className={invalid}>
               {C.invalid}
             </p>
           ) : null}
 
-          <div className={result}>
-            <Totals totals={partTotals} note={C.partNote} empty={C.noCost} format={format} />
-          </div>
+          {partBad ? null : (
+            <div className={result}>
+              <Totals totals={partTotals} note={C.partNote} empty={C.noCost} format={format} />
+            </div>
+          )}
         </section>
-      ) : tab === "mods" ? (
+      ),
+    },
+    {
+      id: "mods",
+      label: C.tabMods,
+      node: (
         <section aria-label={C.tabMods} className={panel}>
           <div className="flex flex-col gap-1">
             <label htmlFor="cost-mod" className={label}>
@@ -200,37 +195,58 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
           </div>
 
           <div className="mt-3 grid grid-cols-2 gap-3">
-            <NumberField id="cost-mod-from" text={C.levelFrom} value={modFrom} min={MOD_MIN} max={MOD_MAX} invalid={modTo <= modFrom} describedBy="cost-mod-error" onChange={(v) => setModFrom(clamp(v, MOD_MIN, MOD_MAX))} />
-            <NumberField id="cost-mod-to" text={C.levelTo} value={modTo} min={MOD_MIN} max={MOD_MAX} invalid={modTo <= modFrom} describedBy="cost-mod-error" onChange={(v) => setModTo(clamp(v, MOD_MIN, MOD_MAX))} />
+            <NumberField id="cost-mod-from" text={C.levelFrom} value={modFrom} min={MOD_MIN} max={MOD_MAX} invalid={modBad} describedBy={modBad ? "cost-mod-error" : undefined} onChange={(v) => setModFrom(clamp(v, MOD_MIN, MOD_MAX))} />
+            <NumberField id="cost-mod-to" text={C.levelTo} value={modTo} min={MOD_MIN} max={MOD_MAX} invalid={modBad} describedBy={modBad ? "cost-mod-error" : undefined} onChange={(v) => setModTo(clamp(v, MOD_MIN, MOD_MAX))} />
           </div>
 
-          {modTo <= modFrom ? (
+          {modBad ? (
             <p id="cost-mod-error" role="status" className={invalid}>
               {C.invalid}
             </p>
           ) : null}
 
-          {targetClass ? (
+          {modBad || !targetClass ? null : (
             <p className="mt-3 text-xs text-zinc-400">
               {C.targetClass}: <span className="font-semibold text-zinc-200">{targetClass.name}</span>
             </p>
-          ) : null}
+          )}
 
-          <div className={result}>
-            <Totals totals={modTotalsResult} note={C.modNote} empty={C.noCost} format={format} />
-          </div>
+          {modBad ? null : (
+            <div className={result}>
+              <Totals totals={modTotalsResult} note={C.modNote} empty={C.noCost} format={format} />
+            </div>
+          )}
         </section>
-      ) : tab === "museum" ? (
-        <MuseumPanel tiers={book.museum} C={C} format={format} />
-      ) : tab === "hq" ? (
-        <HqPanel hq={book.hq} C={C} format={format} />
-      ) : tab === "villa" ? (
-        <VillaPanel villa={book.villa} C={C} format={format} />
-      ) : tab === "collection" ? (
-        <CollectionPanel collection={book.collection} C={C} format={format} />
-      ) : (
-        <CeoPanel ceo={book.ceo} C={C} format={format} />
-      )}
+      ),
+    },
+    { id: "museum", label: C.tabMuseum, node: <MuseumPanel tiers={book.museum} C={C} format={format} /> },
+    { id: "hq", label: C.tabHq, node: <HqPanel hq={book.hq} C={C} format={format} /> },
+    { id: "villa", label: C.tabVilla, node: <VillaPanel villa={book.villa} C={C} format={format} /> },
+    { id: "collection", label: C.tabCollection, node: <CollectionPanel collection={book.collection} C={C} format={format} /> },
+    { id: "ceo", label: C.tabCeo, node: <CeoPanel ceo={book.ceo} C={C} format={format} /> },
+  ];
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div role="group" aria-label={C.title} className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        {panels.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            aria-pressed={tab === item.id}
+            onClick={() => setTab(item.id)}
+            className={chip(tab === item.id)}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
+
+      {panels.map((item) => (
+        <div key={item.id} hidden={tab !== item.id}>
+          {item.node}
+        </div>
+      ))}
 
       <p className="text-xs text-zinc-400">{C.hint}</p>
     </div>
