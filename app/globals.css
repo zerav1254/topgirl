@@ -29,6 +29,7 @@ body {
 /* Ikon bottom nav: PNG transparan dipakai sebagai mask supaya ikut warna teks aktif. */
 .artist-glyph,
 .team-glyph,
+.lineup-glyph,
 .profile-glyph {
   background-color: currentColor;
   -webkit-mask: center / contain no-repeat;
@@ -48,6 +49,11 @@ body {
 .team-glyph {
   -webkit-mask-image: url("/assets/icons/team.png");
   mask-image: url("/assets/icons/team.png");
+}
+
+.lineup-glyph {
+  -webkit-mask-image: url("/assets/icons/lineup.png");
+  mask-image: url("/assets/icons/lineup.png");
 }
 
 ::selection {

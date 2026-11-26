@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import { DICT, t, type Locale } from "@/lib/i18n";
 import { TEAM_SIZE } from "@/lib/team";
 import { getServerTeam, readTeam, subscribeTeam } from "@/lib/team-store";
-import { ICONS, Icon } from "./artist-ui";
 
 const ITEM = "flex min-h-14 flex-col items-center justify-center gap-1 rounded-lg text-center text-xs font-semibold leading-tight transition-colors duration-200";
 const IDLE = "text-zinc-400 hover:bg-white/5 hover:text-zinc-200";
@@ -73,7 +72,7 @@ export function BottomNav({ locale }: { locale: Locale }) {
           aria-current={pathname === `${base}/lineups` ? "page" : undefined}
           className={`${ITEM} ${pathname === `${base}/lineups` ? ACTIVE : IDLE}`}
         >
-          <Icon d={ICONS.layers} className="h-5 w-5" />
+          <span aria-hidden="true" className="lineup-glyph h-5 w-5" />
           {C.header.lineups}
         </Link>
         <Link
