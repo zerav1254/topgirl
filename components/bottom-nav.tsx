@@ -53,7 +53,7 @@ export function BottomNav({ locale }: { locale: Locale }) {
           className={`${ITEM} relative ${onTeam ? ACTIVE : IDLE}`}
         >
           <span className="relative">
-            <Icon d={ICONS.users} className="h-5 w-5" />
+            <span aria-hidden="true" className="team-glyph block h-5 w-5" />
             <span
               aria-hidden="true"
               className={`tabular absolute -top-2.5 -right-3 grid h-5 min-w-5 place-items-center rounded-full px-1 text-[10px] font-bold ${

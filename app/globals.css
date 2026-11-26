@@ -28,6 +28,7 @@ body {
 
 /* Ikon bottom nav: PNG transparan dipakai sebagai mask supaya ikut warna teks aktif. */
 .artist-glyph,
+.team-glyph,
 .profile-glyph {
   background-color: currentColor;
   -webkit-mask: center / contain no-repeat;
@@ -42,6 +43,11 @@ body {
 .profile-glyph {
   -webkit-mask-image: url("/assets/icons/profile.png");
   mask-image: url("/assets/icons/profile.png");
+}
+
+.team-glyph {
+  -webkit-mask-image: url("/assets/icons/team.png");
+  mask-image: url("/assets/icons/team.png");
 }
 
 ::selection {
