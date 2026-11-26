@@ -44,7 +44,7 @@ const orders = {
   rally: ["fan_rally", "player_dmg", "skill_dmg", "basic_atk"],
   defense: ["basic_atk_red", "skill_dmg_red", "player_dmg"],
   economy: ["gold", "drive"],
-  global: ["player_dmg", "wbg_dmg", "skill_dmg", "fan", "basic_atk"],
+  global: ["player_dmg", "skill_dmg", "fan", "wbg_dmg"],
   sustain: ["basic_atk_red", "skill_dmg_red", "player_dmg", "fan", "skill_dmg", "basic_atk"],
 };
 for (const [category, order] of Object.entries(orders)) {

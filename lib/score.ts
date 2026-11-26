@@ -219,7 +219,7 @@ export const SCORE: Record<Category, Record<Effect, number>> = {
   // GLOBAL: player_dmg bobot tertinggi mutlak.
   global: {
     player_dmg: 3,
-    wbg_dmg: 2,
+    wbg_dmg: 0.5,
     skill_dmg: 1.25,
     fan: 1,
     basic_atk: 0.5,
