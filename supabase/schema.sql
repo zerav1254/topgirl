@@ -335,17 +335,38 @@ create table public.game_costs (
   primary key (scope, ref_id, level, item_id)
 );
 
+-- Museum pribadi (CCollectDispatchMuseumLevel): 3 bagian x 7 tier x 60 level.
+-- Biaya tiap bagian identik, yang membedakan hanya buff/stat-nya.
+create table public.museum_parts (
+  id smallint primary key check (id between 1 and 3),
+  name text not null
+);
+
+create table public.museum_costs (
+  part smallint not null references public.museum_parts (id) on delete cascade,
+  tier smallint not null check (tier between 1 and 7),
+  level smallint not null check (level between 1 and 60),
+  item_id integer not null,
+  item_name text not null,
+  amount bigint not null check (amount > 0),
+  primary key (part, tier, level, item_id)
+);
+
 alter table public.car_parts enable row level security;
 alter table public.car_part_levels enable row level security;
 alter table public.car_mod_classes enable row level security;
 alter table public.car_mod_levels enable row level security;
 alter table public.game_costs enable row level security;
+alter table public.museum_parts enable row level security;
+alter table public.museum_costs enable row level security;
 
 create policy "read car parts" on public.car_parts for select to anon, authenticated using (true);
 create policy "read car part levels" on public.car_part_levels for select to anon, authenticated using (true);
 create policy "read car mod classes" on public.car_mod_classes for select to anon, authenticated using (true);
 create policy "read car mod levels" on public.car_mod_levels for select to anon, authenticated using (true);
 create policy "read game costs" on public.game_costs for select to anon, authenticated using (true);
+create policy "read museum parts" on public.museum_parts for select to anon, authenticated using (true);
+create policy "read museum costs" on public.museum_costs for select to anon, authenticated using (true);
 
 -- ── Kalkulator biaya (view ringkas untuk halaman /cost) ─────────────────────
 -- Kurva EXP unik per artis; artis dengan urutan exp_step sama berbagi satu baris.
