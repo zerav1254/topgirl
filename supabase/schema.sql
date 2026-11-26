@@ -34,7 +34,9 @@ create table public.artists (
   photo_path text,
   -- Versi cache foto, terpisah dari updated_at supaya edit stat tidak memicu unduh ulang gambar.
   photo_updated_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+  updated_at timestamptz not null default now(),
+  -- Id hero di config game (CHeroData.Id) sebagai sumber data biaya level; null = belum dipetakan.
+  game_hero_id integer unique
 );
 
 create table public.artist_skills (
@@ -46,6 +48,17 @@ create table public.artist_skills (
   primary key (artist_id, slot)
 );
 
+-- Biaya EXP naik level artis 1..160, sumber tabel config CHeroStarLevel.
+-- exp_step = tambahan EXP level ini, exp_total = total EXP kumulatif dari level 1.
+create table public.artist_level_costs (
+  artist_id integer not null references public.artists (id) on delete cascade,
+  level smallint not null check (level between 1 and 160),
+  star smallint not null check (star >= 0),
+  exp_step bigint not null check (exp_step >= 0),
+  exp_total bigint not null check (exp_total >= 0),
+  primary key (artist_id, level)
+);
+
 create index artist_skills_effect_idx on public.artist_skills (effect);
 create index artists_genre_idx on public.artists (genre);
 create index artists_origin_idx on public.artists (origin);
@@ -55,6 +68,7 @@ create index artists_origin_idx on public.artists (origin);
 
 alter table public.artists enable row level security;
 alter table public.artist_skills enable row level security;
+alter table public.artist_level_costs enable row level security;
 alter table public.genres enable row level security;
 alter table public.origins enable row level security;
 alter table public.effects enable row level security;
@@ -62,6 +76,7 @@ alter table public.effects enable row level security;
 -- Publik hanya boleh membaca. Semua tulis lewat service_role di server action.
 create policy "read artists" on public.artists for select to anon, authenticated using (true);
 create policy "read artist skills" on public.artist_skills for select to anon, authenticated using (true);
+create policy "read artist level costs" on public.artist_level_costs for select to anon, authenticated using (true);
 create policy "read genres" on public.genres for select to anon, authenticated using (true);
 create policy "read origins" on public.origins for select to anon, authenticated using (true);
 create policy "read effects" on public.effects for select to anon, authenticated using (true);
@@ -243,3 +258,72 @@ create trigger artist_seasons_touch
   for each row execute function public.set_updated_at();
 
 create policy "read artist seasons" on public.artist_seasons for select to anon, authenticated using (true);
+
+-- ── Upgrade mobil (config game) ──────────────────────────────────────────────
+-- Dua sistem terpisah: komponen mobil (CCarEquip*) dan mod mobil (CCarMod*).
+-- Sumber: dump config game, bukan data pemain.
+
+-- Komponen mobil: 3 slot x 7 tier (D, C, B, A, A+, S, S+), tiap komponen 60 level.
+create table public.car_parts (
+  id integer primary key,
+  name text not null,
+  slot text not null check (slot in ('steering', 'chip', 'sound')),
+  tier smallint not null check (tier between 1 and 7),
+  quality smallint not null check (quality >= 0),
+  image text
+);
+
+-- Bonus stat per level komponen mobil (CCarEquipLevel); dijumlahkan antar level.
+create table public.car_part_levels (
+  part_id integer not null references public.car_parts (id) on delete cascade,
+  level smallint not null check (level between 1 and 60),
+  sing integer not null default 0 check (sing >= 0),
+  dance integer not null default 0 check (dance >= 0),
+  management integer not null default 0 check (management >= 0),
+  primary key (part_id, level)
+);
+
+-- Kelas mod mobil (CCarModClass): A -> EX, tiap kelas punya beberapa star.
+create table public.car_mod_classes (
+  id integer primary key,
+  name text not null,
+  star smallint not null check (star >= 0),
+  quality smallint not null check (quality >= 0),
+  -- Jumlah level yang harus dinaikkan di kelas ini sebelum naik kelas.
+  upgrades smallint not null check (upgrades > 0)
+);
+
+-- Level mod mobil (CCarModLevel): part 0 mesin, 1 sasis, 2 suspensi, 3 velg; 220 level.
+create table public.car_mod_levels (
+  part smallint not null check (part between 0 and 3),
+  level smallint not null check (level between 0 and 219),
+  class_id integer not null references public.car_mod_classes (id),
+  sing integer not null default 0 check (sing >= 0),
+  dance integer not null default 0 check (dance >= 0),
+  management integer not null default 0 check (management >= 0),
+  primary key (part, level)
+);
+
+-- Biaya item seluruh sistem upgrade mobil. level 0 = biaya naik kelas (car_mod_class).
+-- item_name dari lokalisasi game disimpan apa adanya supaya tidak perlu join.
+create table public.game_costs (
+  scope text not null check (scope in ('car_part', 'car_mod', 'car_mod_class')),
+  ref_id integer not null,
+  level smallint not null default 0 check (level >= 0),
+  item_id integer not null,
+  item_name text not null,
+  amount bigint not null check (amount > 0),
+  primary key (scope, ref_id, level, item_id)
+);
+
+alter table public.car_parts enable row level security;
+alter table public.car_part_levels enable row level security;
+alter table public.car_mod_classes enable row level security;
+alter table public.car_mod_levels enable row level security;
+alter table public.game_costs enable row level security;
+
+create policy "read car parts" on public.car_parts for select to anon, authenticated using (true);
+create policy "read car part levels" on public.car_part_levels for select to anon, authenticated using (true);
+create policy "read car mod classes" on public.car_mod_classes for select to anon, authenticated using (true);
+create policy "read car mod levels" on public.car_mod_levels for select to anon, authenticated using (true);
+create policy "read game costs" on public.game_costs for select to anon, authenticated using (true);
