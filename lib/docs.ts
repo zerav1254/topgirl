@@ -21,7 +21,7 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
         },
         {
           title: "Menyusun tim",
-          body: "Buka tab Team Builder, klik slot, lalu pilih artist. Tombol Susun tim terbaik mengisi 5 slot dari kombinasi skor tertinggi yang bisa diperoleh; bonus genre dipakai untuk memecah seri.",
+          body: "Buka tab Team Builder, klik slot, lalu pilih artist. Tombol Susun tim terbaik mengisi {size} slot dari kombinasi skor tertinggi yang bisa diperoleh; bonus genre dipakai untuk memecah seri.",
         },
         {
           title: "Koleksi",
@@ -101,7 +101,7 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
         },
         {
           title: "Building a team",
-          body: "Open the Team Builder tab, click a slot, then pick an artist. Build the best team fills all 5 slots with the highest-scoring obtainable combination; genre bonus breaks ties.",
+          body: "Open the Team Builder tab, click a slot, then pick an artist. Build the best team fills all {size} slots with the highest-scoring obtainable combination; genre bonus breaks ties.",
         },
         {
           title: "Collection",
@@ -181,7 +181,7 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
         },
         {
           title: "Composer une équipe",
-          body: "Ouvrez l'onglet Team Builder, cliquez sur un emplacement puis choisissez un artiste. Composer la meilleure équipe remplit les 5 emplacements avec la meilleure combinaison disponible ; le bonus de genre départage les égalités.",
+          body: "Ouvrez l'onglet Team Builder, cliquez sur un emplacement puis choisissez un artiste. Composer la meilleure équipe remplit les {size} emplacements avec la meilleure combinaison disponible ; le bonus de genre départage les égalités.",
         },
         {
           title: "Collection",
@@ -261,7 +261,7 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
         },
         {
           title: "팀 구성",
-          body: "Team Builder 탭에서 슬롯을 누르고 아티스트를 고르세요. 최고 팀 구성 버튼은 획득 가능한 조합 중 최고 점수로 5개 슬롯을 채우고, 동점은 장르 보너스로 가릅니다.",
+          body: "Team Builder 탭에서 슬롯을 누르고 아티스트를 고르세요. 최고 팀 구성 버튼은 획득 가능한 조합 중 최고 점수로 {size}개 슬롯을 채우고, 동점은 장르 보너스로 가릅니다.",
         },
         {
           title: "컬렉션",
@@ -341,7 +341,7 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
         },
         {
           title: "组建队伍",
-          body: "打开 Team Builder 标签，点击槽位，然后选择艺术家。最佳队伍按钮会用可获得的最高分组合填满 5 个槽位；同分时由类型加成决定。",
+          body: "打开 Team Builder 标签，点击槽位，然后选择艺术家。最佳队伍按钮会用可获得的最高分组合填满 {size} 个槽位；同分时由类型加成决定。",
         },
         {
           title: "收藏",
@@ -421,7 +421,7 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
         },
         {
           title: "チームを組む",
-          body: "Team Builder タブを開き、スロットをクリックしてアーティストを選びます。最適チーム編成ボタンは入手可能な中で最高スコアの組み合わせで 5 スロットを埋め、同点はジャンルボーナスで決めます。",
+          body: "Team Builder タブを開き、スロットをクリックしてアーティストを選びます。最適チーム編成ボタンは入手可能な中で最高スコアの組み合わせで {size} スロットを埋め、同点はジャンルボーナスで決めます。",
         },
         {
           title: "コレクション",
@@ -501,7 +501,7 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
         },
         {
           title: "Team zusammenstellen",
-          body: "Öffne den Tab Team Builder, klicke auf einen Slot und wähle einen Artist. Bestes Team bilden füllt alle 5 Slots mit der punktbesten erhältlichen Kombination; bei Gleichstand entscheidet der Genre-Bonus.",
+          body: "Öffne den Tab Team Builder, klicke auf einen Slot und wähle einen Artist. Bestes Team bilden füllt alle {size} Slots mit der punktbesten erhältlichen Kombination; bei Gleichstand entscheidet der Genre-Bonus.",
         },
         {
           title: "Sammlung",

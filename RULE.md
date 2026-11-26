@@ -12,7 +12,7 @@ Aturan keras repo ini. Kalau ragu, berhenti dan tanya — jangan improvisasi.
 ## Deploy
 
 - **Jangan** menjalankan `vercel`, `vercel deploy`, `vercel login`, atau menyentuh `.vercel/` dari mesin ini. Deploy dilakukan pemilik akun lewat dashboard Vercel (import repo GitHub, auto-deploy dari `main`).
-- Secret yang dibutuhkan: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_PASSWORD`, `AUTH_SECRET`. Set lewat env Vercel + `.env.local` lokal (gitignored). Jangan menaruh nilainya di repo, `.env`, log, atau komponen client.
+- Secret yang dibutuhkan: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`. Set lewat env Vercel + `.env.local` lokal (gitignored). Jangan menaruh nilainya di repo, `.env`, log, atau komponen client.
 - Jangan mengubah remote git (`origin` = `https://github.com/zerav1254/topgirl.git`).
 
 ## Data
@@ -41,7 +41,7 @@ Aturan keras repo ini. Kalau ragu, berhenti dan tanya — jangan improvisasi.
 - Jangan `useEffect` untuk hal yang bisa dihitung saat render (`useMemo`/turunan langsung).
 - Jangan menambah `tailwind.config.*`; token hanya di `@theme` pada `app/globals.css`.
 - Ikon wajib inline SVG dari set yang sudah ada. Emoji sebagai ikon dilarang.
-- Teks UI tidak boleh hardcode. Semua string tampil diambil dari `lib/dict/<locale>.ts` lewat `DICT[locale]` + `t()`; `id` default, semua locale (`en`, `fr`, `ko`) wajib ikut diisi saat menambah key.
+- Teks UI tidak boleh hardcode. Semua string tampil diambil dari `lib/dict/<locale>.ts` lewat `DICT[locale]` + `t()`; `id` default, semua locale (`en`, `fr`, `ko`, `zh`, `ja`, `de`) wajib ikut diisi saat menambah key.
 - Bahasa ditentukan segmen URL pertama (`/id`, `/en`); `<html lang>` mengikuti locale. Jangan baca bahasa dari localStorage. Label data dari DB (`genres.label` dkk.) tidak diterjemah.
 
 ## Git

@@ -28,8 +28,8 @@ Jangan jalankan `next start`/`npm start`, termasuk uji lokal. Verifikasi lewat `
 ```
 app/[locale]/
   layout.tsx        validasi locale + <html lang> + metadata per locale
-  page.tsx          loadArtists() -> <TeamBuilder tab="artists">, revalidate 300
-  team/page.tsx     loadArtists() -> <TeamBuilder tab="team"> + OG, revalidate 300
+  page.tsx          getArtists() -> <TeamBuilder tab="artists"> (roster cache 300 dtk)
+  team/page.tsx     getArtists() -> <TeamBuilder tab="team"> + OG
   loading.tsx       skeleton route (client, locale dari useParams)
   error.tsx         error boundary per locale (wajib "use client")
   not-found.tsx     404; locale dibaca dari segmen URL (client)
@@ -58,6 +58,7 @@ components/
   locale-switcher.tsx ganti segmen locale di path
 lib/
   artists.ts      query Supabase -> tipe Artist/Effect
+  artists-cache.ts cache roster lintas request (unstable_cache 300 dtk)
   score.ts        bobot skor, tier, label effect
   team.ts         TEAM_SIZE, STAT_ORDER, GENRE_BONUS
   team-store.ts   store tim di localStorage
@@ -70,10 +71,12 @@ lib/
   supabase.ts     read client (anon) + adminClient() (service_role)
   supabase/server.ts client SSR untuk sesi OAuth
   auth.ts         session Supabase: getUser/getProfile/getIdentities
-  i18n.ts         LOCALES, Locale, DICT, LANG_NAME, t() interpolasi, numberLocale, localeOr
+  locales.ts      LOCALES, Locale, isLocale, localeOr (tanpa dictionary, dipakai proxy)
+  i18n.ts         DICT, LANG_NAME, t() interpolasi, numberLocale (re-export locale)
+  rate-limit.ts   limiter per instance untuk server action tulis
   seo.ts          metadata bersama (canonical/hreflang/OG/Twitter) + SITE_ICON
   image-client.ts kompres foto di browser (createImageBitmap/canvas)
-  dict/id.ts      sumber string UI (tipe Dict); en|fr|ko wajib lengkap
+  dict/id.ts      sumber string UI (tipe Dict); en|fr|ko|zh|ja|de wajib lengkap
 supabase/schema.sql  tabel + bucket + RLS
 scripts/seed-supabase.mjs
 data/artists.csv     bahan seed, bukan sumber runtime

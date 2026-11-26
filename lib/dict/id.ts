@@ -96,7 +96,7 @@ export const id = {
     seasonHint: "Artis di atas season ini ditandai belum bisa diperoleh.",
     rank: "Peringkat #{n} dari {total} di season ini",
     best: "Susun tim terbaik dari season ini",
-    bestHint: "Mengisi 5 slot dengan kombinasi skor tertinggi yang bisa diperoleh.",
+    bestHint: "Mengisi {n} slot dengan kombinasi skor tertinggi yang bisa diperoleh.",
     blocked: "Belum bisa diperoleh",
   },
   auth: {

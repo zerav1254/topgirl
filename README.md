@@ -23,25 +23,20 @@ Cek bobot skor/tier terhadap DB: `npm run check:scores`.
 | `NEXT_PUBLIC_SITE_URL` | opsional, origin situs untuk callback OAuth; kosong = `VERCEL_*` lalu `localhost:3000` |
 
 Login memakai Supabase Auth provider **Google** dan **Discord** (provider email dimatikan).
-Callback OAuth: `https://<ref>.supabase.co/auth/v1/callback`. Admin pertama diangkat lewat SQL:
-
-```sql
-from auth.identities i
-where i.user_id = p.user_id and i.provider in ('google', 'discord') and i.provider_id = '<provider-id>';
-```
+Callback OAuth: `https://<ref>.supabase.co/auth/v1/callback`.
 
 ## Halaman
 
-- `/` — redirect ke `/id`.
-- `/id`, `/en`, `/fr`, `/ko` — team builder (revalidate 5 menit; di-refresh langsung setelah simpan). Pilih **season server** untuk melihat peringkat relatif dan menyusun tim terbaik dari artis yang bisa diperoleh. Artis di atas season server tetap tampil di section "Belum bisa diperoleh" dan tetap boleh dipilih, dengan peringatan.
+- `/` — redirect ke locale browser (`id` default).
+- `/id`, `/en`, `/fr`, `/ko`, `/zh`, `/ja`, `/de` — team builder (roster di-cache 5 menit). Pilih **season server** untuk melihat peringkat relatif dan menyusun tim terbaik dari artis yang bisa diperoleh. Artis di atas season server tetap tampil di section "Belum bisa diperoleh" dan tetap boleh dipilih, dengan peringatan.
 - `/{locale}/login` — masuk dengan Google/Discord.
-- `/{locale}/profile` — nama dan ID game.
+- `/{locale}/profile` — profil, avatar, nama dan ID game.
 - `/{locale}/lineups` — simpan dan bagikan tim.
 - `/{locale}/l/<share_slug>` — lineup publik read-only, `noindex`.
 
 ## Skema
 
-`supabase/schema.sql` — tabel `artists`, `artist_skills`, `artist_seasons` (season artis aboard, read-only), tabel opsi `genres`/`origins`/`effects`, bucket `artist-thumb`, RLS select-only untuk anon. Ditambah `profiles`, `user_artists`, `lineups` dengan RLS aktif **tanpa policy** (akses hanya lewat server action `service_role`). Perubahan skema lewat migration di Supabase, lalu file ini diperbarui di commit yang sama.
+`supabase/schema.sql` — tabel `artists`, `artist_skills`, `artist_seasons` (season artis aboard, read-only), tabel opsi `genres` (termasuk `image` ikon)/`origins`/`effects`, bucket `artist-thumb` dan `avatar`, RLS select-only untuk anon. Ditambah `profiles`, `user_artists`, `lineups` dengan RLS aktif **tanpa policy** (akses hanya lewat server action `service_role`). Perubahan skema lewat migration di Supabase, lalu file ini diperbarui di commit yang sama.
 
 `data/artists.csv` = bahan seed, bukan sumber runtime. Foto runtime hanya dari bucket `artist-thumb`.
 

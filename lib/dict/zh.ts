@@ -98,7 +98,7 @@ export const zh: Dict = {
     seasonHint: "高于该赛季的艺人会被标记为暂时无法获取。",
     rank: "本赛季排名第 #{n}，共 {total} 位",
     best: "用本赛季组建最佳队伍",
-    bestHint: "用你能获取的最高得分组合填满 5 个位置。",
+    bestHint: "用你能获取的最高得分组合填满 {n} 个位置。",
     blocked: "暂时无法获取",
   },
   auth: {

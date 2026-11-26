@@ -98,7 +98,7 @@ export const de: Dict = {
     seasonHint: "Artists über dieser Season sind als noch nicht erhältlich markiert.",
     rank: "Platz #{n} von {total} in dieser Season",
     best: "Das beste Team aus dieser Season zusammenstellen",
-    bestHint: "Füllt die 5 Slots mit der bestbewerteten Kombination, die du erhalten kannst.",
+    bestHint: "Füllt die {n} Slots mit der bestbewerteten Kombination, die du erhalten kannst.",
     blocked: "Noch nicht erhältlich",
   },
   auth: {

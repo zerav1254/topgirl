@@ -4,7 +4,8 @@ import { notFound } from "next/navigation";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { ICONS, Icon } from "@/components/artist-ui";
 import { DOCS, DOC_KEYS, type DocKey } from "@/lib/docs";
-import { DICT, isLocale, type Locale } from "@/lib/i18n";
+import { DICT, isLocale, t, type Locale } from "@/lib/i18n";
+import { TEAM_SIZE } from "@/lib/team";
 
 export function generateStaticParams() {
   return DOC_KEYS.map((key) => ({ key }));
@@ -42,7 +43,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
         {doc.sections.map((s) => (
           <article key={s.title} className="rounded-2xl border border-white/10 bg-panel/80 p-4 sm:p-5">
             <h2 className="mb-1 text-sm font-semibold text-zinc-100">{s.title}</h2>
-            <p className="text-sm leading-relaxed text-zinc-400">{s.body}</p>
+            <p className="text-sm leading-relaxed text-zinc-400">{t(s.body, { size: TEAM_SIZE })}</p>
           </article>
         ))}
       </section>

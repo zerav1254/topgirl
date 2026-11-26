@@ -98,7 +98,7 @@ export const en: Dict = {
     seasonHint: "Artists above this season are marked as not obtainable yet.",
     rank: "Rank #{n} of {total} in this season",
     best: "Build the best team from this season",
-    bestHint: "Fills the 5 slots with the highest-scoring combination you can obtain.",
+    bestHint: "Fills the {n} slots with the highest-scoring combination you can obtain.",
     blocked: "Not obtainable yet",
   },
   auth: {
