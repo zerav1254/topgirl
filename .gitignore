@@ -50,3 +50,6 @@ next-env.d.ts
 .eslintcache
 .turbo
 .swc
+
+# local game ripping tools + extracted assets
+/.topgirl-ripper/
