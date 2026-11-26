@@ -59,6 +59,17 @@ create table public.artist_level_costs (
   primary key (artist_id, level)
 );
 
+-- Biaya naik star artis, sumber CHeroStarCard. Baris star N = biaya menuju star N+1.
+-- Star 30 adalah batas (tanpa biaya); roster max level 160 butuh star 0..21.
+create table public.artist_star_costs (
+  artist_id integer not null references public.artists (id) on delete cascade,
+  star smallint not null check (star between 0 and 29),
+  item_id integer not null,
+  item_name text not null,
+  amount bigint not null check (amount > 0),
+  primary key (artist_id, star, item_id)
+);
+
 create index artist_skills_effect_idx on public.artist_skills (effect);
 create index artists_genre_idx on public.artists (genre);
 create index artists_origin_idx on public.artists (origin);
@@ -69,6 +80,7 @@ create index artists_origin_idx on public.artists (origin);
 alter table public.artists enable row level security;
 alter table public.artist_skills enable row level security;
 alter table public.artist_level_costs enable row level security;
+alter table public.artist_star_costs enable row level security;
 alter table public.genres enable row level security;
 alter table public.origins enable row level security;
 alter table public.effects enable row level security;
@@ -77,6 +89,7 @@ alter table public.effects enable row level security;
 create policy "read artists" on public.artists for select to anon, authenticated using (true);
 create policy "read artist skills" on public.artist_skills for select to anon, authenticated using (true);
 create policy "read artist level costs" on public.artist_level_costs for select to anon, authenticated using (true);
+create policy "read artist star costs" on public.artist_star_costs for select to anon, authenticated using (true);
 create policy "read genres" on public.genres for select to anon, authenticated using (true);
 create policy "read origins" on public.origins for select to anon, authenticated using (true);
 create policy "read effects" on public.effects for select to anon, authenticated using (true);
