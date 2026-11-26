@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { sumLevels } from "@/lib/cost-calc";
 import type { CostBook, CostItem } from "@/lib/costs";
-import { clamp, NumberField, Segmented, Select, Totals, type CostDict } from "./fields";
+import { clamp, invalid, NumberField, panel, result, Segmented, Select, Totals, type CostDict } from "./fields";
 
 type Mode = "platform" | "star";
 
@@ -40,8 +40,9 @@ export function CollectionPanel({
   const starTotals = useMemo(() => sumLevels(starItems, starFrom, starTo), [starItems, starFrom, starTo]);
 
   return (
-    <section aria-label={C.tabCollection} className="rounded-2xl border border-white/10 bg-panel/70 p-4 sm:p-5">
+    <section aria-label={C.tabCollection} className={panel}>
       <Segmented
+        text={C.tabCollection}
         value={mode}
         onChange={setMode}
         options={[
@@ -61,13 +62,17 @@ export function CollectionPanel({
           </Select>
 
           <div className="mt-3 grid grid-cols-2 gap-3">
-            <NumberField id="cost-collection-from" text={C.levelFrom} value={platformFrom} min={PLATFORM_MIN} max={PLATFORM_MAX} onChange={(v) => setPlatformFrom(clamp(v, PLATFORM_MIN, PLATFORM_MAX))} />
-            <NumberField id="cost-collection-to" text={C.levelTo} value={platformTo} min={PLATFORM_MIN} max={PLATFORM_MAX} onChange={(v) => setPlatformTo(clamp(v, PLATFORM_MIN, PLATFORM_MAX))} />
+            <NumberField id="cost-collection-from" text={C.levelFrom} value={platformFrom} min={PLATFORM_MIN} max={PLATFORM_MAX} invalid={platformTo <= platformFrom} describedBy="cost-collection-error" onChange={(v) => setPlatformFrom(clamp(v, PLATFORM_MIN, PLATFORM_MAX))} />
+            <NumberField id="cost-collection-to" text={C.levelTo} value={platformTo} min={PLATFORM_MIN} max={PLATFORM_MAX} invalid={platformTo <= platformFrom} describedBy="cost-collection-error" onChange={(v) => setPlatformTo(clamp(v, PLATFORM_MIN, PLATFORM_MAX))} />
           </div>
 
-          {platformTo <= platformFrom ? <p className="mt-3 text-sm text-red-300">{C.invalid}</p> : null}
+          {platformTo <= platformFrom ? (
+            <p id="cost-collection-error" role="status" className={invalid}>
+              {C.invalid}
+            </p>
+          ) : null}
 
-          <div className="mt-4 rounded-xl border border-white/10 bg-panel-2/60 px-3 py-3">
+          <div className={result}>
             <Totals totals={platformTotals} note={C.collectionNote} empty={C.noCost} format={format} />
           </div>
         </>
@@ -82,13 +87,17 @@ export function CollectionPanel({
           </Select>
 
           <div className="mt-3 grid grid-cols-2 gap-3">
-            <NumberField id="cost-collection-star-from" text={C.starFrom} value={starFrom} min={0} max={starMax} onChange={(v) => setStarFrom(clamp(v, 0, starMax))} />
-            <NumberField id="cost-collection-star-to" text={C.starTo} value={starTo} min={0} max={starMax} onChange={(v) => setStarTo(clamp(v, 0, starMax))} />
+            <NumberField id="cost-collection-star-from" text={C.starFrom} value={starFrom} min={0} max={starMax} invalid={starTo <= starFrom} describedBy="cost-collection-star-error" onChange={(v) => setStarFrom(clamp(v, 0, starMax))} />
+            <NumberField id="cost-collection-star-to" text={C.starTo} value={starTo} min={0} max={starMax} invalid={starTo <= starFrom} describedBy="cost-collection-star-error" onChange={(v) => setStarTo(clamp(v, 0, starMax))} />
           </div>
 
-          {starTo <= starFrom ? <p className="mt-3 text-sm text-red-300">{C.invalid}</p> : null}
+          {starTo <= starFrom ? (
+            <p id="cost-collection-star-error" role="status" className={invalid}>
+              {C.invalid}
+            </p>
+          ) : null}
 
-          <div className="mt-4 rounded-xl border border-white/10 bg-panel-2/60 px-3 py-3">
+          <div className={result}>
             <Totals totals={starTotals} note={C.collectionStarNote} empty={C.noCost} format={format} />
           </div>
         </>

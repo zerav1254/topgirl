@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { expBetween, sumLevels } from "@/lib/cost-calc";
 import type { CostBook } from "@/lib/costs";
-import { clamp, NumberField, Segmented, Select, Totals, type CostDict } from "./fields";
+import { clamp, invalid, NumberField, panel, result, Segmented, Select, Totals, type CostDict } from "./fields";
 
 type Mode = "building" | "rooms";
 
@@ -21,6 +21,7 @@ export function HqPanel({ hq, C, format }: { hq: CostBook["hq"]; C: CostDict; fo
   const [roomFrom, setRoomFrom] = useState(ROOM_MIN);
   const [roomTo, setRoomTo] = useState(ROOM_MAX);
 
+  const tiers = useMemo(() => [...new Set(hq.rooms.map((room) => room.tier))].sort((a, b) => a - b), [hq.rooms]);
   const buildingTotal = expBetween(hq.curve.amounts, levelFrom, levelTo);
   const slotCount = slot === 0 ? 4 : 1;
   const roomTotals = useMemo(
@@ -34,8 +35,9 @@ export function HqPanel({ hq, C, format }: { hq: CostBook["hq"]; C: CostDict; fo
   const tierRooms = hq.rooms.filter((room) => room.tier === tier);
 
   return (
-    <section aria-label={C.tabHq} className="rounded-2xl border border-white/10 bg-panel/70 p-4 sm:p-5">
+    <section aria-label={C.tabHq} className={panel}>
       <Segmented
+        text={C.tabHq}
         value={mode}
         onChange={setMode}
         options={[
@@ -47,13 +49,17 @@ export function HqPanel({ hq, C, format }: { hq: CostBook["hq"]; C: CostDict; fo
       {mode === "building" ? (
         <>
           <div className="grid grid-cols-2 gap-3">
-            <NumberField id="cost-hq-from" text={C.levelFrom} value={levelFrom} min={LEVEL_MIN} max={LEVEL_MAX} onChange={(v) => setLevelFrom(clamp(v, LEVEL_MIN, LEVEL_MAX))} />
-            <NumberField id="cost-hq-to" text={C.levelTo} value={levelTo} min={LEVEL_MIN} max={LEVEL_MAX} onChange={(v) => setLevelTo(clamp(v, LEVEL_MIN, LEVEL_MAX))} />
+            <NumberField id="cost-hq-from" text={C.levelFrom} value={levelFrom} min={LEVEL_MIN} max={LEVEL_MAX} invalid={levelTo <= levelFrom} describedBy="cost-hq-error" onChange={(v) => setLevelFrom(clamp(v, LEVEL_MIN, LEVEL_MAX))} />
+            <NumberField id="cost-hq-to" text={C.levelTo} value={levelTo} min={LEVEL_MIN} max={LEVEL_MAX} invalid={levelTo <= levelFrom} describedBy="cost-hq-error" onChange={(v) => setLevelTo(clamp(v, LEVEL_MIN, LEVEL_MAX))} />
           </div>
 
-          {levelTo <= levelFrom ? <p className="mt-3 text-sm text-red-300">{C.invalid}</p> : null}
+          {levelTo <= levelFrom ? (
+            <p id="cost-hq-error" role="status" className={invalid}>
+              {C.invalid}
+            </p>
+          ) : null}
 
-          <div className="mt-4 rounded-xl border border-white/10 bg-panel-2/60 px-3 py-3">
+          <div className={result}>
             <Totals
               totals={buildingTotal > 0 ? [{ name: hq.curve.itemName, amount: buildingTotal }] : []}
               note={C.hqNote}
@@ -66,7 +72,7 @@ export function HqPanel({ hq, C, format }: { hq: CostBook["hq"]; C: CostDict; fo
         <>
           <div className="grid grid-cols-2 gap-3">
             <Select id="cost-hq-tier" text={C.tier} value={tier} onChange={setTier}>
-              {[1, 2, 3, 4, 5, 6, 7].map((value) => (
+              {tiers.map((value) => (
                 <option key={value} value={value}>
                   {C.tier} {value}
                 </option>
@@ -80,13 +86,17 @@ export function HqPanel({ hq, C, format }: { hq: CostBook["hq"]; C: CostDict; fo
                 </option>
               ))}
             </Select>
-            <NumberField id="cost-hq-room-from" text={C.levelFrom} value={roomFrom} min={ROOM_MIN} max={ROOM_MAX} onChange={(v) => setRoomFrom(clamp(v, ROOM_MIN, ROOM_MAX))} />
-            <NumberField id="cost-hq-room-to" text={C.levelTo} value={roomTo} min={ROOM_MIN} max={ROOM_MAX} onChange={(v) => setRoomTo(clamp(v, ROOM_MIN, ROOM_MAX))} />
+            <NumberField id="cost-hq-room-from" text={C.levelFrom} value={roomFrom} min={ROOM_MIN} max={ROOM_MAX} invalid={roomTo <= roomFrom} describedBy="cost-hq-room-error" onChange={(v) => setRoomFrom(clamp(v, ROOM_MIN, ROOM_MAX))} />
+            <NumberField id="cost-hq-room-to" text={C.levelTo} value={roomTo} min={ROOM_MIN} max={ROOM_MAX} invalid={roomTo <= roomFrom} describedBy="cost-hq-room-error" onChange={(v) => setRoomTo(clamp(v, ROOM_MIN, ROOM_MAX))} />
           </div>
 
-          {roomTo <= roomFrom ? <p className="mt-3 text-sm text-red-300">{C.invalid}</p> : null}
+          {roomTo <= roomFrom ? (
+            <p id="cost-hq-room-error" role="status" className={invalid}>
+              {C.invalid}
+            </p>
+          ) : null}
 
-          <div className="mt-4 rounded-xl border border-white/10 bg-panel-2/60 px-3 py-3">
+          <div className={result}>
             <Totals totals={roomTotals} note={C.hqRoomNote} empty={C.noCost} format={format} />
           </div>
         </>

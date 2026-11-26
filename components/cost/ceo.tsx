@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { expBetween, sumLevels } from "@/lib/cost-calc";
 import type { CostBook } from "@/lib/costs";
-import { clamp, NumberField, Segmented, Select, Totals, type CostDict } from "./fields";
+import { clamp, invalid, NumberField, panel, result, Segmented, Select, Totals, type CostDict } from "./fields";
 
 type Mode = "stage" | "outfit" | "sport";
 
@@ -34,8 +34,9 @@ export function CeoPanel({ ceo, C, format }: { ceo: CostBook["ceo"]; C: CostDict
   );
 
   return (
-    <section aria-label={C.tabCeo} className="rounded-2xl border border-white/10 bg-panel/70 p-4 sm:p-5">
+    <section aria-label={C.tabCeo} className={panel}>
       <Segmented
+        text={C.tabCeo}
         value={mode}
         onChange={setMode}
         options={[
@@ -48,13 +49,17 @@ export function CeoPanel({ ceo, C, format }: { ceo: CostBook["ceo"]; C: CostDict
       {mode === "stage" ? (
         <>
           <div className="grid grid-cols-2 gap-3">
-            <NumberField id="cost-ceo-from" text={C.stageFrom} value={stageFrom} min={0} max={maxStage} onChange={(v) => setStageFrom(clamp(v, 0, maxStage))} />
-            <NumberField id="cost-ceo-to" text={C.stageTo} value={stageTo} min={0} max={maxStage} onChange={(v) => setStageTo(clamp(v, 0, maxStage))} />
+            <NumberField id="cost-ceo-from" text={C.stageFrom} value={stageFrom} min={0} max={maxStage} invalid={stageTo <= stageFrom} describedBy="cost-ceo-error" onChange={(v) => setStageFrom(clamp(v, 0, maxStage))} />
+            <NumberField id="cost-ceo-to" text={C.stageTo} value={stageTo} min={0} max={maxStage} invalid={stageTo <= stageFrom} describedBy="cost-ceo-error" onChange={(v) => setStageTo(clamp(v, 0, maxStage))} />
           </div>
 
-          {stageTo <= stageFrom ? <p className="mt-3 text-sm text-red-300">{C.invalid}</p> : null}
+          {stageTo <= stageFrom ? (
+            <p id="cost-ceo-error" role="status" className={invalid}>
+              {C.invalid}
+            </p>
+          ) : null}
 
-          <div className="mt-4 rounded-xl border border-white/10 bg-panel-2/60 px-3 py-3">
+          <div className={result}>
             <Totals
               totals={stageTotal > 0 ? [{ name: ceo.stages[0]?.itemName ?? "", amount: stageTotal }] : []}
               note={C.ceoStageNote}
@@ -82,7 +87,7 @@ export function CeoPanel({ ceo, C, format }: { ceo: CostBook["ceo"]; C: CostDict
             </Select>
           </div>
 
-          <div className="mt-4 rounded-xl border border-white/10 bg-panel-2/60 px-3 py-3">
+          <div className={result}>
             <Totals
               totals={chosenOutfit && chosenOutfit.amount > 0 ? [{ name: chosenOutfit.itemName, amount: chosenOutfit.amount }] : []}
               note={C.ceoOutfitNote}
@@ -102,13 +107,17 @@ export function CeoPanel({ ceo, C, format }: { ceo: CostBook["ceo"]; C: CostDict
           </Select>
 
           <div className="mt-3 grid grid-cols-2 gap-3">
-            <NumberField id="cost-ceo-sport-from" text={C.levelFrom} value={sportFrom} min={SPORT_MIN} max={SPORT_MAX} onChange={(v) => setSportFrom(clamp(v, SPORT_MIN, SPORT_MAX))} />
-            <NumberField id="cost-ceo-sport-to" text={C.levelTo} value={sportTo} min={SPORT_MIN} max={SPORT_MAX} onChange={(v) => setSportTo(clamp(v, SPORT_MIN, SPORT_MAX))} />
+            <NumberField id="cost-ceo-sport-from" text={C.levelFrom} value={sportFrom} min={SPORT_MIN} max={SPORT_MAX} invalid={sportTo <= sportFrom} describedBy="cost-ceo-sport-error" onChange={(v) => setSportFrom(clamp(v, SPORT_MIN, SPORT_MAX))} />
+            <NumberField id="cost-ceo-sport-to" text={C.levelTo} value={sportTo} min={SPORT_MIN} max={SPORT_MAX} invalid={sportTo <= sportFrom} describedBy="cost-ceo-sport-error" onChange={(v) => setSportTo(clamp(v, SPORT_MIN, SPORT_MAX))} />
           </div>
 
-          {sportTo <= sportFrom ? <p className="mt-3 text-sm text-red-300">{C.invalid}</p> : null}
+          {sportTo <= sportFrom ? (
+            <p id="cost-ceo-sport-error" role="status" className={invalid}>
+              {C.invalid}
+            </p>
+          ) : null}
 
-          <div className="mt-4 rounded-xl border border-white/10 bg-panel-2/60 px-3 py-3">
+          <div className={result}>
             <Totals totals={sportTotals} note={C.ceoSportNote} empty={C.noCost} format={format} />
           </div>
         </>

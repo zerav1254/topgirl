@@ -7,7 +7,7 @@ import { DICT, numberLocale, type Locale } from "@/lib/i18n";
 import type { CarPart, CostBook } from "@/lib/costs";
 import { CeoPanel } from "./cost/ceo";
 import { CollectionPanel } from "./cost/collection";
-import { clamp, field, label, NumberField, Totals } from "./cost/fields";
+import { chip, clamp, field, invalid, label, NumberField, panel, result, Totals } from "./cost/fields";
 import { HqPanel } from "./cost/hq";
 import { MuseumPanel } from "./cost/museum";
 import { VillaPanel } from "./cost/villa";
@@ -93,11 +93,7 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
             type="button"
             aria-pressed={tab === item.id}
             onClick={() => setTab(item.id)}
-            className={`min-h-11 cursor-pointer rounded-lg border px-3 text-sm font-semibold transition-colors duration-200 ${
-              tab === item.id
-                ? "border-gold/50 bg-gold/10 text-gold"
-                : "border-white/10 bg-panel/80 text-zinc-300 hover:border-white/25 hover:text-zinc-100"
-            }`}
+            className={chip(tab === item.id)}
           >
             {item.label}
           </button>
@@ -105,7 +101,7 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
       </div>
 
       {tab === "artist" ? (
-        <section aria-label={C.tabArtist} className="rounded-2xl border border-white/10 bg-panel/70 p-4 sm:p-5">
+        <section aria-label={C.tabArtist} className={panel}>
           <div className="flex flex-col gap-1">
             <label htmlFor="cost-artist" className={label}>
               {C.artist}
@@ -120,14 +116,17 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
           </div>
 
           <div className="mt-3 grid grid-cols-2 gap-3">
-            <NumberField id="cost-level-from" text={C.levelFrom} value={levelFrom} min={ARTIST_MIN} max={ARTIST_MAX} onChange={(v) => setLevelFrom(clamp(v, ARTIST_MIN, ARTIST_MAX))} />
-            <NumberField id="cost-level-to" text={C.levelTo} value={levelTo} min={ARTIST_MIN} max={ARTIST_MAX} onChange={(v) => setLevelTo(clamp(v, ARTIST_MIN, ARTIST_MAX))} />
-            <NumberField id="cost-star-from" text={C.starFrom} value={starFrom} min={STAR_MIN} max={STAR_MAX} onChange={(v) => setStarFrom(clamp(v, STAR_MIN, STAR_MAX))} />
-            <NumberField id="cost-star-to" text={C.starTo} value={starTo} min={STAR_MIN} max={STAR_MAX} onChange={(v) => setStarTo(clamp(v, STAR_MIN, STAR_MAX))} />
+            <NumberField id="cost-level-from" text={C.levelFrom} value={levelFrom} min={ARTIST_MIN} max={ARTIST_MAX} invalid={levelTo <= levelFrom} describedBy="cost-artist-error" onChange={(v) => setLevelFrom(clamp(v, ARTIST_MIN, ARTIST_MAX))} />
+            <NumberField id="cost-level-to" text={C.levelTo} value={levelTo} min={ARTIST_MIN} max={ARTIST_MAX} invalid={levelTo <= levelFrom} describedBy="cost-artist-error" onChange={(v) => setLevelTo(clamp(v, ARTIST_MIN, ARTIST_MAX))} />
+            <NumberField id="cost-star-from" text={C.starFrom} value={starFrom} min={STAR_MIN} max={STAR_MAX} invalid={starTo <= starFrom} describedBy="cost-artist-error" onChange={(v) => setStarFrom(clamp(v, STAR_MIN, STAR_MAX))} />
+            <NumberField id="cost-star-to" text={C.starTo} value={starTo} min={STAR_MIN} max={STAR_MAX} invalid={starTo <= starFrom} describedBy="cost-artist-error" onChange={(v) => setStarTo(clamp(v, STAR_MIN, STAR_MAX))} />
           </div>
 
-          {levelTo <= levelFrom ? <p className="mt-3 text-sm text-red-300">{C.invalid}</p> : null}
-          {starTo <= starFrom ? <p className="mt-3 text-sm text-red-300">{C.invalid}</p> : null}
+          {levelTo <= levelFrom || starTo <= starFrom ? (
+            <p id="cost-artist-error" role="status" className={invalid}>
+              {C.invalid}
+            </p>
+          ) : null}
 
           <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
             <div className="rounded-xl border border-gold/30 bg-gold/10 px-3 py-3">
@@ -152,7 +151,7 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
           </div>
         </section>
       ) : tab === "parts" ? (
-        <section aria-label={C.tabParts} className="rounded-2xl border border-white/10 bg-panel/70 p-4 sm:p-5">
+        <section aria-label={C.tabParts} className={panel}>
           <div className="flex flex-col gap-1">
             <label htmlFor="cost-part" className={label}>
               {C.part}
@@ -171,18 +170,22 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
           </div>
 
           <div className="mt-3 grid grid-cols-2 gap-3">
-            <NumberField id="cost-part-from" text={C.levelFrom} value={partFrom} min={PART_MIN} max={PART_MAX} onChange={(v) => setPartFrom(clamp(v, PART_MIN, PART_MAX))} />
-            <NumberField id="cost-part-to" text={C.levelTo} value={partTo} min={PART_MIN} max={PART_MAX} onChange={(v) => setPartTo(clamp(v, PART_MIN, PART_MAX))} />
+            <NumberField id="cost-part-from" text={C.levelFrom} value={partFrom} min={PART_MIN} max={PART_MAX} invalid={partTo <= partFrom} describedBy="cost-part-error" onChange={(v) => setPartFrom(clamp(v, PART_MIN, PART_MAX))} />
+            <NumberField id="cost-part-to" text={C.levelTo} value={partTo} min={PART_MIN} max={PART_MAX} invalid={partTo <= partFrom} describedBy="cost-part-error" onChange={(v) => setPartTo(clamp(v, PART_MIN, PART_MAX))} />
           </div>
 
-          {partTo <= partFrom ? <p className="mt-3 text-sm text-red-300">{C.invalid}</p> : null}
+          {partTo <= partFrom ? (
+            <p id="cost-part-error" role="status" className={invalid}>
+              {C.invalid}
+            </p>
+          ) : null}
 
-          <div className="mt-4 rounded-xl border border-white/10 bg-panel-2/60 px-3 py-3">
+          <div className={result}>
             <Totals totals={partTotals} note={C.partNote} empty={C.noCost} format={format} />
           </div>
         </section>
       ) : tab === "mods" ? (
-        <section aria-label={C.tabMods} className="rounded-2xl border border-white/10 bg-panel/70 p-4 sm:p-5">
+        <section aria-label={C.tabMods} className={panel}>
           <div className="flex flex-col gap-1">
             <label htmlFor="cost-mod" className={label}>
               {C.modPart}
@@ -197,11 +200,15 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
           </div>
 
           <div className="mt-3 grid grid-cols-2 gap-3">
-            <NumberField id="cost-mod-from" text={C.levelFrom} value={modFrom} min={MOD_MIN} max={MOD_MAX} onChange={(v) => setModFrom(clamp(v, MOD_MIN, MOD_MAX))} />
-            <NumberField id="cost-mod-to" text={C.levelTo} value={modTo} min={MOD_MIN} max={MOD_MAX} onChange={(v) => setModTo(clamp(v, MOD_MIN, MOD_MAX))} />
+            <NumberField id="cost-mod-from" text={C.levelFrom} value={modFrom} min={MOD_MIN} max={MOD_MAX} invalid={modTo <= modFrom} describedBy="cost-mod-error" onChange={(v) => setModFrom(clamp(v, MOD_MIN, MOD_MAX))} />
+            <NumberField id="cost-mod-to" text={C.levelTo} value={modTo} min={MOD_MIN} max={MOD_MAX} invalid={modTo <= modFrom} describedBy="cost-mod-error" onChange={(v) => setModTo(clamp(v, MOD_MIN, MOD_MAX))} />
           </div>
 
-          {modTo <= modFrom ? <p className="mt-3 text-sm text-red-300">{C.invalid}</p> : null}
+          {modTo <= modFrom ? (
+            <p id="cost-mod-error" role="status" className={invalid}>
+              {C.invalid}
+            </p>
+          ) : null}
 
           {targetClass ? (
             <p className="mt-3 text-xs text-zinc-400">
@@ -209,7 +216,7 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
             </p>
           ) : null}
 
-          <div className="mt-4 rounded-xl border border-white/10 bg-panel-2/60 px-3 py-3">
+          <div className={result}>
             <Totals totals={modTotalsResult} note={C.modNote} empty={C.noCost} format={format} />
           </div>
         </section>
