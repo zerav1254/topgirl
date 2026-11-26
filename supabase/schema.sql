@@ -447,6 +447,66 @@ create table public.villa_staff_level_costs (
   primary key (staff_id, level, item_id)
 );
 
+-- Tampilan CEO (CCeoAppearanceOutfitAdvance/OutfitLevel/Sports/SportsLevel).
+-- 6 stage tampilan, 4 outfit per stage, 3 olahraga x 6 tier, biaya level di tabel terpisah.
+create table public.ceo_appearance_stages (
+  id integer primary key,
+  stage smallint not null check (stage between 1 and 6),
+  name text not null,
+  advance_max smallint not null,
+  sing integer not null default 0 check (sing >= 0),
+  dance integer not null default 0 check (dance >= 0),
+  management integer not null default 0 check (management >= 0),
+  unlock_sports_type smallint not null,
+  item_id integer,
+  item_name text,
+  amount bigint not null default 0 check (amount >= 0)
+);
+
+create table public.ceo_appearance_outfits (
+  id integer primary key,
+  stage_id integer not null references public.ceo_appearance_stages (id) on delete cascade,
+  outfit smallint not null check (outfit between 1 and 4),
+  quality smallint not null,
+  level_max smallint not null,
+  sing integer not null default 0 check (sing >= 0),
+  dance integer not null default 0 check (dance >= 0),
+  management integer not null default 0 check (management >= 0),
+  name text not null,
+  item_id integer,
+  item_name text,
+  amount bigint not null default 0 check (amount >= 0)
+);
+
+create table public.ceo_appearance_sports (
+  id integer primary key,
+  sports_type smallint not null check (sports_type between 1 and 3),
+  tier smallint not null check (tier between 1 and 6),
+  name text not null,
+  item_id integer,
+  item_name text,
+  amount bigint not null default 0 check (amount >= 0)
+);
+
+create table public.ceo_appearance_sport_levels (
+  sports_id integer not null references public.ceo_appearance_sports (id) on delete cascade,
+  level smallint not null check (level between 1 and 60),
+  max_level smallint not null,
+  sing integer not null default 0 check (sing >= 0),
+  dance integer not null default 0 check (dance >= 0),
+  management integer not null default 0 check (management >= 0),
+  primary key (sports_id, level)
+);
+
+create table public.ceo_appearance_sport_level_costs (
+  sports_id integer not null references public.ceo_appearance_sports (id) on delete cascade,
+  level smallint not null,
+  item_id integer not null,
+  item_name text not null,
+  amount bigint not null check (amount > 0),
+  primary key (sports_id, level, item_id)
+);
+
 alter table public.car_parts enable row level security;
 alter table public.car_part_levels enable row level security;
 alter table public.car_mod_classes enable row level security;
@@ -462,6 +522,11 @@ alter table public.villa_suites enable row level security;
 alter table public.villa_staff enable row level security;
 alter table public.villa_staff_levels enable row level security;
 alter table public.villa_staff_level_costs enable row level security;
+alter table public.ceo_appearance_stages enable row level security;
+alter table public.ceo_appearance_outfits enable row level security;
+alter table public.ceo_appearance_sports enable row level security;
+alter table public.ceo_appearance_sport_levels enable row level security;
+alter table public.ceo_appearance_sport_level_costs enable row level security;
 
 create policy "read car parts" on public.car_parts for select to anon, authenticated using (true);
 create policy "read car part levels" on public.car_part_levels for select to anon, authenticated using (true);
@@ -478,6 +543,11 @@ create policy "read villa suites" on public.villa_suites for select to anon, aut
 create policy "read villa staff" on public.villa_staff for select to anon, authenticated using (true);
 create policy "read villa staff levels" on public.villa_staff_levels for select to anon, authenticated using (true);
 create policy "read villa staff level costs" on public.villa_staff_level_costs for select to anon, authenticated using (true);
+create policy "read ceo appearance stages" on public.ceo_appearance_stages for select to anon, authenticated using (true);
+create policy "read ceo appearance outfits" on public.ceo_appearance_outfits for select to anon, authenticated using (true);
+create policy "read ceo appearance sports" on public.ceo_appearance_sports for select to anon, authenticated using (true);
+create policy "read ceo appearance sport levels" on public.ceo_appearance_sport_levels for select to anon, authenticated using (true);
+create policy "read ceo appearance sport level costs" on public.ceo_appearance_sport_level_costs for select to anon, authenticated using (true);
 
 -- ── Kalkulator biaya (view ringkas untuk halaman /cost) ─────────────────────
 -- Kurva EXP unik per artis; artis dengan urutan exp_step sama berbagi satu baris.
