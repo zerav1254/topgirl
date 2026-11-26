@@ -2,7 +2,7 @@ import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTypescript from "eslint-config-next/typescript";
 
 const eslintConfig = [
-  { ignores: [".next/**", "node_modules/**", "next-env.d.ts", ".topgirl-ripper/**"] },
+  { ignores: [".next/**", "node_modules/**", "next-env.d.ts", ".topgirl-ripper/**", ".opencode/**"] },
   ...nextVitals,
   ...nextTypescript,
 ];
