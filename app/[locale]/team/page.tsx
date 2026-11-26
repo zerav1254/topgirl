@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { loadArtists } from "@/lib/artists";
+import { getArtists } from "@/lib/artists-cache";
 import { getProfile } from "@/lib/auth";
 import { loadOwned } from "@/lib/collection";
 import { DICT, isLocale, localeOr } from "@/lib/i18n";
 import { pageMetadata } from "@/lib/seo";
 import { TeamBuilder } from "@/components/team-builder";
-
-export const revalidate = 300;
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -24,7 +22,7 @@ export default async function TeamPage({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
 
-  const [artists, profile] = await Promise.all([loadArtists(), getProfile()]);
+  const [artists, profile] = await Promise.all([getArtists(), getProfile()]);
   const owned = profile ? await loadOwned(profile.userId) : null;
   return (
     <TeamBuilder

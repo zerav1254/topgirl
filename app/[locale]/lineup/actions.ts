@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { requireUser } from "@/lib/auth";
 import { DICT, localeOr, type Locale } from "@/lib/i18n";
 import { deleteLineup, saveLineup, setShare } from "@/lib/lineups";
+import { allow } from "@/lib/rate-limit";
 import { TEAM_SIZE } from "@/lib/team";
 
 export type LineupResult = { ok: boolean; error: string; link?: string };
@@ -23,6 +24,7 @@ export async function createLineup(locale: Locale, fd: FormData): Promise<Lineup
   const C = DICT[l].lineup;
   const uid = await userId();
   if (!uid) return { ok: false, error: C.loginHint };
+  if (!allow(`lineup:${uid}`, 20, 60_000)) return { ok: false, error: C.error };
 
   const name = String(fd.get("name") ?? "").trim().slice(0, 60);
   if (!name) return { ok: false, error: C.error };
@@ -45,6 +47,7 @@ export async function remove(locale: Locale, id: string): Promise<LineupResult> 
   const C = DICT[l].lineup;
   const uid = await userId();
   if (!uid) return { ok: false, error: C.loginHint };
+  if (!allow(`lineup:${uid}`, 20, 60_000)) return { ok: false, error: C.error };
   if (!(await deleteLineup(uid, id))) return { ok: false, error: C.error };
   revalidatePath(`/${l}/lineups`);
   return { ok: true, error: "" };
@@ -55,6 +58,7 @@ export async function toggleShare(locale: Locale, id: string, share: boolean): P
   const C = DICT[l].lineup;
   const uid = await userId();
   if (!uid) return { ok: false, error: C.loginHint };
+  if (!allow(`lineup:${uid}`, 20, 60_000)) return { ok: false, error: C.error };
   const slug = await setShare(uid, id, share);
   if (slug === null) return { ok: false, error: C.error };
   revalidatePath(`/${l}/lineups`);

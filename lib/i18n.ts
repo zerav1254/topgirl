@@ -5,9 +5,9 @@ import { id, type Dict } from "./dict/id.ts";
 import { ja } from "./dict/ja.ts";
 import { ko } from "./dict/ko.ts";
 import { zh } from "./dict/zh.ts";
+import { isLocale, LOCALES, localeOr, type Locale } from "./locales.ts";
 
-export const LOCALES = ["id", "en", "fr", "ko", "zh", "ja", "de"] as const;
-export type Locale = (typeof LOCALES)[number];
+export { LOCALES, isLocale, localeOr, type Locale };
 export type { Dict };
 
 export const DICT: Record<Locale, Dict> = { id, en, fr, ko, zh, ja, de };
@@ -25,11 +25,6 @@ export const LANG_NAME: Record<Locale, string> = {
 
 // Singkatan yang tampil di switcher (dipakai bersama bendera).
 export const LANG_CODE: Record<Locale, string> = { id: "ID", en: "EN", fr: "FR", ko: "KO", zh: "ZH", ja: "JA", de: "DE" };
-
-export const isLocale = (value: string): value is Locale => (LOCALES as readonly string[]).includes(value);
-
-// Locale dari URL yang tidak dikenal jatuh ke default (id), bukan 404.
-export const localeOr = (value: string): Locale => (isLocale(value) ? value : "id");
 
 export const t = (text: string, vars?: Record<string, string | number>) =>
   vars ? text.replace(/\{(\w+)\}/g, (_, key: string) => String(vars[key] ?? `{${key}}`)) : text;

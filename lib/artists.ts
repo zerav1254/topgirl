@@ -22,6 +22,8 @@ export type Artist = {
   season: number | null;
   skills: Skill[];
   photoUrl: string | null;
+  // Nama file ikon genre dari tabel genres; null = tanpa ikon.
+  genreImage: string | null;
   scores: Record<Category, number>;
   tiers: Record<Category, Tier>;
 };
@@ -37,12 +39,13 @@ type Row = {
   artist_skills: { slot: number; effect: string; value: number | null }[];
   // Relasi satu-satu lewat slug unik; PostgREST bisa mengembalikan objek atau array.
   artist_seasons: { season: number } | { season: number }[] | null;
+  genres: { image: string | null } | { image: string | null }[] | null;
 };
 
 export async function loadArtists(): Promise<Artist[]> {
   const { data, error } = await supabase
     .from("artists")
-    .select("id, slug, name, genre, origin, photo_path, photo_updated_at, artist_skills(slot, effect, value), artist_seasons(season)")
+    .select("id, slug, name, genre, origin, photo_path, photo_updated_at, artist_skills(slot, effect, value), artist_seasons(season), genres(image)")
     .order("id");
 
   if (error) throw new Error(`Gagal memuat artist: ${error.message}`);
@@ -57,6 +60,8 @@ export async function loadArtists(): Promise<Artist[]> {
       const tiers = Object.fromEntries(CATEGORIES.map((c) => [c, tierFromScore(scores[c])])) as Record<Category, Tier>;
       const rel = r.artist_seasons;
       const season = (Array.isArray(rel) ? rel[0] : rel)?.season ?? null;
+      const genreRel = r.genres;
+      const genreImage = (Array.isArray(genreRel) ? genreRel[0] : genreRel)?.image ?? null;
       return {
         id: r.id,
         slug: r.slug,
@@ -65,6 +70,7 @@ export async function loadArtists(): Promise<Artist[]> {
         origin: r.origin,
         season,
         skills,
+        genreImage,
         // ?v=photo_updated_at: path foto tetap, jadi tanpa query ini CDN/optimizer menyajikan gambar lama.
         photoUrl: r.photo_path
           ? `${SUPABASE_URL}/storage/v1/object/public/${PHOTO_BUCKET}/${r.photo_path}?v=${new Date(r.photo_updated_at).getTime()}`

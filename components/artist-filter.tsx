@@ -71,8 +71,8 @@ export function useArtistFilter(artists: Artist[], locale: Locale, owned?: Set<s
     filter,
     setFilter,
     visible,
-    active: Object.values(filter).some((v) => v !== ALL),
-    reset: () => setFilter(EMPTY),
+    active: query !== "" || Object.values(filter).some((v) => v !== ALL),
+    reset: () => setState(INITIAL),
   };
 }
 

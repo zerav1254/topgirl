@@ -15,11 +15,15 @@ const onStorage = (e: StorageEvent) => {
 };
 
 export const readPool = () => {
-  const current = localStorage.getItem(STORAGE_KEY);
-  if (current !== null) return current;
-  for (const key of LEGACY_KEYS) {
-    const legacy = localStorage.getItem(key);
-    if (legacy !== null) return legacy;
+  try {
+    const current = localStorage.getItem(STORAGE_KEY);
+    if (current !== null) return current;
+    for (const key of LEGACY_KEYS) {
+      const legacy = localStorage.getItem(key);
+      if (legacy !== null) return legacy;
+    }
+  } catch {
+    /* mode privat */
   }
   return null;
 };

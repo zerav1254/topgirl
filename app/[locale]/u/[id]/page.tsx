@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { loadArtists } from "@/lib/artists";
+import { getArtists } from "@/lib/artists-cache";
 import { DICT, isLocale, type Locale } from "@/lib/i18n";
 import { loadPublicProfile } from "@/lib/lineups";
 import { TEAM_SIZE } from "@/lib/team";
@@ -13,11 +13,14 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
-  const { locale } = await params;
-  const C = DICT[isLocale(locale) ? locale : "id"];
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; id: string }> }): Promise<Metadata> {
+  const { locale, id } = await params;
+  if (!isLocale(locale) || !UUID.test(id)) return {};
+  const C = DICT[locale];
+  const data = await loadPublicProfile(id);
+  const name = data?.ingameNickname ?? data?.name;
   return {
-    title: `${C.profile.publicProfile} — ${C.meta.title}`,
+    title: name ? `${name} — ${C.profile.publicProfile}` : `${C.profile.publicProfile} — ${C.meta.title}`,
     description: C.profile.publicHint,
     robots: { index: false, follow: true },
   };
@@ -28,7 +31,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
   if (!isLocale(raw) || !UUID.test(id)) notFound();
   const locale: Locale = raw;
   const C = DICT[locale];
-  const [data, artists] = await Promise.all([loadPublicProfile(id), loadArtists()]);
+  const [data, artists] = await Promise.all([loadPublicProfile(id), getArtists()]);
   if (!data) notFound();
 
   const name = data.ingameNickname ?? data.name ?? C.profile.userRole;

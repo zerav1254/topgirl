@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { loadArtists } from "@/lib/artists";
+import { getArtists } from "@/lib/artists-cache";
 import { DICT, isLocale, t, type Locale } from "@/lib/i18n";
 import { loadShared } from "@/lib/lineups";
 import { GENRE_BONUS, TEAM_SIZE, teamSkillTotals } from "@/lib/team";
@@ -27,10 +27,11 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
   const locale: Locale = raw;
   const C = DICT[locale];
 
-  const [shared, artists] = await Promise.all([loadShared(slug), loadArtists()]);
+  const [shared, artists] = await Promise.all([loadShared(slug), getArtists()]);
   if (!shared) notFound();
 
   const bySlug = new Map(artists.map((a) => [a.slug, a]));
+  const genreImages = new Map(artists.map((a) => [a.genre, a.genreImage]));
   const team = shared.lineup.slugs.map((s) => bySlug.get(s)).filter((a) => a !== undefined);
 
   const totalScore = team.reduce((sum, a) => sum + a.scores[DEFAULT_CATEGORY], 0);
@@ -102,7 +103,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
             <div className="mt-2 flex flex-wrap items-center gap-1.5 border-t border-white/10 pt-2">
               {genres.map(([g, n]) => (
                 <span key={g} className="inline-flex items-center gap-1 rounded-md bg-white/5 px-2 py-0.5 text-xs text-zinc-300">
-                  <GenreIcon genre={g} className="h-3 w-3" />
+                  <GenreIcon image={genreImages.get(g) ?? null} className="h-3 w-3" />
                   {g} <span className="text-zinc-400">×{n}</span>
                 </span>
               ))}
@@ -158,7 +159,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
               <Avatar artist={a} tier={a.tiers[DEFAULT_CATEGORY]} size="h-11 w-11" />
               <span className="min-w-0 flex-1">
                 <span className="flex items-center gap-1 text-sm text-zinc-400">
-                  <GenreIcon genre={a.genre} className="h-3 w-3 shrink-0" />
+                  <GenreIcon image={a.genreImage} className="h-3 w-3 shrink-0" />
                   <span className="truncate">{a.genre}</span>
                 </span>
                 <span className="block truncate text-base font-semibold">{a.name}</span>

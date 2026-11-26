@@ -58,6 +58,8 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
     [state.visible, inPool, blocked, current?.slug, picked, rank, category],
   );
 
+  const genreImages = useMemo(() => new Map(artists.map((a) => [a.genre, a.genreImage])), [artists]);
+
   const summary = useMemo(() => {
     const genreCount = new Map<string, number>();
     for (const a of team) genreCount.set(a.genre, (genreCount.get(a.genre) ?? 0) + 1);
@@ -94,7 +96,7 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
               onClick={() => {
                 if (team.length === 0 || window.confirm(C.team.confirmAuto)) onAuto();
               }}
-              title={C.pool.bestHint}
+              title={t(C.pool.bestHint, { n: TEAM_SIZE })}
               className="flex min-h-11 cursor-pointer items-center gap-1 rounded-md border border-brand/40 bg-brand/10 px-2 py-1 text-sm font-semibold text-zinc-100 transition-colors duration-200 hover:border-brand/60"
             >
               <Icon d={ICONS.sliders} className="h-4 w-4 shrink-0" />
@@ -187,7 +189,7 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
               <dd className="mt-1 flex flex-wrap gap-1">
                 {summary.genreList.map(([g, n]) => (
                   <span key={g} className="inline-flex items-center gap-1 rounded-md bg-white/5 px-2 py-0.5 text-zinc-300">
-                    <GenreIcon genre={g} className="h-3 w-3 shrink-0" />
+                    <GenreIcon image={genreImages.get(g) ?? null} className="h-3 w-3 shrink-0" />
                     {g} <span className="text-zinc-400">×{n}</span>
                   </span>
                 ))}

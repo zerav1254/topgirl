@@ -1,5 +1,5 @@
 import type { Artist } from "./artists.ts";
-import type { Category, Tier } from "./score.ts";
+import { tierFromScore, type Category, type Tier } from "./score.ts";
 
 // Pool = batas atas season server pemain. null = semua season.
 export type Pool = { season: number | null };
@@ -52,6 +52,12 @@ export function poolTiers(artists: Artist[], pool: Pool, category: Category): Ma
     (a, b) => b.scores[category] - a.scores[category] || a.name.localeCompare(b.name),
   );
   const out = new Map<string, Tier>();
+  // Kuota relatif tidak bermakna untuk pool sangat kecil (1 artis akan jadi D);
+  // pakai tier absolut supaya skor tinggi tetap tinggi.
+  if (list.length <= 5) {
+    list.forEach((a) => out.set(a.slug, tierFromScore(a.scores[category])));
+    return out;
+  }
   let prevScore = Number.NaN;
   let prevTier: Tier = "S+";
   list.forEach((a, i) => {

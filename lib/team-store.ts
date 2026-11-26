@@ -11,7 +11,13 @@ const onStorage = (e: StorageEvent) => {
   if (e.key === STORAGE_KEY) notify();
 };
 
-export const readTeam = () => localStorage.getItem(STORAGE_KEY);
+export const readTeam = () => {
+  try {
+    return localStorage.getItem(STORAGE_KEY);
+  } catch {
+    return null;
+  }
+};
 export const getServerTeam = () => null;
 
 export function subscribeTeam(listener: () => void) {
@@ -26,6 +32,10 @@ export function subscribeTeam(listener: () => void) {
 }
 
 export function writeTeam(next: string[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+  } catch {
+    // Mode privat / kuota penuh: tim tetap hidup di memori, hanya tidak persist.
+  }
   notify();
 }

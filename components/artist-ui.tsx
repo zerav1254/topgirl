@@ -21,14 +21,6 @@ const AVATAR_STYLE: Record<string, string> = {
   D: "from-zinc-500/80 to-zinc-700/50",
 };
 
-const GENRE_IMAGE: Record<string, string> = {
-  Pop: "pop",
-  Rock: "rock",
-  "Hip Hop": "hiphop",
-  EDM: "edm",
-  "R&B": "rnb",
-};
-
 export const isPercent = (effect: Effect) => !FLAT_EFFECTS.has(effect);
 
 export const formatStat = (v: number, locale: Locale) => v.toLocaleString(numberLocale(locale), { maximumFractionDigits: 1 });
@@ -131,10 +123,9 @@ export function Avatar({ artist, size = "h-12 w-12", tier = artist.tiers[DEFAULT
   );
 }
 
-export function GenreIcon({ genre, className = "h-4 w-4" }: { genre: string; className?: string }) {
-  const file = GENRE_IMAGE[genre];
-  if (!file) return null;
-  return <Image src={`/assets/images/genres/${file}.png`} alt="" width={16} height={16} sizes="16px" className={`${className} object-contain`} />;
+export function GenreIcon({ image, className = "h-4 w-4" }: { image: string | null; className?: string }) {
+  if (!image) return null;
+  return <Image src={`/assets/images/genres/${image}.png`} alt="" width={16} height={16} sizes="16px" className={`${className} object-contain`} />;
 }
 
 export function SearchInput({

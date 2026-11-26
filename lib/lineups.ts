@@ -1,4 +1,5 @@
 import { randomBytes } from "node:crypto";
+import { cache } from "react";
 import { adminClient } from "./supabase.ts";
 
 export type Lineup = {
@@ -29,8 +30,15 @@ export async function loadLineups(userId: string): Promise<Lineup[]> {
 }
 
 export async function saveLineup(userId: string, name: string, slugs: string[]): Promise<boolean> {
-  const { error } = await adminClient().from("lineups").insert({ user_id: userId, name, slugs: [...new Set(slugs)] });
-  return !error;
+  const sb = adminClient();
+  const unique = [...new Set(slugs)];
+  if (unique.length === 0) return false;
+  // slugs text[] tanpa FK: pastikan setiap slug benar-benar ada sebelum disimpan.
+  const { data, error } = await sb.from("artists").select("slug").in("slug", unique);
+  if (error || (data as { slug: string }[]).length !== unique.length) return false;
+
+  const { error: insertError } = await sb.from("lineups").insert({ user_id: userId, name, slugs: unique });
+  return !insertError;
 }
 
 export async function deleteLineup(userId: string, id: string): Promise<boolean> {
@@ -54,7 +62,9 @@ export async function setShare(userId: string, id: string, share: boolean): Prom
   return null;
 }
 
-export async function loadShared(shareSlug: string): Promise<{ lineup: Lineup; ownerName: string | null; ownerServer: number | null; ownerAvatarUrl: string | null } | null> {  const sb = adminClient();
+// cache(): generateMetadata + page dalam request yang sama berbagi satu hasil query.
+export const loadShared = cache(async (shareSlug: string): Promise<{ lineup: Lineup; ownerName: string | null; ownerServer: number | null; ownerAvatarUrl: string | null } | null> => {
+  const sb = adminClient();
   const { data, error } = await sb.from("lineups").select(`${COLS},user_id`).eq("share_slug", shareSlug).maybeSingle();
   if (error || !data) return null;
 
@@ -73,7 +83,7 @@ export async function loadShared(shareSlug: string): Promise<{ lineup: Lineup; o
     ownerServer: owner?.ingame_server ?? null,
     ownerAvatarUrl: owner?.avatar_url ?? null,
   };
-}
+});
 
 export type PublicProfile = {
   name: string | null;
@@ -84,15 +94,18 @@ export type PublicProfile = {
 };
 
 // Profil publik = user_id (uuid). Hanya lineup ber-share_slug yang ikut, jadi isi profil
-// tidak bisa dipakai mengintip lineup privat.
+// tidak bisa dipakai mengintip lineup privat. Tanpa lineup share, identitas ikut disembunyikan.
 
-export async function loadPublicProfile(userId: string): Promise<PublicProfile | null> {
+export const loadPublicProfile = cache(async (userId: string): Promise<PublicProfile | null> => {
   const sb = adminClient();
   const [profile, rows] = await Promise.all([
     sb.from("profiles").select("name,ingame_nickname,ingame_server,avatar_url").eq("user_id", userId).maybeSingle(),
     sb.from("lineups").select(COLS).eq("user_id", userId).not("share_slug", "is", null).order("updated_at", { ascending: false }),
   ]);
   if (profile.error || !profile.data) return null;
+  const lineups = rows.error ? [] : (rows.data as Row[]).map(toLineup);
+  if (lineups.length === 0) return { name: null, ingameNickname: null, ingameServer: null, avatarUrl: null, lineups: [] };
+
   const p = profile.data as {
     name: string | null;
     ingame_nickname: string | null;
@@ -104,6 +117,6 @@ export async function loadPublicProfile(userId: string): Promise<PublicProfile |
     ingameNickname: p.ingame_nickname,
     ingameServer: p.ingame_server,
     avatarUrl: p.avatar_url,
-    lineups: rows.error ? [] : (rows.data as Row[]).map(toLineup),
+    lineups,
   };
-}
+});

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { requireUser } from "@/lib/auth";
 import { setOwned } from "@/lib/collection";
 import { DICT, LOCALES, localeOr, type Locale } from "@/lib/i18n";
+import { allow } from "@/lib/rate-limit";
 
 export type OwnedResult = { ok: boolean; error: string };
 
@@ -21,6 +22,8 @@ export async function toggleOwned(locale: Locale, slug: string, owned: boolean):
   } catch {
     return { ok: false, error: C.loginHint };
   }
+
+  if (!allow(`owned:${userId}`, 120, 60_000)) return { ok: false, error: C.error };
 
   if (!(await setOwned(userId, slug, owned))) return { ok: false, error: C.error };
 

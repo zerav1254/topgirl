@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import { DICT, localeOr, type Locale } from "@/lib/i18n";
+import { allow } from "@/lib/rate-limit";
 import { SITE_URL } from "@/lib/site";
 import { AVATAR_BUCKET, SUPABASE_URL, adminClient } from "@/lib/supabase";
 import { createSupabaseServer } from "@/lib/supabase/server";
@@ -14,11 +15,11 @@ export type ProfileResult = { ok: boolean; error: string };
 type Provider = "google" | "discord";
 
 // Kosong = null (hapus nilai). Bukan angka bulat positif = NaN (tolak).
-const num = (fd: FormData, key: string): number | null => {
+const num = (fd: FormData, key: string, max = Number.MAX_SAFE_INTEGER): number | null => {
   const raw = String(fd.get(key) ?? "").trim();
   if (!raw) return null;
   const n = Number(raw);
-  return Number.isInteger(n) && n > 0 ? n : Number.NaN;
+  return Number.isInteger(n) && n > 0 && n <= max ? n : Number.NaN;
 };
 
 export async function saveProfile(locale: Locale, fd: FormData): Promise<ProfileResult> {
@@ -30,8 +31,10 @@ export async function saveProfile(locale: Locale, fd: FormData): Promise<Profile
     return { ok: false, error: C.error };
   }
 
+  if (!allow(`profile:${userId}`, 20, 60_000)) return { ok: false, error: C.error };
+
   const ingameId = num(fd, "ingameId");
-  const ingameServer = num(fd, "ingameServer");
+  const ingameServer = num(fd, "ingameServer", 32767);
   if (Number.isNaN(ingameId) || Number.isNaN(ingameServer)) return { ok: false, error: C.error };
 
   const name = String(fd.get("name") ?? "").trim() || null;
@@ -61,10 +64,11 @@ export async function uploadAvatar(locale: Locale, fd: FormData): Promise<Profil
 
   const file = fd.get("avatar");
   if (!(file instanceof File) || file.size === 0 || file.size > 10 * 1024 * 1024) return { ok: false, error: C.avatarError };
+  if (!allow(`avatar:${userId}`, 5, 10 * 60_000)) return { ok: false, error: C.avatarError };
 
   let webp: Buffer;
   try {
-    webp = await sharp(Buffer.from(await file.arrayBuffer()))
+    webp = await sharp(Buffer.from(await file.arrayBuffer()), { limitInputPixels: 4096 * 4096 })
       .resize(320, 320, { fit: "cover" })
       .webp({ quality: 82 })
       .toBuffer();

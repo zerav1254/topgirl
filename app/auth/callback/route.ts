@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { localeOr } from "@/lib/i18n";
+import { safeNextPath } from "@/lib/redirect";
 import { createSupabaseServer } from "@/lib/supabase/server";
 
 // Tukar `code` jadi session di cookie, lalu kembali ke halaman locale.
@@ -8,8 +9,7 @@ export async function GET(request: Request) {
   const code = url.searchParams.get("code");
   const next = url.searchParams.get("next") ?? "";
   const locale = localeOr(next.split("/")[1]);
-  // Hanya path internal: tolak "//host" dan URL absolut supaya tidak jadi open redirect.
-  const dest = next.startsWith("/") && !next.startsWith("//") ? next : `/${locale}`;
+  const dest = safeNextPath(next, `/${locale}`);
 
   if (code) {
     const supabase = await createSupabaseServer();

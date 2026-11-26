@@ -200,12 +200,9 @@ function ArtistCard({
             )}
           </span>
           <span className="min-w-0 flex-1">
-            <span className="flex items-baseline justify-between gap-1">
-              <span className="truncate text-sm font-semibold">{a.name}</span>
-              <span className="tabular shrink-0 text-xs font-semibold text-zinc-300">{formatStat(a.scores[category], locale)}</span>
-            </span>
+            <span className="block truncate text-sm font-semibold">{a.name}</span>
             <span className="mt-1 flex items-center gap-1 text-xs text-zinc-400">
-              <GenreIcon genre={a.genre} className="h-4 w-4 shrink-0" />
+              <GenreIcon image={a.genreImage} className="h-4 w-4 shrink-0" />
               <span className="truncate">{a.genre}</span>
               {inTeam && <Icon d={ICONS.check} className="ml-auto h-3.5 w-3.5 shrink-0 text-gold" />}
             </span>
@@ -221,11 +218,14 @@ function ArtistCard({
               {r && <RankBadge rank={r.rank} size={r.size} label={t(C.pool.rank, { n: r.rank, total: r.size })} />}
               <TierBadge tier={tier} />
             </span>
-            <span className="min-w-0 truncate text-xs text-zinc-400">
-              {a.origin ?? "\u2014"}
-              {a.season !== null && ` \u00b7 S${a.season}`}
+            <span className="tabular shrink-0 text-xs text-zinc-400">
+              {C.info.score} <span className="font-semibold text-zinc-100">{formatStat(a.scores[category], locale)}</span>
             </span>
           </div>
+          <p className="min-w-0 truncate text-xs text-zinc-400">
+            {a.origin ?? "\u2014"}
+            {a.season !== null && ` \u00b7 S${a.season}`}
+          </p>
           {blocked && (
             <p className="mt-1.5 rounded-md border border-amber-500/40 bg-ink/85 px-1.5 py-0.5 text-center text-[11px] font-semibold text-amber-300">
               {C.pool.blocked}

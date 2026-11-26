@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProfile } from "@/lib/auth";
-import { loadArtists } from "@/lib/artists";
+import { getArtists } from "@/lib/artists-cache";
 import { DICT, isLocale, type Locale } from "@/lib/i18n";
 import { loadLineups } from "@/lib/lineups";
 import { SITE_URL } from "@/lib/site";
@@ -51,7 +51,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
   const lineups = await loadLineups(profile.userId);
   // Avatar mini di kartu lineup: hanya artis yang dipakai, bukan seluruh roster.
   const used = new Set(lineups.flatMap((l) => l.slugs));
-  const preview = (await loadArtists()).filter((a) => used.has(a.slug));
+  const preview = (await getArtists()).filter((a) => used.has(a.slug));
 
   return (
     <main id="main" className="mx-auto flex w-full max-w-2xl flex-col gap-4 px-4 pt-3 pb-28 sm:pt-6">
