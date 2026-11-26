@@ -317,14 +317,20 @@ create table public.car_mod_levels (
   primary key (part, level)
 );
 
--- Biaya item seluruh sistem upgrade mobil. level 0 = biaya naik kelas (car_mod_class).
--- item_name dari lokalisasi game disimpan apa adanya supaya tidak perlu join.
+-- Biaya item seluruh sistem upgrade mobil + koleksi.
+--   car_part / car_mod  : ref_id = komponen/mod, level = level tujuan
+--   car_mod_class       : ref_id = kelas mod, level 0
+--   collection_platform : ref_id = slot platform (0-8), level = level tujuan 1..50
+--   collection_star     : ref_id = quality item koleksi (1-4), level = urutan bintang
+-- item_name dari lokalisasi game disimpan apa adanya supaya tidak perlu join;
+-- untuk item koleksi (scope collection_*) string game-nya tidak ada di paket i18n,
+-- jadi isinya label turunan: "Bahan Peningkatan Koleksi 1/2" dan "Bintang Koleksi ...".
 create table public.game_costs (
-  scope text not null check (scope in ('car_part', 'car_mod', 'car_mod_class')),
+  scope text not null check (scope in ('car_part', 'car_mod', 'car_mod_class', 'collection_platform', 'collection_star')),
   ref_id integer not null,
   level smallint not null default 0 check (level >= 0),
   item_id integer not null,
-  item_name text not null,
+  item_name text,
   amount bigint not null check (amount > 0),
   primary key (scope, ref_id, level, item_id)
 );
