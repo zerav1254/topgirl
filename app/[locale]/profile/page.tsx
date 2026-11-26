@@ -115,7 +115,7 @@ export default async function Page({
               type="submit"
               className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border border-white/10 px-3 text-sm font-semibold text-zinc-400 transition-colors duration-200 hover:border-red-500/40 hover:text-red-300"
             >
-              <Icon d={ICONS.logout} className="h-4 w-4 shrink-0" />
+              <span aria-hidden="true" className="logout-glyph h-4 w-4 shrink-0" />
               {C.auth.signOut}
             </button>
           </form>

@@ -31,7 +31,8 @@ body {
 .team-glyph,
 .lineup-glyph,
 .profile-glyph,
-.rank-glyph {
+.rank-glyph,
+.logout-glyph {
   background-color: currentColor;
   -webkit-mask: center / contain no-repeat;
   mask: center / contain no-repeat;
@@ -60,6 +61,11 @@ body {
 .rank-glyph {
   -webkit-mask-image: url("/assets/icons/rank.png");
   mask-image: url("/assets/icons/rank.png");
+}
+
+.logout-glyph {
+  -webkit-mask-image: url("/assets/icons/logout.png");
+  mask-image: url("/assets/icons/logout.png");
 }
 
 ::selection {

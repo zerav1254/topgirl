@@ -77,7 +77,7 @@ export default async function Page({
               </Link>
               <form action={signOut.bind(null, locale)}>
                 <button type="submit" className={`${providerButton} border-white/10 font-normal text-zinc-400 hover:border-red-500/40 hover:text-red-300`}>
-                  <Icon d={ICONS.logout} className="h-4 w-4 shrink-0" />
+                  <span aria-hidden="true" className="logout-glyph h-4 w-4 shrink-0" />
                   {C.auth.signOut}
                 </button>
               </form>
