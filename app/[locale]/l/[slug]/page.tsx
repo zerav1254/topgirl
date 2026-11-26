@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getArtists } from "@/lib/artists-cache";
@@ -8,6 +7,7 @@ import { loadShared } from "@/lib/lineups";
 import { GENRE_BONUS, TEAM_SIZE, teamSkillTotals } from "@/lib/team";
 import { DEFAULT_CATEGORY, EFFECT_LABEL, TIER_ORDER } from "@/lib/score";
 import { Avatar, GenreIcon, ICONS, Icon, SkillList, TierBadge, formatStat, isPercent } from "@/components/artist-ui";
+import { UserAvatar } from "@/components/user-avatar";
 
 export const dynamic = "force-dynamic";
 
@@ -49,16 +49,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
       <header className="relative overflow-hidden rounded-2xl border border-white/10 bg-panel/80 p-4 sm:p-5">
         <span aria-hidden="true" className="pointer-events-none absolute -top-20 -right-16 h-48 w-48 rounded-full bg-brand/20 blur-3xl" />
         <div className="relative flex items-start gap-3">
-          <span
-            aria-hidden="true"
-            className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-full border border-gold/30 bg-gradient-to-br from-gold/80 to-brand/70 font-display text-lg font-bold text-white/90"
-          >
-            {shared.ownerAvatarUrl ? (
-              <Image src={shared.ownerAvatarUrl} alt="" width={112} height={112} sizes="56px" className="h-full w-full object-cover" />
-            ) : (
-              (shared.ownerName ?? "TG").slice(0, 2).toUpperCase()
-            )}
-          </span>
+          <UserAvatar src={shared.ownerAvatarUrl} name={shared.ownerName ?? "TG"} frame={shared.ownerAvatarFrame} px={56} />
           <div className="min-w-0 flex-1">
             <p className="font-display text-[11px] font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
             <h1 className="font-display text-xl font-bold tracking-tight break-words sm:text-2xl">

@@ -32,6 +32,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
       owned={owned}
       user={profile?.name ?? profile?.email ?? null}
       avatarUrl={profile?.avatarUrl ?? null}
+      avatarFrame={profile?.avatarFrame ?? null}
     />
   );
 }

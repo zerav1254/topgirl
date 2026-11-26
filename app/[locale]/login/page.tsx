@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProfile } from "@/lib/auth";
 import { DOCS, DOC_KEYS } from "@/lib/docs";
 import { DICT, isLocale, type Locale } from "@/lib/i18n";
 import { LocaleSwitcher } from "@/components/locale-switcher";
+import { UserAvatar } from "@/components/user-avatar";
 import { DiscordMark, GoogleMark } from "@/components/provider-mark";
 import { ICONS, Icon } from "@/components/artist-ui";
 import { signIn, signOut } from "./actions";
@@ -46,15 +46,7 @@ export default async function Page({
         {profile ? (
           <>
             <div className="mt-4 flex items-center gap-3">
-              <span className="block h-11 w-11 shrink-0 overflow-hidden rounded-full border border-white/10 bg-panel-2">
-                {profile.avatarUrl ? (
-                  <Image src={profile.avatarUrl} alt="" width={88} height={88} sizes="44px" className="h-full w-full object-cover" />
-                ) : (
-                  <span aria-hidden="true" className="grid h-full w-full place-items-center font-display text-sm font-bold text-white/50">
-                    {(profile.name ?? profile.email ?? "?").slice(0, 2).toUpperCase()}
-                  </span>
-                )}
-              </span>
+              <UserAvatar src={profile.avatarUrl} name={profile.name ?? profile.email ?? "?"} frame={profile.avatarFrame} px={44} />
               <div className="min-w-0">
                 <h1 className="font-display truncate text-xl font-bold tracking-tight">{profile.name ?? profile.email}</h1>
                 {profile.email && profile.name && <p className="truncate text-xs text-zinc-400">{profile.email}</p>}

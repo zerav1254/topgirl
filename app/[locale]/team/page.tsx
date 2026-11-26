@@ -32,6 +32,7 @@ export default async function TeamPage({ params }: { params: Promise<{ locale: s
       owned={owned}
       user={profile?.name ?? profile?.email ?? null}
       avatarUrl={profile?.avatarUrl ?? null}
+      avatarFrame={profile?.avatarFrame ?? null}
     />
   );
 }
