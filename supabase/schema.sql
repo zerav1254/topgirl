@@ -340,3 +340,38 @@ create policy "read car part levels" on public.car_part_levels for select to ano
 create policy "read car mod classes" on public.car_mod_classes for select to anon, authenticated using (true);
 create policy "read car mod levels" on public.car_mod_levels for select to anon, authenticated using (true);
 create policy "read game costs" on public.game_costs for select to anon, authenticated using (true);
+
+-- ── Kalkulator biaya (view ringkas untuk halaman /cost) ─────────────────────
+-- Kurva EXP unik per artis; artis dengan urutan exp_step sama berbagi satu baris.
+create view public.artist_exp_curves
+with (security_invoker = true) as
+with per_artist as (
+  select artist_id,
+         md5(string_agg(exp_step::text, ',' order by level)) as shape,
+         array_agg(exp_step order by level) as steps
+    from public.artist_level_costs
+   group by artist_id
+)
+select shape,
+       array_agg(artist_id order by artist_id) as artist_ids,
+       steps
+  from per_artist
+ group by shape, steps;
+
+-- Biaya naik star. Saat ini identik untuk semua artis (CHeroStarCard), jadi
+-- cukup satu kurva. Kalau data mulai berbeda per artis, pecah per artist_id.
+create view public.artist_star_curve
+with (security_invoker = true) as
+select star, min(item_name) as item_name, min(amount) as amount
+  from public.artist_star_costs
+ group by star;
+
+-- Biaya item per level, diringkas level -> amount. 1 baris = 1 item per ref.
+create view public.game_cost_items
+with (security_invoker = true) as
+select scope, ref_id, item_id, min(item_name) as item_name,
+       jsonb_object_agg(level, amount) as amounts
+  from public.game_costs
+ group by scope, ref_id, item_id;
+
+grant select on public.artist_exp_curves, public.artist_star_curve, public.game_cost_items to anon, authenticated;
