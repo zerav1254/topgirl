@@ -1,10 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
+import { costIcon } from "@/lib/cost-icons";
 import type { DICT } from "@/lib/i18n";
 
 export type CostDict = (typeof DICT)["id"]["cost"];
-export type Total = { name: string; amount: number };
+export type Total = { itemId?: number; name: string; amount: number };
 
 export const field = "h-11 w-full rounded-lg border border-white/10 bg-panel/80 px-2.5 text-base font-semibold tabular text-zinc-100";
 export const label = "text-[11px] font-semibold uppercase tracking-wide text-zinc-400";
@@ -149,12 +151,18 @@ export function Totals({
       <div aria-live="polite">
         {totals.length > 0 ? (
           <ul className="flex flex-col gap-1.5">
-            {totals.map((item) => (
-              <li key={item.name} className="flex items-center justify-between gap-3 text-sm">
-                <span className="min-w-0 break-words text-zinc-300">{item.name}</span>
-                <span className="tabular shrink-0 font-bold text-gold">{format(item.amount)}</span>
-              </li>
-            ))}
+            {totals.map((item) => {
+              const icon = costIcon(item.itemId, item.name);
+              return (
+                <li key={item.itemId ?? item.name} className="flex items-center justify-between gap-3 text-sm">
+                  <span className="flex min-w-0 items-center gap-2">
+                    {icon ? <Image src={icon} alt="" width={24} height={24} sizes="24px" className="h-6 w-6 shrink-0 object-contain" /> : null}
+                    <span className="min-w-0 break-words text-zinc-300">{item.name}</span>
+                  </span>
+                  <span className="tabular shrink-0 font-bold text-gold">{format(item.amount)}</span>
+                </li>
+              );
+            })}
           </ul>
         ) : (
           <p className="text-sm text-zinc-400">{empty}</p>

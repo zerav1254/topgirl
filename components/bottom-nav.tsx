@@ -81,7 +81,19 @@ export function BottomNav({ locale }: { locale: Locale }) {
           aria-current={onCost ? "page" : undefined}
           className={`${ITEM} ${onCost ? ACTIVE : IDLE}`}
         >
-          <span aria-hidden="true" className="cost-glyph h-5 w-5" />
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="h-5 w-5"
+          >
+            <rect x="4" y="2" width="16" height="20" rx="2" />
+            <path d="M8 6h8M8 11h1m3 0h1m3 0h1M8 15h1m3 0h1m3 0h1M8 19h1m3 0h1m3 0h1" />
+          </svg>
           {C.header.cost}
         </Link>
         <Link
