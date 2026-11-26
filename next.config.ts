@@ -24,6 +24,9 @@ const nextConfig: NextConfig = {
     serverActions: { bodySizeLimit: "10mb" },
   },
   images: {
+    // Kuota Image Optimization Vercel (402) habis untuk proyek ini; aset sudah
+    // dioptimasi di sumber (WebP/ukuran final), jadi sajikan langsung tanpa optimizer.
+    unoptimized: true,
     remotePatterns: [
       ...(supabaseHost ? [{ protocol: "https" as const, hostname: supabaseHost, pathname: "/storage/v1/object/public/**" }] : []),
       // Avatar akun dari provider OAuth (Google/Discord).
