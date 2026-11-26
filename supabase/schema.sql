@@ -352,6 +352,40 @@ create table public.museum_costs (
   primary key (part, tier, level, item_id)
 );
 
+-- Renovasi markas (CHeadquartersBeautifyLevel): 800 level, biaya Kaca,
+-- menambah stat semua artis. level 1 gratis.
+create table public.headquarters_levels (
+  level smallint primary key check (level between 1 and 800),
+  sing integer not null default 0 check (sing >= 0),
+  dance integer not null default 0 check (dance >= 0),
+  management integer not null default 0 check (management >= 0),
+  stage smallint not null,
+  unlock_tier smallint not null,
+  item_id integer,
+  item_name text,
+  amount bigint not null default 0 check (amount >= 0)
+);
+
+-- Renovasi ruangan markas (CHeadquartersBeautifyEquip): 7 ruangan x 4 slot x 60 level.
+create table public.headquarters_rooms (
+  tier smallint not null check (tier between 1 and 7),
+  slot smallint not null check (slot between 1 and 4),
+  room text not null,
+  name text not null,
+  primary key (tier, slot)
+);
+
+create table public.headquarters_room_costs (
+  tier smallint not null,
+  slot smallint not null,
+  level smallint not null check (level between 1 and 60),
+  item_id integer not null,
+  item_name text not null,
+  amount bigint not null check (amount > 0),
+  primary key (tier, slot, level, item_id),
+  foreign key (tier, slot) references public.headquarters_rooms (tier, slot) on delete cascade
+);
+
 alter table public.car_parts enable row level security;
 alter table public.car_part_levels enable row level security;
 alter table public.car_mod_classes enable row level security;
@@ -359,6 +393,9 @@ alter table public.car_mod_levels enable row level security;
 alter table public.game_costs enable row level security;
 alter table public.museum_parts enable row level security;
 alter table public.museum_costs enable row level security;
+alter table public.headquarters_levels enable row level security;
+alter table public.headquarters_rooms enable row level security;
+alter table public.headquarters_room_costs enable row level security;
 
 create policy "read car parts" on public.car_parts for select to anon, authenticated using (true);
 create policy "read car part levels" on public.car_part_levels for select to anon, authenticated using (true);
@@ -367,6 +404,9 @@ create policy "read car mod levels" on public.car_mod_levels for select to anon,
 create policy "read game costs" on public.game_costs for select to anon, authenticated using (true);
 create policy "read museum parts" on public.museum_parts for select to anon, authenticated using (true);
 create policy "read museum costs" on public.museum_costs for select to anon, authenticated using (true);
+create policy "read headquarters levels" on public.headquarters_levels for select to anon, authenticated using (true);
+create policy "read headquarters rooms" on public.headquarters_rooms for select to anon, authenticated using (true);
+create policy "read headquarters room costs" on public.headquarters_room_costs for select to anon, authenticated using (true);
 
 -- ── Kalkulator biaya (view ringkas untuk halaman /cost) ─────────────────────
 -- Kurva EXP unik per artis; artis dengan urutan exp_step sama berbagi satu baris.
