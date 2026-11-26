@@ -65,17 +65,40 @@ export default async function Page({
         <span aria-hidden="true" className="pointer-events-none absolute -bottom-24 -left-16 h-48 w-48 rounded-full bg-brand/15 blur-3xl" />
 
         <div className="relative flex items-center gap-4">
-          <span className="shrink-0 rounded-2xl bg-gradient-to-br from-gold/80 to-brand/70 p-0.5">
-            <span className="block h-20 w-20 overflow-hidden rounded-full bg-panel-2">
-              {profile.avatarUrl ? (
-                <Image src={profile.avatarUrl} alt="" width={160} height={160} sizes="80px" className="h-full w-full object-cover" />
-              ) : (
-                <span aria-hidden="true" className="grid h-full w-full place-items-center font-display text-2xl font-bold text-white/60">
-                  {name.slice(0, 2).toUpperCase()}
-                </span>
-              )}
+          {profile.role === "admin" ? (
+            <span className="relative grid h-28 w-28 shrink-0 place-items-center">
+              <span className="block h-16 w-16 overflow-hidden rounded-full bg-panel-2">
+                {profile.avatarUrl ? (
+                  <Image src={profile.avatarUrl} alt="" width={128} height={128} sizes="64px" className="h-full w-full object-cover" />
+                ) : (
+                  <span aria-hidden="true" className="grid h-full w-full place-items-center font-display text-xl font-bold text-white/60">
+                    {name.slice(0, 2).toUpperCase()}
+                  </span>
+                )}
+              </span>
+              {/* Bingkai avatar admin (PNG transparan, lubang tengah 64px). */}
+              <Image
+                src="/assets/avatars/admin-frame.png"
+                alt=""
+                width={350}
+                height={350}
+                sizes="112px"
+                className="pointer-events-none absolute inset-0 h-full w-full translate-x-[3px] translate-y-[3px] object-contain"
+              />
             </span>
-          </span>
+          ) : (
+            <span className="shrink-0 rounded-2xl bg-gradient-to-br from-gold/80 to-brand/70 p-0.5">
+              <span className="block h-20 w-20 overflow-hidden rounded-full bg-panel-2">
+                {profile.avatarUrl ? (
+                  <Image src={profile.avatarUrl} alt="" width={160} height={160} sizes="80px" className="h-full w-full object-cover" />
+                ) : (
+                  <span aria-hidden="true" className="grid h-full w-full place-items-center font-display text-2xl font-bold text-white/60">
+                    {name.slice(0, 2).toUpperCase()}
+                  </span>
+                )}
+              </span>
+            </span>
+          )}
           <div className="min-w-0 flex-1">
             <p className="font-display truncate text-xl font-bold tracking-tight sm:text-2xl">{name}</p>
             <p className="truncate text-sm text-zinc-400">{secondary || C.profile.publicHint}</p>
