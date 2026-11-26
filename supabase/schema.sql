@@ -4,6 +4,8 @@
 create table public.genres (
   id text primary key,
   label text not null,
+  -- Nama file di public/assets/images/genres (tanpa .png); null = tanpa ikon.
+  image text,
   sort integer not null default 0
 );
 
@@ -72,6 +74,9 @@ begin
 end;
 $$;
 
+-- Fungsi trigger hanya dipanggil oleh trigger, bukan lewat /rest/v1/rpc.
+revoke execute on function public.set_updated_at() from public, anon, authenticated;
+
 drop trigger if exists artists_set_updated_at on public.artists;
 create trigger artists_set_updated_at
   before update on public.artists
@@ -135,9 +140,9 @@ on conflict (id) do nothing;
 
 create table public.profiles (
   user_id uuid primary key references auth.users on delete cascade,
-  email text,                                    -- opsional: Discord bisa tanpa email
-  name text,
-  avatar_url text,
+  email text check (char_length(email) <= 254),   -- opsional: Discord bisa tanpa email
+  name text check (char_length(name) <= 80),
+  avatar_url text check (char_length(avatar_url) <= 500),
   provider text,                                 -- 'google' | 'discord'
   provider_id text,                              -- id stabil provider, bukan username
   ingame_id bigint check (ingame_id > 0),
@@ -206,6 +211,9 @@ begin
   return new;
 end;
 $$;
+
+-- Trigger function: cabut EXECUTE dari publik, anon, dan authenticated.
+revoke execute on function public.handle_new_user() from public, anon, authenticated;
 
 drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
