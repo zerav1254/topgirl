@@ -7,7 +7,7 @@ Team builder + galeri foto artist. Next.js 16, data di Supabase (Postgres + Stor
 ```bash
 npm install
 cp .env.example .env.local   # lalu isi nilainya
-npm run seed                 # sekali: isi tabel + upload thumb dari data/artists.csv
+npm run seed                 # sekali: isi tabel dari data/artists.csv
 npm run dev                  # http://localhost:3000
 ```
 
@@ -45,7 +45,7 @@ where i.user_id = p.user_id and i.provider in ('google', 'discord') and i.provid
 
 `supabase/schema.sql` — tabel `artists`, `artist_skills`, `artist_seasons` (season artis aboard, read-only), tabel opsi `genres`/`origins`/`effects`, bucket `artist-thumb`, RLS select-only untuk anon. Ditambah `profiles`, `user_artists`, `lineups` dengan RLS aktif **tanpa policy** (akses hanya lewat server action `service_role`). Perubahan skema lewat migration di Supabase, lalu file ini diperbarui di commit yang sama.
 
-`data/artists.csv` + `public/assets/images/artists/thumb/` = bahan seed, bukan sumber runtime.
+`data/artists.csv` = bahan seed, bukan sumber runtime. Foto runtime hanya dari bucket `artist-thumb`.
 
 ## Deploy
 

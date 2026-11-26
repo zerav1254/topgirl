@@ -18,7 +18,7 @@ npm run dev            # localhost:3000
 npm run lint           # eslint next/core-web-vitals + typescript
 npm run build          # wajib lulus sebelum commit (butuh env Supabase)
 npm run check:scores   # assert bobot/tier vs DB (baca .env.local)
-npm run seed           # isi DB + upload thumb dari CSV (butuh service_role key)
+npm run seed           # isi DB dari CSV (butuh service_role key)
 ```
 
 Jangan jalankan `next start`/`npm start`, termasuk uji lokal. Verifikasi lewat `npm run dev` + `npm run build` saja.
@@ -91,7 +91,7 @@ Alur data: Supabase → `lib/artists.ts` → server component (props) → client
 | Tambah/ubah artist, stat, skill | migration Supabase (halaman manage hanya foto) |
 | Ubah skema DB | migration Supabase + `supabase/schema.sql` + `lib/artists.ts` |
 | Simpan stat atomik | RPC `save_artist_stats` di `supabase/schema.sql`, dipakai lewat migration/SQL (bukan UI) |
-| Seed ulang dari CSV/thumb lama | `scripts/seed-supabase.mjs` (`npm run seed`) |
+| Seed ulang dari CSV | `scripts/seed-supabase.mjs` (`npm run seed`) |
 | Auth/login admin | `lib/auth.ts` + `app/[locale]/manage/actions.ts` |
 | Teks UI / bahasa baru | `lib/dict/*.ts` (+ `LOCALES`/`LANG_NAME` di `lib/i18n.ts`) |
 | Ukuran tim | `TEAM_SIZE` di `lib/team.ts` |

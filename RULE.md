@@ -18,7 +18,7 @@ Aturan keras repo ini. Kalau ragu, berhenti dan tanya — jangan improvisasi.
 ## Data
 
 - Sumber data runtime = Supabase (tabel `artists`, `artist_skills`, bucket `artist-thumb`). Skema tercatat di `supabase/schema.sql`.
-- `data/artists.csv` dan `public/assets/images/artists/thumb/` hanya bahan seed (`npm run seed`). Jangan dipakai sebagai sumber runtime.
+- `data/artists.csv` hanya bahan seed (`npm run seed`). Jangan dipakai sebagai sumber runtime.
 - Tier **tidak disimpan** di DB; dihitung per kategori dari skor (`SCORE`/`BANDS` di `lib/score.ts`).
 - `slug` unik, huruf kecil tanpa spasi; `origin` ∈ `Tokyo Rome Bali Auction Home Event` atau NULL.
 - `base_sing`/`base_dance` boleh NULL; skor memakai faktor basis netral saat kosong.
