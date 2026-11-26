@@ -582,4 +582,72 @@ select scope, ref_id, item_id, min(item_name) as item_name,
   from public.game_costs
  group by scope, ref_id, item_id;
 
-grant select on public.artist_exp_curves, public.artist_star_curve, public.game_cost_items to anon, authenticated;
+-- Museum: biaya sama untuk 3 bagian, cukup satu baris per tier + item.
+create view public.museum_cost_items
+with (security_invoker = true) as
+with per_level as (
+  select tier, item_id, level, min(item_name) as item_name, min(amount) as amount
+    from public.museum_costs
+   where part = 1
+   group by tier, item_id, level
+)
+select tier, item_id, min(item_name) as item_name,
+       jsonb_object_agg(level, amount) as amounts
+  from per_level
+ group by tier, item_id;
+
+-- Markas: 800 level, satu baris array. amounts[level - 1] = biaya level itu.
+create view public.headquarters_level_curve
+with (security_invoker = true) as
+select array_agg(amount order by level) as amounts,
+       min(level) as min_level,
+       max(level) as max_level,
+       min(item_name) filter (where item_name is not null) as item_name
+  from public.headquarters_levels;
+
+-- Markas ruangan: 4 slot per tier berbagi biaya, jadi ringkas per tier + item.
+create view public.headquarters_room_cost_items
+with (security_invoker = true) as
+with per_level as (
+  select tier, item_id, level, min(item_name) as item_name, min(amount) as amount
+    from public.headquarters_room_costs
+   group by tier, item_id, level
+)
+select tier, item_id, min(item_name) as item_name,
+       jsonb_object_agg(level, amount) as amounts
+  from per_level
+ group by tier, item_id;
+
+-- Vila staf: 3 tipe staf per tier berbagi biaya level, jadi ringkas per tier + item.
+create view public.villa_staff_cost_items
+with (security_invoker = true) as
+with per_level as (
+  select s.tier, c.item_id, c.level, min(c.item_name) as item_name, min(c.amount) as amount
+    from public.villa_staff_level_costs c
+    join public.villa_staff s on s.id = c.staff_id
+   group by s.tier, c.item_id, c.level
+)
+select tier, item_id, min(item_name) as item_name,
+       jsonb_object_agg(level, amount) as amounts
+  from per_level
+ group by tier, item_id;
+
+-- Penampilan CEO: 3 jenis olahraga per tier berbagi biaya level.
+create view public.ceo_sport_cost_items
+with (security_invoker = true) as
+with per_level as (
+  select s.tier, c.item_id, c.level, min(c.item_name) as item_name, min(c.amount) as amount
+    from public.ceo_appearance_sport_level_costs c
+    join public.ceo_appearance_sports s on s.id = c.sports_id
+   group by s.tier, c.item_id, c.level
+)
+select tier, item_id, min(item_name) as item_name,
+       jsonb_object_agg(level, amount) as amounts
+  from per_level
+ group by tier, item_id;
+
+grant select on public.artist_exp_curves, public.artist_star_curve, public.game_cost_items,
+                public.museum_cost_items, public.headquarters_level_curve,
+                public.headquarters_room_cost_items, public.villa_staff_cost_items,
+                public.ceo_sport_cost_items
+  to anon, authenticated;

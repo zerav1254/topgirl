@@ -5,9 +5,14 @@ import { useMemo, useState } from "react";
 import { expBetween, modTotals, starBetween, sumLevels } from "@/lib/cost-calc";
 import { DICT, numberLocale, type Locale } from "@/lib/i18n";
 import type { CarPart, CostBook } from "@/lib/costs";
+import { CeoPanel } from "./cost/ceo";
+import { CollectionPanel } from "./cost/collection";
+import { clamp, field, label, NumberField, Totals } from "./cost/fields";
+import { HqPanel } from "./cost/hq";
+import { MuseumPanel } from "./cost/museum";
+import { VillaPanel } from "./cost/villa";
 
-type Tab = "artist" | "parts" | "mods";
-type Total = { name: string; amount: number };
+type Tab = "artist" | "parts" | "mods" | "museum" | "hq" | "villa" | "collection" | "ceo";
 
 const PART_MIN = 1;
 const PART_MAX = 60;
@@ -17,8 +22,6 @@ const ARTIST_MIN = 1;
 const ARTIST_MAX = 160;
 const STAR_MIN = 0;
 const STAR_MAX = 21;
-
-const clamp = (value: string, min: number, max: number) => Math.max(min, Math.min(max, Number(value) || min));
 
 export function CostCalculator({ book, locale }: { book: CostBook; locale: Locale }) {
   const C = DICT[locale].cost;
@@ -70,74 +73,35 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
   }));
   const modLabels = [C.partEngine, C.partChassis, C.partSuspension, C.partWheels];
 
-  const tabButton = (id: Tab, label: string) => (
-    <button
-      key={id}
-      type="button"
-      aria-pressed={tab === id}
-      onClick={() => setTab(id)}
-      className={`min-h-11 cursor-pointer rounded-lg border px-3 text-sm font-semibold transition-colors duration-200 ${
-        tab === id
-          ? "border-gold/50 bg-gold/10 text-gold"
-          : "border-white/10 bg-panel/80 text-zinc-300 hover:border-white/25 hover:text-zinc-100"
-      }`}
-    >
-      {label}
-    </button>
-  );
-
-  const field = "h-11 w-full rounded-lg border border-white/10 bg-panel/80 px-2.5 text-base font-semibold tabular text-zinc-100";
-  const label = "text-[11px] font-semibold uppercase tracking-wide text-zinc-400";
-
-  const numberField = (
-    id: string,
-    text: string,
-    value: number,
-    min: number,
-    max: number,
-    onChange: (value: string) => void,
-  ) => (
-    <div className="flex flex-col gap-1">
-      <label htmlFor={id} className={label}>
-        {text}
-      </label>
-      <input
-        id={id}
-        type="number"
-        inputMode="numeric"
-        min={min}
-        max={max}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className={field}
-      />
-    </div>
-  );
-
-  const totalsList = (totals: Total[], note?: string) => (
-    <>
-      {totals.length > 0 ? (
-        <ul className="flex flex-col gap-1.5">
-          {totals.map((item) => (
-            <li key={item.name} className="flex items-center justify-between gap-3 text-sm">
-              <span className="min-w-0 break-words text-zinc-300">{item.name}</span>
-              <span className="tabular shrink-0 font-bold text-gold">{format(item.amount)}</span>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="text-sm text-zinc-400">{C.noCost}</p>
-      )}
-      {note ? <p className="mt-3 text-xs text-zinc-400">{note}</p> : null}
-    </>
-  );
+  const tabs: { id: Tab; label: string }[] = [
+    { id: "artist", label: C.tabArtist },
+    { id: "parts", label: C.tabParts },
+    { id: "mods", label: C.tabMods },
+    { id: "museum", label: C.tabMuseum },
+    { id: "hq", label: C.tabHq },
+    { id: "villa", label: C.tabVilla },
+    { id: "collection", label: C.tabCollection },
+    { id: "ceo", label: C.tabCeo },
+  ];
 
   return (
     <div className="flex flex-col gap-4">
-      <div role="group" aria-label={C.title} className="grid grid-cols-3 gap-2">
-        {tabButton("artist", C.tabArtist)}
-        {tabButton("parts", C.tabParts)}
-        {tabButton("mods", C.tabMods)}
+      <div role="group" aria-label={C.title} className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        {tabs.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            aria-pressed={tab === item.id}
+            onClick={() => setTab(item.id)}
+            className={`min-h-11 cursor-pointer rounded-lg border px-3 text-sm font-semibold transition-colors duration-200 ${
+              tab === item.id
+                ? "border-gold/50 bg-gold/10 text-gold"
+                : "border-white/10 bg-panel/80 text-zinc-300 hover:border-white/25 hover:text-zinc-100"
+            }`}
+          >
+            {item.label}
+          </button>
+        ))}
       </div>
 
       {tab === "artist" ? (
@@ -156,18 +120,10 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
           </div>
 
           <div className="mt-3 grid grid-cols-2 gap-3">
-            {numberField("cost-level-from", C.levelFrom, levelFrom, ARTIST_MIN, ARTIST_MAX, (v) =>
-              setLevelFrom(clamp(v, ARTIST_MIN, ARTIST_MAX)),
-            )}
-            {numberField("cost-level-to", C.levelTo, levelTo, ARTIST_MIN, ARTIST_MAX, (v) =>
-              setLevelTo(clamp(v, ARTIST_MIN, ARTIST_MAX)),
-            )}
-            {numberField("cost-star-from", C.starFrom, starFrom, STAR_MIN, STAR_MAX, (v) =>
-              setStarFrom(clamp(v, STAR_MIN, STAR_MAX)),
-            )}
-            {numberField("cost-star-to", C.starTo, starTo, STAR_MIN, STAR_MAX, (v) =>
-              setStarTo(clamp(v, STAR_MIN, STAR_MAX)),
-            )}
+            <NumberField id="cost-level-from" text={C.levelFrom} value={levelFrom} min={ARTIST_MIN} max={ARTIST_MAX} onChange={(v) => setLevelFrom(clamp(v, ARTIST_MIN, ARTIST_MAX))} />
+            <NumberField id="cost-level-to" text={C.levelTo} value={levelTo} min={ARTIST_MIN} max={ARTIST_MAX} onChange={(v) => setLevelTo(clamp(v, ARTIST_MIN, ARTIST_MAX))} />
+            <NumberField id="cost-star-from" text={C.starFrom} value={starFrom} min={STAR_MIN} max={STAR_MAX} onChange={(v) => setStarFrom(clamp(v, STAR_MIN, STAR_MAX))} />
+            <NumberField id="cost-star-to" text={C.starTo} value={starTo} min={STAR_MIN} max={STAR_MAX} onChange={(v) => setStarTo(clamp(v, STAR_MIN, STAR_MAX))} />
           </div>
 
           {levelTo <= levelFrom ? <p className="mt-3 text-sm text-red-300">{C.invalid}</p> : null}
@@ -215,19 +171,17 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
           </div>
 
           <div className="mt-3 grid grid-cols-2 gap-3">
-            {numberField("cost-part-from", C.levelFrom, partFrom, PART_MIN, PART_MAX, (v) =>
-              setPartFrom(clamp(v, PART_MIN, PART_MAX)),
-            )}
-            {numberField("cost-part-to", C.levelTo, partTo, PART_MIN, PART_MAX, (v) =>
-              setPartTo(clamp(v, PART_MIN, PART_MAX)),
-            )}
+            <NumberField id="cost-part-from" text={C.levelFrom} value={partFrom} min={PART_MIN} max={PART_MAX} onChange={(v) => setPartFrom(clamp(v, PART_MIN, PART_MAX))} />
+            <NumberField id="cost-part-to" text={C.levelTo} value={partTo} min={PART_MIN} max={PART_MAX} onChange={(v) => setPartTo(clamp(v, PART_MIN, PART_MAX))} />
           </div>
 
           {partTo <= partFrom ? <p className="mt-3 text-sm text-red-300">{C.invalid}</p> : null}
 
-          <div className="mt-4 rounded-xl border border-white/10 bg-panel-2/60 px-3 py-3">{totalsList(partTotals, C.partNote)}</div>
+          <div className="mt-4 rounded-xl border border-white/10 bg-panel-2/60 px-3 py-3">
+            <Totals totals={partTotals} note={C.partNote} empty={C.noCost} format={format} />
+          </div>
         </section>
-      ) : (
+      ) : tab === "mods" ? (
         <section aria-label={C.tabMods} className="rounded-2xl border border-white/10 bg-panel/70 p-4 sm:p-5">
           <div className="flex flex-col gap-1">
             <label htmlFor="cost-mod" className={label}>
@@ -243,12 +197,8 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
           </div>
 
           <div className="mt-3 grid grid-cols-2 gap-3">
-            {numberField("cost-mod-from", C.levelFrom, modFrom, MOD_MIN, MOD_MAX, (v) =>
-              setModFrom(clamp(v, MOD_MIN, MOD_MAX)),
-            )}
-            {numberField("cost-mod-to", C.levelTo, modTo, MOD_MIN, MOD_MAX, (v) =>
-              setModTo(clamp(v, MOD_MIN, MOD_MAX)),
-            )}
+            <NumberField id="cost-mod-from" text={C.levelFrom} value={modFrom} min={MOD_MIN} max={MOD_MAX} onChange={(v) => setModFrom(clamp(v, MOD_MIN, MOD_MAX))} />
+            <NumberField id="cost-mod-to" text={C.levelTo} value={modTo} min={MOD_MIN} max={MOD_MAX} onChange={(v) => setModTo(clamp(v, MOD_MIN, MOD_MAX))} />
           </div>
 
           {modTo <= modFrom ? <p className="mt-3 text-sm text-red-300">{C.invalid}</p> : null}
@@ -259,8 +209,20 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
             </p>
           ) : null}
 
-          <div className="mt-4 rounded-xl border border-white/10 bg-panel-2/60 px-3 py-3">{totalsList(modTotalsResult, C.modNote)}</div>
+          <div className="mt-4 rounded-xl border border-white/10 bg-panel-2/60 px-3 py-3">
+            <Totals totals={modTotalsResult} note={C.modNote} empty={C.noCost} format={format} />
+          </div>
         </section>
+      ) : tab === "museum" ? (
+        <MuseumPanel tiers={book.museum} C={C} format={format} />
+      ) : tab === "hq" ? (
+        <HqPanel hq={book.hq} C={C} format={format} />
+      ) : tab === "villa" ? (
+        <VillaPanel villa={book.villa} C={C} format={format} />
+      ) : tab === "collection" ? (
+        <CollectionPanel collection={book.collection} C={C} format={format} />
+      ) : (
+        <CeoPanel ceo={book.ceo} C={C} format={format} />
       )}
 
       <p className="text-xs text-zinc-400">{C.hint}</p>
