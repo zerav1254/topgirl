@@ -15,6 +15,7 @@ export const ja: Dict = {
     tabCount: "({n} / {size})",
     info: "ランク情報",
     lineups: "Lineups",
+    cost: "費用",
   },
   info: {
     metaTitle: "ランクの計算方法 — TopGirl",

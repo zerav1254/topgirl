@@ -15,6 +15,7 @@ export const zh: Dict = {
     tabCount: "（{n}/{size}）",
     info: "排名说明",
     lineups: "阵容",
+    cost: "费用",
   },
   info: {
     metaTitle: "排名如何计算 — TopGirl",

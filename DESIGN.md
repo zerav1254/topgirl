@@ -67,7 +67,7 @@ Saat login, kartu menambah satu tombol koleksi selebar kartu di bawah skill: `mi
 
 **Input pencarian** — ikon SVG di kiri (`pl-9`), border fokus `focus:border-brand/60`.
 
-**Bottom nav** — 4 menu (Artists/Team/Lineup/Profil), `grid-cols-4`, item `min-h-14`, status aktif `text-gold bg-gold/10` + `aria-current="page"`, badge jumlah tim memakai `sr-only` untuk angka.
+**Bottom nav** — 5 menu (Artists/Team/Lineup/Biaya/Profil), `grid-cols-5`, item `min-h-14`, status aktif `text-gold bg-gold/10` + `aria-current="page"`, badge jumlah tim memakai `sr-only` untuk angka.
 
 **Language switcher** — tombol pemicu `h-11 rounded-lg border-white/10 bg-panel/80` berisi bendera SVG (`public/assets/flags/<locale>.svg`, 20×14) + singkatan (`LANG_CODE`: ID/EN/FR/KO) + chevron; menu `role="listbox"` muncul di bawah (rata kanan), tiap opsi `min-h-11` berisi bendera + singkatan (`aria-label` = `LANG_NAME`), opsi aktif `bg-gold/10 text-gold`. Berada di header, rata kanan. Keyboard: Enter/Space/ArrowUp/ArrowDown buka, ArrowUp/Down pindah opsi, Escape tutup dan fokus balik ke tombol; fokus keluar dari grup atau klik di luar menutup. Ganti bahasa = `router.push` path sama dengan segmen locale diganti, query dipertahankan.
 

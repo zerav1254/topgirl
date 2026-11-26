@@ -184,7 +184,6 @@ export default async function Page({
         </h2>
         <nav aria-label={C.profile.links} className="grid grid-cols-1 gap-2">
           {[
-            { href: `/${locale}/cost`, label: C.cost.title, icon: ICONS.sliders, rank: false },
             { href: `/${locale}/info`, label: C.header.info, icon: ICONS.info, rank: true },
             ...DOC_KEYS.map((k) => ({
               href: `/${locale}/doc/${k}`,

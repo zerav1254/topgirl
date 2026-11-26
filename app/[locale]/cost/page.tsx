@@ -32,7 +32,7 @@ export default async function CostPage({ params }: { params: Promise<{ locale: s
     <main id="main" className="mx-auto flex w-full max-w-4xl flex-col gap-4 px-4 pt-3 pb-28 sm:px-6 sm:pt-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <Link
-          href={`/${locale}/profile`}
+          href={`/${locale}`}
           className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-white/10 bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
         >
           <Icon d={ICONS.arrowLeft} className="h-4 w-4 shrink-0" />

@@ -28,6 +28,7 @@ export function BottomNav({ locale }: { locale: Locale }) {
 
   const onArtists = pathname === base || pathname === `${base}/`;
   const onTeam = pathname === `${base}/team`;
+  const onCost = pathname === `${base}/cost`;
   const onProfile = pathname.startsWith(`${base}/profile`);
   const full = count >= TEAM_SIZE;
 
@@ -37,7 +38,7 @@ export function BottomNav({ locale }: { locale: Locale }) {
       className="fixed inset-x-0 bottom-0 z-30 border-t border-white/10 bg-panel/95 backdrop-blur"
       style={{ paddingBottom: "max(0.25rem, env(safe-area-inset-bottom))" }}
     >
-      <div className="mx-auto grid max-w-lg grid-cols-4 gap-1 px-2 pt-1">
+      <div className="mx-auto grid max-w-lg grid-cols-5 gap-1 px-2 pt-1">
         <Link
           href={base}
           aria-current={onArtists ? "page" : undefined}
@@ -74,6 +75,14 @@ export function BottomNav({ locale }: { locale: Locale }) {
         >
           <span aria-hidden="true" className="lineup-glyph h-5 w-5" />
           {C.header.lineups}
+        </Link>
+        <Link
+          href={`${base}/cost`}
+          aria-current={onCost ? "page" : undefined}
+          className={`${ITEM} ${onCost ? ACTIVE : IDLE}`}
+        >
+          <span aria-hidden="true" className="cost-glyph h-5 w-5" />
+          {C.header.cost}
         </Link>
         <Link
           href={`${base}/profile`}

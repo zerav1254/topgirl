@@ -185,7 +185,7 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
                 <p className="mt-1 text-xs text-zinc-400">{book.star.itemName}</p>
               </div>
               <Image
-                src="/assets/images/upgrades/UI_Item_Props_UpStar_Orange.png"
+                src="/assets/images/upgrades/UI_Item_Props_UpStar_Orange.webp"
                 alt=""
                 width={56}
                 height={56}

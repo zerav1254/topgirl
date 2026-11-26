@@ -30,6 +30,7 @@ body {
 .artist-glyph,
 .team-glyph,
 .lineup-glyph,
+.cost-glyph,
 .profile-glyph,
 .rank-glyph,
 .logout-glyph,
@@ -57,6 +58,11 @@ body {
 .lineup-glyph {
   -webkit-mask-image: url("/assets/icons/lineup.png");
   mask-image: url("/assets/icons/lineup.png");
+}
+
+.cost-glyph {
+  -webkit-mask-image: url("/assets/images/upgrades/UI_Collection_Icon_UpgradeProps_01.webp");
+  mask-image: url("/assets/images/upgrades/UI_Collection_Icon_UpgradeProps_01.webp");
 }
 
 .rank-glyph {
