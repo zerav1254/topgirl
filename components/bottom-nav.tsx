@@ -81,7 +81,7 @@ export function BottomNav({ locale }: { locale: Locale }) {
           aria-current={onProfile ? "page" : undefined}
           className={`${ITEM} ${onProfile ? ACTIVE : IDLE}`}
         >
-          <Icon d={ICONS.user} className="h-5 w-5" />
+          <span aria-hidden="true" className="profile-glyph h-5 w-5" />
           {C.profile.title}
         </Link>
       </div>
