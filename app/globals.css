@@ -26,6 +26,13 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
+/* Ikon Artists di bottom nav: PNG transparan dipakai sebagai mask supaya ikut warna teks aktif. */
+.artist-glyph {
+  background-color: currentColor;
+  -webkit-mask: url("/assets/icons/artist.png") center / contain no-repeat;
+  mask: url("/assets/icons/artist.png") center / contain no-repeat;
+}
+
 ::selection {
   background: rgb(220 38 38 / 0.35);
 }
