@@ -1,7 +1,7 @@
 import { unstable_cache } from "next/cache";
 import { cache } from "react";
 import type { CostItem } from "./cost-calc.ts";
-import { supabase } from "./supabase.ts";
+import { adminClient } from "./supabase.ts";
 
 export type { CostItem } from "./cost-calc.ts";
 
@@ -89,6 +89,8 @@ function byTier(rows: TierCostRow[]): TierCosts {
 }
 
 export async function loadCostBook(): Promise<CostBook> {
+  // Tabel biaya upgrade hanya untuk role authenticated; server memakai service_role.
+  const supabase = adminClient();
   const [
     curves,
     stars,

@@ -88,8 +88,8 @@ alter table public.effects enable row level security;
 -- Publik hanya boleh membaca. Semua tulis lewat service_role di server action.
 create policy "read artists" on public.artists for select to anon, authenticated using (true);
 create policy "read artist skills" on public.artist_skills for select to anon, authenticated using (true);
-create policy "read artist level costs" on public.artist_level_costs for select to anon, authenticated using (true);
-create policy "read artist star costs" on public.artist_star_costs for select to anon, authenticated using (true);
+create policy "read artist level costs" on public.artist_level_costs for select to authenticated using (true);
+create policy "read artist star costs" on public.artist_star_costs for select to authenticated using (true);
 create policy "read genres" on public.genres for select to anon, authenticated using (true);
 create policy "read origins" on public.origins for select to anon, authenticated using (true);
 create policy "read effects" on public.effects for select to anon, authenticated using (true);
@@ -207,6 +207,9 @@ create index user_artists_user_idx on public.user_artists (user_id);
 create index user_artists_slug_idx on public.user_artists (artist_slug);
 create index lineups_user_idx on public.lineups (user_id);
 
+-- Sengaja tanpa policy: anon/authenticated tidak punya akses baris sama sekali.
+-- Semua baca/tulis lewat service_role di server; policy longgar di sini akan
+-- membuka eskalasi role lewat kolom profiles.role.
 alter table public.profiles enable row level security;
 alter table public.user_artists enable row level security;
 alter table public.lineups enable row level security;
@@ -528,26 +531,26 @@ alter table public.ceo_appearance_sports enable row level security;
 alter table public.ceo_appearance_sport_levels enable row level security;
 alter table public.ceo_appearance_sport_level_costs enable row level security;
 
-create policy "read car parts" on public.car_parts for select to anon, authenticated using (true);
-create policy "read car part levels" on public.car_part_levels for select to anon, authenticated using (true);
-create policy "read car mod classes" on public.car_mod_classes for select to anon, authenticated using (true);
-create policy "read car mod levels" on public.car_mod_levels for select to anon, authenticated using (true);
-create policy "read game costs" on public.game_costs for select to anon, authenticated using (true);
-create policy "read museum parts" on public.museum_parts for select to anon, authenticated using (true);
-create policy "read museum costs" on public.museum_costs for select to anon, authenticated using (true);
-create policy "read headquarters levels" on public.headquarters_levels for select to anon, authenticated using (true);
-create policy "read headquarters rooms" on public.headquarters_rooms for select to anon, authenticated using (true);
-create policy "read headquarters room costs" on public.headquarters_room_costs for select to anon, authenticated using (true);
-create policy "read villa stages" on public.villa_stages for select to anon, authenticated using (true);
-create policy "read villa suites" on public.villa_suites for select to anon, authenticated using (true);
-create policy "read villa staff" on public.villa_staff for select to anon, authenticated using (true);
-create policy "read villa staff levels" on public.villa_staff_levels for select to anon, authenticated using (true);
-create policy "read villa staff level costs" on public.villa_staff_level_costs for select to anon, authenticated using (true);
-create policy "read ceo appearance stages" on public.ceo_appearance_stages for select to anon, authenticated using (true);
-create policy "read ceo appearance outfits" on public.ceo_appearance_outfits for select to anon, authenticated using (true);
-create policy "read ceo appearance sports" on public.ceo_appearance_sports for select to anon, authenticated using (true);
-create policy "read ceo appearance sport levels" on public.ceo_appearance_sport_levels for select to anon, authenticated using (true);
-create policy "read ceo appearance sport level costs" on public.ceo_appearance_sport_level_costs for select to anon, authenticated using (true);
+create policy "read car parts" on public.car_parts for select to authenticated using (true);
+create policy "read car part levels" on public.car_part_levels for select to authenticated using (true);
+create policy "read car mod classes" on public.car_mod_classes for select to authenticated using (true);
+create policy "read car mod levels" on public.car_mod_levels for select to authenticated using (true);
+create policy "read game costs" on public.game_costs for select to authenticated using (true);
+create policy "read museum parts" on public.museum_parts for select to authenticated using (true);
+create policy "read museum costs" on public.museum_costs for select to authenticated using (true);
+create policy "read headquarters levels" on public.headquarters_levels for select to authenticated using (true);
+create policy "read headquarters rooms" on public.headquarters_rooms for select to authenticated using (true);
+create policy "read headquarters room costs" on public.headquarters_room_costs for select to authenticated using (true);
+create policy "read villa stages" on public.villa_stages for select to authenticated using (true);
+create policy "read villa suites" on public.villa_suites for select to authenticated using (true);
+create policy "read villa staff" on public.villa_staff for select to authenticated using (true);
+create policy "read villa staff levels" on public.villa_staff_levels for select to authenticated using (true);
+create policy "read villa staff level costs" on public.villa_staff_level_costs for select to authenticated using (true);
+create policy "read ceo appearance stages" on public.ceo_appearance_stages for select to authenticated using (true);
+create policy "read ceo appearance outfits" on public.ceo_appearance_outfits for select to authenticated using (true);
+create policy "read ceo appearance sports" on public.ceo_appearance_sports for select to authenticated using (true);
+create policy "read ceo appearance sport levels" on public.ceo_appearance_sport_levels for select to authenticated using (true);
+create policy "read ceo appearance sport level costs" on public.ceo_appearance_sport_level_costs for select to authenticated using (true);
 
 -- ── Kalkulator biaya (view ringkas untuk halaman /cost) ─────────────────────
 -- Kurva EXP unik per artis; artis dengan urutan exp_step sama berbagi satu baris.
@@ -646,8 +649,40 @@ select tier, item_id, min(item_name) as item_name,
   from per_level
  group by tier, item_id;
 
+-- Semua view biaya upgrade: authenticated saja (anon dicabut di blok least privilege).
 grant select on public.artist_exp_curves, public.artist_star_curve, public.game_cost_items,
                 public.museum_cost_items, public.headquarters_level_curve,
                 public.headquarters_room_cost_items, public.villa_staff_cost_items,
                 public.ceo_sport_cost_items
-  to anon, authenticated;
+  to authenticated;
+
+-- ── Least privilege untuk klien ──────────────────────────────────────────────
+-- anon/authenticated hanya butuh SELECT (config game + view kalkulator).
+-- Semua tulis (profil, lineup, koleksi) lewat service_role di server.
+-- TRUNCATE tidak tunduk pada RLS, jadi wajib dicabut walaupun tabel ber-RLS.
+revoke insert, update, delete, truncate, references, trigger on all tables in schema public
+  from anon, authenticated;
+revoke usage, update on all sequences in schema public from anon, authenticated;
+
+-- Cegah grant default Supabase mengembalikan DML untuk tabel baru milik role postgres.
+-- Default privilege milik supabase_admin tidak bisa diubah dari sesi aplikasi.
+alter default privileges for role postgres in schema public
+  revoke insert, update, delete, truncate, references, trigger on tables from anon, authenticated;
+alter default privileges for role postgres in schema public
+  revoke usage, update on sequences from anon, authenticated;
+
+-- Tabel/view biaya upgrade: anon tidak boleh baca (grant default Supabase masih SELECT).
+revoke select on
+  public.artist_level_costs, public.artist_star_costs,
+  public.car_parts, public.car_part_levels, public.car_mod_classes, public.car_mod_levels,
+  public.game_costs, public.museum_parts, public.museum_costs,
+  public.headquarters_levels, public.headquarters_rooms, public.headquarters_room_costs,
+  public.villa_stages, public.villa_suites, public.villa_staff,
+  public.villa_staff_levels, public.villa_staff_level_costs,
+  public.ceo_appearance_stages, public.ceo_appearance_outfits, public.ceo_appearance_sports,
+  public.ceo_appearance_sport_levels, public.ceo_appearance_sport_level_costs,
+  public.artist_exp_curves, public.artist_star_curve, public.game_cost_items,
+  public.museum_cost_items, public.headquarters_level_curve,
+  public.headquarters_room_cost_items, public.villa_staff_cost_items,
+  public.ceo_sport_cost_items
+  from anon;
