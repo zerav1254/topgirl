@@ -177,62 +177,63 @@ function ArtistCard({
   const isOwned = owned?.has(a.slug) ?? false;
   return (
     <li>
-      {/* Kartu hanya info: pemilihan artist dilakukan di tab Team Builder. */}
-      <div
-        className={`relative flex h-full w-full flex-col overflow-hidden rounded-xl border ${
+      <details
+        className={`group h-full overflow-hidden rounded-xl border ${
           inTeam ? "border-gold/30 bg-gold/5" : blocked ? "border-amber-500/25 bg-panel/50" : "border-white/10 bg-panel/70"
         }`}
       >
-        <span className="relative block aspect-[3/4] w-full bg-panel-2">
-          {a.photoUrl ? (
-            <Image
-              src={a.photoUrl}
-              alt=""
-              fill
-              sizes="(max-width: 640px) 45vw, (max-width: 768px) 33vw, 25vw"
-              className={`object-cover ${blocked ? "opacity-60 grayscale" : ""}`}
-            />
-          ) : (
-            <span aria-hidden="true" className="grid h-full w-full place-items-center font-display text-2xl font-bold text-white/50">
-              {a.name.slice(0, 2).toUpperCase()}
-            </span>
-          )}
-          <span className="absolute top-1.5 left-1.5 flex flex-col items-start gap-1 rounded-md bg-ink/70 p-0.5 backdrop-blur-sm">
-            {r && <RankBadge rank={r.rank} size={r.size} label={t(C.pool.rank, { n: r.rank, total: r.size })} />}
-            <TierBadge tier={tier} />
-          </span>
-          {blocked ? (
-            <span className="absolute inset-x-1.5 bottom-1.5 rounded-md border border-amber-500/40 bg-ink/85 px-1.5 py-0.5 text-center text-[11px] font-semibold text-amber-300">
-              {C.pool.blocked}
-            </span>
-          ) : (
-            inTeam && (
-              <span className="absolute top-1.5 right-1.5 grid h-7 w-7 place-items-center rounded-md border border-gold/45 bg-ink/80 text-gold">
-                <span className="sr-only">{C.artists.inTeam}</span>
-                <Icon d={ICONS.check} className="h-4 w-4 shrink-0" />
+        <summary className="flex cursor-pointer list-none items-center gap-2 rounded-xl p-2 transition-colors duration-200 hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold [&::-webkit-details-marker]:hidden">
+          <span className="relative block h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-panel-2">
+            {a.photoUrl ? (
+              <Image
+                src={a.photoUrl}
+                alt=""
+                width={96}
+                height={96}
+                sizes="56px"
+                className={`h-full w-full object-cover ${blocked ? "opacity-60 grayscale" : ""}`}
+              />
+            ) : (
+              <span aria-hidden="true" className="grid h-full w-full place-items-center font-display text-base font-bold text-white/50">
+                {a.name.slice(0, 2).toUpperCase()}
               </span>
-            )
-          )}
-        </span>
-        <span className="block min-w-0 p-2">
-          <span className="flex items-baseline justify-between gap-1">
-            <span className="block truncate text-sm font-semibold">{a.name}</span>
-            <span className="tabular shrink-0 text-xs font-semibold text-zinc-300">{formatStat(a.scores[category], locale)}</span>
+            )}
           </span>
-          <span className="mt-1 flex items-center gap-1 text-xs text-zinc-400">
-            <GenreIcon genre={a.genre} className="h-3 w-3 shrink-0" />
-            <span className="truncate">{a.genre}</span>
-          </span>
-          <span className="mt-0.5 flex items-baseline justify-between gap-2 text-xs">
-            <span className="shrink-0 text-[11px] font-semibold uppercase tracking-wide text-zinc-400">{C.artists.origin}</span>
-            <span className="truncate text-zinc-300">
-              {a.origin ?? "—"}
-              {a.season !== null && ` · S${a.season}`}
+          <span className="min-w-0 flex-1">
+            <span className="flex items-baseline justify-between gap-1">
+              <span className="truncate text-sm font-semibold">{a.name}</span>
+              <span className="tabular shrink-0 text-xs font-semibold text-zinc-300">{formatStat(a.scores[category], locale)}</span>
+            </span>
+            <span className="mt-1 flex items-center gap-1 text-xs text-zinc-400">
+              <GenreIcon genre={a.genre} className="h-3 w-3 shrink-0" />
+              <span className="truncate">{a.genre}</span>
+              {inTeam && <Icon d={ICONS.check} className="ml-auto h-3.5 w-3.5 shrink-0 text-gold" />}
             </span>
           </span>
-          <SkillList skills={a.skills} locale={locale} className="mt-1 border-t border-white/10 pt-1" />
-        </span>
-        <div className="mt-auto flex flex-col">
+          <Icon
+            d={ICONS.chevronDown}
+            className="h-4 w-4 shrink-0 text-zinc-400 transition-transform duration-200 group-open:rotate-180"
+          />
+        </summary>
+        <div className="border-t border-white/10 px-2 pt-1.5 pb-2">
+          <div className="flex items-center justify-between gap-2">
+            <span className="flex items-center gap-1">
+              {r && <RankBadge rank={r.rank} size={r.size} label={t(C.pool.rank, { n: r.rank, total: r.size })} />}
+              <TierBadge tier={tier} />
+            </span>
+            <span className="min-w-0 truncate text-xs text-zinc-400">
+              {a.origin ?? "\u2014"}
+              {a.season !== null && ` \u00b7 S${a.season}`}
+            </span>
+          </div>
+          {blocked && (
+            <p className="mt-1.5 rounded-md border border-amber-500/40 bg-ink/85 px-1.5 py-0.5 text-center text-[11px] font-semibold text-amber-300">
+              {C.pool.blocked}
+            </p>
+          )}
+          <SkillList skills={a.skills} locale={locale} className="mt-1.5 border-t border-white/10 pt-1" />
+        </div>
+        <div className="flex flex-col">
           <button
             type="button"
             onClick={() => onToggle(a.slug)}
@@ -267,7 +268,8 @@ function ArtistCard({
             </button>
           )}
         </div>
-      </div>
+      </details>
     </li>
   );
+
 }
