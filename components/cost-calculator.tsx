@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useMemo, useState } from "react";
 import { expBetween, modTotals, starBetween, sumLevels } from "@/lib/cost-calc";
 import { DICT, numberLocale, type Locale } from "@/lib/i18n";
@@ -177,10 +178,20 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
               <p className="text-[11px] font-semibold uppercase tracking-wide text-zinc-300">{C.exp}</p>
               <p className="tabular text-2xl font-bold text-gold">{format(exp)}</p>
             </div>
-            <div className="rounded-xl border border-white/10 bg-panel-2/60 px-3 py-3">
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-zinc-300">{C.starCards}</p>
-              <p className="tabular text-2xl font-bold text-zinc-100">{format(starCards)}</p>
-              <p className="mt-1 text-xs text-zinc-400">{book.star.itemName}</p>
+            <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-panel-2/60 px-3 py-3">
+              <div className="min-w-0 flex-1">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-zinc-300">{C.starCards}</p>
+                <p className="tabular text-2xl font-bold text-zinc-100">{format(starCards)}</p>
+                <p className="mt-1 text-xs text-zinc-400">{book.star.itemName}</p>
+              </div>
+              <Image
+                src="/assets/images/upgrades/UI_Item_Props_UpStar_Orange.png"
+                alt=""
+                width={56}
+                height={56}
+                sizes="56px"
+                className="h-14 w-14 shrink-0 object-contain"
+              />
             </div>
           </div>
         </section>
