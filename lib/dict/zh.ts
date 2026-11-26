@@ -4,14 +4,11 @@ export const zh: Dict = {
   meta: {
     title: "TopGirl 阵容构建器",
     description: "组建最佳 5 人艺人队伍：对比层级、流派与技能。",
-    adminTitle: "编辑属性 — TopGirl",
-    adminDescription: "登录后可编辑艺人基础属性、技能和照片。",
   },
   lang: { label: "语言", switch: "将语言切换为 {name}" },
   header: {
     artists: "艺人",
     team: "阵容构建器",
-    manage: "管理数据",
     mainNav: "主导航",
     docArtists: "艺人 — TopGirl",
     docTeam: "阵容构建器 — TopGirl",

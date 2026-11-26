@@ -4,14 +4,11 @@ export const fr: Dict = {
   meta: {
     title: "TopGirl Team Builder",
     description: "Composez la meilleure équipe de 5 artistes : comparez tier, genre et compétences.",
-    adminTitle: "Modifier les stats — TopGirl",
-    adminDescription: "Connectez-vous pour modifier les stats de base, les compétences et les photos des artistes.",
   },
   lang: { label: "Langue", switch: "Changer la langue en {name}" },
   header: {
     artists: "Artistes",
     team: "Team Builder",
-    manage: "Gérer les données",
     mainNav: "Navigation principale",
     docArtists: "Artistes — TopGirl",
     docTeam: "Team Builder — TopGirl",

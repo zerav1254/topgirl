@@ -23,18 +23,18 @@ Aturan keras repo ini. Kalau ragu, berhenti dan tanya — jangan improvisasi.
 - `slug` unik, huruf kecil tanpa spasi; `origin` ∈ `Tokyo Rome Bali Auction Home Event` atau NULL.
 - `base_sing`/`base_dance` boleh NULL; skor memakai faktor basis netral saat kosong.
 - `effect` wajib ada di tabel `effects` (FK). Kolom `unit` menentukan input: `percent` (12, 24, …) atau `flat` (DPS 200/240). Menambah `Effect` baru: insert baris `effects` + isi `unit`, lalu beri bobot di `SCORE[category]` dan skala di `FLAT_SCALE` bila unit `flat` (`lib/score.ts`).
-- Dropdown `/{locale}/manage` (genre, origin, efek) dibaca dari tabel `genres`, `origins`, `effects`. Menambah opsi = insert baris di tabel, jangan hardcode di komponen.
+- Opsi genre/origin/efek dibaca dari tabel `genres`, `origins`, `effects`. Menambah opsi = insert baris di tabel, jangan hardcode di komponen.
 - Migrasi skema lewat Supabase migration, lalu `supabase/schema.sql` diperbarui di commit yang sama.
-- Foto: upload lewat server action → `sharp` resize 320×320 cover, WebP q80, simpan di bucket `artist-thumb` sebagai `<slug>.webp`, lalu isi `photo_path`. Jangan menyimpan gambar di repo saat runtime.
-- RLS: `anon` hanya boleh `select`. Semua tulis (stat, foto) lewat server action dengan `adminClient()` setelah `isAdmin()`. Jangan longgarkan policy tulis.
+- Foto: bucket `artist-thumb` menyimpan `<slug>.webp` 320×320 WebP. Unggah di luar aplikasi (script/manual), lalu isi `photo_path` + `photo_updated_at`. Jangan menyimpan gambar artis di repo saat runtime.
+- RLS: `anon` hanya boleh `select`. Semua tulis data aplikasi (profil, koleksi, lineup) lewat server action dengan `adminClient()` setelah sesi pengguna diverifikasi. Jangan longgarkan policy tulis.
 - Jangan mengarang data artist. Hanya pemilik data yang boleh menambah/menghapus baris.
 
 ## Kode
 
-- `"use client"` hanya di `components/team-builder.tsx`, `components/artist-editor.tsx`, dan `app/[locale]/error.tsx` (error boundary wajib client di Next). Jangan jadikan `app/[locale]/layout.tsx`/`app/[locale]/page.tsx`/`app/[locale]/manage/page.tsx` client component.
-- `lib/supabase.ts`/`lib/auth.ts` server-only: jangan impor dari client component. Client boleh impor server action dari `app/[locale]/manage/actions.ts`.
+- `"use client"` hanya di komponen yang butuh state/effect/event dan `app/[locale]/error.tsx` (error boundary wajib client di Next). Jangan jadikan `app/[locale]/layout.tsx`/`app/[locale]/page.tsx` client component.
+- `lib/supabase.ts`/`lib/auth.ts` server-only: jangan impor dari client component. Client hanya boleh memanggil server action.
 - `node:fs` hanya di `scripts/` (seed). Jangan impor di app/lib.
-- `adminClient()` (service_role) hanya di server action setelah `isAdmin()`. Jangan pernah kirim service key ke client.
+- `adminClient()` (service_role) hanya di server action/server component setelah sesi diverifikasi. Jangan pernah kirim service key ke client.
 - Jangan fetch data dari browser; data dilewatkan sebagai props dari server component.
 - Ukuran tim dari `TEAM_SIZE` — jangan hardcode angka 5 di tempat lain, termasuk teks UI.
 - Key `localStorage` (`topgirl.team.v1`): naikkan versi bila bentuk data berubah. Jangan hapus/ubah key tanpa migrasi.

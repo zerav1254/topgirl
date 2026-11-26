@@ -4,14 +4,11 @@ export const ko: Dict = {
   meta: {
     title: "TopGirl Team Builder",
     description: "최고의 5인 아티스트 팀을 구성하세요: 티어, 장르, 스킬을 비교합니다.",
-    adminTitle: "스탯 편집 — TopGirl",
-    adminDescription: "아티스트 기본 스탯, 스킬, 사진을 수정하려면 로그인하세요.",
   },
   lang: { label: "언어", switch: "언어를 {name}(으)로 변경" },
   header: {
     artists: "아티스트",
     team: "팀 빌더",
-    manage: "데이터 관리",
     mainNav: "주요 탐색",
     docArtists: "아티스트 — TopGirl",
     docTeam: "팀 빌더 — TopGirl",

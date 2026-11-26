@@ -2,14 +2,11 @@ export const id = {
   meta: {
     title: "TopGirl Team Builder",
     description: "Susun tim 5 artist terbaik: bandingkan tier, genre, dan skill.",
-    adminTitle: "Isi Stat — TopGirl",
-    adminDescription: "Masuk untuk mengisi base stat, skill, dan foto artist.",
   },
   lang: { label: "Bahasa", switch: "Ganti bahasa ke {name}" },
   header: {
     artists: "Artists",
     team: "Team Builder",
-    manage: "Kelola data",
     mainNav: "Navigasi utama",
     docArtists: "Artists — TopGirl",
     docTeam: "Team Builder — TopGirl",

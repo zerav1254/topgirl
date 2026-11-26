@@ -78,13 +78,3 @@ export async function requireUser(): Promise<User> {
   if (!user) throw new UnauthenticatedError();
   return user;
 }
-
-export async function requireAdmin(): Promise<Profile> {
-  const profile = await getProfile();
-  if (!profile || profile.role !== "admin") throw new UnauthenticatedError();
-  return profile;
-}
-
-export async function isAdmin(): Promise<boolean> {
-  return (await getProfile())?.role === "admin";
-}

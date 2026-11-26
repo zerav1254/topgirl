@@ -26,7 +26,6 @@ Login memakai Supabase Auth provider **Google** dan **Discord** (provider email 
 Callback OAuth: `https://<ref>.supabase.co/auth/v1/callback`. Admin pertama diangkat lewat SQL:
 
 ```sql
-update public.profiles p set role = 'admin'
 from auth.identities i
 where i.user_id = p.user_id and i.provider in ('google', 'discord') and i.provider_id = '<provider-id>';
 ```
@@ -35,7 +34,6 @@ where i.user_id = p.user_id and i.provider in ('google', 'discord') and i.provid
 
 - `/` — redirect ke `/id`.
 - `/id`, `/en`, `/fr`, `/ko` — team builder (revalidate 5 menit; di-refresh langsung setelah simpan). Pilih **season server** untuk melihat peringkat relatif dan menyusun tim terbaik dari artis yang bisa diperoleh. Artis di atas season server tetap tampil di section "Belum bisa diperoleh" dan tetap boleh dipilih, dengan peringatan.
-- `/{locale}/manage` — unggah/ganti foto 320×320 WebP (butuh role admin). Stat, skill, genre, dan origin dikunci supaya data tetap konsisten; ubah lewat migration Supabase.
 - `/{locale}/login` — masuk dengan Google/Discord.
 - `/{locale}/profile` — nama dan ID game.
 - `/{locale}/lineups` — simpan dan bagikan tim.

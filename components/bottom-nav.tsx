@@ -12,7 +12,7 @@ const ITEM = "flex min-h-14 flex-col items-center justify-center gap-1 rounded-l
 const IDLE = "text-zinc-400 hover:bg-white/5 hover:text-zinc-200";
 const ACTIVE = "text-gold bg-gold/10";
 
-export function BottomNav({ locale, admin }: { locale: Locale; admin: boolean }) {
+export function BottomNav({ locale }: { locale: Locale }) {
   const C = DICT[locale];
   const base = `/${locale}`;
   const pathname = usePathname() ?? base;
@@ -38,7 +38,7 @@ export function BottomNav({ locale, admin }: { locale: Locale; admin: boolean })
       className="fixed inset-x-0 bottom-0 z-30 border-t border-white/10 bg-panel/95 backdrop-blur"
       style={{ paddingBottom: "max(0.25rem, env(safe-area-inset-bottom))" }}
     >
-      <div className={`mx-auto grid max-w-lg ${admin ? "grid-cols-5" : "grid-cols-4"} gap-1 px-2 pt-1`}>
+      <div className="mx-auto grid max-w-lg grid-cols-4 gap-1 px-2 pt-1">
         <Link
           href={base}
           aria-current={onArtists ? "page" : undefined}
@@ -76,16 +76,6 @@ export function BottomNav({ locale, admin }: { locale: Locale; admin: boolean })
           <Icon d={ICONS.layers} className="h-5 w-5" />
           {C.header.lineups}
         </Link>
-        {admin && (
-          <Link
-            href={`${base}/manage`}
-            aria-current={pathname === `${base}/manage` ? "page" : undefined}
-            className={`${ITEM} ${pathname === `${base}/manage` ? ACTIVE : IDLE}`}
-          >
-            <Icon d={ICONS.edit} className="h-5 w-5" />
-            {C.header.manage}
-          </Link>
-        )}
         <Link
           href={`${base}/profile`}
           aria-current={onProfile ? "page" : undefined}

@@ -8,7 +8,7 @@ Baca `RULE.md` (aturan keras) + `DESIGN.md` (token visual) sebelum ubah apa pun.
 - **npm** + Node **24** (`engines`). Jangan pnpm/yarn.
 - Supabase (Postgres + Storage): artist, skill, foto. Client `@supabase/supabase-js`.
 - `sharp` resize foto upload (320×320 WebP); `@vercel/analytics`.
-- Auth: Supabase OAuth (Google/Discord) via `@supabase/ssr`; role admin dari tabel `profiles`. Tanpa library auth tambahan.
+- Auth: Supabase OAuth (Google/Discord) via `@supabase/ssr`. Tanpa library auth tambahan.
 
 ## Perintah
 
@@ -41,8 +41,6 @@ app/[locale]/
   l/[slug]/page.tsx halaman lineup publik (unlisted)
   u/[id]/page.tsx   profil publik + lineup yang dibagikan
   doc/[key]/page.tsx halaman bantuan/privasi/legal
-  manage/page.tsx   gate login admin + <ArtistEditor locale />
-  manage/actions.ts uploadPhoto(locale)
 app/globals.css     @import "tailwindcss" + @theme + base rules
 app/sitemap.ts      sitemap halaman publik per locale
 app/robots.ts       robots + sitemap
@@ -55,9 +53,8 @@ components/
   lineups-tab.tsx   form simpan lineup + daftar (bagikan/salin/buka/hapus)
   pool-picker.tsx   chip season server (single-select)
   profile-form.tsx  form profil (nama, ID/server, nickname)
-  bottom-nav.tsx    nav Artists/Team/Lineup/Info (+ Kelola untuk admin), dirender root layout
+  bottom-nav.tsx    nav Artists/Team/Lineup/Info, dirender root layout
   artist-ui.tsx     atom: Icon, TierBadge, Avatar, GenreIcon, SearchInput
-  artist-editor.tsx upload foto (stat/skill/genre/origin dikunci)
   locale-switcher.tsx ganti segmen locale di path
 lib/
   artists.ts      query Supabase -> tipe Artist/Effect
@@ -72,7 +69,7 @@ lib/
   site.ts         SITE_URL dari env
   supabase.ts     read client (anon) + adminClient() (service_role)
   supabase/server.ts client SSR untuk sesi OAuth
-  auth.ts         session Supabase: getUser/getProfile/requireAdmin/isAdmin
+  auth.ts         session Supabase: getUser/getProfile/getIdentities
   i18n.ts         LOCALES, Locale, DICT, LANG_NAME, t() interpolasi, numberLocale, localeOr
   seo.ts          metadata bersama (canonical/hreflang/OG/Twitter) + SITE_ICON
   image-client.ts kompres foto di browser (createImageBitmap/canvas)
@@ -82,17 +79,16 @@ scripts/seed-supabase.mjs
 data/artists.csv     bahan seed, bukan sumber runtime
 ```
 
-Alur data: Supabase → `lib/artists.ts` → server component (props) → client component. Tulis data hanya lewat `app/[locale]/manage/actions.ts` (cookie admin + service_role). Tidak ada fetch data dari browser.
+Alur data: Supabase → `lib/artists.ts` → server component (props) → client component. Tidak ada fetch data dari browser; artis/foto/staf diubah lewat migration Supabase + upload bucket.
 
 ## Di mana mengubah apa
 
 | Kebutuhan | File |
 | --- | --- |
-| Tambah/ubah artist, stat, skill | migration Supabase (halaman manage hanya foto) |
+| Tambah/ubah artist, stat, skill | migration Supabase + upload foto ke bucket |
 | Ubah skema DB | migration Supabase + `supabase/schema.sql` + `lib/artists.ts` |
 | Simpan stat atomik | RPC `save_artist_stats` di `supabase/schema.sql`, dipakai lewat migration/SQL (bukan UI) |
 | Seed ulang dari CSV | `scripts/seed-supabase.mjs` (`npm run seed`) |
-| Auth/login admin | `lib/auth.ts` + `app/[locale]/manage/actions.ts` |
 | Teks UI / bahasa baru | `lib/dict/*.ts` (+ `LOCALES`/`LANG_NAME` di `lib/i18n.ts`) |
 | Ukuran tim | `TEAM_SIZE` di `lib/team.ts` |
 | Filter/sort/summary | `components/artist-filter.tsx` (filter shared), `components/artists-tab.tsx` (roster), `components/team-tab.tsx` (ringkasan tim) |

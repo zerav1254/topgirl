@@ -4,14 +4,11 @@ export const ja: Dict = {
   meta: {
     title: "TopGirl Team Builder",
     description: "5人のアーティストで最強のチームを編成: tier、genre、skill を比較。",
-    adminTitle: "ステータス編集 — TopGirl",
-    adminDescription: "サインインしてアーティストの基礎ステータス、skill、写真を編集。",
   },
   lang: { label: "言語", switch: "言語を {name} に切り替え" },
   header: {
     artists: "Artists",
     team: "Team Builder",
-    manage: "データ管理",
     mainNav: "メインナビゲーション",
     docArtists: "Artists — TopGirl",
     docTeam: "Team Builder — TopGirl",

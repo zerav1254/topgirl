@@ -78,7 +78,7 @@ create trigger artists_set_updated_at
   for each row execute function public.set_updated_at();
 
 -- Simpan stat artist secara atomik (update baris + ganti skill dalam satu transaksi).
--- Hanya service_role: dipanggil dari server action setelah isAdmin().
+-- Hanya service_role: dipanggil dari server action yang sudah memeriksa sesi.
 create or replace function public.save_artist_stats(
   p_slug text,
   p_name text,
