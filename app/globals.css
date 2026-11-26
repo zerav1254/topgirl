@@ -61,8 +61,8 @@ body {
 }
 
 .cost-glyph {
-  -webkit-mask-image: url("/assets/images/upgrades/UI_Collection_Icon_UpgradeProps_01.webp");
-  mask-image: url("/assets/images/upgrades/UI_Collection_Icon_UpgradeProps_01.webp");
+  -webkit-mask-image: url("/assets/images/upgrades/koleksi/UI_Collection_Icon_UpgradeProps_01.webp");
+  mask-image: url("/assets/images/upgrades/koleksi/UI_Collection_Icon_UpgradeProps_01.webp");
 }
 
 .rank-glyph {
