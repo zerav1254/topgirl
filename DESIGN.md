@@ -15,6 +15,7 @@ Dark gaming dashboard: latar hampir hitam, panel berlapis, aksen merah agresif +
 | `panel-2` | `#1c1c24` | Hover kartu, slot tim terisi |
 | `brand` | `#dc2626` | Aksen utama, filter genre aktif, skill |
 | `gold` | `#fbbf24` | Tier S+, filter Spesialis aktif, counter tim, focus ring |
+| ikon genre | `zinc-300` (`#d4d4d8`, sudah dibakar di PNG) | `public/assets/images/genres/*.png`, 128 px, alpha dari aset game |
 | teks utama | `zinc-100` | Judul, nama artist |
 | teks sekunder | `zinc-400` | Metadata, label, deskripsi |
 | teks lemah | `zinc-400` | Placeholder, hint, unit, label kecil (jangan pakai `zinc-500`/`zinc-600` untuk teks — kontras < 4,5:1) |
@@ -50,7 +51,7 @@ Badge tier: `border-<warna>/45 bg-<warna>/15 text-<warna>-300` (S+ pakai `text-g
 
 ## Komponen
 
-**Artist card** — kartu ringkas yang bisa dibuka (native `<details>`): baris ringkas berisi avatar persegi 56 px, nama + skor sebaris, genre (ikon + teks), ikon centang bila sudah di tim, dan chevron yang berputar saat terbuka. Isi terbuka: badge rank + tier, asal/share season ringkas, peringatan `pool.blocked`, dua baris skill (nama efek `text-zinc-400`, nilai `tabular font-semibold`), lalu tombol tim dan tombol koleksi `min-h-11` dengan `aria-pressed`. Kartu yang sudah di tim: `border-gold/30 bg-gold/5`. `<summary>` punya focus ring `outline-gold`.
+**Artist card** — kartu ringkas yang bisa dibuka (native `<details>`): baris ringkas berisi avatar persegi 56 px, nama + skor sebaris, genre (ikon 16 px + teks), ikon centang bila sudah di tim, dan chevron yang berputar saat terbuka. Grid roster memakai `items-start` supaya kartu lain tidak ikut melar saat satu kartu dibuka. Isi terbuka: badge rank + tier, asal/share season ringkas, peringatan `pool.blocked`, dua baris skill (nama efek `text-zinc-400`, nilai `tabular font-semibold`), lalu tombol tim dan tombol koleksi `min-h-11` dengan `aria-pressed`. Kartu yang sudah di tim: `border-gold/30 bg-gold/5`. `<summary>` punya focus ring `outline-gold`.
 
 Saat login, kartu menambah satu tombol koleksi selebar kartu di bawah skill: `min-h-11 rounded-lg` (`rounded-none` mengikuti sudut kartu), `border-t`. Belum punya: `border-white/10 text-zinc-400 hover:text-zinc-200`. Sudah punya: `border-emerald-500/30 bg-emerald-500/10 text-emerald-300`. Status `aria-pressed`, `aria-label` memakai `collection.markOwned`/`markMissing` + nama artist. Tombol ini tidak membuka dialog; ia hanya menandai kepemilikan.
 
@@ -72,7 +73,7 @@ Saat login, kartu menambah satu tombol koleksi selebar kartu di bawah skill: `mi
 
 ## Gerak
 
-- Transisi hanya warna/border/opacity, `duration-200`. Tidak ada transform scale atau animasi layout (menghindari shift).
+- Transisi hanya warna/border/opacity, `duration-200`. Tidak ada transform scale atau animasi layout (menghindari shift). Satu pengecualian: rotasi chevron pada kartu expandable.
 - Semua animasi dimatikan via `prefers-reduced-motion`.
 
 ## Aksesibilitas

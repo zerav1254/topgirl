@@ -87,7 +87,7 @@ export function ArtistsTab({ artists, scoped, blocked, rank, seasonTiers, owned,
               ) : null}
               <span className="text-xs font-normal text-zinc-400">{t(C.artists.tierCount, { n: list.length })}</span>
             </h2>
-            <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
+            <ul className="grid grid-cols-2 items-start gap-2 sm:grid-cols-3 md:grid-cols-4">
               {list.map((a) => (
                 <ArtistCard
                   key={a.slug}
@@ -121,7 +121,7 @@ export function ArtistsTab({ artists, scoped, blocked, rank, seasonTiers, owned,
             <span className="text-xs font-normal text-zinc-400">{t(C.artists.tierCount, { n: unavailable.length })}</span>
           </h2>
           <p className="mb-2 text-xs text-zinc-400">{C.pool.seasonHint}</p>
-          <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
+          <ul className="grid grid-cols-2 items-start gap-2 sm:grid-cols-3 md:grid-cols-4">
             {unavailable.map((a) => (
               <ArtistCard
                 key={a.slug}
@@ -182,7 +182,7 @@ function ArtistCard({
           inTeam ? "border-gold/30 bg-gold/5" : blocked ? "border-amber-500/25 bg-panel/50" : "border-white/10 bg-panel/70"
         }`}
       >
-        <summary className="flex cursor-pointer list-none items-center gap-2 rounded-xl p-2 transition-colors duration-200 hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold [&::-webkit-details-marker]:hidden">
+        <summary className="flex cursor-pointer list-none items-center gap-2 rounded-xl p-2 transition-colors duration-200 hover:bg-white/5 focus-visible:-outline-offset-2 focus-visible:outline-2 focus-visible:outline-gold [&::-webkit-details-marker]:hidden">
           <span className="relative block h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-panel-2">
             {a.photoUrl ? (
               <Image
@@ -205,7 +205,7 @@ function ArtistCard({
               <span className="tabular shrink-0 text-xs font-semibold text-zinc-300">{formatStat(a.scores[category], locale)}</span>
             </span>
             <span className="mt-1 flex items-center gap-1 text-xs text-zinc-400">
-              <GenreIcon genre={a.genre} className="h-3 w-3 shrink-0" />
+              <GenreIcon genre={a.genre} className="h-4 w-4 shrink-0" />
               <span className="truncate">{a.genre}</span>
               {inTeam && <Icon d={ICONS.check} className="ml-auto h-3.5 w-3.5 shrink-0 text-gold" />}
             </span>
