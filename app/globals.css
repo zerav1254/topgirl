@@ -30,7 +30,8 @@ body {
 .artist-glyph,
 .team-glyph,
 .lineup-glyph,
-.profile-glyph {
+.profile-glyph,
+.rank-glyph {
   background-color: currentColor;
   -webkit-mask: center / contain no-repeat;
   mask: center / contain no-repeat;
@@ -54,6 +55,11 @@ body {
 .lineup-glyph {
   -webkit-mask-image: url("/assets/icons/lineup.png");
   mask-image: url("/assets/icons/lineup.png");
+}
+
+.rank-glyph {
+  -webkit-mask-image: url("/assets/icons/rank.png");
+  mask-image: url("/assets/icons/rank.png");
 }
 
 ::selection {
