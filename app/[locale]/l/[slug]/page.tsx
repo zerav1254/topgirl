@@ -43,6 +43,9 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
   const [topGenre, topCount] = genres[0] ?? ["", 0];
   const genreBonus = GENRE_BONUS[topCount] ?? 0;
   const { playerDmg, stats } = teamSkillTotals(team);
+  const totalSing = team.reduce((n, a) => n + (a.singMax ?? 0), 0);
+  const totalDance = team.reduce((n, a) => n + (a.danceMax ?? 0), 0);
+  const hasStats = team.some((a) => a.singMax !== null);
 
   return (
     <main id="main" className="mx-auto flex w-full max-w-2xl flex-col gap-4 px-4 pt-3 pb-28 sm:pt-6">
@@ -79,6 +82,18 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
               <dt className="text-[11px] font-semibold uppercase tracking-wide text-zinc-400">{C.lineup.avgScore}</dt>
               <dd className="tabular mt-0.5 font-display text-xl font-bold text-gold">{formatStat(avgScore, locale)}</dd>
             </div>
+            {hasStats && (
+              <>
+                <div className="rounded-xl border border-white/10 bg-panel/70 p-3">
+                  <dt className="text-[11px] font-semibold uppercase tracking-wide text-zinc-400">{C.artists.sing}</dt>
+                  <dd className="tabular mt-0.5 font-display text-xl font-bold text-zinc-100">{formatStat(totalSing, locale)}</dd>
+                </div>
+                <div className="rounded-xl border border-white/10 bg-panel/70 p-3">
+                  <dt className="text-[11px] font-semibold uppercase tracking-wide text-zinc-400">{C.artists.dance}</dt>
+                  <dd className="tabular mt-0.5 font-display text-xl font-bold text-zinc-100">{formatStat(totalDance, locale)}</dd>
+                </div>
+              </>
+            )}
           </dl>
 
           <section className="rounded-xl border border-white/10 bg-panel/70 p-3">
@@ -155,6 +170,16 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
                 </span>
                 <span className="block truncate text-base font-semibold">{a.name}</span>
                 <SkillList baseDmg={a.baseDmg} skills={a.skills} locale={locale} className="mt-1" />
+                {a.singMax !== null && a.danceMax !== null && (
+                  <span className="tabular mt-0.5 flex gap-2 text-xs text-zinc-400">
+                    <span>
+                      {C.artists.sing} <span className="font-semibold text-zinc-200">{formatStat(a.singMax, locale)}</span>
+                    </span>
+                    <span>
+                      {C.artists.dance} <span className="font-semibold text-zinc-200">{formatStat(a.danceMax, locale)}</span>
+                    </span>
+                  </span>
+                )}
               </span>
               <span className="flex shrink-0 flex-col items-end gap-1">
                 <span className="tabular font-display text-base font-semibold text-zinc-100">{formatStat(a.score, locale)}</span>
