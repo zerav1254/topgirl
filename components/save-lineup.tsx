@@ -21,11 +21,14 @@ export function SaveLineup({ slugs, locale, signedIn }: { slugs: string[]; local
       className="flex flex-col gap-3 rounded-xl border border-line bg-panel/80 p-3"
       onSubmit={(e) => {
         e.preventDefault();
-        const fd = new FormData(e.currentTarget);
+        const form = e.currentTarget;
+        const fd = new FormData(form);
         fd.set("slugs", slugs.join(","));
         start(async () => {
           const res = await createLineup(locale, fd);
-          setMessage(res.ok ? C.saved : res.error);
+          const ok = res.ok;
+          if (ok) form.reset();
+          setMessage(ok ? C.saved : res.error);
         });
       }}
     >
