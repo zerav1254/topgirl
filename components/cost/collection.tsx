@@ -1,10 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import { useMemo, useState } from "react";
 import { sumLevels } from "@/lib/cost-calc";
 import type { CostBook } from "@/lib/costs";
-import { collectionIcon, collectionRarityBg, collectionZoneIcon } from "@/lib/cost-icons";
 import { clamp, invalid, label, NumberField, panel, result, Segmented, Totals, type CostDict } from "./fields";
 import { MuseumPanel } from "./museum";
 
@@ -106,14 +104,6 @@ function CollectionRoom({
                   active ? "border-gold/50 bg-gold/10" : "border-line bg-panel/80 hover:border-white/25"
                 }`}
               >
-                <Image
-                  src={collectionZoneIcon(entry.icon, active)}
-                  alt=""
-                  width={40}
-                  height={40}
-                  sizes="40px"
-                  className="h-10 w-10 shrink-0 object-contain"
-                />
                 <span className={`text-sm font-semibold ${active ? "text-gold" : "text-zinc-200"}`}>{entry.name}</span>
               </button>
             );
@@ -133,27 +123,10 @@ function CollectionRoom({
               aria-label={`${it.name} (${RARITY[rarity]})`}
               title={it.name}
               onClick={() => setItemId(it.id)}
-              className={`flex min-h-11 flex-col items-center gap-1 rounded-lg border px-1 py-1.5 transition-colors duration-200 ${
+              className={`flex min-h-11 flex-col items-center justify-center gap-1 rounded-lg border px-1 py-1.5 transition-colors duration-200 ${
                 active ? "border-gold/50 bg-gold/10" : "border-line bg-panel/80 hover:border-white/25"
               }`}
             >
-              <span className="relative flex aspect-square w-full items-center justify-center">
-                <Image
-                  src={collectionRarityBg(it.rarity)}
-                  alt=""
-                  fill
-                  sizes="(max-width: 640px) 30vw, 120px"
-                  className="object-contain"
-                />
-                <Image
-                  src={collectionIcon(it.id)}
-                  alt=""
-                  width={512}
-                  height={512}
-                  sizes="(max-width: 640px) 22vw, 112px"
-                  className="relative h-auto w-[72%] object-contain"
-                />
-              </span>
               <span className={`rounded border px-1 text-2xs font-semibold ${RARITY_STYLE[rarity]}`}>
                 {RARITY[rarity]}
               </span>

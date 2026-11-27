@@ -54,5 +54,8 @@ next-env.d.ts
 # local game ripping tools + extracted assets
 /.topgirl-ripper/
 
+# backup aset game menu upgrade (ditarik dari repo soal hak cipta)
+/assets-backup/
+
 # local agent config + memory (index is derived)
 /.opencode/

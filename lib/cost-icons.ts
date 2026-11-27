@@ -1,6 +1,9 @@
 // Peta item_id game -> ikon di public/assets/images/upgrades.
 // id/nama diambil dari items.json + LcName di .topgirl-ripper/work/upgrades.
 // Item tanpa ikon hasil ekstraksi tampil tanpa gambar.
+// ponytail: aset webp ditarik dari repo (hak cipta aset game), backup di
+// assets-backup/upgrades/ (gitignored). Pulihkan = mv kembali + render situs
+// lewat git log sebelum commit pembersihan. File ini tinggal referensi pemetaan.
 const ROOT = "/assets/images/upgrades";
 
 const ICONS: Record<number, string> = {

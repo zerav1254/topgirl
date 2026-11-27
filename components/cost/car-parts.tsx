@@ -1,10 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import { useMemo, useState } from "react";
 import { sumLevels } from "@/lib/cost-calc";
 import type { CostBook } from "@/lib/costs";
-import { carPartIcon } from "@/lib/cost-icons";
 import { clamp, invalid, NumberField, panel, result, Select, Totals, type CostDict } from "./fields";
 
 const LEVEL_MIN = 1;
@@ -50,8 +48,7 @@ export function CarPartsPanel({
     chip: C.slotChip,
     sound: C.slotSound,
   };
-  // Pratinjau komponen: semua slot di tier ini, atau yang dipilih.
-  const previewSlots = slot === 0 ? slots : slots.slice(slot - 1, slot);
+
 
   return (
     <section aria-label={C.tabParts} className={panel}>
@@ -74,24 +71,6 @@ export function CarPartsPanel({
         <NumberField id="cost-part-from" text={C.levelFrom} value={from} min={LEVEL_MIN} max={LEVEL_MAX} invalid={bad} describedBy={bad ? "cost-part-error" : undefined} onChange={(v) => setFrom(clamp(v, LEVEL_MIN, LEVEL_MAX))} />
         <NumberField id="cost-part-to" text={C.levelTo} value={to} min={LEVEL_MIN} max={LEVEL_MAX} invalid={bad} describedBy={bad ? "cost-part-error" : undefined} onChange={(v) => setTo(clamp(v, LEVEL_MIN, LEVEL_MAX))} />
       </div>
-
-      {previewSlots.length > 0 ? (
-        <ul aria-hidden className="mt-3 flex flex-wrap gap-2">
-          {previewSlots.map((value) => (
-            <li key={value} className="flex w-20 flex-col items-center gap-1">
-              <Image
-                src={carPartIcon(value, tier)}
-                alt=""
-                width={80}
-                height={80}
-                sizes="80px"
-                className="h-20 w-20 rounded-lg border border-line bg-panel-2/60 object-contain"
-              />
-              <span className="w-full truncate text-center text-2xs text-zinc-400">{slotLabels[value]}</span>
-            </li>
-          ))}
-        </ul>
-      ) : null}
 
       {bad ? (
         <p id="cost-part-error" role="status" className={invalid}>

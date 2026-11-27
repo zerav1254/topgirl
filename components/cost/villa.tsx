@@ -1,10 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import { useMemo, useState } from "react";
 import { expBetween, sumLevels } from "@/lib/cost-calc";
 import type { CostBook } from "@/lib/costs";
-import { villaStageIcon, villaSuiteIcon } from "@/lib/cost-icons";
 import { clamp, invalid, NumberField, panel, result, Segmented, Select, Totals, type CostDict, type Total } from "./fields";
 
 type Mode = "suite" | "staff";
@@ -46,8 +44,6 @@ export function VillaPanel({ villa, C, format }: { villa: CostBook["villa"]; C: 
   // Biaya suite konstan per level (ClassUpgradeCost), jadi amount x jumlah level x jumlah suite.
   const suiteAmount = suiteLevelBad || !suite ? 0 : suite.amount * (suiteTo - suiteFrom) * suiteCount;
   const suiteItem = suite?.itemName ?? "";
-  // Pratinjau gambar suite: semua lokasi saat "semua suite", atau yang dipilih.
-  const previewSuites = selectedSuiteId === 0 ? targetSuites : suite ? [suite] : [];
   const totals = [
     stageAmount > 0 && stageItem ? { name: stageItem, amount: stageAmount } : null,
     suiteAmount > 0 && suiteItem ? { name: suiteItem, amount: suiteAmount } : null,
@@ -111,22 +107,6 @@ export function VillaPanel({ villa, C, format }: { villa: CostBook["villa"]; C: 
             </Select>
           </div>
 
-          {stageTo > 0 ? (
-            <div className="mt-3 flex items-center gap-3 rounded-xl border border-line bg-panel-2/60 p-2">
-              <Image
-                src={villaStageIcon(stageTo)}
-                alt=""
-                width={96}
-                height={96}
-                sizes="96px"
-                className="h-24 w-24 shrink-0 object-contain"
-              />
-              <p className="min-w-0 text-sm font-semibold text-zinc-300">
-                {villa.stages.find((item) => item.stage === stageTo)?.name}
-              </p>
-            </div>
-          ) : null}
-
           {hasSuites ? (
             <>
               <div className="mt-3">
@@ -139,24 +119,6 @@ export function VillaPanel({ villa, C, format }: { villa: CostBook["villa"]; C: 
                   ))}
                 </Select>
               </div>
-
-              {previewSuites.length > 0 ? (
-                <ul aria-hidden className="mt-2 flex flex-wrap gap-2">
-                  {previewSuites.map((item) => (
-                    <li key={item.suite} className="flex w-16 flex-col items-center gap-1">
-                      <Image
-                        src={villaSuiteIcon(item.suite, item.stage)}
-                        alt=""
-                        width={64}
-                        height={64}
-                        sizes="64px"
-                        className="h-16 w-16 rounded-lg border border-line bg-panel-2/60 object-contain"
-                      />
-                      <span className="w-full truncate text-center text-2xs text-zinc-400">{item.name}</span>
-                    </li>
-                  ))}
-                </ul>
-              ) : null}
 
               <div className="mt-3 grid grid-cols-2 gap-3">
                 <NumberField id="cost-villa-suite-from" text={C.levelFrom} value={suiteFrom} min={0} max={suiteMax} invalid={suiteLevelBad} describedBy={suiteLevelBad ? "cost-villa-suite-error" : undefined} onChange={(v) => setSuiteFrom(clamp(v, 0, suiteMax))} />
