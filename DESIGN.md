@@ -71,6 +71,10 @@ Saat login, kartu menambah satu tombol koleksi selebar kartu di bawah skill: `mi
 
 **Language switcher** — tombol pemicu `h-11 rounded-lg border-white/10 bg-panel/80` berisi bendera SVG (`public/assets/flags/<locale>.svg`, 20×14) + singkatan (`LANG_CODE`: ID/EN/FR/KO/ZH/JA/DE) + chevron; menu `role="listbox"` muncul di bawah (rata kanan), tiap opsi `min-h-11` berisi bendera + singkatan (`aria-label` = `LANG_NAME`), opsi aktif `bg-gold/10 text-gold`. Berada di header, rata kanan. Keyboard: Enter/Space/ArrowUp/ArrowDown buka, ArrowUp/Down pindah opsi, Escape tutup dan fokus balik ke tombol; fokus keluar dari grup atau klik di luar menutup. Ganti bahasa = `router.push` path sama dengan segmen locale diganti, query dipertahankan.
 
+## Logo
+
+Monogram **Z** (identitas `zerav`, bukan game): tile rounded-square `panel-2`, border `gold/30`, huruf Z tiga stroke geometris `gold` (tebal 8/64 tile). Sumber tunggal: `app/icon.svg`; `components/logo-mark.tsx` (SVG inline, warna via token `--color-*`) dipakai di header; `npm run logo` merender `app/apple-icon.png` (180), `app/opengraph-image.png` (1200×630), `app/twitter-image.png` (512) dari file itu — regen setelah mengubah mark. Mark tetap terbaca sampai 16px favicon; jangan turunkan ketebalan stroke.
+
 ## Gerak
 
 - Transisi hanya warna/border/opacity, `duration-200`. Tidak ada transform scale atau animasi layout (menghindari shift). Satu pengecualian: rotasi chevron pada kartu expandable.

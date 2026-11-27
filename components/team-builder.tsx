@@ -1,9 +1,9 @@
 "use client";
 
 import { useMemo, useOptimistic, useState, useSyncExternalStore, useTransition } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { toggleOwned } from "@/app/[locale]/collection/actions";
+import { LogoMark } from "@/components/logo-mark";
 import type { Artist } from "@/lib/artists";
 import { DICT, type Locale } from "@/lib/i18n";
 import { parsePool, getServerPool, readPool, subscribePool, writePool } from "@/lib/pool-store";
@@ -100,15 +100,7 @@ export function TeamBuilder({
     <main id="main" className="mx-auto flex max-w-4xl flex-col gap-3 px-4 pt-3 pb-28 sm:px-6 sm:pt-6">
       <header className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
         <div className="flex min-w-0 items-center gap-3">
-          <Image
-            src="/assets/icon-topgirl.webp"
-            alt=""
-            width={96}
-            height={96}
-            sizes="40px"
-            priority
-            className="h-9 w-9 shrink-0 rounded-xl border border-line object-cover"
-          />
+          <LogoMark size={36} />
           <div className="min-w-0">
             <p className="font-display text-2xs font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
             <h1 className="font-display truncate text-lg font-bold tracking-tight sm:text-2xl">

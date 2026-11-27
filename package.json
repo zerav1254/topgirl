@@ -13,7 +13,8 @@
     "lint": "eslint .",
     "check:scores": "node --no-warnings --env-file-if-exists=.env.local scripts/score-check.mjs",
     "check:lib": "node --no-warnings scripts/check-lib.mjs",
-    "seed": "node --no-warnings --env-file-if-exists=.env.local scripts/seed-supabase.mjs"
+    "seed": "node --no-warnings --env-file-if-exists=.env.local scripts/seed-supabase.mjs",
+    "logo": "node --no-warnings scripts/make-logo.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

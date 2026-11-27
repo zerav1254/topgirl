@@ -84,7 +84,7 @@ lib/
   locales.ts      LOCALES, Locale, isLocale, localeOr (tanpa dictionary, dipakai proxy)
   i18n.ts         DICT, LANG_NAME, t() interpolasi, numberLocale (re-export locale)
   rate-limit.ts   limiter per instance untuk server action tulis
-  seo.ts          metadata bersama (canonical/hreflang/OG/Twitter) + SITE_ICON
+  seo.ts          metadata bersama (canonical/hreflang/OG/Twitter); ikon lewat file convention app/icon.svg dkk.
   image-client.ts kompres foto di browser (createImageBitmap/canvas)
   dict/id.ts      sumber string UI (tipe Dict); en|fr|ko|zh|ja|de wajib lengkap
 supabase/schema.sql  tabel + bucket + RLS

@@ -5,7 +5,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { BottomNav } from "@/components/bottom-nav";
 import { DOCS } from "@/lib/docs";
 import { DICT, LOCALES, localeOr } from "@/lib/i18n";
-import { SITE_ICON, pageMetadata } from "@/lib/seo";
+import { pageMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 import "../globals.css";
 
@@ -29,7 +29,6 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     metadataBase: new URL(SITE_URL),
     title: meta.title,
     description: meta.description,
-    icons: { icon: SITE_ICON, apple: "/assets/apple-icon.png" },
     ...pageMetadata({ locale: l, title: meta.title, description: meta.description }),
   };
 }

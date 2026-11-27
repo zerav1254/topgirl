@@ -2,12 +2,11 @@ import type { Metadata } from "next";
 import { LOCALES, type Locale } from "./i18n.ts";
 
 export const SITE_NAME = "TopGirl Fan Site";
-export const SITE_ICON = "/assets/icon-topgirl.webp";
-
 const OG_LOCALE: Record<Locale, string> = { id: "id_ID", en: "en_US", fr: "fr_FR", ko: "ko_KR", zh: "zh_CN", ja: "ja_JP", de: "de_DE" };
 
 // Chunk metadata bersama: canonical + hreflang per locale, Open Graph, Twitter.
-// Dipakai root layout (basePath "") dan halaman info (basePath "/info").
+// Gambar ikon/OG disuplai file convention (app/icon.svg, app/apple-icon.png,
+// app/opengraph-image.png, app/twitter-image.png).
 export function pageMetadata({
   locale,
   basePath = "",
@@ -33,8 +32,10 @@ export function pageMetadata({
       url,
       locale: OG_LOCALE[locale],
       alternateLocale: LOCALES.filter((x) => x !== locale).map((x) => OG_LOCALE[x]),
-      images: [{ url: SITE_ICON, width: 512, height: 512, alt: SITE_NAME }],
+      // Objek openGraph eksplisit menekan injeksi og:image otomatis dari file
+      // convention, jadi gambar ditunjuk langsung (app/opengraph-image.png).
+      images: [{ url: "/opengraph-image.png", width: 1200, height: 630, alt: SITE_NAME }],
     },
-    twitter: { card: "summary", title, description, images: [SITE_ICON] },
+    twitter: { card: "summary", title, description, images: ["/twitter-image.png"] },
   };
 }
