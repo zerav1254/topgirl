@@ -45,11 +45,13 @@ export function CollectionPanel({
           { id: "museum", label: C.tabMuseum },
         ]}
       />
-      {mode === "room" ? (
+      {/* Kedua cabang tetap ter-mount supaya input tidak hilang saat ganti mode. */}
+      <div hidden={mode !== "room"}>
         <CollectionRoom collection={collection} C={C} format={format} />
-      ) : (
+      </div>
+      <div hidden={mode !== "museum"}>
         <MuseumPanel tiers={museum} C={C} format={format} />
-      )}
+      </div>
     </section>
   );
 }

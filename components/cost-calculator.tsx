@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { expBetween, classLevels, modTotals, starCardsForLevels } from "@/lib/cost-calc";
 import { carModIcon, tabIcon } from "@/lib/cost-icons";
@@ -260,6 +261,15 @@ export function CostCalculator({ book, locale, signedIn }: { book: CostBook; loc
 
   return (
     <div className="flex flex-col gap-4">
+      {!signedIn && (
+        <p className="rounded-xl border border-line bg-panel/70 px-3 py-2 text-sm text-zinc-400">
+          {C.loginHint}{" "}
+          <Link href={`/${locale}/login`} className="font-semibold text-gold underline-offset-2 hover:underline">
+            {DICT[locale].auth.login}
+          </Link>
+        </p>
+      )}
+
       {signedIn ? (
         <div ref={tabBar} role="group" aria-label={C.title} className="grid grid-cols-3 gap-2 sm:grid-cols-6">
           {tabs.map((item) => (
