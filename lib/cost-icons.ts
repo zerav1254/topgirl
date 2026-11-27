@@ -81,3 +81,13 @@ const CAR_PART_ASSET = { steering: "SteeringWheel", chip: "ECU", sound: "CarAudi
 
 export const carPartIcon = (slot: keyof typeof CAR_PART_ASSET, tier: number) =>
   `${ROOT}/mobil/UI_Icon_Vehicle_${CAR_PART_ASSET[slot]}_${String(tier).padStart(2, "0")}.webp`;
+
+// Ikon mod mobil: 4 part (Mesin, Sasis, Suspensi, Velg) x 6 tampilan.
+// Config game berganti gambar per rentang level kelas: 0-1, 2-5, 6-14, 15-34, 35-64, 65+.
+const CAR_MOD_ASSET = ["Engine", "CarFrame", "Chassis", "Wheel"] as const;
+const CAR_MOD_LEVEL_EDGES = [2, 6, 15, 35, 65];
+
+export const carModIcon = (part: number, level: number) =>
+  `${ROOT}/mobil/UI_Icon_Vehicle_${CAR_MOD_ASSET[part] ?? CAR_MOD_ASSET[0]}_${String(
+    CAR_MOD_LEVEL_EDGES.filter((edge) => level >= edge).length + 1,
+  ).padStart(2, "0")}.webp`;

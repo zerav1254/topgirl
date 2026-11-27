@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useMemo, useState, type ReactNode } from "react";
 import { expBetween, classLevels, modTotals, starCardsForLevels, sumLevels } from "@/lib/cost-calc";
-import { carPartIcon } from "@/lib/cost-icons";
+import { carModIcon, carPartIcon } from "@/lib/cost-icons";
 import { DICT, numberLocale, type Locale } from "@/lib/i18n";
 import type { CarClass, CarPart, CostBook } from "@/lib/costs";
 import { CeoPanel } from "./cost/ceo";
@@ -203,17 +203,36 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
       label: C.tabMods,
       node: (
         <section aria-label={C.tabMods} className={panel}>
-          <div className="flex flex-col gap-1">
-            <label htmlFor="cost-mod" className={label}>
-              {C.modPart}
-            </label>
-            <select id="cost-mod" value={modPart} onChange={(e) => setModPart(Number(e.target.value))} className={field}>
-              {modLabels.map((name, index) => (
-                <option key={name} value={index}>
-                  {name}
-                </option>
-              ))}
-            </select>
+          <div role="group" aria-label={C.modPart}>
+            <p className={label}>{C.modPart}</p>
+            <div className="mt-1 grid grid-cols-4 gap-2">
+              {modLabels.map((name, index) => {
+                const active = index === modPart;
+                return (
+                  <button
+                    key={name}
+                    type="button"
+                    aria-pressed={active}
+                    aria-label={name}
+                    title={name}
+                    onClick={() => setModPart(index)}
+                    className={`flex min-h-11 flex-col items-center gap-1 rounded-lg border px-1 py-1.5 transition-colors duration-200 ${
+                      active ? "border-gold/50 bg-gold/10" : "border-white/10 bg-panel/80 hover:border-white/25"
+                    }`}
+                  >
+                    <Image
+                      src={carModIcon(index, modTo)}
+                      alt=""
+                      width={40}
+                      height={40}
+                      sizes="40px"
+                      className="h-10 w-10 object-contain"
+                    />
+                    <span className={`text-[10px] font-semibold ${active ? "text-gold" : "text-zinc-400"}`}>{name}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           <div className="mt-3 grid grid-cols-2 gap-3">
