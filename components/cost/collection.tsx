@@ -146,10 +146,10 @@ function CollectionRoom({
                 <Image
                   src={collectionIcon(it.id)}
                   alt=""
-                  width={48}
-                  height={48}
-                  sizes="48px"
-                  className="relative h-12 w-12 object-contain"
+                  width={512}
+                  height={512}
+                  sizes="(max-width: 640px) 22vw, 112px"
+                  className="relative h-auto w-[72%] object-contain"
                 />
               </span>
               <span className={`rounded border px-1 text-[11px] font-semibold ${RARITY_STYLE[rarity]}`}>
