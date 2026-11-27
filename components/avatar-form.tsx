@@ -5,6 +5,7 @@ import { uploadAvatar } from "@/app/[locale]/profile/actions";
 import { DICT, type Locale } from "@/lib/i18n";
 import { compressPhoto } from "@/lib/image-client";
 import { ICONS, Icon } from "@/components/artist-ui";
+import { Turnstile, resetTurnstile } from "@/components/turnstile";
 
 export function AvatarForm({ locale }: { locale: Locale }) {
   const C = DICT[locale].profile;
@@ -27,11 +28,15 @@ export function AvatarForm({ locale }: { locale: Locale }) {
           try {
             const fd = new FormData();
             fd.set("avatar", await compressPhoto(file));
+            const tokenInput = form.elements.namedItem("cf-turnstile-response");
+            if (tokenInput instanceof HTMLInputElement) fd.set("cf-turnstile-response", tokenInput.value);
             const res = await uploadAvatar(locale, fd);
             setMessage(res.ok ? C.saved : res.error);
             if (res.ok) form.reset();
+            resetTurnstile();
           } catch {
             setMessage(C.avatarError);
+            resetTurnstile();
           }
         });
       }}
@@ -47,6 +52,7 @@ export function AvatarForm({ locale }: { locale: Locale }) {
         />
       </label>
       <p className="text-xs text-zinc-400">{C.avatarHint}</p>
+      <Turnstile action="avatar-upload" />
       <button
         type="submit"
         disabled={pending}

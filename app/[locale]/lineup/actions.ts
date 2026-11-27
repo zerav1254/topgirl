@@ -6,6 +6,7 @@ import { DICT, localeOr, type Locale } from "@/lib/i18n";
 import { deleteLineup, saveLineup, setShare } from "@/lib/lineups";
 import { allow } from "@/lib/rate-limit";
 import { TEAM_SIZE } from "@/lib/team";
+import { clientIp, verifyTurnstile } from "@/lib/turnstile";
 
 export type LineupResult = { ok: boolean; error: string; link?: string };
 
@@ -25,6 +26,9 @@ export async function createLineup(locale: Locale, fd: FormData): Promise<Lineup
   const uid = await userId();
   if (!uid) return { ok: false, error: C.loginHint };
   if (!allow(`lineup:${uid}`, 20, 60_000)) return { ok: false, error: C.error };
+  if (!(await verifyTurnstile(fd.get("cf-turnstile-response"), "lineup-create", await clientIp()))) {
+    return { ok: false, error: C.error };
+  }
 
   const name = String(fd.get("name") ?? "").trim().slice(0, 60);
   if (!name) return { ok: false, error: C.error };

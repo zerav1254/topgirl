@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { createLineup } from "@/app/[locale]/lineup/actions";
 import { DICT, type Locale } from "@/lib/i18n";
 import { TEAM_SIZE } from "@/lib/team";
+import { Turnstile, resetTurnstile } from "./turnstile";
 import { ICONS, Icon } from "./artist-ui";
 
 // Simpan tim yang sedang disusun; daftar dan pengelolaannya ada di halaman Lineup.
@@ -28,6 +29,7 @@ export function SaveLineup({ slugs, locale, signedIn }: { slugs: string[]; local
           const res = await createLineup(locale, fd);
           const ok = res.ok;
           if (ok) form.reset();
+          resetTurnstile();
           setMessage(ok ? C.saved : res.error);
         });
       }}
@@ -52,6 +54,7 @@ export function SaveLineup({ slugs, locale, signedIn }: { slugs: string[]; local
         />
       </label>
       <p className="text-xs text-zinc-400">{slugs.length === 0 ? C.needTeam : C.subtitle}</p>
+      <Turnstile action="lineup-create" />
       <button
         type="submit"
         disabled={pending || slugs.length === 0}

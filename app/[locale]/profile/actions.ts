@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import { DICT, localeOr, type Locale } from "@/lib/i18n";
 import { allow } from "@/lib/rate-limit";
+import { clientIp, verifyTurnstile } from "@/lib/turnstile";
 import { SITE_URL } from "@/lib/site";
 import { AVATAR_BUCKET, SUPABASE_URL, adminClient } from "@/lib/supabase";
 import { createSupabaseServer } from "@/lib/supabase/server";
@@ -67,6 +68,9 @@ export async function uploadAvatar(locale: Locale, fd: FormData): Promise<Profil
   const file = fd.get("avatar");
   if (!(file instanceof File) || file.size === 0 || file.size > 10 * 1024 * 1024) return { ok: false, error: C.avatarError };
   if (!allow(`avatar:${userId}`, 5, 10 * 60_000)) return { ok: false, error: C.avatarError };
+  if (!(await verifyTurnstile(fd.get("cf-turnstile-response"), "avatar-upload", await clientIp()))) {
+    return { ok: false, error: C.avatarError };
+  }
 
   let webp: Buffer;
   try {
