@@ -69,8 +69,8 @@ export const fr: Dict = {
     score: "Score",
   },
   cost: {
-    title: "Calculateur de coûts",
-    metaTitle: "Calculateur de coût d'amélioration — TopGirl",
+    title: "Calculateur d'amélioration",
+    metaTitle: "Calculateur d'amélioration — TopGirl",
     metaDescription: "Estimez l'EXP d'artiste, les cartes étoile et les objets d'amélioration de voiture.",
     intro: "Estimez l'EXP et les objets nécessaires pour monter un artiste ou une voiture de niveau.",
     back: "Retour",

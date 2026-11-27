@@ -69,8 +69,8 @@ export const en: Dict = {
     score: "Score",
   },
   cost: {
-    title: "Cost calculator",
-    metaTitle: "Upgrade Cost Calculator — TopGirl",
+    title: "Upgrade calculator",
+    metaTitle: "Upgrade Calculator — TopGirl",
     metaDescription: "Estimate artist EXP, star cards, and car upgrade items from the game config.",
     intro: "Estimate the EXP and items needed to raise an artist or car level.",
     back: "Back",

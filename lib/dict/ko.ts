@@ -68,8 +68,8 @@ export const ko: Dict = {
     score: "점수",
   },
   cost: {
-    title: "비용 계산기",
-    metaTitle: "업그레이드 비용 계산기 — TopGirl",
+    title: "업그레이드 계산기",
+    metaTitle: "업그레이드 계산기 — TopGirl",
     metaDescription: "게임 설정을 기준으로 아티스트 EXP, 스타 카드, 자동차 업그레이드 아이템을 계산합니다.",
     intro: "아티스트나 자동차 레벨을 올리는 데 필요한 EXP와 아이템을 예상합니다.",
     back: "뒤로",

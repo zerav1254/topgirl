@@ -68,8 +68,8 @@ export const ja: Dict = {
     score: "スコア",
   },
   cost: {
-    title: "コスト計算機",
-    metaTitle: "アップグレード費用計算機 — TopGirl",
+    title: "強化計算機",
+    metaTitle: "強化計算機 — TopGirl",
     metaDescription: "ゲーム設定からアーティストのEXP、スターカード、車の強化アイテムを計算します。",
     intro: "アーティストや車のレベルを上げるのに必要なEXPとアイテムを見積もります。",
     back: "戻る",

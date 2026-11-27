@@ -67,8 +67,8 @@ export const id = {
     score: "Skor",
   },
   cost: {
-    title: "Kalkulator biaya",
-    metaTitle: "Kalkulator Biaya Upgrade — TopGirl",
+    title: "Kalkulator upgrade",
+    metaTitle: "Kalkulator Upgrade — TopGirl",
     metaDescription: "Hitung EXP artis, kartu star, dan item upgrade mobil dari config game.",
     intro: "Perkirakan EXP dan item yang dibutuhkan untuk menaikkan level artis atau mobil.",
     back: "Kembali",

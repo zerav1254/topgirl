@@ -68,8 +68,8 @@ export const zh: Dict = {
     score: "得分",
   },
   cost: {
-    title: "费用计算器",
-    metaTitle: "升级费用计算器 — TopGirl",
+    title: "升级计算器",
+    metaTitle: "升级计算器 — TopGirl",
     metaDescription: "根据游戏配置估算艺人 EXP、星级卡和车辆升级材料。",
     intro: "估算提升艺人或车辆等级所需的 EXP 和材料。",
     back: "返回",

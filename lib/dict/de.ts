@@ -69,8 +69,8 @@ export const de: Dict = {
     score: "Score",
   },
   cost: {
-    title: "Kostenrechner",
-    metaTitle: "Upgrade-Kostenrechner — TopGirl",
+    title: "Upgrade-Rechner",
+    metaTitle: "Upgrade-Rechner — TopGirl",
     metaDescription: "Schätze Artist-EXP, Sternkarten und Auto-Upgrade-Items aus der Spielkonfiguration.",
     intro: "Schätze EXP und Items, die zum Leveln eines Artists oder Autos nötig sind.",
     back: "Zurück",
