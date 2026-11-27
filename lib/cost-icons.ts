@@ -105,6 +105,6 @@ export const collectionPlatformIcon = (index: number) =>
 // Ikon 30 item koleksi ruang pamer (collection_53010101..53010506).
 export const collectionIcon = (id: number) => `${ROOT}/koleksi/collection_${id}.webp`;
 
-// Ikon tombol tab kalkulator; tab artis memakai glyph bottom nav.
-// Sumber lain: setir, gear, galeri, menara markas, vila, brosur koleksi, kartu CEO.
+// Ikon tombol tab kalkulator. Artis, mobil, dan CEO memakai glyph bottom nav;
+// sisanya: galeri (museum), menara markas, vila, brosur koleksi.
 export const tabIcon = (tab: string) => `${ROOT}/menu/${tab}.webp`;

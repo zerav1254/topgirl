@@ -80,10 +80,11 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
   const tierLabel = (name: string) => name.match(/\(([^)]+)\)/)?.[1] ?? "";
 
   // Semua panel tetap ter-mount (disembunyikan) supaya input tidak hilang saat ganti tab.
-  const panels: { id: Tab; label: string; node: ReactNode }[] = [
+  const panels: { id: Tab; label: string; glyph?: string; node: ReactNode }[] = [
     {
       id: "artist",
       label: C.tabArtist,
+      glyph: "artist-glyph",
       node: (
         <section aria-label={C.tabArtist} className={panel}>
           <div className="flex flex-col gap-1">
@@ -139,6 +140,7 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
     {
       id: "parts",
       label: C.tabParts,
+      glyph: "team-glyph",
       node: (
         <section aria-label={C.tabParts} className={panel}>
           {partGroups.map((group) => (
@@ -201,6 +203,7 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
     {
       id: "mods",
       label: C.tabMods,
+      glyph: "team-glyph",
       node: (
         <section aria-label={C.tabMods} className={panel}>
           <div role="group" aria-label={C.modPart}>
@@ -286,7 +289,7 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
     { id: "hq", label: C.tabHq, node: <HqPanel hq={book.hq} C={C} format={format} /> },
     { id: "villa", label: C.tabVilla, node: <VillaPanel villa={book.villa} C={C} format={format} /> },
     { id: "collection", label: C.tabCollection, node: <CollectionPanel collection={book.collection} C={C} format={format} /> },
-    { id: "ceo", label: C.tabCeo, node: <CeoPanel ceo={book.ceo} C={C} format={format} /> },
+    { id: "ceo", label: C.tabCeo, glyph: "profile-glyph", node: <CeoPanel ceo={book.ceo} C={C} format={format} /> },
   ];
 
   return (
@@ -300,8 +303,8 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
             onClick={() => setTab(item.id)}
             className={`${chip(tab === item.id)} flex items-center justify-center gap-2`}
           >
-            {item.id === "artist" ? (
-              <span aria-hidden="true" className="artist-glyph h-6 w-6 shrink-0" />
+            {item.glyph ? (
+              <span aria-hidden="true" className={`${item.glyph} h-6 w-6 shrink-0`} />
             ) : (
               <Image
                 src={tabIcon(item.id)}
