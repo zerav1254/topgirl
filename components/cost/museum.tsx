@@ -7,8 +7,9 @@ import { clamp, invalid, label, NumberField, panel, result, Segmented, Select, T
 
 const MIN = 1;
 const MAX = 60;
+const PARTS = 3;
 
-type Part = "case" | "wall" | "floor";
+type Part = "all" | "case" | "wall" | "floor";
 
 export function MuseumPanel({
   tiers,
@@ -19,14 +20,18 @@ export function MuseumPanel({
   C: CostDict;
   format: (value: number) => string;
 }) {
-  const [part, setPart] = useState<Part>("case");
+  const [part, setPart] = useState<Part>("all");
   const [tier, setTier] = useState(1);
   const [from, setFrom] = useState(MIN);
   const [to, setTo] = useState(MAX);
 
   // Biaya tiap bagian identik di config; pilihan bagian hanya untuk kejelasan.
-  const partName = part === "case" ? C.museumPart1 : part === "wall" ? C.museumPart2 : C.museumPart3;
-  const totals = useMemo(() => sumLevels(tiers[tier - 1] ?? [], from, to), [tiers, tier, from, to]);
+  const partName =
+    part === "all" ? C.museumAllParts : part === "case" ? C.museumPart1 : part === "wall" ? C.museumPart2 : C.museumPart3;
+  const totals = useMemo(() => {
+    const count = part === "all" ? PARTS : 1;
+    return sumLevels(tiers[tier - 1] ?? [], from, to).map((item) => ({ ...item, amount: item.amount * count }));
+  }, [tiers, tier, from, to, part]);
   const bad = to <= from;
 
   return (
@@ -37,6 +42,7 @@ export function MuseumPanel({
         value={part}
         onChange={setPart}
         options={[
+          { id: "all", label: C.museumAllParts },
           { id: "case", label: C.museumPart1 },
           { id: "wall", label: C.museumPart2 },
           { id: "floor", label: C.museumPart3 },

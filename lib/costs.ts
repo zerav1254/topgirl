@@ -60,7 +60,7 @@ export type CostBook = {
     // staffCosts[tier - 1] = biaya level staf; 3 tipe staf berbagi biaya.
     staffCosts: TierCosts;
   };
-  collection: { platforms: Record<number, CostItem[]>; stars: Record<number, CostItem[]>; items: CollectionItem[]; zones: CollectionZone[] };
+  collection: { stars: Record<number, CostItem[]>; items: CollectionItem[]; zones: CollectionZone[] };
   ceo: { stages: CeoStage[]; outfits: CeoOutfit[]; sportCosts: TierCosts };
 };
 
@@ -236,7 +236,6 @@ export async function loadCostBook(): Promise<CostBook> {
       staffCosts: byTier(villaStaffCosts.data as TierCostRow[]),
     },
     collection: {
-      platforms: {},
       stars: {},
       items: (collectionItems.data as CollectionItemRow[]).map((r) => ({
         id: r.id,
@@ -268,8 +267,8 @@ export async function loadCostBook(): Promise<CostBook> {
 
   for (const row of costs.data as CostRow[]) {
     const item = { itemId: row.item_id, itemName: row.item_name, amounts: row.amounts };
-    if (row.scope === "collection_platform") (book.collection.platforms[row.ref_id] ??= []).push(item);
-    else if (row.scope === "collection_star") (book.collection.stars[row.ref_id] ??= []).push(item);
+    if (row.scope === "collection_platform") continue;
+    if (row.scope === "collection_star") (book.collection.stars[row.ref_id] ??= []).push(item);
     else if (row.scope === "car_part") {
       // Biaya identik untuk 3 slot; simpan sekali per tier.
       const tier = book.parts.find((part) => part.id === row.ref_id)?.tier;
