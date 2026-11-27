@@ -29,7 +29,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
       <header className="flex items-center justify-between gap-2">
         <Link
           href={`/${locale}/profile`}
-          className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-white/10 bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
+          className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-line bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
         >
           <Icon d={ICONS.arrowLeft} className="h-4 w-4 shrink-0" />
           {C.profile.back}
@@ -38,13 +38,13 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
       </header>
 
       <div className="min-w-0">
-        <p className="font-display text-[11px] font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
+        <p className="font-display text-2xs font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
         <h1 className="font-display truncate text-lg font-bold tracking-tight sm:text-2xl">{C.profile.editTitle}</h1>
       </div>
 
-      <section className="rounded-2xl border border-white/10 bg-panel/80 p-4 sm:p-5">
+      <section className="rounded-2xl border border-line bg-panel/80 p-4 sm:p-5">
         <AvatarForm locale={locale} />
-        <div className="my-4 border-t border-white/10" />
+        <div className="my-4 border-t border-line" />
         <ProfileForm profile={profile} locale={locale} />
       </section>
     </main>

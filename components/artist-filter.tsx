@@ -85,12 +85,12 @@ function Select({
 }) {
   return (
     <label className="flex min-w-0 flex-col gap-1">
-      <span className="text-[11px] font-semibold uppercase tracking-wide text-zinc-400">{label}</span>
+      <span className="text-2xs font-semibold uppercase tracking-wide text-zinc-400">{label}</span>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className={`h-11 w-full cursor-pointer rounded-lg border bg-panel/80 px-2.5 text-base font-semibold transition-colors duration-200 focus:border-brand/60 ${
-          value === ALL ? "border-white/10 text-zinc-300" : "border-brand/50 bg-brand/10 text-zinc-100"
+          value === ALL ? "border-line text-zinc-300" : "border-brand/50 bg-brand/10 text-zinc-100"
         }`}
       >
         <option value={ALL}>{DICT[locale].common.all}</option>
@@ -153,7 +153,7 @@ export function ArtistFilterBar({
           onClick={state.reset}
           aria-label={C.artists.resetFilter}
           title={C.artists.resetFilter}
-          className={`flex min-h-11 min-w-11 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-panel/80 px-2 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100 sm:px-3 ${
+          className={`flex min-h-11 min-w-11 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-line bg-panel/80 px-2 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100 sm:px-3 ${
             state.active ? "" : "invisible"
           }`}
         >
@@ -166,7 +166,7 @@ export function ArtistFilterBar({
             onClick={() => setOpen((o) => !o)}
             aria-expanded={open}
             aria-controls="artist-filter-panel"
-            className="flex min-h-11 shrink-0 cursor-pointer items-center gap-1.5 rounded-xl border border-white/10 bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100 sm:hidden"
+            className="flex min-h-11 shrink-0 cursor-pointer items-center gap-1.5 rounded-xl border border-line bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100 sm:hidden"
           >
             <Icon d={ICONS.sliders} className="h-4 w-4 shrink-0" />
             {C.artists.filters}
@@ -191,7 +191,7 @@ export function ArtistFilterBar({
                 className={`min-h-11 cursor-pointer rounded-lg border px-3 text-sm font-semibold transition-colors duration-200 ${
                   state.filter.scope === id
                     ? "border-gold/50 bg-gold/10 text-gold"
-                    : "border-white/10 bg-panel/80 text-zinc-300 hover:border-white/25 hover:text-zinc-100"
+                    : "border-line bg-panel/80 text-zinc-300 hover:border-white/25 hover:text-zinc-100"
                 }`}
               >
                 {label}

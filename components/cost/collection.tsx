@@ -101,7 +101,7 @@ function CollectionRoom({
                 title={entry.name}
                 onClick={() => pickZone(entry.zone)}
                 className={`flex min-h-11 items-center gap-2 rounded-lg border px-2 py-1.5 text-left transition-colors duration-200 ${
-                  active ? "border-gold/50 bg-gold/10" : "border-white/10 bg-panel/80 hover:border-white/25"
+                  active ? "border-gold/50 bg-gold/10" : "border-line bg-panel/80 hover:border-white/25"
                 }`}
               >
                 <Image
@@ -132,7 +132,7 @@ function CollectionRoom({
               title={it.name}
               onClick={() => setItemId(it.id)}
               className={`flex min-h-11 flex-col items-center gap-1 rounded-lg border px-1 py-1.5 transition-colors duration-200 ${
-                active ? "border-gold/50 bg-gold/10" : "border-white/10 bg-panel/80 hover:border-white/25"
+                active ? "border-gold/50 bg-gold/10" : "border-line bg-panel/80 hover:border-white/25"
               }`}
             >
               <span className="relative flex aspect-square w-full items-center justify-center">
@@ -152,7 +152,7 @@ function CollectionRoom({
                   className="relative h-auto w-[72%] object-contain"
                 />
               </span>
-              <span className={`rounded border px-1 text-[11px] font-semibold ${RARITY_STYLE[rarity]}`}>
+              <span className={`rounded border px-1 text-2xs font-semibold ${RARITY_STYLE[rarity]}`}>
                 {RARITY[rarity]}
               </span>
             </button>

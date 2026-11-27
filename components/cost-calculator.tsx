@@ -111,12 +111,12 @@ export function CostCalculator({ book, locale, signedIn }: { book: CostBook; loc
           {artistBad ? null : (
             <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
               <div className="rounded-xl border border-gold/30 bg-gold/10 px-3 py-3">
-                <p className="text-[11px] font-semibold uppercase tracking-wide text-zinc-300">{C.exp}</p>
+                <p className="text-2xs font-semibold uppercase tracking-wide text-zinc-300">{C.exp}</p>
                 <p className="tabular text-2xl font-bold text-gold">{format(exp)}</p>
               </div>
-              <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-panel-2/60 px-3 py-3">
+              <div className="flex items-center gap-3 rounded-xl border border-line bg-panel-2/60 px-3 py-3">
                 <div className="min-w-0 flex-1">
-                  <p className="text-[11px] font-semibold uppercase tracking-wide text-zinc-300">{C.starCards}</p>
+                  <p className="text-2xs font-semibold uppercase tracking-wide text-zinc-300">{C.starCards}</p>
                   <p className="tabular text-2xl font-bold text-zinc-100">{format(starCards)}</p>
                   <p className="mt-1 text-xs text-zinc-400">{book.star.itemName}</p>
                 </div>
@@ -166,7 +166,7 @@ export function CostCalculator({ book, locale, signedIn }: { book: CostBook; loc
                     title={name}
                     onClick={() => setModPart(index)}
                     className={`flex min-h-11 flex-col items-center gap-1 rounded-lg border px-1 py-1.5 transition-colors duration-200 ${
-                      active ? "border-gold/50 bg-gold/10" : "border-white/10 bg-panel/80 hover:border-white/25"
+                      active ? "border-gold/50 bg-gold/10" : "border-line bg-panel/80 hover:border-white/25"
                     }`}
                   >
                     <Image
@@ -177,7 +177,7 @@ export function CostCalculator({ book, locale, signedIn }: { book: CostBook; loc
                       sizes="40px"
                       className="h-10 w-10 object-contain"
                     />
-                    <span className={`text-[11px] font-semibold ${active ? "text-gold" : "text-zinc-400"}`}>{name}</span>
+                    <span className={`text-2xs font-semibold ${active ? "text-gold" : "text-zinc-400"}`}>{name}</span>
                   </button>
                 );
               })}
@@ -258,7 +258,7 @@ export function CostCalculator({ book, locale, signedIn }: { book: CostBook; loc
               type="button"
               aria-pressed={tab === item.id}
               onClick={() => setTab(item.id)}
-              className={`${chip(tab === item.id)} flex items-center justify-center gap-2`}
+              className={`${chip(tab === item.id, "sm")} flex flex-col items-center justify-center gap-1 text-center leading-tight sm:flex-row sm:gap-2 sm:px-3 sm:text-sm`}
             >
               {item.glyph ? (
                 <span aria-hidden="true" className={`${item.glyph} h-6 w-6 shrink-0`} />

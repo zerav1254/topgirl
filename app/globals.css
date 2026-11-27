@@ -6,6 +6,9 @@
   --color-panel-2: #1c1c24;
   --color-brand: #dc2626;
   --color-gold: #fbbf24;
+  --color-line: rgb(255 255 255 / 0.1);
+  --color-surface: rgb(255 255 255 / 0.05);
+  --text-2xs: 0.6875rem;
   /* Warna brand penyedia OAuth: identitas pihak ketiga, bukan bagian palet app. */
   --color-google-surface: #ffffff;
   --color-google-border: #dadce0;

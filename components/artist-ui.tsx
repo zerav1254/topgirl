@@ -59,7 +59,7 @@ export function SkillList({
       {rows.map((r) => (
         <span key={r.slot} className="flex items-baseline justify-between gap-2 text-xs">
           <span className="flex min-w-0 items-baseline gap-1.5">
-            <span className="tabular text-[10px] font-semibold text-zinc-400">{r.slot}</span>
+            <span className="tabular text-2xs font-semibold text-zinc-400">{r.slot}</span>
             <span className="truncate text-zinc-400">{r.label}</span>
           </span>
           <span className="tabular shrink-0 font-semibold text-zinc-200">{r.value}</span>
@@ -117,7 +117,7 @@ export function TierBadge({ tier, className = "" }: { tier: string; className?: 
 export function RoleBadge({ role, locale, className = "" }: { role: Role; locale: Locale; className?: string }) {
   return (
     <span
-      className={`inline-flex items-center rounded border px-1.5 py-0.5 text-[11px] font-semibold whitespace-nowrap ${ROLE_STYLE[role] ?? ROLE_STYLE.support} ${className}`}
+      className={`inline-flex items-center rounded border px-1.5 py-0.5 text-2xs font-semibold whitespace-nowrap ${ROLE_STYLE[role] ?? ROLE_STYLE.support} ${className}`}
     >
       {DICT[locale].artists.role[role]}
     </span>
@@ -130,7 +130,7 @@ export function RankBadge({ rank, size, label, className = "" }: { rank: number;
     <span
       aria-label={label}
       title={label}
-      className={`tabular inline-flex items-center rounded-md border border-white/15 bg-white/5 px-1.5 py-0.5 font-display text-xs font-semibold text-zinc-100 ${className}`}
+      className={`tabular inline-flex items-center rounded-md border border-white/15 bg-surface px-1.5 py-0.5 font-display text-xs font-semibold text-zinc-100 ${className}`}
     >
       #{rank}
       <span className="text-zinc-400">/{size}</span>
@@ -178,14 +178,14 @@ export function SearchInput({
         type="search"
         placeholder={placeholder ?? c.searchPlaceholder}
         aria-label={c.searchArtist}
-        className="w-full rounded-xl border border-white/10 bg-panel/80 py-3 pr-12 pl-9 text-base placeholder:text-zinc-400 focus:border-brand/60 [&::-webkit-search-cancel-button]:appearance-none"
+        className="w-full rounded-xl border border-line bg-panel/80 py-3 pr-12 pl-9 text-base placeholder:text-zinc-400 focus:border-brand/60 [&::-webkit-search-cancel-button]:appearance-none"
       />
       {value !== "" && (
         <button
           type="button"
           onClick={() => onChange("")}
           aria-label={c.clearSearch}
-          className="absolute top-1/2 right-0.5 grid h-11 w-11 -translate-y-1/2 cursor-pointer place-items-center rounded-md text-zinc-400 hover:bg-white/5 hover:text-zinc-200"
+          className="absolute top-1/2 right-0.5 grid h-11 w-11 -translate-y-1/2 cursor-pointer place-items-center rounded-md text-zinc-400 hover:bg-surface hover:text-zinc-200"
         >
           <Icon d={ICONS.close} className="h-4 w-4" />
         </button>

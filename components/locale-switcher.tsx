@@ -85,7 +85,7 @@ export function LocaleSwitcher({ locale, className = "" }: { locale: Locale; cla
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label={DICT[locale].lang.label}
-        className="inline-flex h-11 cursor-pointer items-center gap-1.5 rounded-lg border border-white/10 bg-panel/80 px-2.5 transition-colors duration-200 hover:border-white/25 focus:border-brand/60"
+        className="inline-flex h-11 cursor-pointer items-center gap-1.5 rounded-lg border border-line bg-panel/80 px-2.5 transition-colors duration-200 hover:border-white/25 focus:border-brand/60"
       >
         <Flag locale={locale} />
         <span className="text-xs font-semibold text-zinc-300">{LANG_CODE[locale]}</span>
@@ -98,7 +98,7 @@ export function LocaleSwitcher({ locale, className = "" }: { locale: Locale; cla
           role="listbox"
           aria-label={DICT[locale].lang.label}
           onKeyDown={onListKey}
-          className="absolute top-full right-0 z-50 mt-1 w-44 rounded-lg border border-white/10 bg-panel"
+          className="absolute top-full right-0 z-50 mt-1 w-44 rounded-lg border border-line bg-panel"
         >
           {LOCALES.map((l) => (
             <button
@@ -110,7 +110,7 @@ export function LocaleSwitcher({ locale, className = "" }: { locale: Locale; cla
               aria-label={LANG_NAME[l]}
               onClick={() => change(l)}
               className={`flex min-h-11 w-full cursor-pointer items-center gap-2 px-2.5 text-sm transition-colors duration-200 first:rounded-t-lg last:rounded-b-lg ${
-                l === locale ? "bg-gold/10 font-semibold text-gold" : "text-zinc-300 hover:bg-white/5 hover:text-zinc-100"
+                l === locale ? "bg-gold/10 font-semibold text-gold" : "text-zinc-300 hover:bg-surface hover:text-zinc-100"
               }`}
             >
               <Flag locale={l} />

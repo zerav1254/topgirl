@@ -40,12 +40,12 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
 
   return (
     <main id="main" className="mx-auto flex w-full max-w-2xl flex-col gap-4 px-4 pt-4 pb-28 sm:pt-6">
-      <section className="relative overflow-hidden rounded-2xl border border-white/10 bg-panel/80 p-4 sm:p-5">
+      <section className="relative overflow-hidden rounded-2xl border border-line bg-panel/80 p-4 sm:p-5">
         <span aria-hidden="true" className="pointer-events-none absolute -top-20 -right-16 h-48 w-48 rounded-full bg-gold/15 blur-3xl" />
         <div className="relative flex items-center gap-4">
           <UserAvatar src={data.avatarUrl} name={name} frame={data.avatarFrame} />
           <div className="min-w-0 flex-1">
-            <p className="font-display text-[11px] font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
+            <p className="font-display text-2xs font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
             <h1 className="font-display truncate text-xl font-bold tracking-tight sm:text-2xl">{name}</h1>
             <p className="truncate text-sm text-zinc-400">
               {data.name && data.ingameNickname ? `${data.name} · ` : ""}
@@ -56,12 +56,12 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
       </section>
 
       <dl className="grid grid-cols-2 gap-2">
-        <div className="rounded-xl border border-white/10 bg-panel/70 p-3">
-          <dt className="text-[11px] font-semibold uppercase tracking-wide text-zinc-400">{C.profile.sharedLineups}</dt>
+        <div className="rounded-xl border border-line bg-panel/70 p-3">
+          <dt className="text-2xs font-semibold uppercase tracking-wide text-zinc-400">{C.profile.sharedLineups}</dt>
           <dd className="tabular mt-0.5 font-display text-xl font-bold text-zinc-100">{data.lineups.length}</dd>
         </div>
-        <div className="rounded-xl border border-white/10 bg-panel/70 p-3">
-          <dt className="text-[11px] font-semibold uppercase tracking-wide text-zinc-400">{C.profile.artists}</dt>
+        <div className="rounded-xl border border-line bg-panel/70 p-3">
+          <dt className="text-2xs font-semibold uppercase tracking-wide text-zinc-400">{C.profile.artists}</dt>
           <dd className="tabular mt-0.5 font-display text-xl font-bold text-zinc-100">{uniqueArtists}</dd>
         </div>
       </dl>
@@ -69,7 +69,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
       <section aria-label={C.profile.sharedLineups} className="flex flex-col gap-2">
         <h2 className="font-display text-sm font-semibold uppercase tracking-wide text-zinc-300">{C.profile.sharedLineups}</h2>
         {data.lineups.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-white/10 p-4 text-sm text-zinc-400">{C.profile.noShared}</p>
+          <p className="rounded-xl border border-dashed border-line p-4 text-sm text-zinc-400">{C.profile.noShared}</p>
         ) : (
           <ul className="flex flex-col gap-2">
             {data.lineups.map((l) => {
@@ -78,7 +78,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
                 <li key={l.id}>
                   <Link
                     href={`/${locale}/l/${l.shareSlug}`}
-                    className="flex min-h-14 flex-col gap-2 rounded-xl border border-white/10 bg-panel/70 p-3 transition-colors duration-200 hover:border-white/25 hover:bg-panel-2"
+                    className="flex min-h-14 flex-col gap-2 rounded-xl border border-line bg-panel/70 p-3 transition-colors duration-200 hover:border-white/25 hover:bg-panel-2"
                   >
                     <span className="flex items-center gap-3">
                       <span className="flex shrink-0 -space-x-2">
@@ -109,7 +109,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
 
       <Link
         href={`/${locale}`}
-        className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/10 px-4 text-sm font-semibold text-zinc-400 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
+        className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-line px-4 text-sm font-semibold text-zinc-400 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
       >
         <Icon d={ICONS.home} className="h-4 w-4 shrink-0" />
         {C.isi.home}

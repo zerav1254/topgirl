@@ -21,7 +21,8 @@ export function LineupTags({ team, locale }: { team: Artist[]; locale: Locale })
         return (
           <span
             key={`genre-${genre}`}
-            className="inline-flex items-center gap-1 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-1.5 py-0.5 text-[11px] font-semibold text-emerald-300"
+            title={genre}
+            className="inline-flex items-center gap-1 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-1.5 py-0.5 text-2xs font-semibold text-emerald-300"
           >
             {image ? <GenreIcon image={image} className="h-3.5 w-3.5 shrink-0" /> : genre}
             <span className="tabular">×{n}</span>
@@ -32,7 +33,7 @@ export function LineupTags({ team, locale }: { team: Artist[]; locale: Locale })
       {seasons.map((s) => (
         <span
           key={`season-${s}`}
-          className="tabular inline-flex items-center rounded-md border border-gold/30 bg-gold/10 px-1.5 py-0.5 text-[11px] font-semibold text-gold"
+          className="tabular inline-flex items-center rounded-md border border-gold/30 bg-gold/10 px-1.5 py-0.5 text-2xs font-semibold text-gold"
         >
           S{s}
         </span>
@@ -40,7 +41,7 @@ export function LineupTags({ team, locale }: { team: Artist[]; locale: Locale })
       {tags.map((tag) => (
         <span
           key={tag.effect}
-          className="inline-flex items-center gap-1 rounded-md border border-white/15 bg-white/5 px-1.5 py-0.5 text-[11px] font-semibold text-zinc-300"
+          className="inline-flex items-center gap-1 rounded-md border border-white/15 bg-surface px-1.5 py-0.5 text-2xs font-semibold text-zinc-300"
         >
           {EFFECT_LABEL[tag.effect][locale]}
           <span className="tabular text-zinc-400">×{tag.count}</span>

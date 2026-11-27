@@ -45,12 +45,12 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
 
   return (
     <main id="main" className="mx-auto flex w-full max-w-2xl flex-col gap-4 px-4 pt-3 pb-28 sm:pt-6">
-      <header className="relative overflow-hidden rounded-2xl border border-white/10 bg-panel/80 p-4 sm:p-5">
+      <header className="relative overflow-hidden rounded-2xl border border-line bg-panel/80 p-4 sm:p-5">
         <span aria-hidden="true" className="pointer-events-none absolute -top-20 -right-16 h-48 w-48 rounded-full bg-brand/20 blur-3xl" />
         <div className="relative flex items-start gap-3">
           <UserAvatar src={shared.ownerAvatarUrl} name={shared.ownerName ?? "TG"} frame={shared.ownerAvatarFrame} px={56} />
           <div className="min-w-0 flex-1">
-            <p className="font-display text-[11px] font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
+            <p className="font-display text-2xs font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
             <h1 className="font-display text-xl font-bold tracking-tight break-words sm:text-2xl">
               {t(C.lineup.shareTitle, { name: shared.lineup.name })}
             </h1>
@@ -61,7 +61,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
               </p>
             )}
           </div>
-          <span className="tabular inline-flex shrink-0 items-center rounded-md border border-white/15 bg-white/5 px-2 py-0.5 font-display text-xs font-semibold text-zinc-100">
+          <span className="tabular inline-flex shrink-0 items-center rounded-md border border-white/15 bg-surface px-2 py-0.5 font-display text-xs font-semibold text-zinc-100">
             {team.length}/{TEAM_SIZE}
           </span>
         </div>
@@ -70,25 +70,25 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
       {team.length > 0 && (
         <>
           <dl className="grid grid-cols-2 gap-2">
-            <div className="rounded-xl border border-white/10 bg-panel/70 p-3">
-              <dt className="text-[11px] font-semibold uppercase tracking-wide text-zinc-400">{C.lineup.totalScore}</dt>
+            <div className="rounded-xl border border-line bg-panel/70 p-3">
+              <dt className="text-2xs font-semibold uppercase tracking-wide text-zinc-400">{C.lineup.totalScore}</dt>
               <dd className="tabular mt-0.5 font-display text-xl font-bold text-zinc-100">{formatStat(totalScore, locale)}</dd>
             </div>
-            <div className="rounded-xl border border-white/10 bg-panel/70 p-3">
-              <dt className="text-[11px] font-semibold uppercase tracking-wide text-zinc-400">{C.lineup.avgScore}</dt>
+            <div className="rounded-xl border border-line bg-panel/70 p-3">
+              <dt className="text-2xs font-semibold uppercase tracking-wide text-zinc-400">{C.lineup.avgScore}</dt>
               <dd className="tabular mt-0.5 font-display text-xl font-bold text-gold">{formatStat(avgScore, locale)}</dd>
             </div>
             {hasStats && (
               <>
-                <div className="rounded-xl border border-white/10 bg-panel/70 p-3">
-                  <dt className="text-[11px] font-semibold uppercase tracking-wide text-zinc-400">{C.artists.sing}</dt>
+                <div className="rounded-xl border border-line bg-panel/70 p-3">
+                  <dt className="text-2xs font-semibold uppercase tracking-wide text-zinc-400">{C.artists.sing}</dt>
                   <dd className="tabular mt-0.5 font-display text-xl font-bold text-zinc-100">
                     {formatStat(totalSing, locale)}
                     {synergy.bonus > 0 && <span className="ml-1 align-middle text-xs font-semibold text-emerald-300">+{synergy.bonus}%</span>}
                   </dd>
                 </div>
-                <div className="rounded-xl border border-white/10 bg-panel/70 p-3">
-                  <dt className="text-[11px] font-semibold uppercase tracking-wide text-zinc-400">{C.artists.dance}</dt>
+                <div className="rounded-xl border border-line bg-panel/70 p-3">
+                  <dt className="text-2xs font-semibold uppercase tracking-wide text-zinc-400">{C.artists.dance}</dt>
                   <dd className="tabular mt-0.5 font-display text-xl font-bold text-zinc-100">
                     {formatStat(totalDance, locale)}
                     {synergy.bonus > 0 && <span className="ml-1 align-middle text-xs font-semibold text-emerald-300">+{synergy.bonus}%</span>}
@@ -98,8 +98,8 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
             )}
           </dl>
 
-          <section className="rounded-xl border border-white/10 bg-panel/70 p-3">
-            <h2 className="text-[11px] font-semibold uppercase tracking-wide text-zinc-400">{C.team.tiers}</h2>
+          <section className="rounded-xl border border-line bg-panel/70 p-3">
+            <h2 className="text-2xs font-semibold uppercase tracking-wide text-zinc-400">{C.team.tiers}</h2>
             <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
               {tierCounts.map(([tier, n]) => (
                 <span key={tier} className="inline-flex items-center gap-1">
@@ -108,9 +108,9 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
                 </span>
               ))}
             </div>
-            <div className="mt-2 flex flex-wrap items-center gap-1.5 border-t border-white/10 pt-2">
+            <div className="mt-2 flex flex-wrap items-center gap-1.5 border-t border-line pt-2">
               {synergy.genres.map(([g, n]) => (
-                <span key={g} className="inline-flex items-center gap-1 rounded-md bg-white/5 px-2 py-0.5 text-xs text-zinc-300">
+                <span key={g} className="inline-flex items-center gap-1 rounded-md bg-surface px-2 py-0.5 text-xs text-zinc-300">
                   <GenreIcon image={genreImages.get(g) ?? null} className="h-3 w-3" />
                   {g} <span className="text-zinc-400">×{n}</span>
                 </span>
@@ -125,8 +125,8 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
             </div>
           </section>
 
-          <section className="rounded-xl border border-white/10 bg-panel/70 p-3">
-            <h2 className="text-[11px] font-semibold uppercase tracking-wide text-zinc-400">{C.team.stats}</h2>
+          <section className="rounded-xl border border-line bg-panel/70 p-3">
+            <h2 className="text-2xs font-semibold uppercase tracking-wide text-zinc-400">{C.team.stats}</h2>
             {stats.length === 0 ? (
               <p className="mt-1.5 text-sm text-zinc-400">{C.team.noStats}</p>
             ) : (
@@ -155,13 +155,13 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
       )}
 
       {team.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-white/10 p-4 text-sm text-zinc-400">{C.lineup.notFound}</p>
+        <p className="rounded-xl border border-dashed border-line p-4 text-sm text-zinc-400">{C.lineup.notFound}</p>
       ) : (
         <ol className="flex flex-col gap-2">
           {team.map((a, i) => (
             <li
               key={a.slug}
-              className="flex items-center gap-3 rounded-xl border border-white/10 bg-panel/70 p-2.5"
+              className="flex items-center gap-3 rounded-xl border border-line bg-panel/70 p-2.5"
             >
               <span className="tabular w-4 shrink-0 text-center text-xs text-zinc-400">{i + 1}</span>
               <Avatar artist={a} tier={a.tier} size="h-11 w-11" />

@@ -110,10 +110,10 @@ export function TeamBuilder({
             height={96}
             sizes="40px"
             priority
-            className="h-9 w-9 shrink-0 rounded-xl border border-white/10 object-cover"
+            className="h-9 w-9 shrink-0 rounded-xl border border-line object-cover"
           />
           <div className="min-w-0">
-            <p className="font-display text-[11px] font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
+            <p className="font-display text-2xs font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
             <h1 className="font-display truncate text-lg font-bold tracking-tight sm:text-2xl">
               {tab === "artists" ? C.header.artists : C.header.team}
             </h1>
@@ -122,7 +122,7 @@ export function TeamBuilder({
         <div className="flex w-full items-center justify-end gap-2 sm:w-auto">
           <Link
             href={`/${locale}${user ? "/profile" : "/login"}`}
-            className="flex min-h-11 max-w-40 items-center gap-1.5 truncate rounded-lg border border-white/10 px-2 text-xs font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
+            className="flex min-h-11 max-w-40 items-center gap-1.5 truncate rounded-lg border border-line px-2 text-xs font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
           >
             {user && <UserAvatar src={avatarUrl} name={user} frame={avatarFrame} px={24} />}
             <span className="truncate">{user ? user : C.auth.login}</span>

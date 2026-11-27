@@ -54,13 +54,13 @@ export default async function Page({
     <main id="main" className="mx-auto flex w-full max-w-md flex-col gap-4 px-4 pt-3 pb-28 sm:pt-6">
       <header className="flex items-center justify-between gap-3">
         <div className="min-w-0">
-          <p className="font-display text-[11px] font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
+          <p className="font-display text-2xs font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
           <h1 className="font-display truncate text-lg font-bold tracking-tight sm:text-2xl">{C.profile.title}</h1>
         </div>
         <LocaleSwitcher locale={locale} />
       </header>
 
-      <section className="relative overflow-hidden rounded-2xl border border-white/10 bg-panel/80 p-4 sm:p-5">
+      <section className="relative overflow-hidden rounded-2xl border border-line bg-panel/80 p-4 sm:p-5">
         <span aria-hidden="true" className="pointer-events-none absolute -top-20 -right-16 h-48 w-48 rounded-full bg-gold/15 blur-3xl" />
         <span aria-hidden="true" className="pointer-events-none absolute -bottom-24 -left-16 h-48 w-48 rounded-full bg-brand/15 blur-3xl" />
 
@@ -73,7 +73,7 @@ export default async function Page({
               className={`mt-2 inline-flex rounded-md border px-2 py-0.5 text-xs font-semibold ${
                 profile.role === "admin"
                   ? "border-gold/45 bg-gold/10 text-gold"
-                  : "border-white/15 bg-white/5 text-zinc-300"
+                  : "border-white/15 bg-surface text-zinc-300"
               }`}
             >
               {profile.role === "admin" ? C.profile.adminRole : C.profile.userRole}
@@ -82,17 +82,17 @@ export default async function Page({
         </div>
 
         {identity.length > 0 ? (
-          <dl className="relative mt-4 grid grid-cols-2 gap-2 border-t border-white/10 pt-3">
+          <dl className="relative mt-4 grid grid-cols-2 gap-2 border-t border-line pt-3">
             {identity.map((item) => (
-              <div key={item.label} className="rounded-lg border border-white/10 bg-panel-2/60 px-3 py-2">
-                <dt className="text-[11px] font-semibold uppercase tracking-wide text-zinc-400">{item.label}</dt>
+              <div key={item.label} className="rounded-lg border border-line bg-panel-2/60 px-3 py-2">
+                <dt className="text-2xs font-semibold uppercase tracking-wide text-zinc-400">{item.label}</dt>
                 <dd className="tabular text-sm font-semibold text-zinc-100">{item.value}</dd>
               </div>
             ))}
           </dl>
         ) : null}
 
-        <div className="relative mt-3 flex flex-wrap gap-2 border-t border-white/10 pt-3">
+        <div className="relative mt-3 flex flex-wrap gap-2 border-t border-line pt-3">
           <Link
             href={publicHref}
             className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-lg border border-gold/45 bg-gold/15 px-3 text-sm font-semibold text-gold transition-colors duration-200 hover:bg-gold/25"
@@ -103,7 +103,7 @@ export default async function Page({
           <form action={signOut.bind(null, locale)}>
             <button
               type="submit"
-              className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border border-white/10 px-3 text-sm font-semibold text-zinc-400 transition-colors duration-200 hover:border-red-500/40 hover:text-red-300"
+              className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border border-line px-3 text-sm font-semibold text-zinc-400 transition-colors duration-200 hover:border-red-500/40 hover:text-red-300"
             >
               <span aria-hidden="true" className="logout-glyph h-4 w-4 shrink-0" />
               {C.auth.signOut}
@@ -126,7 +126,7 @@ export default async function Page({
         </Link>
       </section>
 
-      <section aria-labelledby="profile-accounts" className="rounded-2xl border border-white/10 bg-panel/80 p-4 sm:p-5">
+      <section aria-labelledby="profile-accounts" className="rounded-2xl border border-line bg-panel/80 p-4 sm:p-5">
         <h2 id="profile-accounts" className="font-display text-sm font-semibold uppercase tracking-wide text-zinc-300">
           {C.profile.accountsTitle}
         </h2>
@@ -140,8 +140,8 @@ export default async function Page({
           {providers.map((p) => {
             const isLinked = linked.has(p.id);
             return (
-              <li key={p.id} className="flex items-center gap-3 rounded-xl border border-white/10 bg-panel-2/60 px-3 py-2">
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-white/10 bg-ink/60">{p.mark}</span>
+              <li key={p.id} className="flex items-center gap-3 rounded-xl border border-line bg-panel-2/60 px-3 py-2">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-line bg-ink/60">{p.mark}</span>
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-semibold">{p.label}</p>
                   <p className={`text-xs ${isLinked ? "text-emerald-300" : "text-zinc-400"}`}>
@@ -154,7 +154,7 @@ export default async function Page({
                       type="submit"
                       disabled={onlyIdentity}
                       title={onlyIdentity ? C.profile.disconnectHint : undefined}
-                      className="inline-flex min-h-11 cursor-pointer items-center gap-1.5 rounded-lg border border-white/10 px-3 text-xs font-semibold text-zinc-400 transition-colors duration-200 hover:border-red-500/40 hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-white/10 disabled:hover:text-zinc-400"
+                      className="inline-flex min-h-11 cursor-pointer items-center gap-1.5 rounded-lg border border-line px-3 text-xs font-semibold text-zinc-400 transition-colors duration-200 hover:border-red-500/40 hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-line disabled:hover:text-zinc-400"
                     >
                       <Icon d={ICONS.unlink} className="h-4 w-4 shrink-0" />
                       {C.profile.disconnect}
@@ -195,7 +195,7 @@ export default async function Page({
             <Link
               key={item.href}
               href={item.href}
-              className="inline-flex min-h-11 items-center justify-start gap-1.5 rounded-lg border border-white/10 bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
+              className="inline-flex min-h-11 items-center justify-start gap-1.5 rounded-lg border border-line bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
             >
               {item.rank ? (
                 <span aria-hidden="true" className="rank-glyph h-4 w-4 shrink-0" />
@@ -210,7 +210,7 @@ export default async function Page({
 
       <Link
         href={`/${locale}`}
-        className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/10 px-4 text-sm font-semibold text-zinc-400 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
+        className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-line px-4 text-sm font-semibold text-zinc-400 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
       >
         <Icon d={ICONS.home} className="h-4 w-4 shrink-0" />
         {C.isi.home}

@@ -13,7 +13,7 @@ export default function NotFound() {
   const C = DICT[locale].notFound;
   return (
     <main id="main" className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center px-4 pt-10 pb-28">
-      <section className="rounded-2xl border border-white/10 bg-panel/80 p-5 text-center sm:p-6">
+      <section className="rounded-2xl border border-line bg-panel/80 p-5 text-center sm:p-6">
         <h1 className="font-display text-2xl font-bold tracking-tight">{C.title}</h1>
         <p className="mt-2 text-sm text-zinc-400">{C.description}</p>
         <Link

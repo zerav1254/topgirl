@@ -70,7 +70,7 @@ export default async function InfoPage({ params }: { params: Promise<{ locale: s
       <div className="flex flex-wrap items-center justify-between gap-2">
         <Link
           href={`/${locale}`}
-          className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-white/10 bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
+          className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-line bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
         >
           <Icon d={ICONS.arrowLeft} className="h-4 w-4 shrink-0" />
           {C.back}
@@ -79,16 +79,16 @@ export default async function InfoPage({ params }: { params: Promise<{ locale: s
       </div>
 
       <header className="flex flex-col gap-2">
-        <p className="font-display text-[11px] font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
+        <p className="font-display text-2xs font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
         <h1 className="font-display text-xl font-bold tracking-tight sm:text-2xl">{C.title}</h1>
         <p className="max-w-2xl text-sm text-zinc-400">{C.intro}</p>
       </header>
 
-      <section aria-labelledby="info-formula" className="rounded-2xl border border-white/10 bg-panel/60 p-4 sm:p-5">
+      <section aria-labelledby="info-formula" className="rounded-2xl border border-line bg-panel/60 p-4 sm:p-5">
         <h2 id="info-formula" className="font-display text-sm font-semibold uppercase tracking-wide text-zinc-300">
           {C.formula}
         </h2>
-        <p className="tabular mt-3 overflow-x-auto rounded-xl border border-white/10 bg-ink/60 px-3 py-3 font-mono text-sm text-zinc-100">
+        <p className="tabular mt-3 overflow-x-auto rounded-xl border border-line bg-ink/60 px-3 py-3 font-mono text-sm text-zinc-100">
           {t(C.formulaText, { skill: SKILL_WEIGHT, stat: STAT_WEIGHT })}
         </p>
         <p className="mt-3 text-sm text-zinc-400">{t(C.formulaNote, { scale: SCALE, ref: STAT_REF.toLocaleString(number) })}</p>
@@ -101,9 +101,9 @@ export default async function InfoPage({ params }: { params: Promise<{ locale: s
           </h2>
           <p className="mt-1 text-sm text-zinc-400">{C.weightsNote}</p>
         </div>
-        <div className="overflow-x-auto rounded-xl border border-white/10 bg-panel/60">
+        <div className="overflow-x-auto rounded-xl border border-line bg-panel/60">
           <table className="w-full text-sm">
-            <thead className="text-[11px] uppercase tracking-wide text-zinc-400">
+            <thead className="text-2xs uppercase tracking-wide text-zinc-400">
               <tr>
                 <th scope="col" className="px-3 py-2 text-left font-semibold">
                   {C.effect}
@@ -127,25 +127,25 @@ export default async function InfoPage({ params }: { params: Promise<{ locale: s
         </div>
       </section>
 
-      <section aria-labelledby="info-player" className="rounded-2xl border border-white/10 bg-panel/60 p-4 sm:p-5">
+      <section aria-labelledby="info-player" className="rounded-2xl border border-line bg-panel/60 p-4 sm:p-5">
         <h2 id="info-player" className="font-display text-sm font-semibold uppercase tracking-wide text-zinc-300">
           {C.player}
         </h2>
         <p className="mt-2 text-sm text-zinc-400">{C.playerNote}</p>
       </section>
 
-      <section aria-labelledby="info-battle" className="rounded-2xl border border-white/10 bg-panel/60 p-4 sm:p-5">
+      <section aria-labelledby="info-battle" className="rounded-2xl border border-line bg-panel/60 p-4 sm:p-5">
         <h2 id="info-battle" className="font-display text-sm font-semibold uppercase tracking-wide text-zinc-300">
           {C.battle}
         </h2>
         <p className="mt-2 text-sm text-zinc-400">{C.battleIntro}</p>
-        <p className="tabular mt-3 overflow-x-auto rounded-xl border border-white/10 bg-ink/60 px-3 py-3 font-mono text-sm text-zinc-100">
+        <p className="tabular mt-3 overflow-x-auto rounded-xl border border-line bg-ink/60 px-3 py-3 font-mono text-sm text-zinc-100">
           {C.battleFormulaText}
         </p>
         <p className="mt-3 text-sm text-zinc-400">{C.battleFormulaNote}</p>
-        <div className="mt-3 overflow-x-auto rounded-xl border border-white/10 bg-panel/60">
+        <div className="mt-3 overflow-x-auto rounded-xl border border-line bg-panel/60">
           <table className="w-full text-sm">
-            <thead className="text-[11px] uppercase tracking-wide text-zinc-400">
+            <thead className="text-2xs uppercase tracking-wide text-zinc-400">
               <tr>
                 <th scope="col" className="px-3 py-2 text-left font-semibold">
                   {C.battleConst}
@@ -182,9 +182,9 @@ export default async function InfoPage({ params }: { params: Promise<{ locale: s
           </h2>
           <p className="mt-1 text-sm text-zinc-400">{C.exampleNote}</p>
         </div>
-        <div className="overflow-x-auto rounded-xl border border-white/10 bg-panel/60">
+        <div className="overflow-x-auto rounded-xl border border-line bg-panel/60">
           <table className="w-full text-sm">
-            <thead className="text-[11px] uppercase tracking-wide text-zinc-400">
+            <thead className="text-2xs uppercase tracking-wide text-zinc-400">
               <tr>
                 <th scope="col" className="px-3 py-2 text-left font-semibold">
                   {C.artist}
@@ -231,9 +231,9 @@ export default async function InfoPage({ params }: { params: Promise<{ locale: s
             <span className="font-semibold text-zinc-300">{C.tierPool}.</span> {C.tierPoolNote}
           </p>
         </div>
-        <div className="overflow-x-auto rounded-xl border border-white/10 bg-panel/60">
+        <div className="overflow-x-auto rounded-xl border border-line bg-panel/60">
           <table className="w-full text-sm">
-            <thead className="text-[11px] uppercase tracking-wide text-zinc-400">
+            <thead className="text-2xs uppercase tracking-wide text-zinc-400">
               <tr>
                 <th scope="col" className="px-3 py-2 text-left font-semibold">
                   {C.tier}

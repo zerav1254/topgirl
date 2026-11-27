@@ -8,19 +8,19 @@ import type { DICT } from "@/lib/i18n";
 export type CostDict = (typeof DICT)["id"]["cost"];
 export type Total = { itemId?: number; name: string; amount: number };
 
-export const field = "h-11 w-full rounded-lg border border-white/10 bg-panel/80 px-2.5 text-base font-semibold tabular text-zinc-100";
-export const label = "text-[11px] font-semibold uppercase tracking-wide text-zinc-400";
+export const field = "h-11 w-full rounded-lg border border-line bg-panel/80 px-2.5 text-base font-semibold tabular text-zinc-100";
+export const label = "text-2xs font-semibold uppercase tracking-wide text-zinc-400";
 
 // Kelas kartu tab dan kotak hasil; dipakai semua panel biar tidak drift.
-export const panel = "rounded-2xl border border-white/10 bg-panel/70 p-4 sm:p-5";
-export const result = "mt-4 rounded-xl border border-white/10 bg-panel-2/60 px-3 py-3";
+export const panel = "rounded-2xl border border-line bg-panel/70 p-4 sm:p-5";
+export const result = "mt-4 rounded-xl border border-line bg-panel-2/60 px-3 py-3";
 export const invalid = "mt-3 text-sm text-red-300";
 
 export const chip = (active: boolean, size: "md" | "sm" = "md") =>
   `min-h-11 cursor-pointer rounded-lg border ${size === "sm" ? "px-2.5 text-xs" : "px-3 text-sm"} font-semibold transition-colors duration-200 ${
     active
       ? "border-gold/50 bg-gold/10 text-gold"
-      : "border-white/10 bg-panel/80 text-zinc-300 hover:border-white/25 hover:text-zinc-100"
+      : "border-line bg-panel/80 text-zinc-300 hover:border-white/25 hover:text-zinc-100"
   }`;
 
 export const clamp = (value: string, min: number, max: number) => {

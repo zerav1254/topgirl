@@ -8,7 +8,7 @@ import { TEAM_SIZE } from "@/lib/team";
 import { getServerTeam, readTeam, subscribeTeam } from "@/lib/team-store";
 
 const ITEM = "flex min-h-14 flex-col items-center justify-center gap-1 rounded-lg text-center text-xs font-semibold leading-tight transition-colors duration-200";
-const IDLE = "text-zinc-400 hover:bg-white/5 hover:text-zinc-200";
+const IDLE = "text-zinc-400 hover:bg-surface hover:text-zinc-200";
 const ACTIVE = "text-gold bg-gold/10";
 
 export function BottomNav({ locale }: { locale: Locale }) {
@@ -35,7 +35,7 @@ export function BottomNav({ locale }: { locale: Locale }) {
   return (
     <nav
       aria-label={C.header.mainNav}
-      className="fixed inset-x-0 bottom-0 z-30 border-t border-white/10 bg-panel/95"
+      className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-panel/95"
       style={{ paddingBottom: "max(0.25rem, env(safe-area-inset-bottom))" }}
     >
       <div className="mx-auto grid max-w-lg grid-cols-5 gap-1 px-2 pt-1">
@@ -56,7 +56,7 @@ export function BottomNav({ locale }: { locale: Locale }) {
             <span aria-hidden="true" className="team-glyph block h-5 w-5" />
             <span
               aria-hidden="true"
-              className={`tabular absolute -top-2.5 -right-3 grid h-5 min-w-5 place-items-center rounded-full px-1 text-[10px] font-bold ${
+              className={`tabular absolute -top-2.5 -right-3 grid h-5 min-w-5 place-items-center rounded-full px-1 text-2xs font-bold ${
                 full ? "bg-gold text-ink" : count > 0 ? "bg-brand text-white" : "bg-white/10 text-zinc-300"
               }`}
             >

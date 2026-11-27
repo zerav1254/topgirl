@@ -18,7 +18,7 @@ export function PublicLineups({ lineups, preview, locale }: { lineups: PublicLin
         <p className="text-xs text-zinc-400">{C.communityHint}</p>
       </div>
       {lineups.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-white/10 p-4 text-sm text-zinc-400">{C.communityEmpty}</p>
+        <p className="rounded-xl border border-dashed border-line p-4 text-sm text-zinc-400">{C.communityEmpty}</p>
       ) : (
         <ul className="flex flex-col gap-2">
           {lineups.map((l) => {
@@ -27,7 +27,7 @@ export function PublicLineups({ lineups, preview, locale }: { lineups: PublicLin
               <li key={l.id}>
                 <Link
                   href={`/${locale}/l/${l.shareSlug}`}
-                  className="flex min-h-14 flex-col gap-2 rounded-xl border border-white/10 bg-panel/70 p-3 transition-colors duration-200 hover:border-white/25 hover:bg-panel-2"
+                  className="flex min-h-14 flex-col gap-2 rounded-xl border border-line bg-panel/70 p-3 transition-colors duration-200 hover:border-white/25 hover:bg-panel-2"
                 >
                   <span className="flex items-center gap-3">
                     <span className="flex shrink-0 -space-x-2">

@@ -18,7 +18,7 @@ export function SaveLineup({ slugs, locale, signedIn }: { slugs: string[]; local
 
   return (
     <form
-      className="flex flex-col gap-3 rounded-xl border border-white/10 bg-panel/80 p-3"
+      className="flex flex-col gap-3 rounded-xl border border-line bg-panel/80 p-3"
       onSubmit={(e) => {
         e.preventDefault();
         const fd = new FormData(e.currentTarget);
@@ -34,7 +34,7 @@ export function SaveLineup({ slugs, locale, signedIn }: { slugs: string[]; local
           <Icon d={ICONS.layers} className="h-4 w-4 shrink-0" />
         </span>
         <h2 className="min-w-0 flex-1 truncate text-sm font-semibold">{C.saveTitle}</h2>
-        <span className="tabular shrink-0 rounded-md border border-white/15 bg-white/5 px-2 py-0.5 text-xs font-semibold text-zinc-100">
+        <span className="tabular shrink-0 rounded-md border border-white/15 bg-surface px-2 py-0.5 text-xs font-semibold text-zinc-100">
           {slugs.length}/{TEAM_SIZE}
         </span>
       </div>
@@ -45,7 +45,7 @@ export function SaveLineup({ slugs, locale, signedIn }: { slugs: string[]; local
           required
           maxLength={60}
           defaultValue=""
-          className="min-h-11 rounded-lg border border-white/10 bg-panel px-3 py-2 text-base text-zinc-100 focus:border-brand/60"
+          className="min-h-11 rounded-lg border border-line bg-panel px-3 py-2 text-base text-zinc-100 focus:border-brand/60"
         />
       </label>
       <p className="text-xs text-zinc-400">{slugs.length === 0 ? C.needTeam : C.subtitle}</p>

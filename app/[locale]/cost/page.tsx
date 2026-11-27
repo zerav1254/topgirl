@@ -31,7 +31,7 @@ export default async function CostPage({ params }: { params: Promise<{ locale: s
       <div className="flex flex-wrap items-center justify-between gap-2">
         <Link
           href={`/${locale}`}
-          className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-white/10 bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
+          className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-line bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
         >
           <Icon d={ICONS.arrowLeft} className="h-4 w-4 shrink-0" />
           {C.back}
@@ -40,7 +40,7 @@ export default async function CostPage({ params }: { params: Promise<{ locale: s
       </div>
 
       <header className="flex flex-col gap-1.5">
-        <p className="font-display text-[11px] font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
+        <p className="font-display text-2xs font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
         <h1 className="font-display text-xl font-bold tracking-tight sm:text-2xl">{C.title}</h1>
         <p className="max-w-2xl text-sm text-zinc-400">{C.intro}</p>
       </header>

@@ -43,14 +43,14 @@ export function AvatarForm({ locale }: { locale: Locale }) {
           type="file"
           accept="image/jpeg,image/png,image/webp"
           required
-          className="min-h-11 cursor-pointer rounded-lg border border-white/10 bg-panel/80 px-3 py-2 text-sm text-zinc-300 file:mr-3 file:cursor-pointer file:rounded-md file:border-0 file:bg-white/10 file:px-2 file:py-1 file:text-sm file:font-semibold file:text-zinc-100"
+          className="min-h-11 cursor-pointer rounded-lg border border-line bg-panel/80 px-3 py-2 text-sm text-zinc-300 file:mr-3 file:cursor-pointer file:rounded-md file:border-0 file:bg-white/10 file:px-2 file:py-1 file:text-sm file:font-semibold file:text-zinc-100"
         />
       </label>
       <p className="text-xs text-zinc-400">{C.avatarHint}</p>
       <button
         type="submit"
         disabled={pending}
-        className="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-lg border border-white/10 px-4 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100 disabled:opacity-60"
+        className="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-lg border border-line px-4 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100 disabled:opacity-60"
       >
         <Icon d={ICONS.upload} className="h-4 w-4 shrink-0" />
         {pending ? C.saving : C.avatarUpload}

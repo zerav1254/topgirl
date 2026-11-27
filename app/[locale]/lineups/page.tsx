@@ -36,7 +36,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
       <main id="main" className="mx-auto flex w-full max-w-2xl flex-col gap-4 px-4 pt-3 pb-28 sm:pt-6">
         <header className="flex items-center justify-between gap-3">
           <div className="min-w-0">
-            <p className="font-display text-[11px] font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
+            <p className="font-display text-2xs font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
             <h1 className="font-display truncate text-lg font-bold tracking-tight sm:text-2xl">{C.header.lineups}</h1>
           </div>
           <LocaleSwitcher locale={locale} />
@@ -63,7 +63,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
     <main id="main" className="mx-auto flex w-full max-w-2xl flex-col gap-4 px-4 pt-3 pb-28 sm:pt-6">
       <header className="flex items-center justify-between gap-3">
         <div className="min-w-0">
-          <p className="font-display text-[11px] font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
+          <p className="font-display text-2xs font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
           <h1 className="font-display text-lg font-bold tracking-tight sm:text-2xl">{C.lineup.title}</h1>
         </div>
         <LocaleSwitcher locale={locale} />
@@ -73,7 +73,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
       <PublicLineups lineups={publicLineups} preview={publicPreview} locale={locale} />
       <Link
         href={`/${locale}/team`}
-        className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/10 px-4 text-sm font-semibold text-zinc-400 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
+        className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-line px-4 text-sm font-semibold text-zinc-400 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
       >
         <Icon d={ICONS.users} className="h-4 w-4 shrink-0" />
         {C.header.team}

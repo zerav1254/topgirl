@@ -101,7 +101,7 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
               onClick={() => {
                 if (window.confirm(C.team.confirmReset)) onReset();
               }}
-              className="flex min-h-11 cursor-pointer items-center gap-1 rounded-md px-2 py-1 text-sm text-zinc-400 transition-colors duration-200 hover:bg-white/5 hover:text-red-300"
+              className="flex min-h-11 cursor-pointer items-center gap-1 rounded-md px-2 py-1 text-sm text-zinc-400 transition-colors duration-200 hover:bg-surface hover:text-red-300"
             >
               <Icon d={ICONS.trash} className="h-4 w-4 shrink-0" />
               {C.common.reset}
@@ -117,7 +117,7 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
             <li
               key={i}
               className={`flex min-h-[4rem] items-center gap-1 border p-2.5 ${
-                a ? "rounded-xl border-white/15 bg-panel-2" : "rounded-xl border-dashed border-white/10"
+                a ? "rounded-xl border-white/15 bg-panel-2" : "rounded-xl border-dashed border-line"
               }`}
             >
               {a ? (
@@ -125,7 +125,7 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
                   <button
                     type="button"
                     onClick={() => open(i)}
-                    className="flex min-h-11 min-w-0 flex-1 cursor-pointer items-center gap-3 rounded-lg text-left transition-colors duration-200 hover:bg-white/5"
+                    className="flex min-h-11 min-w-0 flex-1 cursor-pointer items-center gap-3 rounded-lg text-left transition-colors duration-200 hover:bg-surface"
                   >
                     <Avatar artist={a} tier={tierOf(a)} size="h-10 w-10" />
                     <span className="min-w-0 flex-1">
@@ -147,7 +147,7 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
                     type="button"
                     onClick={() => onToggle(a.slug)}
                     aria-label={t(C.team.remove, { name: a.name })}
-                    className="grid h-11 w-11 cursor-pointer place-items-center rounded-md text-zinc-400 transition-colors duration-200 hover:bg-white/5 hover:text-red-300"
+                    className="grid h-11 w-11 cursor-pointer place-items-center rounded-md text-zinc-400 transition-colors duration-200 hover:bg-surface hover:text-red-300"
                   >
                     <Icon d={ICONS.close} className="h-5 w-5" />
                   </button>
@@ -167,7 +167,7 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
         })}
       </ol>
 
-      <div className="border-t border-white/10 pt-3">
+      <div className="border-t border-line pt-3">
         {team.length === 0 ? (
           <p className="text-sm text-zinc-400">{C.team.pick}</p>
         ) : (
@@ -180,7 +180,7 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
               <dt className="text-zinc-400">{C.team.genre}</dt>
               <dd className="mt-1 flex flex-wrap gap-1">
                 {summary.genreList.map(([g, n]) => (
-                  <span key={g} className="inline-flex items-center gap-1 rounded-md bg-white/5 px-2 py-0.5 text-zinc-300">
+                  <span key={g} className="inline-flex items-center gap-1 rounded-md bg-surface px-2 py-0.5 text-zinc-300">
                     <GenreIcon image={genreImages.get(g) ?? null} className="h-3 w-3 shrink-0" />
                     {g} <span className="text-zinc-400">×{n}</span>
                   </span>
@@ -249,10 +249,10 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
           // Klik backdrop jatuh ke elemen dialog sendiri, bukan isinya.
           if (e.target === e.currentTarget) setSlot(null);
         }}
-        className="m-auto w-[min(100%-2rem,32rem)] rounded-2xl border border-white/10 bg-panel p-0 text-zinc-100 backdrop:bg-ink/80"
+        className="m-auto w-[min(100%-2rem,32rem)] rounded-2xl border border-line bg-panel p-0 text-zinc-100 backdrop:bg-ink/80"
       >
         <div className="flex max-h-[85vh] flex-col">
-          <div className="flex items-center justify-between gap-2 border-b border-white/10 p-3">
+          <div className="flex items-center justify-between gap-2 border-b border-line p-3">
             <h2 id="team-picker-title" className="font-display text-sm font-semibold uppercase tracking-wide text-zinc-300">
               {t(C.team.chooseSlot, { n: (slot ?? 0) + 1 })}
             </h2>
@@ -260,7 +260,7 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
               type="button"
               onClick={() => setSlot(null)}
               aria-label={C.common.close}
-              className="grid h-11 w-11 cursor-pointer place-items-center rounded-md text-zinc-400 transition-colors duration-200 hover:bg-white/5 hover:text-zinc-100"
+              className="grid h-11 w-11 cursor-pointer place-items-center rounded-md text-zinc-400 transition-colors duration-200 hover:bg-surface hover:text-zinc-100"
             >
               <Icon d={ICONS.close} className="h-5 w-5" />
             </button>
@@ -279,7 +279,7 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
                     onClick={() => choose(a)}
                     aria-pressed={active}
                     className={`flex min-h-14 w-full cursor-pointer items-center gap-3 rounded-xl border p-2 text-left transition-colors duration-200 ${
-                      active ? "border-gold/45 bg-gold/10" : "border-white/10 bg-panel/70 hover:border-white/25 hover:bg-panel-2"
+                      active ? "border-gold/45 bg-gold/10" : "border-line bg-panel/70 hover:border-white/25 hover:bg-panel-2"
                     }`}
                   >
                     <Avatar artist={a} tier={tierOf(a)} size="h-9 w-9" />

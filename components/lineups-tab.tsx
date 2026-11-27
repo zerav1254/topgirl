@@ -45,25 +45,25 @@ export function LineupsTab({
   return (
     <div className="flex flex-col gap-4">
       <dl className="grid grid-cols-2 gap-2">
-        <div className="rounded-xl border border-white/10 bg-panel/70 p-3">
-          <dt className="text-[11px] font-semibold uppercase tracking-wide text-zinc-400">{C.title}</dt>
+        <div className="rounded-xl border border-line bg-panel/70 p-3">
+          <dt className="text-2xs font-semibold uppercase tracking-wide text-zinc-400">{C.title}</dt>
           <dd className="tabular mt-0.5 font-display text-xl font-bold text-zinc-100">{lineups.length}</dd>
         </div>
-        <div className="rounded-xl border border-white/10 bg-panel/70 p-3">
-          <dt className="text-[11px] font-semibold uppercase tracking-wide text-zinc-400">{C.shared}</dt>
+        <div className="rounded-xl border border-line bg-panel/70 p-3">
+          <dt className="text-2xs font-semibold uppercase tracking-wide text-zinc-400">{C.shared}</dt>
           <dd className="tabular mt-0.5 font-display text-xl font-bold text-emerald-300">{sharedCount}</dd>
         </div>
       </dl>
 
       {lineups.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-white/10 p-4 text-sm text-zinc-400">{C.empty}</p>
+        <p className="rounded-xl border border-dashed border-line p-4 text-sm text-zinc-400">{C.empty}</p>
       ) : (
         <ul className="flex flex-col gap-2">
           {lineups.map((l) => {
             const link = l.shareSlug ? `${siteUrl}/${locale}/l/${l.shareSlug}` : "";
             const team = l.slugs.map((s) => bySlug.get(s)).filter((a) => a !== undefined);
             return (
-              <li key={l.id} className="flex flex-col gap-2 rounded-xl border border-white/10 bg-panel/70 p-3">
+              <li key={l.id} className="flex flex-col gap-2 rounded-xl border border-line bg-panel/70 p-3">
                 <div className="flex items-center gap-3">
                   <span className="flex shrink-0 -space-x-2">
                     {Array.from({ length: TEAM_SIZE }).map((_, i) => {
@@ -74,7 +74,7 @@ export function LineupsTab({
                           <Avatar artist={a} size="h-9 w-9" />
                         </span>
                       ) : (
-                        <span key={i} aria-hidden="true" className="h-9 w-9 rounded-lg border border-dashed border-white/10 bg-panel-2/60 ring-2 ring-panel" />
+                        <span key={i} aria-hidden="true" className="h-9 w-9 rounded-lg border border-dashed border-line bg-panel-2/60 ring-2 ring-panel" />
                       );
                     })}
                   </span>
@@ -82,8 +82,8 @@ export function LineupsTab({
                     <span className="block truncate text-sm font-semibold">{l.name}</span>
                     <span className="mt-0.5 flex items-center gap-1.5">
                       <span
-                        className={`inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[11px] font-semibold ${
-                          l.shareSlug ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300" : "border-white/15 bg-white/5 text-zinc-300"
+                        className={`inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-2xs font-semibold ${
+                          l.shareSlug ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300" : "border-white/15 bg-surface text-zinc-300"
                         }`}
                       >
                         <span aria-hidden="true" className={`h-1.5 w-1.5 rounded-full ${l.shareSlug ? "bg-emerald-400" : "bg-zinc-400"}`} />
@@ -104,7 +104,7 @@ export function LineupsTab({
                     type="button"
                     disabled={pending}
                     onClick={() => run(() => toggleShare(locale, l.id, !l.shareSlug))}
-                    className={`${btn} border-white/10 text-zinc-300 hover:border-white/25 hover:text-zinc-100`}
+                    className={`${btn} border-line text-zinc-300 hover:border-white/25 hover:text-zinc-100`}
                   >
                     <Icon d={l.shareSlug ? ICONS.unlink : ICONS.share} className="h-4 w-4 shrink-0" />
                     {l.shareSlug ? C.unshare : C.share}
@@ -123,12 +123,12 @@ export function LineupsTab({
                             setMessage(C.copyFailed);
                           }
                         }}
-                        className={`${btn} border-white/10 text-zinc-300 hover:border-white/25 hover:text-zinc-100`}
+                        className={`${btn} border-line text-zinc-300 hover:border-white/25 hover:text-zinc-100`}
                       >
                         <Icon d={ICONS.copy} className="h-4 w-4 shrink-0" />
                         {copied === l.id ? C.copied : C.copy}
                       </button>
-                      <a href={link} target="_blank" rel="noreferrer" className={`${btn} inline-flex items-center border-white/10 text-zinc-300 hover:border-white/25 hover:text-zinc-100`}>
+                      <a href={link} target="_blank" rel="noreferrer" className={`${btn} inline-flex items-center border-line text-zinc-300 hover:border-white/25 hover:text-zinc-100`}>
                         <Icon d={ICONS.external} className="h-4 w-4 shrink-0" />
                         {C.open}
                       </a>
@@ -140,7 +140,7 @@ export function LineupsTab({
                     onClick={() => {
                       if (window.confirm(C.confirmDelete)) run(() => remove(locale, l.id), "");
                     }}
-                    className={`${btn} ml-auto border-white/10 text-zinc-400 hover:border-red-400/40 hover:text-red-300`}
+                    className={`${btn} ml-auto border-line text-zinc-400 hover:border-red-400/40 hover:text-red-300`}
                   >
                     <Icon d={ICONS.trash} className="h-4 w-4 shrink-0" />
                     {C.delete}
@@ -153,7 +153,7 @@ export function LineupsTab({
       )}
 
       {message && (
-        <p role="status" className="rounded-xl border border-white/10 bg-panel/70 px-3 py-2 text-sm break-words text-zinc-300">
+        <p role="status" className="rounded-xl border border-line bg-panel/70 px-3 py-2 text-sm break-words text-zinc-300">
           {message}
         </p>
       )}

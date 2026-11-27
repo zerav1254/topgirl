@@ -37,7 +37,7 @@ export default async function Page({
 
   return (
     <main id="main" className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center px-4 pt-10 pb-28">
-      <section className="rounded-2xl border border-white/10 bg-panel/80 p-5 sm:p-6">
+      <section className="rounded-2xl border border-line bg-panel/80 p-5 sm:p-6">
         <div className="flex items-center justify-between gap-3">
           <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
           <LocaleSwitcher locale={locale} />
@@ -55,20 +55,20 @@ export default async function Page({
             <div className="mt-5 flex flex-col gap-2">
               <Link
                 href={`/${locale}/profile`}
-                className={`${providerButton} border-white/10 font-normal text-zinc-300 hover:border-white/25 hover:text-zinc-100`}
+                className={`${providerButton} border-line font-normal text-zinc-300 hover:border-white/25 hover:text-zinc-100`}
               >
                 <Icon d={ICONS.user} className="h-4 w-4 shrink-0" />
                 {C.profile.title}
               </Link>
               <Link
                 href={`/${locale}/lineups`}
-                className={`${providerButton} border-white/10 font-normal text-zinc-300 hover:border-white/25 hover:text-zinc-100`}
+                className={`${providerButton} border-line font-normal text-zinc-300 hover:border-white/25 hover:text-zinc-100`}
               >
                 <Icon d={ICONS.layers} className="h-4 w-4 shrink-0" />
                 {C.lineup.title}
               </Link>
               <form action={signOut.bind(null, locale)}>
-                <button type="submit" className={`${providerButton} border-white/10 font-normal text-zinc-400 hover:border-red-500/40 hover:text-red-300`}>
+                <button type="submit" className={`${providerButton} border-line font-normal text-zinc-400 hover:border-red-500/40 hover:text-red-300`}>
                   <span aria-hidden="true" className="logout-glyph h-4 w-4 shrink-0" />
                   {C.auth.signOut}
                 </button>
@@ -104,7 +104,7 @@ export default async function Page({
 
         <Link
           href={`/${locale}`}
-          className="mt-3 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-white/10 px-4 text-sm font-semibold text-zinc-400 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
+          className="mt-3 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-line px-4 text-sm font-semibold text-zinc-400 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
         >
           <Icon d={ICONS.home} className="h-4 w-4 shrink-0" />
           {C.isi.home}

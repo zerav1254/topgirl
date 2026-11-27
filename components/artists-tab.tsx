@@ -80,7 +80,7 @@ export function ArtistsTab({ artists, scoped, blocked, rank, seasonTiers, owned,
             <h2 className="mb-2 flex items-center gap-2">
               <TierBadge tier={tier} />
               {rank && range ? (
-                <span className="tabular rounded-md border border-white/15 bg-white/5 px-2 py-0.5 font-display text-sm font-semibold text-zinc-100">
+                <span className="tabular rounded-md border border-white/15 bg-surface px-2 py-0.5 font-display text-sm font-semibold text-zinc-100">
                   {range}
                 </span>
               ) : null}
@@ -110,7 +110,7 @@ export function ArtistsTab({ artists, scoped, blocked, rank, seasonTiers, owned,
       {visible.length === 0 && unavailable.length === 0 && <p className="mt-6 text-base text-zinc-400">{C.artists.empty}</p>}
 
       {unavailable.length > 0 && (
-        <section className="mt-6 border-t border-white/10 pt-4">
+        <section className="mt-6 border-t border-line pt-4">
           <h2 className="mb-1 flex items-center gap-2">
             <span className="inline-flex items-center gap-1 rounded-md border border-amber-500/40 bg-amber-500/10 px-2 py-0.5 text-sm font-semibold text-amber-300">
               <Icon d={ICONS.info} className="h-4 w-4 shrink-0" />
@@ -174,10 +174,10 @@ function ArtistCard({
     <li>
       <details
         className={`group h-full overflow-hidden rounded-xl border ${
-          inTeam ? "border-gold/30 bg-gold/5" : blocked ? "border-amber-500/25 bg-panel/50" : "border-white/10 bg-panel/70"
+          inTeam ? "border-gold/30 bg-gold/5" : blocked ? "border-amber-500/25 bg-panel/50" : "border-line bg-panel/70"
         }`}
       >
-        <summary className="flex cursor-pointer list-none items-center gap-2 rounded-xl p-2 transition-colors duration-200 hover:bg-white/5 focus-visible:-outline-offset-2 focus-visible:outline-2 focus-visible:outline-gold [&::-webkit-details-marker]:hidden">
+        <summary className="flex cursor-pointer list-none items-center gap-2 rounded-xl p-2 transition-colors duration-200 hover:bg-surface focus-visible:-outline-offset-2 focus-visible:outline-2 focus-visible:outline-gold [&::-webkit-details-marker]:hidden">
           <span className="relative block h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-panel-2">
             {a.photoUrl ? (
               <Image
@@ -208,7 +208,7 @@ function ArtistCard({
             className="h-4 w-4 shrink-0 text-zinc-400 transition-transform duration-200 group-open:rotate-180"
           />
         </summary>
-        <div className="border-t border-white/10 px-2 pt-1.5 pb-2">
+        <div className="border-t border-line px-2 pt-1.5 pb-2">
           <div className="flex items-center justify-between gap-2">
             <span className="flex items-center gap-1">
               {r ? <RankBadge rank={r.rank} size={r.size} label={t(C.pool.rank, { n: r.rank, total: r.size })} /> : <TierBadge tier={tier} />}
@@ -232,11 +232,11 @@ function ArtistCard({
             </p>
           )}
           {blocked && (
-            <p className="mt-1.5 rounded-md border border-amber-500/40 bg-ink/85 px-1.5 py-0.5 text-center text-[11px] font-semibold text-amber-300">
+            <p className="mt-1.5 rounded-md border border-amber-500/40 bg-ink/85 px-1.5 py-0.5 text-center text-2xs font-semibold text-amber-300">
               {C.pool.blocked}
             </p>
           )}
-          <SkillList baseDmg={a.baseDmg} skills={a.skills} locale={locale} className="mt-1.5 border-t border-white/10 pt-1" />
+          <SkillList baseDmg={a.baseDmg} skills={a.skills} locale={locale} className="mt-1.5 border-t border-line pt-1" />
         </div>
         <div className="flex flex-col">
           <button
@@ -249,7 +249,7 @@ function ArtistCard({
             className={`flex min-h-11 cursor-pointer items-center justify-center gap-1.5 border-t px-2 text-xs font-semibold transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-50 ${
               inTeam
                 ? "border-gold/30 bg-gold/10 text-gold hover:bg-gold/15"
-                : "border-white/10 text-zinc-300 hover:bg-white/5 hover:text-zinc-100"
+                : "border-line text-zinc-300 hover:bg-surface hover:text-zinc-100"
             }`}
           >
             <Icon d={inTeam ? ICONS.check : ICONS.plus} className="h-3.5 w-3.5 shrink-0" />
@@ -265,7 +265,7 @@ function ArtistCard({
               className={`flex min-h-11 cursor-pointer items-center justify-center gap-1.5 border-t px-2 text-xs font-semibold transition-colors duration-200 disabled:cursor-wait disabled:opacity-60 ${
                 isOwned
                   ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/15"
-                  : "border-white/10 text-zinc-300 hover:bg-white/5 hover:text-zinc-100"
+                  : "border-line text-zinc-300 hover:bg-surface hover:text-zinc-100"
               }`}
             >
               <Icon d={isOwned ? ICONS.check : ICONS.plus} className="h-3.5 w-3.5 shrink-0" />

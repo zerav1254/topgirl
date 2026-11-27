@@ -8,7 +8,7 @@ import { saveProfile } from "@/app/[locale]/profile/actions";
 import { ICONS, Icon } from "@/components/artist-ui";
 import { FramePicker } from "@/components/frame-picker";
 
-const FIELD = "min-h-11 rounded-lg border border-white/10 bg-panel/80 px-3 py-2 text-base text-zinc-100 focus:border-brand/60";
+const FIELD = "min-h-11 rounded-lg border border-line bg-panel/80 px-3 py-2 text-base text-zinc-100 focus:border-brand/60";
 
 export function ProfileForm({ profile, locale }: { profile: Profile; locale: Locale }) {
   const C = DICT[locale].profile;

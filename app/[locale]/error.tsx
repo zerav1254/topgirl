@@ -12,7 +12,7 @@ export default function Error({ reset }: { error: Error & { digest?: string }; r
   const C = DICT[locale].error;
   return (
     <main id="main" className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center px-4 pt-10 pb-28">
-      <section className="rounded-2xl border border-white/10 bg-panel/80 p-5 text-center sm:p-6">
+      <section className="rounded-2xl border border-line bg-panel/80 p-5 text-center sm:p-6">
         <h1 className="font-display text-2xl font-bold tracking-tight">{C.title}</h1>
         <p className="mt-2 text-sm text-zinc-400">{C.description}</p>
         <div className="mt-5 flex flex-col gap-2">
@@ -26,7 +26,7 @@ export default function Error({ reset }: { error: Error & { digest?: string }; r
           </button>
           <Link
             href={`/${locale}`}
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/10 px-4 text-sm font-semibold text-zinc-400 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-line px-4 text-sm font-semibold text-zinc-400 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
           >
             <Icon d={ICONS.home} className="h-4 w-4 shrink-0" />
             {DICT[locale].notFound.home}
