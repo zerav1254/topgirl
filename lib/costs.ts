@@ -14,13 +14,16 @@ export type TierCosts = CostItem[][];
 
 export type VillaStage = { stage: number; name: string; itemName: string; amount: number };
 
-export type VillaSuite = { stage: number; suite: number; name: string; itemName: string; amount: number };
+export type VillaSuite = { stage: number; suite: number; name: string; itemName: string; levelMax: number; amount: number };
 
 export type VillaStaff = { id: number; name: string; staffType: number; tier: number; itemName: string; amount: number };
 
 export type CeoStage = { stage: number; name: string; itemName: string; amount: number };
 
-export type CeoOutfit = { stage: number; outfit: number; name: string; itemName: string; amount: number };
+export type CeoOutfit = { stage: number; outfit: number; name: string; itemName: string; levelMax: number; amount: number };
+
+// Zona ruang koleksi (CCollectDispatchCollectionZone).
+export type CollectionZone = { zone: number; name: string; icon: string };
 
 // Item koleksi ruang pamer; rarity 2/3/4 = R/SR/SSR, biaya per level pakai permata sesuai rarity.
 export type CollectionItem = { id: number; zone: number; name: string; rarity: number; cost: CostItem };
@@ -56,7 +59,7 @@ export type CostBook = {
     // staffCosts[tier - 1] = biaya level staf; 3 tipe staf berbagi biaya.
     staffCosts: TierCosts;
   };
-  collection: { platforms: Record<number, CostItem[]>; stars: Record<number, CostItem[]>; items: CollectionItem[] };
+  collection: { platforms: Record<number, CostItem[]>; stars: Record<number, CostItem[]>; items: CollectionItem[]; zones: CollectionZone[] };
   ceo: { stages: CeoStage[]; outfits: CeoOutfit[]; sportCosts: TierCosts };
 };
 
@@ -74,11 +77,12 @@ type HqRoomRow = { tier: number; slot: number; room: string; name: string };
 type VillaStageRow = { stage: number; name: string; item_name: string; amount: number };
 // Relasi embed bisa berbentuk objek atau array tergantung tipe yang digenerate Supabase.
 type StageRef = { stage: number } | { stage: number }[];
-type VillaSuiteRow = { suite: number; name: string; item_name: string; amount: number; villa_stages: StageRef };
+type VillaSuiteRow = { suite: number; name: string; item_name: string; level_max: number; amount: number; villa_stages: StageRef };
 type VillaStaffRow = { id: number; name: string; staff_type: number; tier: number; item_name: string; amount: number };
 type CeoStageRow = { stage: number; name: string; item_name: string; amount: number };
-type CeoOutfitRow = { outfit: number; name: string; item_name: string; amount: number; ceo_appearance_stages: StageRef };
+type CeoOutfitRow = { outfit: number; name: string; item_name: string; level_max: number; amount: number; ceo_appearance_stages: StageRef };
 type CollectionItemRow = { id: number; zone: number; name: string; rarity: number; gem_item: number; gem_name: string };
+type CollectionZoneRow = { zone: number; name: string; icon: string };
 
 const stageOf = (ref: StageRef) => (Array.isArray(ref) ? (ref[0]?.stage ?? 0) : ref.stage);
 
@@ -120,6 +124,7 @@ export async function loadCostBook(): Promise<CostBook> {
     ceoSportCosts,
     collectionItems,
     collectionLevels,
+    collectionZones,
   ] = await Promise.all([
     supabase.from("artist_exp_curves").select("artist_ids, steps"),
     supabase.from("artist_star_curve").select("star, item_name, amount").order("star"),
@@ -134,14 +139,15 @@ export async function loadCostBook(): Promise<CostBook> {
     supabase.from("headquarters_room_cost_items").select("tier, item_id, item_name, amounts").order("tier"),
     supabase.from("headquarters_rooms").select("tier, slot, room, name").order("tier").order("slot"),
     supabase.from("villa_stages").select("stage, name, item_name, amount").order("stage"),
-    supabase.from("villa_suites").select("suite, name, item_name, amount, villa_stages!inner(stage)").order("id"),
+    supabase.from("villa_suites").select("suite, name, item_name, level_max, amount, villa_stages!inner(stage)").order("id"),
     supabase.from("villa_staff").select("id, name, staff_type, tier, item_name, amount").order("id"),
     supabase.from("villa_staff_cost_items").select("tier, item_id, item_name, amounts").order("tier"),
     supabase.from("ceo_appearance_stages").select("stage, name, item_name, amount").order("stage"),
-    supabase.from("ceo_appearance_outfits").select("outfit, name, item_name, amount, ceo_appearance_stages!inner(stage)").order("id"),
+    supabase.from("ceo_appearance_outfits").select("outfit, name, item_name, level_max, amount, ceo_appearance_stages!inner(stage)").order("id"),
     supabase.from("ceo_sport_cost_items").select("tier, item_id, item_name, amounts").order("tier"),
     supabase.from("collection_items").select("id, zone, name, rarity, gem_item, gem_name").order("id"),
     supabase.from("collection_levels").select("level, amount").order("level"),
+    supabase.from("collection_zones").select("zone, name, icon").order("zone"),
   ]);
 
   if (curves.error) fail("kurva EXP", curves.error.message);
@@ -165,6 +171,7 @@ export async function loadCostBook(): Promise<CostBook> {
   if (ceoSportCosts.error) fail("biaya olahraga CEO", ceoSportCosts.error.message);
   if (collectionItems.error) fail("item koleksi", collectionItems.error.message);
   if (collectionLevels.error) fail("biaya level koleksi", collectionLevels.error.message);
+  if (collectionZones.error) fail("zona koleksi", collectionZones.error.message);
 
   const curveRows = (curves.data as CurveRow[]).map((r) => ({ artistIds: r.artist_ids, steps: r.steps.map(Number) }));
   const curveOf = new Map<number, number>();
@@ -214,6 +221,7 @@ export async function loadCostBook(): Promise<CostBook> {
         suite: r.suite,
         name: r.name,
         itemName: r.item_name,
+        levelMax: r.level_max,
         amount: Number(r.amount),
       })),
       staff: (villaStaff.data as VillaStaffRow[]).map((r) => ({
@@ -236,6 +244,7 @@ export async function loadCostBook(): Promise<CostBook> {
         rarity: r.rarity,
         cost: { itemId: r.gem_item, itemName: r.gem_name, amounts: collectionAmounts },
       })),
+      zones: collectionZones.data as CollectionZoneRow[],
     },
     ceo: {
       stages: (ceoStages.data as CeoStageRow[]).map((r) => ({
@@ -249,6 +258,7 @@ export async function loadCostBook(): Promise<CostBook> {
         outfit: r.outfit,
         name: r.name,
         itemName: r.item_name,
+        levelMax: r.level_max,
         amount: Number(r.amount),
       })),
       sportCosts: byTier(ceoSportCosts.data as TierCostRow[]),

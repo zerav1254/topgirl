@@ -3,10 +3,12 @@
 import { useMemo, useState } from "react";
 import { sumLevels } from "@/lib/cost-calc";
 import type { CostItem } from "@/lib/costs";
-import { clamp, invalid, label, NumberField, panel, result, Select, Totals, type CostDict } from "./fields";
+import { clamp, invalid, label, NumberField, panel, result, Segmented, Select, Totals, type CostDict } from "./fields";
 
 const MIN = 1;
 const MAX = 60;
+
+type Part = "case" | "wall" | "floor";
 
 export function MuseumPanel({
   tiers,
@@ -17,20 +19,33 @@ export function MuseumPanel({
   C: CostDict;
   format: (value: number) => string;
 }) {
+  const [part, setPart] = useState<Part>("case");
   const [tier, setTier] = useState(1);
   const [from, setFrom] = useState(MIN);
   const [to, setTo] = useState(MAX);
 
+  // Biaya tiap bagian identik di config; pilihan bagian hanya untuk kejelasan.
+  const partName = part === "case" ? C.museumPart1 : part === "wall" ? C.museumPart2 : C.museumPart3;
   const totals = useMemo(() => sumLevels(tiers[tier - 1] ?? [], from, to), [tiers, tier, from, to]);
   const bad = to <= from;
 
   return (
     <section aria-label={C.tabMuseum} className={panel}>
       <p className={`${label} mb-2`}>{C.tabMuseum}</p>
-      <Select id="cost-museum-tier" text={C.tier} value={tier} onChange={setTier}>
+      <Segmented
+        text={C.tabMuseum}
+        value={part}
+        onChange={setPart}
+        options={[
+          { id: "case", label: C.museumPart1 },
+          { id: "wall", label: C.museumPart2 },
+          { id: "floor", label: C.museumPart3 },
+        ]}
+      />
+      <Select id="cost-museum-tier" text={C.museumGallery} value={tier} onChange={setTier}>
         {tiers.map((_, index) => (
           <option key={index} value={index + 1}>
-            {C.tier} {index + 1}
+            {C.museumGallery} {index + 1}
           </option>
         ))}
       </Select>
@@ -48,7 +63,7 @@ export function MuseumPanel({
 
       {bad ? null : (
         <div className={result}>
-          <Totals totals={totals} note={C.museumNote} empty={C.noCost} format={format} />
+          <Totals totals={totals} note={`${partName} · ${C.museumNote}`} empty={C.noCost} format={format} />
         </div>
       )}
     </section>

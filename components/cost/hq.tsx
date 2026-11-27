@@ -76,10 +76,18 @@ export function HqPanel({ hq, C, format }: { hq: CostBook["hq"]; C: CostDict; fo
       ) : (
         <>
           <div className="grid grid-cols-2 gap-3">
-            <Select id="cost-hq-tier" text={C.tier} value={tier} onChange={setTier}>
+            <Select
+              id="cost-hq-tier"
+              text={C.hqRooms}
+              value={tier}
+              onChange={(value) => {
+                setTier(value);
+                setSlot(0);
+              }}
+            >
               {tiers.map((value) => (
                 <option key={value} value={value}>
-                  {C.tier} {value}
+                  {hq.rooms.find((room) => room.tier === value)?.room ?? `${C.tier} ${value}`}
                 </option>
               ))}
             </Select>

@@ -105,6 +105,11 @@ export const collectionPlatformIcon = (index: number) =>
 // Ikon 30 item koleksi ruang pamer (collection_53010101..53010506).
 export const collectionIcon = (id: number) => `${ROOT}/koleksi/collection_${id}.webp`;
 
+// Peta + ikon area ruang koleksi.
+export const COLLECTION_MAP = `${ROOT}/koleksi/UI_Collection_Bg_Map_01.webp`;
+
+export const collectionZoneIcon = (icon: string, active = false) => `${ROOT}/koleksi/${icon}${active ? "_a" : ""}.webp`;
+
 // Ikon tombol tab kalkulator: tab artis memakai glyph bottom nav, sisanya
 // badge UI_Item_Tag_Icon game (markas, vila, mobil, koleksi, CEO) + museum.
 export const tabIcon = (tab: string) => `${ROOT}/menu/${tab}.webp`;

@@ -10,7 +10,6 @@ import { CeoPanel } from "./cost/ceo";
 import { CollectionPanel } from "./cost/collection";
 import { chip, clamp, field, invalid, label, NumberField, panel, result, Select, Totals } from "./cost/fields";
 import { HqPanel } from "./cost/hq";
-import { MuseumPanel } from "./cost/museum";
 import { VillaPanel } from "./cost/villa";
 
 // Satu tab = satu menu game; isinya beberapa panel (flat + persentase).
@@ -155,6 +154,7 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
       id: "parts",
       node: (
         <section aria-label={C.tabParts} className={panel}>
+          <p className={`${label} mb-2`}>{C.tabParts}</p>
           {partGroups.map((group) => (
             <div key={group.slot} role="group" aria-label={group.label} className="mb-3 last:mb-0">
               <p className={label}>{group.label}</p>
@@ -217,6 +217,7 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
       id: "mods",
       node: (
         <section aria-label={C.tabMods} className={panel}>
+          <p className={`${label} mb-2`}>{C.tabMods}</p>
           <div role="group" aria-label={C.modPart}>
             <p className={label}>{C.modPart}</p>
             <div className="mt-1 grid grid-cols-4 gap-2">
@@ -298,8 +299,7 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
     },
     { tab: "hq", id: "hq", node: <HqPanel hq={book.hq} C={C} format={format} /> },
     { tab: "villa", id: "villa", node: <VillaPanel villa={book.villa} C={C} format={format} /> },
-    { tab: "collection", id: "collection", node: <CollectionPanel collection={book.collection} C={C} format={format} /> },
-    { tab: "collection", id: "museum", node: <MuseumPanel tiers={book.museum} C={C} format={format} /> },
+    { tab: "collection", id: "collection", node: <CollectionPanel collection={book.collection} museum={book.museum} C={C} format={format} /> },
     { tab: "ceo", id: "ceo", node: <CeoPanel ceo={book.ceo} C={C} format={format} /> },
   ];
 

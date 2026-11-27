@@ -5,16 +5,19 @@ import { expBetween, sumLevels } from "@/lib/cost-calc";
 import type { CostBook } from "@/lib/costs";
 import { clamp, invalid, NumberField, panel, result, Segmented, Select, Totals, type CostDict, type Total } from "./fields";
 
-type Mode = "villa" | "staff";
+type Mode = "suite" | "staff";
 
 const STAFF_MIN = 1;
 const STAFF_MAX = 60;
 
 export function VillaPanel({ villa, C, format }: { villa: CostBook["villa"]; C: CostDict; format: (value: number) => string }) {
-  const [mode, setMode] = useState<Mode>("villa");
+  const [mode, setMode] = useState<Mode>("suite");
   // Helper stage: pakai nama stage dari game. 0 = belum punya vila.
   const [stageFrom, setStageFrom] = useState(0);
   const [stageTo, setStageTo] = useState(villa.stages.at(-1)?.stage ?? 0);
+  const [suiteId, setSuiteId] = useState(1);
+  const [suiteFrom, setSuiteFrom] = useState(0);
+  const [suiteTo, setSuiteTo] = useState(5);
   const [staffId, setStaffId] = useState(villa.staff[0]?.id ?? 0);
   const [staffFrom, setStaffFrom] = useState(STAFF_MIN);
   const [staffTo, setStaffTo] = useState(STAFF_MAX);
@@ -28,10 +31,13 @@ export function VillaPanel({ villa, C, format }: { villa: CostBook["villa"]; C: 
     [stageBad, villa.stages, stageFrom, stageTo],
   );
   const stageItem = villa.stages.find((item) => item.itemName)?.itemName ?? "";
-  // Empat suite pada stage target berbagi biaya buka yang sama.
   const targetSuites = villa.suites.filter((item) => item.stage === stageTo);
-  const suiteAmount = targetSuites.reduce((total, item) => total + item.amount, 0);
-  const suiteItem = targetSuites.find((item) => item.itemName)?.itemName ?? "";
+  const suite = targetSuites.find((item) => item.suite === suiteId) ?? targetSuites[0];
+  const suiteMax = suite?.levelMax ?? 5;
+  const suiteLevelBad = suiteTo <= suiteFrom || suiteTo > suiteMax;
+  // Biaya suite konstan per level (ClassUpgradeCost), jadi amount x jumlah level.
+  const suiteAmount = suiteLevelBad ? 0 : suite ? suite.amount * (suiteTo - suiteFrom) : 0;
+  const suiteItem = suite?.itemName ?? "";
   const totals = [
     stageAmount > 0 && stageItem ? { name: stageItem, amount: stageAmount } : null,
     suiteAmount > 0 && suiteItem ? { name: suiteItem, amount: suiteAmount } : null,
@@ -51,12 +57,12 @@ export function VillaPanel({ villa, C, format }: { villa: CostBook["villa"]; C: 
         value={mode}
         onChange={setMode}
         options={[
-          { id: "villa", label: C.tabVilla },
+          { id: "suite", label: C.villaSuite },
           { id: "staff", label: C.villaStaff },
         ]}
       />
 
-      {mode === "villa" ? (
+      {mode === "suite" ? (
         <>
           <div className="grid grid-cols-2 gap-3">
             <Select id="cost-villa-from" text={C.stageFrom} value={stageFrom} onChange={setStageFrom}>
@@ -67,7 +73,16 @@ export function VillaPanel({ villa, C, format }: { villa: CostBook["villa"]; C: 
                 </option>
               ))}
             </Select>
-            <Select id="cost-villa-to" text={C.stageTo} value={stageTo} onChange={setStageTo}>
+            <Select
+              id="cost-villa-to"
+              text={C.stageTo}
+              value={stageTo}
+              onChange={(value) => {
+                setStageTo(value);
+                const max = villa.suites.find((item) => item.stage === value && item.suite === suiteId)?.levelMax ?? 5;
+                setSuiteTo((current) => Math.min(current, max));
+              }}
+            >
               {villa.stages.map((item) => (
                 <option key={item.stage} value={item.stage}>
                   {item.name}
@@ -76,8 +91,23 @@ export function VillaPanel({ villa, C, format }: { villa: CostBook["villa"]; C: 
             </Select>
           </div>
 
-          {stageBad ? (
-            <p id="cost-villa-stage-error" role="status" className={invalid}>
+          <div className="mt-3">
+            <Select id="cost-villa-suite" text={C.villaSuite} value={suiteId} onChange={setSuiteId}>
+              {targetSuites.map((item) => (
+                <option key={item.suite} value={item.suite}>
+                  {item.name}
+                </option>
+              ))}
+            </Select>
+          </div>
+
+          <div className="mt-3 grid grid-cols-2 gap-3">
+            <NumberField id="cost-villa-suite-from" text={C.levelFrom} value={suiteFrom} min={0} max={suiteMax} invalid={suiteLevelBad} describedBy={suiteLevelBad ? "cost-villa-suite-error" : undefined} onChange={(v) => setSuiteFrom(clamp(v, 0, suiteMax))} />
+            <NumberField id="cost-villa-suite-to" text={C.levelTo} value={suiteTo} min={0} max={suiteMax} invalid={suiteLevelBad} describedBy={suiteLevelBad ? "cost-villa-suite-error" : undefined} onChange={(v) => setSuiteTo(clamp(v, 0, suiteMax))} />
+          </div>
+
+          {stageBad || suiteLevelBad ? (
+            <p id="cost-villa-suite-error" role="status" className={invalid}>
               {C.invalid}
             </p>
           ) : (

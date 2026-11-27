@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { expBetween, sumLevels } from "@/lib/cost-calc";
 import type { CostBook } from "@/lib/costs";
-import { clamp, invalid, NumberField, panel, result, Segmented, Select, Totals, type CostDict } from "./fields";
+import { clamp, invalid, NumberField, panel, result, Segmented, Select, Totals, type CostDict, type Total } from "./fields";
 
 type Mode = "appearance" | "sport";
 
@@ -15,6 +15,9 @@ export function CeoPanel({ ceo, C, format }: { ceo: CostBook["ceo"]; C: CostDict
   // Helper tampilan: pakai nama stage dari game, bukan nomor. 0 = belum punya.
   const [stageFrom, setStageFrom] = useState(0);
   const [stageTo, setStageTo] = useState(ceo.stages.at(-1)?.stage ?? 0);
+  const [outfitId, setOutfitId] = useState(1);
+  const [outfitFrom, setOutfitFrom] = useState(0);
+  const [outfitTo, setOutfitTo] = useState(10);
   const [tier, setTier] = useState(1);
   const [sportFrom, setSportFrom] = useState(SPORT_MIN);
   const [sportTo, setSportTo] = useState(SPORT_MAX);
@@ -28,14 +31,17 @@ export function CeoPanel({ ceo, C, format }: { ceo: CostBook["ceo"]; C: CostDict
     [appearanceBad, ceo.stages, stageFrom, stageTo],
   );
   const promoItem = ceo.stages.find((item) => item.itemName)?.itemName ?? "";
-  // Empat outfit pada tampilan target berbagi biaya buka yang sama.
   const targetOutfits = ceo.outfits.filter((item) => item.stage === stageTo);
-  const outfitAmount = targetOutfits.reduce((total, item) => total + item.amount, 0);
-  const outfitItem = targetOutfits.find((item) => item.itemName)?.itemName ?? "";
+  const outfit = targetOutfits.find((item) => item.outfit === outfitId) ?? targetOutfits[0];
+  const outfitMax = outfit?.levelMax ?? 10;
+  const outfitBad = outfitTo <= outfitFrom || outfitTo > outfitMax;
+  // Biaya aksesori konstan per level (ClassUpgradeCost), jadi amount x jumlah level.
+  const outfitAmount = outfitBad ? 0 : outfit ? outfit.amount * (outfitTo - outfitFrom) : 0;
+  const outfitItem = outfit?.itemName ?? "";
   const totals = [
     promoAmount > 0 && promoItem ? { name: promoItem, amount: promoAmount } : null,
     outfitAmount > 0 && outfitItem ? { name: outfitItem, amount: outfitAmount } : null,
-  ].filter((item): item is { name: string; amount: number } => item !== null);
+  ].filter((item): item is Total => item !== null);
 
   const sportTotals = useMemo(
     () => sumLevels(ceo.sportCosts[tier - 1] ?? [], sportFrom, sportTo),
@@ -65,7 +71,16 @@ export function CeoPanel({ ceo, C, format }: { ceo: CostBook["ceo"]; C: CostDict
                 </option>
               ))}
             </Select>
-            <Select id="cost-ceo-to" text={C.appearanceTo} value={stageTo} onChange={setStageTo}>
+            <Select
+              id="cost-ceo-to"
+              text={C.appearanceTo}
+              value={stageTo}
+              onChange={(value) => {
+                setStageTo(value);
+                const max = ceo.outfits.find((item) => item.stage === value && item.outfit === outfitId)?.levelMax ?? 10;
+                setOutfitTo((current) => Math.min(current, max));
+              }}
+            >
               {ceo.stages.map((item) => (
                 <option key={item.stage} value={item.stage}>
                   {item.name}
@@ -74,7 +89,22 @@ export function CeoPanel({ ceo, C, format }: { ceo: CostBook["ceo"]; C: CostDict
             </Select>
           </div>
 
-          {appearanceBad ? (
+          <div className="mt-3">
+            <Select id="cost-ceo-outfit" text={C.ceoAppearance} value={outfitId} onChange={setOutfitId}>
+              {targetOutfits.map((item) => (
+                <option key={item.outfit} value={item.outfit}>
+                  {item.name}
+                </option>
+              ))}
+            </Select>
+          </div>
+
+          <div className="mt-3 grid grid-cols-2 gap-3">
+            <NumberField id="cost-ceo-outfit-from" text={C.levelFrom} value={outfitFrom} min={0} max={outfitMax} invalid={outfitBad} describedBy={outfitBad ? "cost-ceo-error" : undefined} onChange={(v) => setOutfitFrom(clamp(v, 0, outfitMax))} />
+            <NumberField id="cost-ceo-outfit-to" text={C.levelTo} value={outfitTo} min={0} max={outfitMax} invalid={outfitBad} describedBy={outfitBad ? "cost-ceo-error" : undefined} onChange={(v) => setOutfitTo(clamp(v, 0, outfitMax))} />
+          </div>
+
+          {appearanceBad || outfitBad ? (
             <p id="cost-ceo-error" role="status" className={invalid}>
               {C.invalid}
             </p>
