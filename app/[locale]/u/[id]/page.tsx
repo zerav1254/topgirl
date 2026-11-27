@@ -38,6 +38,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
   const bySlug = new Map(artists.map((a) => [a.slug, a]));
   const uniqueArtists = new Set(data.lineups.flatMap((l) => l.slugs)).size;
 
+
   return (
     <main id="main" className="mx-auto flex w-full max-w-2xl flex-col gap-4 px-4 pt-4 pb-28 sm:pt-6">
       <section className="relative overflow-hidden rounded-2xl border border-line bg-panel/80 p-4 sm:p-5">
@@ -73,7 +74,6 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
         ) : (
           <ul className="flex flex-col gap-2">
             {data.lineups.map((l) => {
-              const preview = l.slugs.map((s) => bySlug.get(s)).filter((a) => a !== undefined);
               return (
                 <li key={l.id}>
                   <Link
@@ -82,11 +82,16 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
                   >
                     <span className="flex items-center gap-3">
                       <span className="flex shrink-0 -space-x-2">
-                        {preview.map((a) => (
-                          <span key={a.slug} className="rounded-lg ring-2 ring-panel">
-                            <Avatar artist={a} size="h-8 w-8" />
-                          </span>
-                        ))}
+                        {Array.from({ length: TEAM_SIZE }).map((_, i) => {
+                          const a = l.slugs[i] ? bySlug.get(l.slugs[i]) : undefined;
+                          return a ? (
+                            <span key={i} className="rounded-lg ring-2 ring-panel">
+                              <Avatar artist={a} size="h-8 w-8" />
+                            </span>
+                          ) : (
+                            <span key={i} aria-hidden="true" className="h-8 w-8 rounded-lg border border-dashed border-line bg-panel-2/60 ring-2 ring-panel" />
+                          );
+                        })}
                       </span>
                       <span className="min-w-0 flex-1">
                         <span className="block truncate text-sm font-semibold">{l.name}</span>
