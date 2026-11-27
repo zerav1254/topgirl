@@ -300,7 +300,18 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
             onClick={() => setTab(item.id)}
             className={`${chip(tab === item.id)} flex items-center justify-center gap-2`}
           >
-            <Image src={tabIcon(item.id)} alt="" width={24} height={24} sizes="24px" className="h-6 w-6 shrink-0 object-contain" />
+            {item.id === "artist" ? (
+              <span aria-hidden="true" className="artist-glyph h-6 w-6 shrink-0" />
+            ) : (
+              <Image
+                src={tabIcon(item.id)}
+                alt=""
+                width={24}
+                height={24}
+                sizes="24px"
+                className="h-6 w-6 shrink-0 object-contain"
+              />
+            )}
             {item.label}
           </button>
         ))}
