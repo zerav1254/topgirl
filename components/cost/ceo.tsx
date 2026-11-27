@@ -32,11 +32,12 @@ export function CeoPanel({ ceo, C, format }: { ceo: CostBook["ceo"]; C: CostDict
   );
   const promoItem = ceo.stages.find((item) => item.itemName)?.itemName ?? "";
   const targetOutfits = ceo.outfits.filter((item) => item.stage === stageTo);
-  const outfit = targetOutfits.find((item) => item.outfit === outfitId) ?? targetOutfits[0];
+  const outfit = (outfitId === 0 ? targetOutfits[0] : targetOutfits.find((item) => item.outfit === outfitId)) ?? targetOutfits[0];
+  const outfitCount = outfitId === 0 ? Math.max(targetOutfits.length, 1) : 1;
   const outfitMax = outfit?.levelMax ?? 10;
   const outfitBad = outfitTo <= outfitFrom || outfitTo > outfitMax;
-  // Biaya aksesori konstan per level (ClassUpgradeCost), jadi amount x jumlah level.
-  const outfitAmount = outfitBad ? 0 : outfit ? outfit.amount * (outfitTo - outfitFrom) : 0;
+  // Biaya aksesori konstan per level (ClassUpgradeCost), jadi amount x jumlah level x jumlah outfit.
+  const outfitAmount = outfitBad ? 0 : outfit ? outfit.amount * (outfitTo - outfitFrom) * outfitCount : 0;
   const outfitItem = outfit?.itemName ?? "";
   const totals = [
     promoAmount > 0 && promoItem ? { name: promoItem, amount: promoAmount } : null,
@@ -77,7 +78,7 @@ export function CeoPanel({ ceo, C, format }: { ceo: CostBook["ceo"]; C: CostDict
               value={stageTo}
               onChange={(value) => {
                 setStageTo(value);
-                const max = ceo.outfits.find((item) => item.stage === value && item.outfit === outfitId)?.levelMax ?? 10;
+                const max = ceo.outfits.find((item) => item.stage === value && item.outfit === (outfitId === 0 ? 1 : outfitId))?.levelMax ?? 10;
                 setOutfitTo((current) => Math.min(current, max));
               }}
             >
@@ -91,6 +92,7 @@ export function CeoPanel({ ceo, C, format }: { ceo: CostBook["ceo"]; C: CostDict
 
           <div className="mt-3">
             <Select id="cost-ceo-outfit" text={C.ceoAppearance} value={outfitId} onChange={setOutfitId}>
+              <option value={0}>{C.ceoAllOutfits}</option>
               {targetOutfits.map((item) => (
                 <option key={item.outfit} value={item.outfit}>
                   {item.name}
