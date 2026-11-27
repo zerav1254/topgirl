@@ -9,6 +9,7 @@ export const ja: Dict = {
   header: {
     artists: "Artists",
     team: "Team Builder",
+    teamShort: "チーム",
     mainNav: "メインナビゲーション",
     docArtists: "Artists — TopGirl",
     docTeam: "Team Builder — TopGirl",
@@ -146,6 +147,7 @@ export const ja: Dict = {
     ceoAppearanceNote: "ステージ昇格はクラウンカード、アクセサリーのレベルアップはデビットカードを使います。すべて選ぶと4つ分をまとめて計算します。",
     ceoSport: "スポーツ",
     ceoSportNote: "スポーツのレベル費用。同じティアのスポーツ種別は費用を共有します。",
+    loginHint: "サインインすると車、HQ、ヴィラ、コレクション、CEO タブが使えます。",
   },
   common: {
     loading: "読み込み中…",
@@ -283,6 +285,7 @@ export const ja: Dict = {
     avgScore: "平均",
     buildOwn: "自分のチームを編成",
     notFound: "Lineup が見つかりません。",
+    emptyTeam: "このラインアップにはまだアーティストがいません。",
     error: "Lineup を保存できませんでした。",
     needTeam: "先に Team Builder でチームを編成してください。",
     loginHint: "サインインして lineup を保存。",

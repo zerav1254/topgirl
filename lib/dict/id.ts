@@ -7,6 +7,7 @@ export const id = {
   header: {
     artists: "Artists",
     team: "Team Builder",
+    teamShort: "Tim",
     mainNav: "Navigasi utama",
     docArtists: "Artists — TopGirl",
     docTeam: "Team Builder — TopGirl",
@@ -145,6 +146,7 @@ export const id = {
     ceoAppearanceNote: "Promosi tampilan memakai Kartu mahkota. Tiap aksesori naik level memakai Kartu debit; pilih semua outfit untuk 4 aksesori sekaligus.",
     ceoSport: "Olahraga",
     ceoSportNote: "Biaya level olahraga. Jenis olahraga dalam tier yang sama berbagi biaya.",
+    loginHint: "Masuk untuk membuka tab mobil, markas, vila, koleksi, dan CEO.",
   },
   common: {
     loading: "Memuat…",
@@ -282,6 +284,7 @@ export const id = {
     avgScore: "Rata-rata",
     buildOwn: "Susun tim sendiri",
     notFound: "Lineup tidak ditemukan.",
+    emptyTeam: "Lineup ini belum berisi artist.",
     error: "Lineup gagal disimpan.",
     needTeam: "Susun tim dulu di Team Builder.",
     loginHint: "Masuk untuk menyimpan lineup.",

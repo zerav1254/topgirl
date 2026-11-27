@@ -54,17 +54,19 @@ export function BottomNav({ locale }: { locale: Locale }) {
         >
           <span className="relative">
             <span aria-hidden="true" className="team-glyph block h-5 w-5" />
-            <span
-              aria-hidden="true"
-              className={`tabular absolute -top-2.5 -right-3 grid h-5 min-w-5 place-items-center rounded-full px-1 text-2xs font-bold ${
-                full ? "bg-gold text-ink" : count > 0 ? "bg-brand text-white" : "bg-white/10 text-zinc-300"
-              }`}
-            >
-              {count}
-            </span>
+            {count > 0 && (
+              <span
+                aria-hidden="true"
+                className={`tabular absolute -top-2.5 -right-3 grid h-5 min-w-5 place-items-center rounded-full px-1 text-2xs font-bold ${
+                  full ? "bg-gold text-ink" : "bg-brand text-white"
+                }`}
+              >
+                {count}
+              </span>
+            )}
           </span>
           <span>
-            {C.header.team}
+            {C.header.teamShort}
             <span className="sr-only"> {t(C.header.tabCount, { n: count, size: TEAM_SIZE })}</span>
           </span>
         </Link>
@@ -81,19 +83,7 @@ export function BottomNav({ locale }: { locale: Locale }) {
           aria-current={onCost ? "page" : undefined}
           className={`${ITEM} ${onCost ? ACTIVE : IDLE}`}
         >
-          <svg
-            aria-hidden="true"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="h-5 w-5"
-          >
-            <rect x="4" y="2" width="16" height="20" rx="2" />
-            <path d="M8 6h8M8 11h1m3 0h1m3 0h1M8 15h1m3 0h1m3 0h1M8 19h1m3 0h1m3 0h1" />
-          </svg>
+          <span aria-hidden="true" className="cost-glyph h-5 w-5" />
           {C.header.cost}
         </Link>
         <Link

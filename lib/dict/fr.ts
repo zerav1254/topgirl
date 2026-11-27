@@ -9,6 +9,7 @@ export const fr: Dict = {
   header: {
     artists: "Artistes",
     team: "Team Builder",
+    teamShort: "Équipe",
     mainNav: "Navigation principale",
     docArtists: "Artistes — TopGirl",
     docTeam: "Team Builder — TopGirl",
@@ -147,6 +148,7 @@ export const fr: Dict = {
     ceoAppearanceNote: "La promotion de tenue utilise des cartes couronne. Chaque niveau d'accessoire utilise des cartes débit ; tout sélectionner pour les 4 accessoires.",
     ceoSport: "Sport",
     ceoSportNote: "Coût des niveaux de sport. Les sports d'un même palier partagent les coûts.",
+    loginHint: "Connectez-vous pour débloquer les onglets voiture, QG, villa, collection et CEO.",
   },
   common: {
     loading: "Chargement…",
@@ -284,6 +286,7 @@ export const fr: Dict = {
     avgScore: "Moyenne",
     buildOwn: "Composez votre équipe",
     notFound: "Composition introuvable.",
+    emptyTeam: "Cette composition ne contient encore aucun artiste.",
     error: "Composition non enregistrée.",
     loginHint: "Connectez-vous pour enregistrer des compositions.",
     needTeam: "Composez d’abord une équipe dans Team Builder.",

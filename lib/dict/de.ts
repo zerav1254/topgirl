@@ -9,6 +9,7 @@ export const de: Dict = {
   header: {
     artists: "Artists",
     team: "Team Builder",
+    teamShort: "Team",
     mainNav: "Hauptnavigation",
     docArtists: "Artists — TopGirl",
     docTeam: "Team Builder — TopGirl",
@@ -147,6 +148,7 @@ export const de: Dict = {
     ceoAppearanceNote: "Stufenaufstieg nutzt Kronenkarten. Jedes Accessoire-Level nutzt Debitkarten; alle auswählen für alle 4 Accessoires.",
     ceoSport: "Sport",
     ceoSportNote: "Levelkosten für Sport. Sportarten derselben Stufe teilen Kosten.",
+    loginHint: "Melde dich an, um die Tabs Auto, HQ, Villa, Sammlung und CEO freizuschalten.",
   },
   common: {
     loading: "Lädt…",
@@ -284,6 +286,7 @@ export const de: Dict = {
     avgScore: "Durchschnitt",
     buildOwn: "Stelle dein eigenes Team zusammen",
     notFound: "Lineup nicht gefunden.",
+    emptyTeam: "Dieses Lineup enthält noch keine Artists.",
     error: "Lineup konnte nicht gespeichert werden.",
     needTeam: "Stelle zuerst im Team Builder ein Team zusammen.",
     loginHint: "Melde dich an, um Lineups zu speichern.",

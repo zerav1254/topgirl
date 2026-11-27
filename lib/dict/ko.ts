@@ -9,6 +9,7 @@ export const ko: Dict = {
   header: {
     artists: "아티스트",
     team: "팀 빌더",
+    teamShort: "팀",
     mainNav: "주요 탐색",
     docArtists: "아티스트 — TopGirl",
     docTeam: "팀 빌더 — TopGirl",
@@ -146,6 +147,7 @@ export const ko: Dict = {
     ceoAppearanceNote: "스테이지 승급은 크라운 카드, 액세서리 레벨업은 데빗 카드를 사용합니다. 모두 선택하면 4개 액세서리를 한 번에 계산합니다.",
     ceoSport: "운동",
     ceoSportNote: "운동 레벨 비용. 같은 티어의 운동 유형은 비용을 공유합니다.",
+    loginHint: "로그인하면 자동차, 본부, 빌라, 컬렉션, CEO 탭을 사용할 수 있습니다.",
   },
   common: {
     loading: "불러오는 중…",
@@ -283,6 +285,7 @@ export const ko: Dict = {
     avgScore: "평균",
     buildOwn: "내 팀 구성하기",
     notFound: "라인업을 찾을 수 없습니다.",
+    emptyTeam: "이 라인업에는 아직 아티스트가 없습니다.",
     error: "라인업을 저장하지 못했습니다.",
     loginHint: "로그인하면 라인업을 저장할 수 있습니다.",
     needTeam: "먼저 Team Builder에서 팀을 구성하세요.",

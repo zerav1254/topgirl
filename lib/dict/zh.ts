@@ -9,6 +9,7 @@ export const zh: Dict = {
   header: {
     artists: "艺人",
     team: "阵容构建器",
+    teamShort: "队伍",
     mainNav: "主导航",
     docArtists: "艺人 — TopGirl",
     docTeam: "阵容构建器 — TopGirl",
@@ -146,6 +147,7 @@ export const zh: Dict = {
     ceoAppearanceNote: "阶段晋升使用皇冠卡，饰品升级使用借记卡；选择全部可一次计算 4 个饰品。",
     ceoSport: "运动",
     ceoSportNote: "运动等级费用。同一层级的运动类型费用相同。",
+    loginHint: "登录后可解锁车辆、总部、别墅、收藏和 CEO 标签页。",
   },
   common: {
     loading: "加载中…",
@@ -283,6 +285,7 @@ export const zh: Dict = {
     avgScore: "平均",
     buildOwn: "组建你自己的队伍",
     notFound: "未找到阵容。",
+    emptyTeam: "该阵容还没有艺人。",
     error: "无法保存阵容。",
     needTeam: "请先在阵容构建器中组建队伍。",
     loginHint: "登录后可保存阵容。",

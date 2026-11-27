@@ -9,6 +9,7 @@ export const en: Dict = {
   header: {
     artists: "Artists",
     team: "Team Builder",
+    teamShort: "Team",
     mainNav: "Main navigation",
     docArtists: "Artists — TopGirl",
     docTeam: "Team Builder — TopGirl",
@@ -147,6 +148,7 @@ export const en: Dict = {
     ceoAppearanceNote: "Stage promotion uses Crown Cards. Each accessory level-up uses Debit Cards; pick all outfits for all 4 accessories at once.",
     ceoSport: "Sports",
     ceoSportNote: "Sport level cost. Sport types in the same tier share costs.",
+    loginHint: "Sign in to unlock car, HQ, villa, collection, and CEO tabs.",
   },
   common: {
     loading: "Loading…",
@@ -284,6 +286,7 @@ export const en: Dict = {
     avgScore: "Average",
     buildOwn: "Build your own team",
     notFound: "Lineup not found.",
+    emptyTeam: "This lineup has no artists yet.",
     error: "Could not save the lineup.",
     needTeam: "Build a team in Team Builder first.",
     loginHint: "Sign in to save lineups.",

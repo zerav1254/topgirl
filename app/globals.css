@@ -40,6 +40,7 @@ body {
 .artist-glyph,
 .team-glyph,
 .lineup-glyph,
+.cost-glyph,
 .profile-glyph,
 .rank-glyph,
 .logout-glyph,
@@ -69,6 +70,11 @@ body {
   mask-image: url("/assets/icons/lineup.png");
 }
 
+.cost-glyph {
+  -webkit-mask-image: url("/assets/icons/cost.png");
+  mask-image: url("/assets/icons/cost.png");
+}
+
 .rank-glyph {
   -webkit-mask-image: url("/assets/icons/rank.png");
   mask-image: url("/assets/icons/rank.png");
@@ -86,6 +92,12 @@ body {
 
 ::selection {
   background: rgb(220 38 38 / 0.35);
+}
+
+/* Tailwind v4 tidak menormalkan cursor tombol; browser default = panah. */
+button:not(:disabled),
+summary {
+  cursor: pointer;
 }
 
 *:focus-visible {
