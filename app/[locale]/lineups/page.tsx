@@ -62,7 +62,10 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
   return (
     <main id="main" className="mx-auto flex w-full max-w-2xl flex-col gap-4 px-4 pt-3 pb-28 sm:pt-6">
       <header className="flex items-center justify-between gap-3">
-        <h1 className="font-display text-lg font-bold tracking-tight sm:text-2xl">{C.lineup.title}</h1>
+        <div className="min-w-0">
+          <p className="font-display text-[11px] font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
+          <h1 className="font-display text-lg font-bold tracking-tight sm:text-2xl">{C.lineup.title}</h1>
+        </div>
         <LocaleSwitcher locale={locale} />
       </header>
       <p className="text-sm text-zinc-400">{C.lineup.subtitle}</p>

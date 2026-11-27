@@ -37,7 +37,10 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
         <LocaleSwitcher locale={locale} />
       </header>
 
-      <h1 className="font-display truncate text-lg font-bold tracking-tight sm:text-2xl">{C.profile.editTitle}</h1>
+      <div className="min-w-0">
+        <p className="font-display text-[11px] font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
+        <h1 className="font-display truncate text-lg font-bold tracking-tight sm:text-2xl">{C.profile.editTitle}</h1>
+      </div>
 
       <section className="rounded-2xl border border-white/10 bg-panel/80 p-4 sm:p-5">
         <AvatarForm locale={locale} />
