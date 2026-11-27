@@ -98,7 +98,7 @@ export function LocaleSwitcher({ locale, className = "" }: { locale: Locale; cla
           role="listbox"
           aria-label={DICT[locale].lang.label}
           onKeyDown={onListKey}
-          className="absolute top-full right-0 z-50 mt-1 w-44 rounded-lg border border-white/10 bg-panel shadow-xl shadow-black/40"
+          className="absolute top-full right-0 z-50 mt-1 w-44 rounded-lg border border-white/10 bg-panel"
         >
           {LOCALES.map((l) => (
             <button

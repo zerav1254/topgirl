@@ -35,7 +35,7 @@ export function BottomNav({ locale }: { locale: Locale }) {
   return (
     <nav
       aria-label={C.header.mainNav}
-      className="fixed inset-x-0 bottom-0 z-30 border-t border-white/10 bg-panel/95 backdrop-blur"
+      className="fixed inset-x-0 bottom-0 z-30 border-t border-white/10 bg-panel/95"
       style={{ paddingBottom: "max(0.25rem, env(safe-area-inset-bottom))" }}
     >
       <div className="mx-auto grid max-w-lg grid-cols-5 gap-1 px-2 pt-1">
