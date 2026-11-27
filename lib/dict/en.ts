@@ -75,6 +75,7 @@ export const en: Dict = {
     back: "Back",
     tabArtist: "Artist",
     tabParts: "Car parts",
+    tabCar: "Car",
     tabMods: "Car mods",
     artist: "Artist",
     levelFrom: "Starting level",

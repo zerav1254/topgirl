@@ -74,6 +74,7 @@ export const zh: Dict = {
     back: "返回",
     tabArtist: "艺人",
     tabParts: "车辆部件",
+    tabCar: "汽车",
     tabMods: "车辆改装",
     artist: "艺人",
     levelFrom: "起始等级",

@@ -13,7 +13,8 @@ import { HqPanel } from "./cost/hq";
 import { MuseumPanel } from "./cost/museum";
 import { VillaPanel } from "./cost/villa";
 
-type Tab = "artist" | "parts" | "mods" | "museum" | "hq" | "villa" | "collection" | "ceo";
+// Satu tab = satu menu game; isinya beberapa panel (flat + persentase).
+type Tab = "artist" | "car" | "hq" | "villa" | "collection" | "ceo";
 
 const PART_MIN = 1;
 const PART_MAX = 60;
@@ -80,11 +81,11 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
   const tierLabel = (name: string) => name.match(/\(([^)]+)\)/)?.[1] ?? "";
 
   // Semua panel tetap ter-mount (disembunyikan) supaya input tidak hilang saat ganti tab.
-  const panels: { id: Tab; label: string; glyph?: string; node: ReactNode }[] = [
+  // Museum ikut menu Koleksi: koleksi menambah stat flat, museum mengalikannya (persentase).
+  const panels: { tab: Tab; id: string; node: ReactNode }[] = [
     {
+      tab: "artist",
       id: "artist",
-      label: C.tabArtist,
-      glyph: "artist-glyph",
       node: (
         <section aria-label={C.tabArtist} className={panel}>
           <div className="flex flex-col gap-1">
@@ -138,8 +139,8 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
       ),
     },
     {
+      tab: "car",
       id: "parts",
-      label: C.tabParts,
       node: (
         <section aria-label={C.tabParts} className={panel}>
           {partGroups.map((group) => (
@@ -200,8 +201,8 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
       ),
     },
     {
+      tab: "car",
       id: "mods",
-      label: C.tabMods,
       node: (
         <section aria-label={C.tabMods} className={panel}>
           <div role="group" aria-label={C.modPart}>
@@ -283,17 +284,26 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
         </section>
       ),
     },
-    { id: "museum", label: C.tabMuseum, node: <MuseumPanel tiers={book.museum} C={C} format={format} /> },
-    { id: "hq", label: C.tabHq, node: <HqPanel hq={book.hq} C={C} format={format} /> },
-    { id: "villa", label: C.tabVilla, node: <VillaPanel villa={book.villa} C={C} format={format} /> },
-    { id: "collection", label: C.tabCollection, node: <CollectionPanel collection={book.collection} C={C} format={format} /> },
-    { id: "ceo", label: C.tabCeo, node: <CeoPanel ceo={book.ceo} C={C} format={format} /> },
+    { tab: "hq", id: "hq", node: <HqPanel hq={book.hq} C={C} format={format} /> },
+    { tab: "villa", id: "villa", node: <VillaPanel villa={book.villa} C={C} format={format} /> },
+    { tab: "collection", id: "collection", node: <CollectionPanel collection={book.collection} C={C} format={format} /> },
+    { tab: "collection", id: "museum", node: <MuseumPanel tiers={book.museum} C={C} format={format} /> },
+    { tab: "ceo", id: "ceo", node: <CeoPanel ceo={book.ceo} C={C} format={format} /> },
+  ];
+
+  const tabs: { id: Tab; label: string; glyph?: string }[] = [
+    { id: "artist", label: C.tabArtist, glyph: "artist-glyph" },
+    { id: "car", label: C.tabCar },
+    { id: "hq", label: C.tabHq },
+    { id: "villa", label: C.tabVilla },
+    { id: "collection", label: C.tabCollection },
+    { id: "ceo", label: C.tabCeo },
   ];
 
   return (
     <div className="flex flex-col gap-4">
       <div role="group" aria-label={C.title} className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-        {panels.map((item) => (
+        {tabs.map((item) => (
           <button
             key={item.id}
             type="button"
@@ -318,9 +328,13 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
         ))}
       </div>
 
-      {panels.map((item) => (
-        <div key={item.id} hidden={tab !== item.id}>
-          {item.node}
+      {tabs.map((item) => (
+        <div key={item.id} hidden={tab !== item.id} className="flex flex-col gap-4">
+          {panels
+            .filter((panelItem) => panelItem.tab === item.id)
+            .map((panelItem) => (
+              <div key={panelItem.id}>{panelItem.node}</div>
+            ))}
         </div>
       ))}
 

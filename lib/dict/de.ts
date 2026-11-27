@@ -75,6 +75,7 @@ export const de: Dict = {
     back: "Zurück",
     tabArtist: "Artist",
     tabParts: "Auto-Teile",
+    tabCar: "Auto",
     tabMods: "Auto-Mods",
     artist: "Artist",
     levelFrom: "Startlevel",

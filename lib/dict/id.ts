@@ -73,6 +73,7 @@ export const id = {
     back: "Kembali",
     tabArtist: "Artis",
     tabParts: "Komponen mobil",
+    tabCar: "Mobil",
     tabMods: "Mod mobil",
     artist: "Artis",
     levelFrom: "Level awal",

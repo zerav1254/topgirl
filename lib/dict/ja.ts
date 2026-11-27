@@ -74,6 +74,7 @@ export const ja: Dict = {
     back: "戻る",
     tabArtist: "アーティスト",
     tabParts: "車パーツ",
+    tabCar: "車",
     tabMods: "車MOD",
     artist: "アーティスト",
     levelFrom: "開始レベル",

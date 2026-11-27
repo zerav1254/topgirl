@@ -74,6 +74,7 @@ export const ko: Dict = {
     back: "뒤로",
     tabArtist: "아티스트",
     tabParts: "자동차 부품",
+    tabCar: "자동차",
     tabMods: "자동차 모드",
     artist: "아티스트",
     levelFrom: "시작 레벨",

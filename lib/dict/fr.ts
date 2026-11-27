@@ -75,6 +75,7 @@ export const fr: Dict = {
     back: "Retour",
     tabArtist: "Artiste",
     tabParts: "Pièces de voiture",
+    tabCar: "Voiture",
     tabMods: "Mods de voiture",
     artist: "Artiste",
     levelFrom: "Niveau initial",
