@@ -31,6 +31,10 @@ const ICONS: Record<number, string> = {
   // Bahan peningkatan koleksi (lempeng batu + parket, beda dari batu pasir museum)
   11117206: `${ROOT}/koleksi/UI_Icon_collect_daoju2.webp`,
   11117207: `${ROOT}/koleksi/UI_Icon_collect_daoju3.webp`,
+  // Permata koleksi per rarity: Langka, Sangat Langka, Legendaris
+  11119021: `${ROOT}/koleksi/UI_Collection_Icon_UpgradeProps_01.webp`,
+  11119022: `${ROOT}/koleksi/UI_Collection_Icon_UpgradeProps_02.webp`,
+  11119023: `${ROOT}/koleksi/UI_Collection_Icon_UpgradeProps_03.webp`,
   // Museum: batu pasir 1-4, ubin 1-4, rencana konstruksi T01-T07
   11118714: `${ROOT}/koleksi/UI_Item_Sandstone_1.webp`,
   11118715: `${ROOT}/koleksi/UI_Item_Sandstone_2.webp`,
@@ -97,6 +101,9 @@ export const COLLECTION_PLATFORMS = 7;
 
 export const collectionPlatformIcon = (index: number) =>
   `${ROOT}/koleksi/UI_Showcase_${Math.min(index + 1, COLLECTION_PLATFORMS)}_01.webp`;
+
+// Ikon 30 item koleksi ruang pamer (collection_53010101..53010506).
+export const collectionIcon = (id: number) => `${ROOT}/koleksi/collection_${id}.webp`;
 
 // Ikon tombol tab kalkulator; sumber: mikrofon artis, setir, gear, galeri,
 // menara markas, vila, brosur koleksi, kartu CEO.

@@ -126,6 +126,7 @@ export const id = {
     collectionStar: "Bintang",
     platform: "Platform",
     quality: "Kualitas",
+    collectionItemNote: "Biaya naik level koleksi; permata mengikuti rarity item.",
     collectionNote: "Biaya peningkatan level platform koleksi.",
     collectionStarNote: "Biaya naik bintang item koleksi.",
     ceoAppearance: "Tampilan",

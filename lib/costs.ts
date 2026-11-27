@@ -22,6 +22,9 @@ export type CeoStage = { stage: number; name: string; itemName: string; amount: 
 
 export type CeoOutfit = { stage: number; outfit: number; name: string; itemName: string; amount: number };
 
+// Item koleksi ruang pamer; rarity 2/3/4 = R/SR/SSR, biaya per level pakai permata sesuai rarity.
+export type CollectionItem = { id: number; zone: number; name: string; rarity: number; cost: CostItem };
+
 export type CostBook = {
   artists: { id: number; name: string; curve: number }[];
   // steps[level - 1] = EXP untuk naik ke level tersebut. Indeks 0 (level 1) bernilai 0.
@@ -53,7 +56,7 @@ export type CostBook = {
     // staffCosts[tier - 1] = biaya level staf; 3 tipe staf berbagi biaya.
     staffCosts: TierCosts;
   };
-  collection: { platforms: Record<number, CostItem[]>; stars: Record<number, CostItem[]> };
+  collection: { platforms: Record<number, CostItem[]>; stars: Record<number, CostItem[]>; items: CollectionItem[] };
   ceo: { stages: CeoStage[]; outfits: CeoOutfit[]; sportCosts: TierCosts };
 };
 
@@ -75,6 +78,7 @@ type VillaSuiteRow = { suite: number; name: string; item_name: string; amount: n
 type VillaStaffRow = { id: number; name: string; staff_type: number; tier: number; item_name: string; amount: number };
 type CeoStageRow = { stage: number; name: string; item_name: string; amount: number };
 type CeoOutfitRow = { outfit: number; name: string; item_name: string; amount: number; ceo_appearance_stages: StageRef };
+type CollectionItemRow = { id: number; zone: number; name: string; rarity: number; gem_item: number; gem_name: string };
 
 const stageOf = (ref: StageRef) => (Array.isArray(ref) ? (ref[0]?.stage ?? 0) : ref.stage);
 
@@ -114,6 +118,8 @@ export async function loadCostBook(): Promise<CostBook> {
     ceoStages,
     ceoOutfits,
     ceoSportCosts,
+    collectionItems,
+    collectionLevels,
   ] = await Promise.all([
     supabase.from("artist_exp_curves").select("artist_ids, steps"),
     supabase.from("artist_star_curve").select("star, item_name, amount").order("star"),
@@ -134,6 +140,8 @@ export async function loadCostBook(): Promise<CostBook> {
     supabase.from("ceo_appearance_stages").select("stage, name, item_name, amount").order("stage"),
     supabase.from("ceo_appearance_outfits").select("outfit, name, item_name, amount, ceo_appearance_stages!inner(stage)").order("id"),
     supabase.from("ceo_sport_cost_items").select("tier, item_id, item_name, amounts").order("tier"),
+    supabase.from("collection_items").select("id, zone, name, rarity, gem_item, gem_name").order("id"),
+    supabase.from("collection_levels").select("level, amount").order("level"),
   ]);
 
   if (curves.error) fail("kurva EXP", curves.error.message);
@@ -155,6 +163,8 @@ export async function loadCostBook(): Promise<CostBook> {
   if (ceoStages.error) fail("stage penampilan CEO", ceoStages.error.message);
   if (ceoOutfits.error) fail("outfit penampilan CEO", ceoOutfits.error.message);
   if (ceoSportCosts.error) fail("biaya olahraga CEO", ceoSportCosts.error.message);
+  if (collectionItems.error) fail("item koleksi", collectionItems.error.message);
+  if (collectionLevels.error) fail("biaya level koleksi", collectionLevels.error.message);
 
   const curveRows = (curves.data as CurveRow[]).map((r) => ({ artistIds: r.artist_ids, steps: r.steps.map(Number) }));
   const curveOf = new Map<number, number>();
@@ -168,6 +178,9 @@ export async function loadCostBook(): Promise<CostBook> {
 
   const levelStarRows: number[] = [];
   for (const row of levelStars.data as LevelStarRow[]) levelStarRows[row.level - 1] = row.star;
+
+  const collectionAmounts: Record<string, number> = {};
+  for (const row of collectionLevels.data as { level: number; amount: string }[]) collectionAmounts[row.level] = Number(row.amount);
 
   const book: CostBook = {
     artists: (artists.data as { id: number; name: string }[])
@@ -213,7 +226,17 @@ export async function loadCostBook(): Promise<CostBook> {
       })),
       staffCosts: byTier(villaStaffCosts.data as TierCostRow[]),
     },
-    collection: { platforms: {}, stars: {} },
+    collection: {
+      platforms: {},
+      stars: {},
+      items: (collectionItems.data as CollectionItemRow[]).map((r) => ({
+        id: r.id,
+        zone: r.zone,
+        name: r.name,
+        rarity: r.rarity,
+        cost: { itemId: r.gem_item, itemName: r.gem_name, amounts: collectionAmounts },
+      })),
+    },
     ceo: {
       stages: (ceoStages.data as CeoStageRow[]).map((r) => ({
         stage: r.stage,

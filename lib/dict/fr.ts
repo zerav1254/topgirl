@@ -128,6 +128,7 @@ export const fr: Dict = {
     collectionStar: "Étoile",
     platform: "Plateforme",
     quality: "Qualité",
+    collectionItemNote: "Coût de niveau de collection ; les gemmes suivent la rareté de l'objet.",
     collectionNote: "Coût de montée de niveau des plateformes de collection.",
     collectionStarNote: "Coût pour monter les étoiles d'un objet de collection.",
     ceoAppearance: "Apparence",

@@ -127,6 +127,7 @@ export const ja: Dict = {
     collectionStar: "スター",
     platform: "プラットフォーム",
     quality: "品質",
+    collectionItemNote: "コレクションのレベル費用。宝石はレアリティに対応します。",
     collectionNote: "コレクションプラットフォームのレベル上げ費用。",
     collectionStarNote: "コレクションアイテムのスター上げ費用。",
     ceoAppearance: "ルック",

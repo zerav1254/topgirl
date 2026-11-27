@@ -360,6 +360,23 @@ create table public.museum_costs (
   primary key (part, tier, level, item_id)
 );
 
+-- Koleksi ruang pamer (CCollectDispatchCollectionType): 5 zona x 6 item.
+-- rarity = Quality config: 2 = R, 3 = SR, 4 = SSR; biaya memakai permata sesuai rarity.
+create table public.collection_items (
+  id integer primary key,
+  zone smallint not null check (zone between 1 and 5),
+  name text not null,
+  rarity smallint not null check (rarity between 2 and 4),
+  gem_item integer not null,
+  gem_name text not null
+);
+
+-- Kurva biaya naik level koleksi (CCollectDispatchCollectionLevel), sama untuk semua item.
+create table public.collection_levels (
+  level smallint primary key check (level between 1 and 65),
+  amount bigint not null check (amount > 0)
+);
+
 -- Renovasi markas (CHeadquartersBeautifyLevel): 800 level, biaya Kaca,
 -- menambah stat semua artis. level 1 gratis.
 create table public.headquarters_levels (
@@ -522,6 +539,8 @@ alter table public.car_mod_levels enable row level security;
 alter table public.game_costs enable row level security;
 alter table public.museum_parts enable row level security;
 alter table public.museum_costs enable row level security;
+alter table public.collection_items enable row level security;
+alter table public.collection_levels enable row level security;
 alter table public.headquarters_levels enable row level security;
 alter table public.headquarters_rooms enable row level security;
 alter table public.headquarters_room_costs enable row level security;
@@ -543,6 +562,8 @@ create policy "read car mod levels" on public.car_mod_levels for select to authe
 create policy "read game costs" on public.game_costs for select to authenticated using (true);
 create policy "read museum parts" on public.museum_parts for select to authenticated using (true);
 create policy "read museum costs" on public.museum_costs for select to authenticated using (true);
+create policy "read collection items" on public.collection_items for select to authenticated using (true);
+create policy "read collection levels" on public.collection_levels for select to authenticated using (true);
 create policy "read headquarters levels" on public.headquarters_levels for select to authenticated using (true);
 create policy "read headquarters rooms" on public.headquarters_rooms for select to authenticated using (true);
 create policy "read headquarters room costs" on public.headquarters_room_costs for select to authenticated using (true);

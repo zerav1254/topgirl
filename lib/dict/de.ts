@@ -128,6 +128,7 @@ export const de: Dict = {
     collectionStar: "Stern",
     platform: "Plattform",
     quality: "Qualität",
+    collectionItemNote: "Levelkosten der Sammlung; Edelsteine richten sich nach der Seltenheit.",
     collectionNote: "Levelkosten der Sammlungs-Plattformen.",
     collectionStarNote: "Sternkosten für Sammlungsobjekte.",
     ceoAppearance: "Look",

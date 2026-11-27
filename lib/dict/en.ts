@@ -128,6 +128,7 @@ export const en: Dict = {
     collectionStar: "Star",
     platform: "Platform",
     quality: "Quality",
+    collectionItemNote: "Collection level-up cost; gems follow the item rarity.",
     collectionNote: "Collection platform level-up cost.",
     collectionStarNote: "Collection item star-up cost.",
     ceoAppearance: "Appearance",

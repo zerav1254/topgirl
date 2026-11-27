@@ -127,6 +127,7 @@ export const zh: Dict = {
     collectionStar: "星星",
     platform: "平台",
     quality: "品质",
+    collectionItemNote: "收藏升级费用；宝石随稀有度而定。",
     collectionNote: "收藏平台升级费用。",
     collectionStarNote: "收藏物品升星费用。",
     ceoAppearance: "外观",

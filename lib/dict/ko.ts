@@ -127,6 +127,7 @@ export const ko: Dict = {
     collectionStar: "별",
     platform: "플랫폼",
     quality: "품질",
+    collectionItemNote: "컬렉션 레벨 상승 비용. 보석은 등급에 따라 다릅니다.",
     collectionNote: "컬렉션 플랫폼 레벨 상승 비용.",
     collectionStarNote: "컬렉션 아이템 별 상승 비용.",
     ceoAppearance: "외형",
