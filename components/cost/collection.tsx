@@ -152,7 +152,7 @@ function CollectionRoom({
                   className="relative h-12 w-12 object-contain"
                 />
               </span>
-              <span className={`rounded border px-1 text-[10px] font-semibold ${RARITY_STYLE[rarity]}`}>
+              <span className={`rounded border px-1 text-[11px] font-semibold ${RARITY_STYLE[rarity]}`}>
                 {RARITY[rarity]}
               </span>
             </button>

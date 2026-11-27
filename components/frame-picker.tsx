@@ -7,7 +7,7 @@ import { AVATAR_FRAMES, avatarFrameSrc } from "@/lib/avatar-frames";
 // Pilihan frame avatar; nilai dikirim lewat hidden input `avatarFrame` di form profil.
 export function FramePicker({ current, label, noneLabel }: { current: string | null; label: string; noneLabel: string }) {
   const [selected, setSelected] = useState(current);
-  const tile = "grid aspect-square place-items-center rounded-lg border p-1 text-[10px] font-semibold transition-colors duration-200";
+  const tile = "grid aspect-square place-items-center rounded-lg border p-1 text-[11px] font-semibold transition-colors duration-200";
 
   return (
     <fieldset className="flex flex-col gap-1">

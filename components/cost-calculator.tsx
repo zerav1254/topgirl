@@ -176,7 +176,7 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
                       sizes="40px"
                       className="h-10 w-10 object-contain"
                     />
-                    <span className={`text-[10px] font-semibold ${active ? "text-gold" : "text-zinc-400"}`}>{name}</span>
+                    <span className={`text-[11px] font-semibold ${active ? "text-gold" : "text-zinc-400"}`}>{name}</span>
                   </button>
                 );
               })}
