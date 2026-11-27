@@ -8,20 +8,12 @@ export function LineupTags({ team, locale }: { team: Artist[]; locale: Locale })
   const tags = lineupEffects(team);
   // Genre hanya yang sudah dapat bonus sinergi (3+ artis), urut jumlah terbanyak.
   const genres = genreSynergy(team).genres.filter(([, n]) => n >= 3);
-  // Season hanya dari artis terbatas season; artis reguler (null) tidak menambah tag.
-  const seasons = [...new Set(team.map((a) => a.season).filter((s): s is number => s !== null))].sort((a, b) => a - b);
+  // Season hanya dari artis terbatas season, terbesar dulu; artis reguler (null) tidak menambah tag.
+  const seasons = [...new Set(team.map((a) => a.season).filter((s): s is number => s !== null))].sort((a, b) => b - a);
   if (tags.length === 0 && seasons.length === 0 && genres.length === 0) return null;
 
   return (
     <span className="flex flex-wrap gap-1">
-      {seasons.map((s) => (
-        <span
-          key={`season-${s}`}
-          className="tabular inline-flex items-center rounded-md border border-gold/30 bg-gold/10 px-1.5 py-0.5 text-[11px] font-semibold text-gold"
-        >
-          S{s}
-        </span>
-      ))}
       {genres.map(([genre, n]) => (
         <span
           key={`genre-${genre}`}
@@ -29,6 +21,14 @@ export function LineupTags({ team, locale }: { team: Artist[]; locale: Locale })
         >
           {genre}
           <span className="tabular">×{n}</span>
+        </span>
+      ))}
+      {seasons.map((s) => (
+        <span
+          key={`season-${s}`}
+          className="tabular inline-flex items-center rounded-md border border-gold/30 bg-gold/10 px-1.5 py-0.5 text-[11px] font-semibold text-gold"
+        >
+          S{s}
         </span>
       ))}
       {tags.map((tag) => (
