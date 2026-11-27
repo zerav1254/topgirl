@@ -29,7 +29,7 @@ export function PublicLineups({ lineups, preview, locale }: { lineups: PublicLin
                   href={`/${locale}/l/${l.shareSlug}`}
                   className="flex min-h-14 flex-col gap-2 rounded-xl border border-line bg-panel/70 p-3 transition-colors duration-200 hover:border-white/25 hover:bg-panel-2"
                 >
-                  <span className="flex items-center gap-3">
+                  <span className="flex flex-wrap items-center gap-3">
                     <span className="flex shrink-0 -space-x-2">
                       {team.map((a) => (
                         <span key={a.slug} className="rounded-lg ring-2 ring-panel">
@@ -44,7 +44,7 @@ export function PublicLineups({ lineups, preview, locale }: { lineups: PublicLin
                         <span className="tabular"> · {l.slugs.length}/{TEAM_SIZE}</span>
                       </span>
                     </span>
-                    <Icon d={ICONS.chevronRight} className="h-4 w-4 shrink-0 text-zinc-400" />
+                    <Icon d={ICONS.chevronRight} className="ml-auto h-4 w-4 shrink-0 text-zinc-400" />
                   </span>
                   <LineupTags team={team} locale={locale} />
                   <span aria-hidden="true" className="block h-1 overflow-hidden rounded-full bg-white/10">

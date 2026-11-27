@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { getIdentities, getProfile } from "@/lib/auth";
 import { DOCS, DOC_KEYS } from "@/lib/docs";
 import { DICT, isLocale, type Locale } from "@/lib/i18n";
+import { pageMetadata } from "@/lib/seo";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { ICONS, Icon } from "@/components/artist-ui";
 import { UserAvatar } from "@/components/user-avatar";
@@ -15,8 +16,14 @@ export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
-  const C = DICT[isLocale(locale) ? locale : "id"];
-  return { title: `${C.profile.title} — ${C.meta.title}`, robots: { index: false, follow: false } };
+  const l = isLocale(locale) ? locale : "id";
+  const C = DICT[l];
+  const title = `${C.profile.title} — ${C.meta.title}`;
+  return {
+    title,
+    robots: { index: false, follow: false },
+    ...pageMetadata({ locale: l, basePath: "/profile", title, description: C.meta.description }),
+  };
 }
 
 export default async function Page({
@@ -82,7 +89,7 @@ export default async function Page({
         </div>
 
         {identity.length > 0 ? (
-          <dl className="relative mt-4 grid grid-cols-2 gap-2 border-t border-line pt-3">
+          <dl className="relative mt-4 grid grid-cols-[repeat(auto-fill,minmax(8.5rem,1fr))] gap-2 border-t border-line pt-3 sm:grid-cols-2">
             {identity.map((item) => (
               <div key={item.label} className="rounded-lg border border-line bg-panel-2/60 px-3 py-2">
                 <dt className="text-2xs font-semibold uppercase tracking-wide text-zinc-400">{item.label}</dt>

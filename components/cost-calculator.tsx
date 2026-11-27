@@ -239,7 +239,7 @@ export function CostCalculator({ book, locale, signedIn }: { book: CostBook; loc
       {!signedIn && (
         <p className="rounded-xl border border-line bg-panel/70 px-3 py-2 text-sm text-zinc-400">
           {C.loginHint}{" "}
-          <Link href={`/${locale}/login`} className="font-semibold text-gold underline-offset-2 hover:underline">
+          <Link href={`/${locale}/login`} className="inline-flex min-h-11 items-center font-semibold text-gold underline-offset-2 hover:underline">
             {DICT[locale].auth.login}
           </Link>
         </p>

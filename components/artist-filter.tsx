@@ -143,7 +143,7 @@ export function ArtistFilterBar({
           : "z-20 -mx-4 flex flex-col gap-1.5 border-b border-white/5 bg-ink/95 px-4 pt-2 pb-2 sm:-mx-6 sm:px-6"
       }
     >
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <div className="min-w-0 flex-1">
           <SearchInput value={state.query} onChange={state.setQuery} locale={locale} />
         </div>

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getProfile } from "@/lib/auth";
 import { DOCS, DOC_KEYS } from "@/lib/docs";
 import { DICT, isLocale, type Locale } from "@/lib/i18n";
+import { pageMetadata } from "@/lib/seo";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { UserAvatar } from "@/components/user-avatar";
 import { DiscordMark, GoogleMark } from "@/components/provider-mark";
@@ -14,8 +15,14 @@ export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
-  const C = DICT[isLocale(locale) ? locale : "id"];
-  return { title: `${C.auth.title} — ${C.meta.title}`, robots: { index: false, follow: false } };
+  const l = isLocale(locale) ? locale : "id";
+  const C = DICT[l];
+  const title = `${C.auth.title} — ${C.meta.title}`;
+  return {
+    title,
+    robots: { index: false, follow: false },
+    ...pageMetadata({ locale: l, basePath: "/login", title, description: C.meta.description }),
+  };
 }
 
 export default async function Page({

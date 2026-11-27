@@ -5,6 +5,7 @@ import { LocaleSwitcher } from "@/components/locale-switcher";
 import { ICONS, Icon } from "@/components/artist-ui";
 import { DOCS, DOC_KEYS, type DocKey } from "@/lib/docs";
 import { DICT, isLocale, t, type Locale } from "@/lib/i18n";
+import { pageMetadata } from "@/lib/seo";
 import { TEAM_SIZE } from "@/lib/team";
 
 export function generateStaticParams() {
@@ -15,10 +16,12 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const { locale, key } = await params;
   if (!isLocale(locale) || !DOC_KEYS.includes(key as DocKey)) return {};
   const doc = DOCS[locale][key as DocKey];
+  const title = `${doc.title} — ${DICT[locale].meta.title}`;
   return {
-    title: `${doc.title} — ${DICT[locale].meta.title}`,
+    title,
     description: doc.intro,
     robots: { index: true, follow: true },
+    ...pageMetadata({ locale, basePath: `/doc/${key}`, title, description: doc.intro }),
   };
 }
 

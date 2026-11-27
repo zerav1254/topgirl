@@ -5,6 +5,7 @@ import { getProfile } from "@/lib/auth";
 import { getArtists } from "@/lib/artists-cache";
 import { DICT, isLocale, type Locale } from "@/lib/i18n";
 import { loadLineups, loadPublicLineups } from "@/lib/lineups";
+import { pageMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { LineupsTab } from "@/components/lineups-tab";
@@ -15,8 +16,14 @@ export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
-  const C = DICT[isLocale(locale) ? locale : "id"];
-  return { title: `${C.lineup.title} — ${C.meta.title}`, robots: { index: false, follow: false } };
+  const l = isLocale(locale) ? locale : "id";
+  const C = DICT[l];
+  const title = `${C.lineup.title} — ${C.meta.title}`;
+  return {
+    title,
+    robots: { index: false, follow: false },
+    ...pageMetadata({ locale: l, basePath: "/lineups", title, description: C.meta.description }),
+  };
 }
 
 export default async function Page({ params }: { params: Promise<{ locale: string }> }) {

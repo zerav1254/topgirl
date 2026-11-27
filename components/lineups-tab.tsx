@@ -64,7 +64,7 @@ export function LineupsTab({
             const team = l.slugs.map((s) => bySlug.get(s)).filter((a) => a !== undefined);
             return (
               <li key={l.id} className="flex flex-col gap-2 rounded-xl border border-line bg-panel/70 p-3">
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                   <span className="flex shrink-0 -space-x-2">
                     {Array.from({ length: TEAM_SIZE }).map((_, i) => {
                       const slug = l.slugs[i];

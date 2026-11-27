@@ -37,7 +37,7 @@ app/[locale]/
   login/page.tsx    OAuth Google/Discord + gate profil
   profile/page.tsx  profil, tautkan/lepas provider, form nama & ID game
   profile/edit/page.tsx form edit profil + avatar
-  collection/       tandai artist yang dimiliki user
+  collection/actions.ts  aksi tandai artist yang dimiliki user (tanpa halaman sendiri)
   cost/page.tsx     kalkulator biaya
   lineups/page.tsx  daftar lineup + buat/bagikan/hapus
   lineup/actions.ts createLineup/toggleShare/remove

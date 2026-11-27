@@ -86,7 +86,7 @@ export function ArtistsTab({ artists, scoped, blocked, rank, seasonTiers, owned,
               ) : null}
               <span className="text-xs font-normal text-zinc-400">{t(C.artists.tierCount, { n: list.length })}</span>
             </h2>
-            <ul className="grid grid-cols-2 items-start gap-2 sm:grid-cols-3 md:grid-cols-4">
+            <ul className="grid grid-cols-[repeat(auto-fill,minmax(8.5rem,1fr))] items-start gap-2 sm:grid-cols-3 md:grid-cols-4">
               {list.map((a) => (
                 <ArtistCard
                   key={a.slug}
@@ -119,7 +119,7 @@ export function ArtistsTab({ artists, scoped, blocked, rank, seasonTiers, owned,
             <span className="text-xs font-normal text-zinc-400">{t(C.artists.tierCount, { n: unavailable.length })}</span>
           </h2>
           <p className="mb-2 text-xs text-zinc-400">{C.pool.seasonHint}</p>
-          <ul className="grid grid-cols-2 items-start gap-2 sm:grid-cols-3 md:grid-cols-4">
+          <ul className="grid grid-cols-[repeat(auto-fill,minmax(8.5rem,1fr))] items-start gap-2 sm:grid-cols-3 md:grid-cols-4">
             {unavailable.map((a) => (
               <ArtistCard
                 key={a.slug}
@@ -208,7 +208,7 @@ function ArtistCard({
           />
         </summary>
         <div className="border-t border-line px-2 pt-1.5 pb-2">
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <span className="flex items-center gap-1">
               {r ? <RankBadge rank={r.rank} size={r.size} label={t(C.pool.rank, { n: r.rank, total: r.size })} /> : <TierBadge tier={tier} />}
               {a.role && <RoleBadge role={a.role} locale={locale} />}
@@ -222,7 +222,7 @@ function ArtistCard({
             {a.season !== null && ` \u00b7 S${a.season}`}
           </p>
           {a.singMax !== null && a.danceMax !== null && (
-            <p className="tabular mt-0.5 flex gap-2 text-xs text-zinc-400">
+            <p className="tabular mt-0.5 flex flex-wrap gap-2 text-xs text-zinc-400">
               <span className="inline-flex items-center gap-1">
                 <StatIcon stat="sing" className="h-3.5 w-3.5" />
                 <span className="sr-only">{C.artists.sing}</span>

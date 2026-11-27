@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getArtists } from "@/lib/artists-cache";
 import { DICT, isLocale, type Locale } from "@/lib/i18n";
 import { loadPublicProfile } from "@/lib/lineups";
+import { pageMetadata } from "@/lib/seo";
 import { TEAM_SIZE } from "@/lib/team";
 import { Avatar, ICONS, Icon } from "@/components/artist-ui";
 import { UserAvatar } from "@/components/user-avatar";
@@ -19,10 +20,12 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const C = DICT[locale];
   const data = await loadPublicProfile(id);
   const name = data?.ingameNickname ?? data?.name;
+  const title = name ? `${name} — ${C.profile.publicProfile}` : `${C.profile.publicProfile} — ${C.meta.title}`;
   return {
-    title: name ? `${name} — ${C.profile.publicProfile}` : `${C.profile.publicProfile} — ${C.meta.title}`,
+    title,
     description: C.profile.publicHint,
     robots: { index: false, follow: true },
+    ...pageMetadata({ locale, basePath: `/u/${id}`, title, description: C.profile.publicHint }),
   };
 }
 
@@ -43,7 +46,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
     <main id="main" className="mx-auto flex w-full max-w-2xl flex-col gap-4 px-4 pt-4 pb-28 sm:pt-6">
       <section className="relative overflow-hidden rounded-2xl border border-line bg-panel/80 p-4 sm:p-5">
         <span aria-hidden="true" className="pointer-events-none absolute -top-20 -right-16 h-48 w-48 rounded-full bg-gold/15 blur-3xl" />
-        <div className="relative flex items-center gap-4">
+        <div className="relative flex flex-wrap items-center gap-4">
           <UserAvatar src={data.avatarUrl} name={name} />
           <div className="min-w-0 flex-1">
             <p className="font-display text-2xs font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
@@ -56,7 +59,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
         </div>
       </section>
 
-      <dl className="grid grid-cols-2 gap-2">
+      <dl className="grid grid-cols-[repeat(auto-fill,minmax(8.5rem,1fr))] gap-2 sm:grid-cols-2">
         <div className="rounded-xl border border-line bg-panel/70 p-3">
           <dt className="text-2xs font-semibold uppercase tracking-wide text-zinc-400">{C.profile.sharedLineups}</dt>
           <dd className="tabular mt-0.5 font-display text-xl font-bold text-zinc-100">{data.lineups.length}</dd>
@@ -80,7 +83,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
                     href={`/${locale}/l/${l.shareSlug}`}
                     className="flex min-h-14 flex-col gap-2 rounded-xl border border-line bg-panel/70 p-3 transition-colors duration-200 hover:border-white/25 hover:bg-panel-2"
                   >
-                    <span className="flex items-center gap-3">
+                    <span className="flex flex-wrap items-center gap-3">
                       <span className="flex shrink-0 -space-x-2">
                         {Array.from({ length: TEAM_SIZE }).map((_, i) => {
                           const a = l.slugs[i] ? bySlug.get(l.slugs[i]) : undefined;
@@ -99,7 +102,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
                           {l.slugs.length}/{TEAM_SIZE}
                         </span>
                       </span>
-                      <Icon d={ICONS.chevronRight} className="h-4 w-4 shrink-0 text-zinc-400" />
+                      <Icon d={ICONS.chevronRight} className="ml-auto h-4 w-4 shrink-0 text-zinc-400" />
                     </span>
                     <span aria-hidden="true" className="block h-1 overflow-hidden rounded-full bg-white/10">
                       <span className="block h-full rounded-full bg-gold" style={{ width: `${(l.slugs.length / TEAM_SIZE) * 100}%` }} />

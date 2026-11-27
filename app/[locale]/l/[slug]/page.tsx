@@ -6,6 +6,7 @@ import { DICT, isLocale, t, type Locale } from "@/lib/i18n";
 import { loadShared } from "@/lib/lineups";
 import { genreSynergy, TEAM_SIZE, teamSkillTotals, withGenreBonus } from "@/lib/team";
 import { EFFECT_LABEL, TIER_ORDER } from "@/lib/score";
+import { pageMetadata } from "@/lib/seo";
 import { Avatar, GenreIcon, ICONS, Icon, SkillList, StatIcon, TierBadge, formatStat, isPercent } from "@/components/artist-ui";
 import { UserAvatar } from "@/components/user-avatar";
 
@@ -13,11 +14,14 @@ export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
   const { locale, slug } = await params;
-  const C = DICT[isLocale(locale) ? locale : "id"];
+  const l = isLocale(locale) ? locale : "id";
+  const C = DICT[l];
   const shared = await loadShared(slug);
+  const title = shared ? `${t(C.lineup.shareTitle, { name: shared.lineup.name })} — ${C.meta.title}` : C.lineup.notFound;
   return {
-    title: shared ? `${t(C.lineup.shareTitle, { name: shared.lineup.name })} — ${C.meta.title}` : C.lineup.notFound,
+    title,
     robots: { index: false, follow: false },
+    ...pageMetadata({ locale: l, basePath: `/l/${slug}`, title, description: C.meta.description }),
   };
 }
 
@@ -47,7 +51,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
     <main id="main" className="mx-auto flex w-full max-w-2xl flex-col gap-4 px-4 pt-3 pb-28 sm:pt-6">
       <header className="relative overflow-hidden rounded-2xl border border-line bg-panel/80 p-4 sm:p-5">
         <span aria-hidden="true" className="pointer-events-none absolute -top-20 -right-16 h-48 w-48 rounded-full bg-brand/20 blur-3xl" />
-        <div className="relative flex items-start gap-3">
+        <div className="relative flex flex-wrap items-start gap-3">
           <UserAvatar src={shared.ownerAvatarUrl} name={shared.ownerName ?? "TG"} px={56} />
           <div className="min-w-0 flex-1">
             <p className="font-display text-2xs font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
@@ -69,14 +73,14 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
 
       {team.length > 0 && (
         <>
-          <dl className="grid grid-cols-2 gap-2">
+          <dl className="grid grid-cols-[repeat(auto-fill,minmax(8.5rem,1fr))] gap-2 sm:grid-cols-2">
             <div className="rounded-xl border border-line bg-panel/70 p-3">
               <dt className="text-2xs font-semibold uppercase tracking-wide text-zinc-400">{C.lineup.totalScore}</dt>
-              <dd className="tabular mt-0.5 font-display text-xl font-bold text-zinc-100">{formatStat(totalScore, locale)}</dd>
+              <dd className="tabular mt-0.5 flex flex-wrap items-baseline gap-x-1 font-display text-xl font-bold text-zinc-100">{formatStat(totalScore, locale)}</dd>
             </div>
             <div className="rounded-xl border border-line bg-panel/70 p-3">
               <dt className="text-2xs font-semibold uppercase tracking-wide text-zinc-400">{C.lineup.avgScore}</dt>
-              <dd className="tabular mt-0.5 font-display text-xl font-bold text-gold">{formatStat(avgScore, locale)}</dd>
+              <dd className="tabular mt-0.5 flex flex-wrap items-baseline gap-x-1 font-display text-xl font-bold text-gold">{formatStat(avgScore, locale)}</dd>
             </div>
             {hasStats && (
               <>
@@ -85,9 +89,9 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
                     <StatIcon stat="sing" className="h-3.5 w-3.5" />
                     {C.artists.sing}
                   </dt>
-                  <dd className="tabular mt-0.5 font-display text-xl font-bold text-zinc-100">
+                  <dd className="tabular mt-0.5 flex flex-wrap items-baseline gap-x-1 font-display text-xl font-bold text-zinc-100">
                     {formatStat(totalSing, locale)}
-                    {synergy.bonus > 0 && <span className="ml-1 align-middle text-xs font-semibold text-emerald-300">+{synergy.bonus}%</span>}
+                    {synergy.bonus > 0 && <span className="align-middle text-xs font-semibold text-emerald-300">+{synergy.bonus}%</span>}
                   </dd>
                 </div>
                 <div className="rounded-xl border border-line bg-panel/70 p-3">
@@ -95,9 +99,9 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
                     <StatIcon stat="dance" className="h-3.5 w-3.5" />
                     {C.artists.dance}
                   </dt>
-                  <dd className="tabular mt-0.5 font-display text-xl font-bold text-zinc-100">
+                  <dd className="tabular mt-0.5 flex flex-wrap items-baseline gap-x-1 font-display text-xl font-bold text-zinc-100">
                     {formatStat(totalDance, locale)}
-                    {synergy.bonus > 0 && <span className="ml-1 align-middle text-xs font-semibold text-emerald-300">+{synergy.bonus}%</span>}
+                    {synergy.bonus > 0 && <span className="align-middle text-xs font-semibold text-emerald-300">+{synergy.bonus}%</span>}
                   </dd>
                 </div>
               </>
@@ -167,7 +171,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
           {team.map((a, i) => (
             <li
               key={a.slug}
-              className="flex items-center gap-3 rounded-xl border border-line bg-panel/70 p-2.5"
+              className="flex flex-wrap items-center gap-3 rounded-xl border border-line bg-panel/70 p-2.5"
             >
               <span className="tabular w-4 shrink-0 text-center text-xs text-zinc-400">{i + 1}</span>
               <Avatar artist={a} tier={a.tier} size="h-11 w-11" />
@@ -179,7 +183,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
                 <span className="block truncate text-base font-semibold">{a.name}</span>
                 <SkillList baseDmg={a.baseDmg} skills={a.skills} locale={locale} className="mt-1" />
                 {a.singMax !== null && a.danceMax !== null && (
-                  <span className="tabular mt-0.5 flex gap-2 text-xs text-zinc-400">
+                  <span className="tabular mt-0.5 flex flex-wrap gap-2 text-xs text-zinc-400">
                     <span className="inline-flex items-center gap-1">
                       <StatIcon stat="sing" className="h-3.5 w-3.5" />
                       <span className="sr-only">{C.artists.sing}</span>

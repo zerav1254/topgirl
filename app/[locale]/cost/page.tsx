@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getUser } from "@/lib/auth";
 import { artistCostBook, getCostBook } from "@/lib/costs";
 import { DICT, isLocale, type Locale } from "@/lib/i18n";
+import { pageMetadata } from "@/lib/seo";
 import { ICONS, Icon } from "@/components/artist-ui";
 import { CostCalculator } from "@/components/cost-calculator";
 import { LocaleSwitcher } from "@/components/locale-switcher";
@@ -12,8 +13,14 @@ export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
-  const C = DICT[isLocale(locale) ? locale : "id"].cost;
-  return { title: C.metaTitle, description: C.metaDescription, robots: { index: false, follow: false } };
+  const l = isLocale(locale) ? locale : "id";
+  const C = DICT[l].cost;
+  return {
+    title: C.metaTitle,
+    description: C.metaDescription,
+    robots: { index: false, follow: false },
+    ...pageMetadata({ locale: l, basePath: "/cost", title: C.metaTitle, description: C.metaDescription }),
+  };
 }
 
 export default async function CostPage({ params }: { params: Promise<{ locale: string }> }) {

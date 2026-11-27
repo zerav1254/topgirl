@@ -55,18 +55,18 @@ export default async function LocaleLayout({
           {DICT[locale].common.skip}
         </a>
         {children}
-        <footer className="mx-auto w-full max-w-4xl px-4 pb-28 text-xs leading-relaxed text-zinc-500">
+        <footer className="mx-auto w-full max-w-4xl px-4 pb-28 text-xs leading-relaxed text-zinc-400">
           <p>{DOCS[locale].legal.sections[0].body}</p>
           <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
             <Link
               href={`/${locale}/doc/legal`}
-              className="inline-block min-h-6 font-semibold text-zinc-400 underline-offset-2 hover:text-gold hover:underline"
+              className="inline-flex min-h-11 items-center font-semibold text-zinc-300 underline-offset-2 hover:text-gold hover:underline"
             >
               {DOCS[locale].legal.title}
             </Link>
             <a
               href="mailto:support@zerav.web.id"
-              className="inline-block min-h-6 font-semibold text-zinc-400 underline-offset-2 hover:text-gold hover:underline"
+              className="inline-flex min-h-11 items-center font-semibold text-zinc-300 underline-offset-2 hover:text-gold hover:underline"
             >
               support@zerav.web.id
             </a>

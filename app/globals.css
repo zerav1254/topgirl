@@ -16,8 +16,8 @@
   --color-google-hover: #f1f3f4;
   --color-discord: #5865f2;
   --color-discord-hover: #4752c4;
-  --font-sans: var(--font-inter), var(--font-ko), ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-display: var(--font-sora), var(--font-inter), var(--font-ko), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, var(--font-ko), sans-serif;
+  --font-display: var(--font-sora), var(--font-inter), ui-sans-serif, system-ui, var(--font-ko), sans-serif;
 }
 
 html {
