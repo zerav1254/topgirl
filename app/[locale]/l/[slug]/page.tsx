@@ -161,7 +161,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
           {team.map((a, i) => (
             <li
               key={a.slug}
-              className="flex items-center gap-3 rounded-xl border border-white/10 bg-panel/70 p-2.5 transition-colors duration-200 hover:border-white/25"
+              className="flex items-center gap-3 rounded-xl border border-white/10 bg-panel/70 p-2.5"
             >
               <span className="tabular w-4 shrink-0 text-center text-xs text-zinc-400">{i + 1}</span>
               <Avatar artist={a} tier={a.tier} size="h-11 w-11" />
