@@ -89,6 +89,15 @@ const NAMES: Record<string, string> = {
 export const costIcon = (itemId?: number, name?: string) =>
   (itemId === undefined ? undefined : ICONS[itemId]) ?? (name ? NAMES[name] : undefined);
 
+// Pratinjau bangunan vila per stage (1-8); stage 9-10 memakai gambar stage 8.
+export const villaStageIcon = (stage: number) =>
+  `${ROOT}/villa/UI_Icon_villa_base${Math.min(Math.max(stage, 1), 8)}.webp`;
+
+// Pratinjau suite vila: 4 lokasi (Ruang Tamu, Ruang Anggur, Infinity Pool,
+// Halaman) x 8 tahap bangunan. Stage 9-10 memakai gambar tahap 8.
+export const villaSuiteIcon = (suite: number, stage: number) =>
+  `${ROOT}/villa/UI_Icon_base_location${suite}_stage${Math.min(Math.max(stage, 1), 8)}.webp`;
+
 // Ikon mod mobil: 4 part (Mesin, Sasis, Suspensi, Velg) x 6 tampilan.
 // Config game berganti gambar per rentang level kelas: 0-1, 2-5, 6-14, 15-34, 35-64, 65+.
 const CAR_MOD_ASSET = ["Engine", "CarFrame", "Chassis", "Wheel"] as const;
