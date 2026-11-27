@@ -5,7 +5,7 @@ import type { Artist } from "@/lib/artists";
 import { DICT, t, type Locale } from "@/lib/i18n";
 import type { Rank } from "@/lib/pool";
 import { EFFECT_LABEL, type Tier } from "@/lib/score";
-import { GENRE_BONUS, TEAM_SIZE, teamSkillTotals } from "@/lib/team";
+import { genreSynergy, TEAM_SIZE, teamSkillTotals, withGenreBonus } from "@/lib/team";
 import { ArtistFilterBar, type ArtistFilterState } from "./artist-filter";
 import { Avatar, GenreIcon, ICONS, Icon, RankBadge, SkillList, TierBadge, formatStat, isPercent } from "./artist-ui";
 
@@ -60,19 +60,18 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
   const genreImages = useMemo(() => new Map(artists.map((a) => [a.genre, a.genreImage])), [artists]);
 
   const summary = useMemo(() => {
-    const genreCount = new Map<string, number>();
-    for (const a of team) genreCount.set(a.genre, (genreCount.get(a.genre) ?? 0) + 1);
-    const genreList = [...genreCount.entries()].sort((a, b) => b[1] - a[1]);
-    const [topGenre, topCount] = genreList[0] ?? ["", 0];
+    const synergy = genreSynergy(team);
+    const sing = team.reduce((n, a) => n + (a.singMax ?? 0), 0);
+    const dance = team.reduce((n, a) => n + (a.danceMax ?? 0), 0);
     return {
-      genreList,
+      genreList: synergy.genres,
       ...teamSkillTotals(team),
-      sing: team.reduce((n, a) => n + (a.singMax ?? 0), 0),
-      dance: team.reduce((n, a) => n + (a.danceMax ?? 0), 0),
+      sing: withGenreBonus(sing, synergy.bonus),
+      dance: withGenreBonus(dance, synergy.bonus),
       hasMax: team.some((a) => a.singMax !== null),
-      topGenre,
-      topCount,
-      genreBonus: GENRE_BONUS[topCount] ?? 0,
+      topGenre: synergy.genre,
+      topCount: synergy.count,
+      genreBonus: synergy.bonus,
       tiers: team.map((a) => seasonTiers?.get(a.slug) ?? a.tier).join(" · "),
     };
   }, [team, seasonTiers]);
@@ -198,13 +197,15 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
               </dd>
               <dd className="mt-1.5 flex flex-wrap items-center gap-1">
                 {summary.genreBonus > 0 ? (
-                  <span className="inline-flex items-center gap-1 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-1.5 py-0.5 font-semibold text-emerald-300">
-                    {t(C.team.synergy, { n: summary.topCount, genre: summary.topGenre, bonus: summary.genreBonus })}
-                  </span>
+                  <>
+                    <span className="inline-flex items-center gap-1 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-1.5 py-0.5 font-semibold text-emerald-300">
+                      {t(C.team.synergy, { n: summary.topCount, genre: summary.topGenre, bonus: summary.genreBonus })}
+                    </span>
+                    <span className="text-zinc-400">{C.team.synergyApplied}</span>
+                  </>
                 ) : (
                   <span className="text-zinc-400">{t(C.team.synergyNeed, { n: summary.topCount, genre: summary.topGenre })}</span>
                 )}
-                <span className="text-zinc-400">{C.team.infoOnly}</span>
               </dd>
             </div>
             {summary.hasMax && (

@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { getArtists } from "@/lib/artists-cache";
 import { DICT, isLocale, t, type Locale } from "@/lib/i18n";
 import { loadShared } from "@/lib/lineups";
-import { GENRE_BONUS, TEAM_SIZE, teamSkillTotals } from "@/lib/team";
+import { genreSynergy, TEAM_SIZE, teamSkillTotals, withGenreBonus } from "@/lib/team";
 import { EFFECT_LABEL, TIER_ORDER } from "@/lib/score";
 import { Avatar, GenreIcon, ICONS, Icon, SkillList, TierBadge, formatStat, isPercent } from "@/components/artist-ui";
 import { UserAvatar } from "@/components/user-avatar";
@@ -37,14 +37,10 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
   const totalScore = team.reduce((sum, a) => sum + a.score, 0);
   const avgScore = team.length > 0 ? totalScore / team.length : 0;
   const tierCounts = TIER_ORDER.map((tier) => [tier, team.filter((a) => a.tier === tier).length] as const).filter(([, n]) => n > 0);
-  const genreCount = new Map<string, number>();
-  for (const a of team) genreCount.set(a.genre, (genreCount.get(a.genre) ?? 0) + 1);
-  const genres = [...genreCount.entries()].sort((a, b) => b[1] - a[1]);
-  const [topGenre, topCount] = genres[0] ?? ["", 0];
-  const genreBonus = GENRE_BONUS[topCount] ?? 0;
+  const synergy = genreSynergy(team);
   const { playerDmg, stats } = teamSkillTotals(team);
-  const totalSing = team.reduce((n, a) => n + (a.singMax ?? 0), 0);
-  const totalDance = team.reduce((n, a) => n + (a.danceMax ?? 0), 0);
+  const totalSing = withGenreBonus(team.reduce((n, a) => n + (a.singMax ?? 0), 0), synergy.bonus);
+  const totalDance = withGenreBonus(team.reduce((n, a) => n + (a.danceMax ?? 0), 0), synergy.bonus);
   const hasStats = team.some((a) => a.singMax !== null);
 
   return (
@@ -86,11 +82,17 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
               <>
                 <div className="rounded-xl border border-white/10 bg-panel/70 p-3">
                   <dt className="text-[11px] font-semibold uppercase tracking-wide text-zinc-400">{C.artists.sing}</dt>
-                  <dd className="tabular mt-0.5 font-display text-xl font-bold text-zinc-100">{formatStat(totalSing, locale)}</dd>
+                  <dd className="tabular mt-0.5 font-display text-xl font-bold text-zinc-100">
+                    {formatStat(totalSing, locale)}
+                    {synergy.bonus > 0 && <span className="ml-1 align-middle text-xs font-semibold text-emerald-300">+{synergy.bonus}%</span>}
+                  </dd>
                 </div>
                 <div className="rounded-xl border border-white/10 bg-panel/70 p-3">
                   <dt className="text-[11px] font-semibold uppercase tracking-wide text-zinc-400">{C.artists.dance}</dt>
-                  <dd className="tabular mt-0.5 font-display text-xl font-bold text-zinc-100">{formatStat(totalDance, locale)}</dd>
+                  <dd className="tabular mt-0.5 font-display text-xl font-bold text-zinc-100">
+                    {formatStat(totalDance, locale)}
+                    {synergy.bonus > 0 && <span className="ml-1 align-middle text-xs font-semibold text-emerald-300">+{synergy.bonus}%</span>}
+                  </dd>
                 </div>
               </>
             )}
@@ -107,18 +109,18 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
               ))}
             </div>
             <div className="mt-2 flex flex-wrap items-center gap-1.5 border-t border-white/10 pt-2">
-              {genres.map(([g, n]) => (
+              {synergy.genres.map(([g, n]) => (
                 <span key={g} className="inline-flex items-center gap-1 rounded-md bg-white/5 px-2 py-0.5 text-xs text-zinc-300">
                   <GenreIcon image={genreImages.get(g) ?? null} className="h-3 w-3" />
                   {g} <span className="text-zinc-400">×{n}</span>
                 </span>
               ))}
-              {genreBonus > 0 ? (
+              {synergy.bonus > 0 ? (
                 <span className="inline-flex items-center rounded-md border border-emerald-500/30 bg-emerald-500/10 px-1.5 py-0.5 text-xs font-semibold text-emerald-300">
-                  {t(C.team.synergy, { n: topCount, genre: topGenre, bonus: genreBonus })}
+                  {t(C.team.synergy, { n: synergy.count, genre: synergy.genre, bonus: synergy.bonus })}
                 </span>
               ) : (
-                <span className="text-xs text-zinc-400">{t(C.team.synergyNeed, { n: topCount, genre: topGenre })}</span>
+                <span className="text-xs text-zinc-400">{t(C.team.synergyNeed, { n: synergy.count, genre: synergy.genre })}</span>
               )}
             </div>
           </section>

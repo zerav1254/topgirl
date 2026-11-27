@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { classLevels, expBetween, modTotals, starBetween, starCardsForLevels, sumLevels } from "../lib/cost-calc.ts";
 import { poolTiers } from "../lib/pool.ts";
+import { genreSynergy, withGenreBonus } from "../lib/team.ts";
 import { allow } from "../lib/rate-limit.ts";
 import { safeNextPath } from "../lib/redirect.ts";
 
@@ -19,6 +20,12 @@ const key = `test:${Date.now()}`;
 assert.equal(allow(key, 2, 60_000), true);
 assert.equal(allow(key, 2, 60_000), true);
 assert.equal(allow(key, 2, 60_000), false);
+
+// Sinergi genre: 3/4/5 artis genre sama = +10/+15/+25% Menyanyi & Menari.
+assert.equal(genreSynergy([{ genre: "Pop" }, { genre: "Pop" }, { genre: "Pop" }]).bonus, 10);
+assert.equal(genreSynergy([{ genre: "Pop" }, { genre: "Pop" }, { genre: "Pop" }, { genre: "Pop" }]).bonus, 15);
+assert.equal(withGenreBonus(100_000, 25), 125_000);
+assert.equal(withGenreBonus(100_001, 10), 110_001);
 
 // Kalkulator biaya: rentang level/star dijumlahkan, biaya kelas mod ditagih sekali per naik kelas.
 assert.equal(expBetween([0, 120, 120], 1, 3), 240);

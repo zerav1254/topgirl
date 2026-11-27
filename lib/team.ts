@@ -7,8 +7,21 @@ export const TEAM_SIZE = 5;
 // pool besar (94 artis) jadi 58 juta kombinasi di browser.
 export const BEST_POOL_LIMIT = 20;
 
-// Genre synergy is informational here: 3/4/5 artists of one genre grant +5/+10/+25% in game.
-export const GENRE_BONUS: Record<number, number> = { 3: 5, 4: 10, 5: 25 };
+// Sinergi genre (LC_IDOL_queue_buff_name9): 3/4/5 artis genre sama
+// menambah +10/+15/+25% Menyanyi & Menari.
+export const GENRE_BONUS: Record<number, number> = { 3: 10, 4: 15, 5: 25 };
+
+// Genre terbanyak dalam tim + bonus yang berlaku.
+export function genreSynergy(team: Artist[]) {
+  const counts = new Map<string, number>();
+  for (const a of team) counts.set(a.genre, (counts.get(a.genre) ?? 0) + 1);
+  const genres = [...counts.entries()].sort((a, b) => b[1] - a[1]);
+  const [genre, count] = genres[0] ?? ["", 0];
+  return { genres, genre, count, bonus: GENRE_BONUS[count] ?? 0 };
+}
+
+export const withGenreBonus = (value: number, bonus: number) =>
+  Math.round(value * (1 + bonus / 100));
 
 export const STAT_ORDER: Effect[] = [
   "player_dmg",
