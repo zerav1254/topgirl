@@ -124,6 +124,19 @@ Alur data: Supabase → `lib/artists.ts` → server component (props) → client
 4. Tanpa emoji sebagai ikon, tanpa teks kontras rendah.
 5. Commit kecil, pesan imperatif (`Add ...`, `Fix ...`). Push hanya setelah tanya + izin pemilik repo (lihat `RULE.md`).
 
+## Memory repo
+
+Keputusan/gotcha proyek ada di `.opencode/memory/` (baca `INDEX.md` dulu).
+
+```bash
+python3 .opencode/memory/mem.py search "kata kunci"
+python3 .opencode/memory/mem.py recent 15
+python3 .opencode/memory/mem.py sync     # setelah menulis .md baru
+```
+
+Simpan hanya yang tidak terbaca dari kode; jangan duplikasi isi `AGENTS.md`/`RULE.md`/`DESIGN.md`.
+Jangan tulis ke `~/.config/opencode/memory/` untuk proyek ini; memory TopGirl hanya di `.opencode/memory/`.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 ## This is NOT the Next.js you know
