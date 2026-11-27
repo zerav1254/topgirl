@@ -110,9 +110,19 @@ export function CostCalculator({ book, locale, signedIn }: { book: CostBook; loc
 
           {artistBad ? null : (
             <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
-              <div className="rounded-xl border border-gold/30 bg-gold/10 px-3 py-3">
-                <p className="text-2xs font-semibold uppercase tracking-wide text-zinc-300">{C.exp}</p>
-                <p className="tabular text-2xl font-bold text-gold">{format(exp)}</p>
+              <div className="flex items-center gap-3 rounded-xl border border-gold/30 bg-gold/10 px-3 py-3">
+                <div className="min-w-0 flex-1">
+                  <p className="text-2xs font-semibold uppercase tracking-wide text-zinc-300">{C.exp}</p>
+                  <p className="tabular text-2xl font-bold text-gold">{format(exp)}</p>
+                </div>
+                <Image
+                  src="/assets/images/upgrades/UI_Item_Props_Exp.webp"
+                  alt=""
+                  width={56}
+                  height={56}
+                  sizes="56px"
+                  className="h-14 w-14 shrink-0 object-contain"
+                />
               </div>
               <div className="flex items-center gap-3 rounded-xl border border-line bg-panel-2/60 px-3 py-3">
                 <div className="min-w-0 flex-1">
