@@ -80,12 +80,6 @@ const NAMES: Record<string, string> = {
 export const costIcon = (itemId?: number, name?: string) =>
   (itemId === undefined ? undefined : ICONS[itemId]) ?? (name ? NAMES[name] : undefined);
 
-// Ikon komponen mobil per slot + tier (tier 1-7 = D, C, B, A, A+, S, S+).
-const CAR_PART_ASSET = { steering: "SteeringWheel", chip: "ECU", sound: "CarAudio" } as const;
-
-export const carPartIcon = (slot: keyof typeof CAR_PART_ASSET, tier: number) =>
-  `${ROOT}/mobil/UI_Icon_Vehicle_${CAR_PART_ASSET[slot]}_${String(tier).padStart(2, "0")}.webp`;
-
 // Ikon mod mobil: 4 part (Mesin, Sasis, Suspensi, Velg) x 6 tampilan.
 // Config game berganti gambar per rentang level kelas: 0-1, 2-5, 6-14, 15-34, 35-64, 65+.
 const CAR_MOD_ASSET = ["Engine", "CarFrame", "Chassis", "Wheel"] as const;

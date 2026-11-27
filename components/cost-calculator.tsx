@@ -2,10 +2,11 @@
 
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { expBetween, classLevels, modTotals, starCardsForLevels, sumLevels } from "@/lib/cost-calc";
-import { carModIcon, carPartIcon, tabIcon } from "@/lib/cost-icons";
+import { expBetween, classLevels, modTotals, starCardsForLevels } from "@/lib/cost-calc";
+import { carModIcon, tabIcon } from "@/lib/cost-icons";
 import { DICT, numberLocale, type Locale } from "@/lib/i18n";
-import type { CarClass, CarPart, CostBook } from "@/lib/costs";
+import type { CarClass, CostBook } from "@/lib/costs";
+import { CarPartsPanel } from "./cost/car-parts";
 import { CeoPanel } from "./cost/ceo";
 import { CollectionPanel } from "./cost/collection";
 import { chip, clamp, field, invalid, label, NumberField, panel, result, Select, Totals } from "./cost/fields";
@@ -15,8 +16,6 @@ import { VillaPanel } from "./cost/villa";
 // Satu tab = satu menu game; isinya beberapa panel (flat + persentase).
 type Tab = "artist" | "car" | "hq" | "villa" | "collection" | "ceo";
 
-const PART_MIN = 1;
-const PART_MAX = 60;
 const MOD_MIN = 0;
 const MOD_MAX = 219;
 const ARTIST_MIN = 1;
@@ -44,10 +43,6 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
   const [levelFrom, setLevelFrom] = useState(ARTIST_MIN);
   const [levelTo, setLevelTo] = useState(ARTIST_MAX);
 
-  const [partId, setPartId] = useState(book.parts[0]?.id ?? 0);
-  const [partFrom, setPartFrom] = useState(PART_MIN);
-  const [partTo, setPartTo] = useState(PART_MAX);
-
   const [modPart, setModPart] = useState(0);
   const [modFrom, setModFrom] = useState(MOD_MIN);
   const [modTo, setModTo] = useState(MOD_MAX);
@@ -57,13 +52,7 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
   const exp = expBetween(curve, levelFrom, levelTo);
   const starCards = starCardsForLevels(book.levelStars, book.star.amounts, levelFrom, levelTo);
   const artistBad = levelTo <= levelFrom;
-  const partBad = partTo <= partFrom;
   const modBad = modTo <= modFrom;
-
-  const partTotals = useMemo(
-    () => sumLevels(book.costs.carPart[partId] ?? [], partFrom, partTo),
-    [book.costs.carPart, partId, partFrom, partTo],
-  );
 
   const modTotalsResult = useMemo(
     () =>
@@ -82,14 +71,7 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
   const classRanges = useMemo(() => classLevels(book.classByLevel), [book.classByLevel]);
   const classOptions = book.classes.filter((c) => classRanges.has(c.id));
   const classLabel = (c: CarClass) => (c.star > 0 ? `${c.name} ★${c.star}` : c.name);
-  const partGroups = (["steering", "chip", "sound"] as const).map((slot) => ({
-    slot,
-    label: slot === "steering" ? C.slotSteering : slot === "chip" ? C.slotChip : C.slotSound,
-    parts: book.parts.filter((p) => p.slot === slot),
-  }));
   const modLabels = [C.partEngine, C.partChassis, C.partSuspension, C.partWheels];
-  // Tier huruf diambil dari nama game: "Setir (A+)" -> "A+".
-  const tierLabel = (name: string) => name.match(/\(([^)]+)\)/)?.[1] ?? "";
 
   // Semua panel tetap ter-mount (disembunyikan) supaya input tidak hilang saat ganti tab.
   // Museum ikut menu Koleksi: koleksi menambah stat flat, museum mengalikannya (persentase).
@@ -153,63 +135,7 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
       tab: "car",
       id: "parts",
       node: (
-        <section aria-label={C.tabParts} className={panel}>
-          <p className={`${label} mb-2`}>{C.tabParts}</p>
-          {partGroups.map((group) => (
-            <div key={group.slot} role="group" aria-label={group.label} className="mb-3 last:mb-0">
-              <p className={label}>{group.label}</p>
-              <div className="mt-1 grid grid-cols-4 gap-2 sm:grid-cols-7">
-                {group.parts.map((part: CarPart) => {
-                  const active = part.id === partId;
-                  return (
-                    <button
-                      key={part.id}
-                      type="button"
-                      aria-pressed={active}
-                      aria-label={part.name}
-                      title={part.name}
-                      onClick={() => setPartId(part.id)}
-                      className={`flex min-h-11 flex-col items-center gap-1 rounded-lg border px-1 py-1.5 transition-colors duration-200 ${
-                        active
-                          ? "border-gold/50 bg-gold/10"
-                          : "border-white/10 bg-panel/80 hover:border-white/25"
-                      }`}
-                    >
-                      <Image
-                        src={carPartIcon(group.slot, part.tier)}
-                        alt=""
-                        width={40}
-                        height={40}
-                        sizes="40px"
-                        className="h-10 w-10 object-contain"
-                      />
-                      <span className={`text-[10px] font-semibold ${active ? "text-gold" : "text-zinc-400"}`}>
-                        {tierLabel(part.name)}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-
-          <div className="mt-3 grid grid-cols-2 gap-3">
-            <NumberField id="cost-part-from" text={C.levelFrom} value={partFrom} min={PART_MIN} max={PART_MAX} invalid={partBad} describedBy={partBad ? "cost-part-error" : undefined} onChange={(v) => setPartFrom(clamp(v, PART_MIN, PART_MAX))} />
-            <NumberField id="cost-part-to" text={C.levelTo} value={partTo} min={PART_MIN} max={PART_MAX} invalid={partBad} describedBy={partBad ? "cost-part-error" : undefined} onChange={(v) => setPartTo(clamp(v, PART_MIN, PART_MAX))} />
-          </div>
-
-          {partBad ? (
-            <p id="cost-part-error" role="status" className={invalid}>
-              {C.invalid}
-            </p>
-          ) : null}
-
-          {partBad ? null : (
-            <div className={result}>
-              <Totals totals={partTotals} note={C.partNote} empty={C.noCost} format={format} />
-            </div>
-          )}
-        </section>
+        <CarPartsPanel parts={book.parts} costs={book.costs.carPart} C={C} format={format} />
       ),
     },
     {

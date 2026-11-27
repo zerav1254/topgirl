@@ -41,7 +41,8 @@ export type CostBook = {
   // classByLevel[level] = id kelas mod; 220 level, sama untuk keempat part.
   classByLevel: number[];
   costs: {
-    carPart: Record<number, CostItem[]>;
+    // carPart[tier - 1] = biaya level; 3 slot di tier yang sama berbagi biaya.
+    carPart: TierCosts;
     carMod: Record<number, CostItem[]>;
     carModClass: Record<number, CostItem[]>;
   };
@@ -199,7 +200,7 @@ export async function loadCostBook(): Promise<CostBook> {
     parts: parts.data as PartRow[],
     classes: (classes.data as ClassRow[]).map((c) => ({ id: c.id, name: c.name, star: c.star })),
     classByLevel: (levels.data as LevelRow[]).map((r) => r.class_id),
-    costs: { carPart: {}, carMod: {}, carModClass: {} },
+    costs: { carPart: [], carMod: {}, carModClass: {} },
     museum: byTier(museum.data as TierCostRow[]),
     hq: {
       curve: {
@@ -269,9 +270,15 @@ export async function loadCostBook(): Promise<CostBook> {
     const item = { itemId: row.item_id, itemName: row.item_name, amounts: row.amounts };
     if (row.scope === "collection_platform") (book.collection.platforms[row.ref_id] ??= []).push(item);
     else if (row.scope === "collection_star") (book.collection.stars[row.ref_id] ??= []).push(item);
-    else {
-      const target =
-        row.scope === "car_part" ? book.costs.carPart : row.scope === "car_mod" ? book.costs.carMod : book.costs.carModClass;
+    else if (row.scope === "car_part") {
+      // Biaya identik untuk 3 slot; simpan sekali per tier.
+      const tier = book.parts.find((part) => part.id === row.ref_id)?.tier;
+      if (tier) {
+        const tierItems = (book.costs.carPart[tier - 1] ??= []);
+        if (!tierItems.some((existing) => existing.itemId === item.itemId)) tierItems.push(item);
+      }
+    } else {
+      const target = row.scope === "car_mod" ? book.costs.carMod : book.costs.carModClass;
       (target[row.ref_id] ??= []).push(item);
     }
   }

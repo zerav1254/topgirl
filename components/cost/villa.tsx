@@ -18,7 +18,9 @@ export function VillaPanel({ villa, C, format }: { villa: CostBook["villa"]; C: 
   const [suiteId, setSuiteId] = useState(1);
   const [suiteFrom, setSuiteFrom] = useState(0);
   const [suiteTo, setSuiteTo] = useState(5);
-  const [staffId, setStaffId] = useState(villa.staff[0]?.id ?? 0);
+  const [staffTier, setStaffTier] = useState(villa.staff[0]?.tier ?? 1);
+  // 0 = semua tipe staf di tier ini.
+  const [staffSlot, setStaffSlot] = useState(0);
   const [staffFrom, setStaffFrom] = useState(STAFF_MIN);
   const [staffTo, setStaffTo] = useState(STAFF_MAX);
 
@@ -32,23 +34,32 @@ export function VillaPanel({ villa, C, format }: { villa: CostBook["villa"]; C: 
   );
   const stageItem = villa.stages.find((item) => item.itemName)?.itemName ?? "";
   const targetSuites = villa.suites.filter((item) => item.stage === stageTo);
-  const suite = targetSuites.find((item) => item.suite === suiteId) ?? targetSuites[0];
+  const suite = (suiteId === 0 ? targetSuites[0] : targetSuites.find((item) => item.suite === suiteId)) ?? targetSuites[0];
+  const suiteCount = suiteId === 0 ? Math.max(targetSuites.length, 1) : 1;
   const suiteMax = suite?.levelMax ?? 5;
   const suiteLevelBad = suiteTo <= suiteFrom || suiteTo > suiteMax;
-  // Biaya suite konstan per level (ClassUpgradeCost), jadi amount x jumlah level.
-  const suiteAmount = suiteLevelBad ? 0 : suite ? suite.amount * (suiteTo - suiteFrom) : 0;
+  // Biaya suite konstan per level (ClassUpgradeCost), jadi amount x jumlah level x jumlah suite.
+  const suiteAmount = suiteLevelBad ? 0 : suite ? suite.amount * (suiteTo - suiteFrom) * suiteCount : 0;
   const suiteItem = suite?.itemName ?? "";
   const totals = [
     stageAmount > 0 && stageItem ? { name: stageItem, amount: stageAmount } : null,
     suiteAmount > 0 && suiteItem ? { name: suiteItem, amount: suiteAmount } : null,
   ].filter((item): item is Total => item !== null);
 
-  const staff = villa.staff.find((item) => item.id === staffId) ?? villa.staff[0];
-  const staffTotals = useMemo(() => {
-    if (!staff) return [];
-    const totals: Total[] = staff.amount > 0 && staff.itemName ? [{ name: staff.itemName, amount: staff.amount }] : [];
-    return totals.concat(sumLevels(villa.staffCosts[staff.tier - 1] ?? [], staffFrom - 1, staffTo));
-  }, [staff, villa.staffCosts, staffFrom, staffTo]);
+  const staffTiers = useMemo(() => [...new Set(villa.staff.map((item) => item.tier))].sort((a, b) => a - b), [villa.staff]);
+  const tierStaff = villa.staff.filter((item) => item.tier === staffTier);
+  const staffCount = staffSlot === 0 ? Math.max(tierStaff.length, 1) : 1;
+  const staff = tierStaff.find((item) => item.staffType === staffSlot) ?? tierStaff[0];
+  const staffTotals: Total[] = [];
+  if (staff) {
+    if (staff.amount > 0 && staff.itemName) staffTotals.push({ name: staff.itemName, amount: staff.amount * staffCount });
+    staffTotals.push(
+      ...sumLevels(villa.staffCosts[staff.tier - 1] ?? [], staffFrom - 1, staffTo).map((item) => ({
+        ...item,
+        amount: item.amount * staffCount,
+      })),
+    );
+  }
 
   return (
     <section aria-label={C.tabVilla} className={panel}>
@@ -79,7 +90,7 @@ export function VillaPanel({ villa, C, format }: { villa: CostBook["villa"]; C: 
               value={stageTo}
               onChange={(value) => {
                 setStageTo(value);
-                const max = villa.suites.find((item) => item.stage === value && item.suite === suiteId)?.levelMax ?? 5;
+                const max = villa.suites.find((item) => item.stage === value && item.suite === (suiteId === 0 ? 1 : suiteId))?.levelMax ?? 5;
                 setSuiteTo((current) => Math.min(current, max));
               }}
             >
@@ -93,6 +104,7 @@ export function VillaPanel({ villa, C, format }: { villa: CostBook["villa"]; C: 
 
           <div className="mt-3">
             <Select id="cost-villa-suite" text={C.villaSuite} value={suiteId} onChange={setSuiteId}>
+              <option value={0}>{C.villaAllSuites}</option>
               {targetSuites.map((item) => (
                 <option key={item.suite} value={item.suite}>
                   {item.name}
@@ -123,13 +135,31 @@ export function VillaPanel({ villa, C, format }: { villa: CostBook["villa"]; C: 
         </>
       ) : (
         <>
-          <Select id="cost-villa-staff" text={C.villaStaff} value={staffId} onChange={setStaffId}>
-            {villa.staff.map((item) => (
-              <option key={item.id} value={item.id}>
-                {item.name} (T{item.tier})
-              </option>
-            ))}
-          </Select>
+          <div className="grid grid-cols-2 gap-3">
+            <Select
+              id="cost-villa-staff-tier"
+              text={C.tier}
+              value={staffTier}
+              onChange={(value) => {
+                setStaffTier(value);
+                setStaffSlot(0);
+              }}
+            >
+              {staffTiers.map((value) => (
+                <option key={value} value={value}>
+                  {`${C.tier} ${value}`}
+                </option>
+              ))}
+            </Select>
+            <Select id="cost-villa-staff" text={C.villaStaff} value={staffSlot} onChange={setStaffSlot}>
+              <option value={0}>{C.villaAllStaff}</option>
+              {tierStaff.map((item) => (
+                <option key={item.id} value={item.staffType}>
+                  {item.name}
+                </option>
+              ))}
+            </Select>
+          </div>
 
           <div className="mt-3 grid grid-cols-2 gap-3">
             <NumberField id="cost-villa-staff-from" text={C.levelFrom} value={staffFrom} min={STAFF_MIN} max={STAFF_MAX} invalid={staffBad} describedBy={staffBad ? "cost-villa-staff-error" : undefined} onChange={(v) => setStaffFrom(clamp(v, STAFF_MIN, STAFF_MAX))} />
