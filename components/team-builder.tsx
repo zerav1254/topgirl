@@ -106,7 +106,7 @@ export function TeamBuilder({
   }
 
   return (
-    <div id="main" className="mx-auto flex max-w-4xl flex-col gap-3 px-4 pt-3 pb-28 sm:px-6 sm:pt-6">
+    <main id="main" className="mx-auto flex max-w-4xl flex-col gap-3 px-4 pt-3 pb-28 sm:px-6 sm:pt-6">
       <header className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
         <div className="flex min-w-0 items-center gap-3">
           <Image
@@ -172,6 +172,6 @@ export function TeamBuilder({
           onReset={() => writeTeam([])}
         />
       )}
-    </div>
+    </main>
   );
 }
