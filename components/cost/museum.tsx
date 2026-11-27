@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { sumLevels } from "@/lib/cost-calc";
 import type { CostItem } from "@/lib/costs";
-import { clamp, invalid, label, NumberField, panel, result, Segmented, Select, Totals, type CostDict } from "./fields";
+import { clamp, invalid, NumberField, panel, result, Segmented, Select, Totals, type CostDict } from "./fields";
 
 const MIN = 1;
 const MAX = 60;
@@ -36,7 +36,7 @@ export function MuseumPanel({
 
   return (
     <section aria-label={C.tabMuseum} className={panel}>
-      <p className={`${label} mb-2`}>{C.tabMuseum}</p>
+      <h2 className="sr-only">{C.tabMuseum}</h2>
       <Segmented
         text={C.tabMuseum}
         value={part}

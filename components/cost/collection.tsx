@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { sumLevels } from "@/lib/cost-calc";
 import type { CostBook } from "@/lib/costs";
-import { clamp, invalid, label, NumberField, panel, result, Segmented, Totals, type CostDict } from "./fields";
+import { clamp, heading, invalid, NumberField, panel, result, Segmented, Totals, type CostDict } from "./fields";
 import { MuseumPanel } from "./museum";
 
 const ITEM_MIN = 1;
@@ -39,7 +39,7 @@ export function CollectionPanel({
         value={mode}
         onChange={setMode}
         options={[
-          { id: "room", label: C.tabCollection },
+          { id: "room", label: C.item },
           { id: "museum", label: C.tabMuseum },
         ]}
       />
@@ -88,7 +88,7 @@ function CollectionRoom({
   return (
     <div className={panel}>
       <div role="group" aria-label={C.tabCollection}>
-        <p className={label}>{C.tabCollection}</p>
+        <h2 className={heading}>{C.tabCollection}</h2>
         <div className="mt-1 flex flex-col gap-2">
           {zones.map((entry) => {
             const active = entry.zone === zone;
@@ -123,13 +123,14 @@ function CollectionRoom({
               aria-label={`${it.name} (${RARITY[rarity]})`}
               title={it.name}
               onClick={() => setItemId(it.id)}
-              className={`flex min-h-11 flex-col items-center justify-center gap-1 rounded-lg border px-1 py-1.5 transition-colors duration-200 ${
+              className={`flex min-h-14 flex-col items-center justify-center gap-1 rounded-lg border px-1 py-1.5 text-center transition-colors duration-200 ${
                 active ? "border-gold/50 bg-gold/10" : "border-line bg-panel/80 hover:border-white/25"
               }`}
             >
               <span className={`rounded border px-1 text-2xs font-semibold ${RARITY_STYLE[rarity]}`}>
                 {RARITY[rarity]}
               </span>
+              <span className="line-clamp-2 text-2xs font-medium leading-tight text-zinc-300">{it.name}</span>
             </button>
           );
         })}

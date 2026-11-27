@@ -6,8 +6,9 @@ import type { DICT } from "@/lib/i18n";
 export type CostDict = (typeof DICT)["id"]["cost"];
 export type Total = { itemId?: number; name: string; amount: number };
 
-export const field = "h-11 w-full rounded-lg border border-line bg-panel/80 px-2.5 text-base font-semibold tabular text-zinc-100";
+export const field = "h-11 w-full rounded-lg border border-line bg-panel/80 px-2.5 text-base font-semibold tabular text-zinc-100 aria-invalid:border-brand/60";
 export const label = "text-2xs font-semibold uppercase tracking-wide text-zinc-400";
+export const heading = "text-sm font-semibold uppercase tracking-wide text-zinc-100";
 
 // Kelas kartu tab dan kotak hasil; dipakai semua panel biar tidak drift.
 export const panel = "rounded-2xl border border-line bg-panel/70 p-4 sm:p-5";
@@ -97,7 +98,7 @@ export function Select({
       <label htmlFor={id} className={label}>
         {text}
       </label>
-      <select id={id} value={value} onChange={(e) => onChange(Number(e.target.value))} className={field}>
+      <select id={id} value={value} onChange={(e) => onChange(Number(e.target.value))} className={`${field} truncate`}>
         {children}
       </select>
     </div>

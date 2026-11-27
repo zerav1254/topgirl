@@ -8,7 +8,7 @@ import type { CarClass, CostBook } from "@/lib/costs";
 import { CarPartsPanel } from "./cost/car-parts";
 import { CeoPanel } from "./cost/ceo";
 import { CollectionPanel } from "./cost/collection";
-import { chip, clamp, field, invalid, label, NumberField, panel, result, Select, Totals } from "./cost/fields";
+import { chip, clamp, field, heading, invalid, label, NumberField, panel, result, Select, Totals } from "./cost/fields";
 import { HqPanel } from "./cost/hq";
 import { VillaPanel } from "./cost/villa";
 
@@ -83,6 +83,7 @@ export function CostCalculator({ book, locale, signedIn }: { book: CostBook; loc
       id: "artist",
       node: (
         <section aria-label={C.tabArtist} className={panel}>
+          <h2 className="sr-only">{C.tabArtist}</h2>
           <div className="flex flex-col gap-1">
             <label htmlFor="cost-artist" className={label}>
               {C.artist}
@@ -112,7 +113,7 @@ export function CostCalculator({ book, locale, signedIn }: { book: CostBook; loc
               <div className="flex items-center gap-3 rounded-xl border border-gold/30 bg-gold/10 px-3 py-3">
                 <div className="min-w-0 flex-1">
                   <p className="text-2xs font-semibold uppercase tracking-wide text-zinc-300">{C.exp}</p>
-                  <p className="tabular text-2xl font-bold text-gold">{format(exp)}</p>
+                  <p className="tabular text-2xl font-bold break-words text-gold">{format(exp)}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3 rounded-xl border border-line bg-panel-2/60 px-3 py-3">
@@ -139,7 +140,7 @@ export function CostCalculator({ book, locale, signedIn }: { book: CostBook; loc
       id: "mods",
       node: (
         <section aria-label={C.tabMods} className={panel}>
-          <p className={`${label} mb-2`}>{C.tabMods}</p>
+          <h2 className={`${heading} mb-2`}>{C.tabMods}</h2>
           <div role="group" aria-label={C.modPart}>
             <p className={label}>{C.modPart}</p>
             <div className="mt-1">

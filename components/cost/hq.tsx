@@ -40,6 +40,7 @@ export function HqPanel({ hq, C, format }: { hq: CostBook["hq"]; C: CostDict; fo
 
   return (
     <section aria-label={C.tabHq} className={panel}>
+      <h2 className="sr-only">{C.tabHq}</h2>
       <Segmented
         text={C.tabHq}
         value={mode}

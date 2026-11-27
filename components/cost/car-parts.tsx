@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { sumLevels } from "@/lib/cost-calc";
 import type { CostBook } from "@/lib/costs";
-import { clamp, invalid, NumberField, panel, result, Select, Totals, type CostDict } from "./fields";
+import { clamp, heading, invalid, NumberField, panel, result, Select, Totals, type CostDict } from "./fields";
 
 const LEVEL_MIN = 1;
 const LEVEL_MAX = 60;
@@ -52,6 +52,7 @@ export function CarPartsPanel({
 
   return (
     <section aria-label={C.tabParts} className={panel}>
+      <h2 className={`${heading} mb-3`}>{C.tabParts}</h2>
       <div className="grid grid-cols-2 gap-3">
         <Select id="cost-part-tier" text={C.tier} value={tier} onChange={setTier}>
           {tiers.map((value) => (

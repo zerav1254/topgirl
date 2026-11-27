@@ -54,6 +54,7 @@ export function CeoPanel({ ceo, C, format }: { ceo: CostBook["ceo"]; C: CostDict
 
   return (
     <section aria-label={C.tabCeo} className={panel}>
+      <h2 className="sr-only">{C.tabCeo}</h2>
       <Segmented
         text={C.tabCeo}
         value={mode}
@@ -121,7 +122,7 @@ export function CeoPanel({ ceo, C, format }: { ceo: CostBook["ceo"]; C: CostDict
             </p>
           ) : (
             <div className={result}>
-              <Totals totals={totals} note={C.ceoAppearanceNote} empty={C.noCost} format={format} />
+              <Totals totals={totals} note={hasOutfits ? C.ceoAppearanceNote : undefined} empty={C.noCost} format={format} />
             </div>
           )}
         </>

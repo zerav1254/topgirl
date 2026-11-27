@@ -45,7 +45,7 @@ export function BottomNav({ locale }: { locale: Locale }) {
           className={`${ITEM} ${onArtists ? ACTIVE : IDLE}`}
         >
           <span aria-hidden="true" className="artist-glyph h-5 w-5" />
-          {C.header.artists}
+          <span className="max-w-full truncate">{C.header.artists}</span>
         </Link>
         <Link
           href={`${base}/team`}
@@ -65,7 +65,7 @@ export function BottomNav({ locale }: { locale: Locale }) {
               </span>
             )}
           </span>
-          <span>
+          <span className="max-w-full truncate">
             {C.header.teamShort}
             <span className="sr-only"> {t(C.header.tabCount, { n: count, size: TEAM_SIZE })}</span>
           </span>
@@ -76,7 +76,7 @@ export function BottomNav({ locale }: { locale: Locale }) {
           className={`${ITEM} ${pathname === `${base}/lineups` ? ACTIVE : IDLE}`}
         >
           <span aria-hidden="true" className="lineup-glyph h-5 w-5" />
-          {C.header.lineups}
+          <span className="max-w-full truncate">{C.header.lineups}</span>
         </Link>
         <Link
           href={`${base}/cost`}
@@ -84,7 +84,7 @@ export function BottomNav({ locale }: { locale: Locale }) {
           className={`${ITEM} ${onCost ? ACTIVE : IDLE}`}
         >
           <span aria-hidden="true" className="upgrade-glyph h-5 w-5" />
-          {C.header.cost}
+          <span className="max-w-full truncate">{C.header.cost}</span>
         </Link>
         <Link
           href={`${base}/profile`}
@@ -92,7 +92,7 @@ export function BottomNav({ locale }: { locale: Locale }) {
           className={`${ITEM} ${onProfile ? ACTIVE : IDLE}`}
         >
           <span aria-hidden="true" className="profile-glyph h-5 w-5" />
-          {C.profile.title}
+          <span className="max-w-full truncate">{C.profile.title}</span>
         </Link>
       </div>
     </nav>

@@ -66,6 +66,7 @@ export function VillaPanel({ villa, C, format }: { villa: CostBook["villa"]; C: 
 
   return (
     <section aria-label={C.tabVilla} className={panel}>
+      <h2 className="sr-only">{C.tabVilla}</h2>
       <Segmented
         text={C.tabVilla}
         value={mode}
@@ -135,7 +136,7 @@ export function VillaPanel({ villa, C, format }: { villa: CostBook["villa"]; C: 
             <div className={result}>
               <Totals
                 totals={totals}
-                note={`${C.villaStageNote} ${C.villaSuiteNote}`}
+                note={hasSuites ? `${C.villaStageNote} ${C.villaSuiteNote}` : C.villaStageNote}
                 empty={C.noCost}
                 format={format}
               />
