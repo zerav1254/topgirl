@@ -287,3 +287,20 @@ export async function loadCostBook(): Promise<CostBook> {
 
 // Data config game hampir statis; cache satu jam supaya query view tidak diulang tiap request.
 export const getCostBook = cache(unstable_cache(loadCostBook, ["cost-book"], { revalidate: 3600 }));
+
+// Pengunjung tanpa login hanya boleh menerima data biaya artist; bagian lain
+// dikosongkan supaya tidak ikut terkirim di payload server component.
+export function artistCostBook(book: CostBook): CostBook {
+  return {
+    ...book,
+    parts: [],
+    classes: [],
+    classByLevel: [],
+    costs: { carPart: [], carMod: {}, carModClass: {} },
+    museum: [],
+    hq: { curve: { itemName: "", amounts: [] }, rooms: [], roomCosts: [] },
+    villa: { stages: [], suites: [], staff: [], staffCosts: [] },
+    collection: { stars: {}, items: [], zones: [] },
+    ceo: { stages: [], outfits: [], sportCosts: [] },
+  };
+}

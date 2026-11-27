@@ -22,7 +22,7 @@ const MOD_PARTS = 4;
 const ARTIST_MIN = 1;
 const ARTIST_MAX = 160;
 
-export function CostCalculator({ book, locale }: { book: CostBook; locale: Locale }) {
+export function CostCalculator({ book, locale, signedIn }: { book: CostBook; locale: Locale; signedIn: boolean }) {
   const C = DICT[locale].cost;
   const format = (value: number) => value.toLocaleString(numberLocale(locale));
 
@@ -245,36 +245,40 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
     { id: "collection", label: C.tabCollection },
     { id: "ceo", label: C.tabCeo },
   ];
+  // Tanpa login hanya tab artist yang tampil (dan datanya saja yang dikirim server).
+  const visibleTabs = signedIn ? tabs : tabs.filter((item) => item.id === "artist");
 
   return (
     <div className="flex flex-col gap-4">
-      <div ref={tabBar} role="group" aria-label={C.title} className="grid grid-cols-3 gap-2 sm:grid-cols-6">
-        {tabs.map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            aria-pressed={tab === item.id}
-            onClick={() => setTab(item.id)}
-            className={`${chip(tab === item.id)} flex items-center justify-center gap-2`}
-          >
-            {item.glyph ? (
-              <span aria-hidden="true" className={`${item.glyph} h-6 w-6 shrink-0`} />
-            ) : (
-              <Image
-                src={tabIcon(item.id)}
-                alt=""
-                width={24}
-                height={24}
-                sizes="24px"
-                className="h-6 w-6 shrink-0 object-contain"
-              />
-            )}
-            {item.label}
-          </button>
-        ))}
-      </div>
+      {signedIn ? (
+        <div ref={tabBar} role="group" aria-label={C.title} className="grid grid-cols-3 gap-2 sm:grid-cols-6">
+          {tabs.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              aria-pressed={tab === item.id}
+              onClick={() => setTab(item.id)}
+              className={`${chip(tab === item.id)} flex items-center justify-center gap-2`}
+            >
+              {item.glyph ? (
+                <span aria-hidden="true" className={`${item.glyph} h-6 w-6 shrink-0`} />
+              ) : (
+                <Image
+                  src={tabIcon(item.id)}
+                  alt=""
+                  width={24}
+                  height={24}
+                  sizes="24px"
+                  className="h-6 w-6 shrink-0 object-contain"
+                />
+              )}
+              {item.label}
+            </button>
+          ))}
+        </div>
+      ) : null}
 
-      {tabs.map((item) => (
+      {visibleTabs.map((item) => (
         <div key={item.id} hidden={tab !== item.id} className="flex flex-col gap-4">
           {panels
             .filter((panelItem) => panelItem.tab === item.id)
