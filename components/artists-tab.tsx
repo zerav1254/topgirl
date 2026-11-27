@@ -211,8 +211,7 @@ function ArtistCard({
         <div className="border-t border-white/10 px-2 pt-1.5 pb-2">
           <div className="flex items-center justify-between gap-2">
             <span className="flex items-center gap-1">
-              {r && <RankBadge rank={r.rank} size={r.size} label={t(C.pool.rank, { n: r.rank, total: r.size })} />}
-              <TierBadge tier={tier} />
+              {r ? <RankBadge rank={r.rank} size={r.size} label={t(C.pool.rank, { n: r.rank, total: r.size })} /> : <TierBadge tier={tier} />}
             </span>
             <span className="tabular shrink-0 text-xs text-zinc-400">
               {C.info.score} <span className="font-semibold text-zinc-100">{formatStat(a.score, locale)}</span>

@@ -295,8 +295,7 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
                     <span className="min-w-0 flex-1">
                       <span className="flex items-center gap-1.5">
                         <span className="truncate text-sm font-semibold">{a.name}</span>
-                        {r && <RankBadge rank={r.rank} size={r.size} label={t(C.pool.rank, { n: r.rank, total: r.size })} />}
-                        <TierBadge tier={tierOf(a)} />
+                        {r ? <RankBadge rank={r.rank} size={r.size} label={t(C.pool.rank, { n: r.rank, total: r.size })} /> : <TierBadge tier={tierOf(a)} />}
                       </span>
                       <span className="tabular block truncate text-xs text-zinc-400">
                         {a.genre} · {formatStat(a.score, locale)}
