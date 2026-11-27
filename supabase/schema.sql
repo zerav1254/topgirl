@@ -64,8 +64,8 @@ create table public.artist_level_costs (
   primary key (artist_id, level)
 );
 
--- Biaya naik star artis, sumber CHeroStarCard. Baris star N = biaya menuju star N+1.
--- Star 30 adalah batas (tanpa biaya); roster max level 160 butuh star 0..21.
+-- Biaya naik star artis, sumber CHeroStar. Baris star N = biaya menuju star N+1.
+-- Star 21 adalah batas (tanpa biaya); roster max level 160 butuh star 0..20.
 create table public.artist_star_costs (
   artist_id integer not null references public.artists (id) on delete cascade,
   star smallint not null check (star between 0 and 29),
