@@ -5,7 +5,7 @@ export const SITE_NAME = "TopGirl Fan Site";
 const OG_LOCALE: Record<Locale, string> = { id: "id_ID", en: "en_US", fr: "fr_FR", ko: "ko_KR", zh: "zh_CN", ja: "ja_JP", de: "de_DE" };
 
 // Chunk metadata bersama: canonical + hreflang per locale, Open Graph, Twitter.
-// Gambar ikon/OG disuplai file convention (app/icon.svg, app/apple-icon.png,
+// Gambar ikon/OG disuplai file convention (app/icon.png, app/apple-icon.png,
 // app/opengraph-image.png, app/twitter-image.png).
 export function pageMetadata({
   locale,

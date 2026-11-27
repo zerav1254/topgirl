@@ -73,7 +73,7 @@ Saat login, kartu menambah satu tombol koleksi selebar kartu di bawah skill: `mi
 
 ## Logo
 
-Monogram **Z** (identitas `zerav`, bukan game): tile rounded-square `panel-2`, border `gold/30`, huruf Z tiga stroke geometris `gold` (tebal 8/64 tile). Sumber tunggal: `app/icon.svg`; `components/logo-mark.tsx` (SVG inline, warna via token `--color-*`) dipakai di header; `npm run logo` merender `app/apple-icon.png` (180), `app/opengraph-image.png` (1200×630), `app/twitter-image.png` (512) dari file itu — regen setelah mengubah mark. Mark tetap terbaca sampai 16px favicon; jangan turunkan ketebalan stroke.
+Logo **Z ribbon** (identitas `zerav`, bukan game): diagonal silver + pita biru atas/bawah di latar navy, gaya flat. Sumber tunggal: `public/logo.png` (512, PNG — hasil generate AI, bukan SVG); `components/logo-mark.tsx` merendernya via `next/image` (dibungkus `rounded-xl`); `npm run logo` merender `app/icon.png` (512, favicon), `app/apple-icon.png` (180), `app/opengraph-image.png` (1200×630), `app/twitter-image.png` (512) dari file itu — regen setelah mengganti `public/logo.png`. Palet logo: navy `#050a14`, biru `#25d3f8`→`#1736b4`, silver — di luar token `@theme`, dipakai hanya di `scripts/make-logo.mjs`.
 
 ## Gerak
 
