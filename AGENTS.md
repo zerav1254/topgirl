@@ -57,8 +57,7 @@ components/
   save-lineup.tsx   form simpan tim aktif sebagai lineup (dipakai tab Team)
   pool-picker.tsx   chip season server (single-select)
   profile-form.tsx  form profil (nama, ID/server, nickname)
-  frame-picker.tsx  pilihan frame avatar (client, hidden input avatarFrame)
-  user-avatar.tsx   avatar bulat + frame pilihan
+  user-avatar.tsx   avatar bulat
   bottom-nav.tsx    nav Artists/Team/Lineup/Biaya/Profil, dirender root layout
   cost-calculator.tsx + cost/  kalkulator biaya per menu game (artist, mobil, HQ, villa, koleksi, CEO)
   lineup-tags.tsx   tag genre/season/efek pada kartu lineup
@@ -70,7 +69,6 @@ components/
 lib/
   artists.ts      query Supabase -> tipe Artist/Effect
   artists-cache.ts cache roster lintas request (unstable_cache 300 dtk)
-  avatar-frames.ts daftar id frame avatar (public/assets/avatars/frames) + validasi
   score.ts        bobot skor, tier, label effect
   team.ts         TEAM_SIZE, STAT_ORDER, GENRE_BONUS
   team-store.ts   store tim di localStorage

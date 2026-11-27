@@ -46,7 +46,7 @@ export default async function Page({
         {profile ? (
           <>
             <div className="mt-4 flex items-center gap-3">
-              <UserAvatar src={profile.avatarUrl} name={profile.name ?? profile.email ?? "?"} frame={profile.avatarFrame} px={44} />
+              <UserAvatar src={profile.avatarUrl} name={profile.name ?? profile.email ?? "?"} px={44} />
               <div className="min-w-0">
                 <h1 className="font-display truncate text-xl font-bold tracking-tight">{profile.name ?? profile.email}</h1>
                 {profile.email && profile.name && <p className="truncate text-xs text-zinc-400">{profile.email}</p>}

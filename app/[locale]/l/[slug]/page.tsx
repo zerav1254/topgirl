@@ -48,7 +48,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
       <header className="relative overflow-hidden rounded-2xl border border-line bg-panel/80 p-4 sm:p-5">
         <span aria-hidden="true" className="pointer-events-none absolute -top-20 -right-16 h-48 w-48 rounded-full bg-brand/20 blur-3xl" />
         <div className="relative flex items-start gap-3">
-          <UserAvatar src={shared.ownerAvatarUrl} name={shared.ownerName ?? "TG"} frame={shared.ownerAvatarFrame} px={56} />
+          <UserAvatar src={shared.ownerAvatarUrl} name={shared.ownerName ?? "TG"} px={56} />
           <div className="min-w-0 flex-1">
             <p className="font-display text-2xs font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
             <h1 className="font-display text-xl font-bold tracking-tight break-words sm:text-2xl">

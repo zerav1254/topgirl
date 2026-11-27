@@ -65,7 +65,7 @@ export default async function Page({
         <span aria-hidden="true" className="pointer-events-none absolute -bottom-24 -left-16 h-48 w-48 rounded-full bg-brand/15 blur-3xl" />
 
         <div className="relative flex items-center gap-4">
-          <UserAvatar src={profile.avatarUrl} name={name} frame={profile.avatarFrame} />
+          <UserAvatar src={profile.avatarUrl} name={name} />
           <div className="min-w-0 flex-1">
             <p className="font-display truncate text-xl font-bold tracking-tight sm:text-2xl">{name}</p>
             <p className="truncate text-sm text-zinc-400">{secondary || C.profile.publicHint}</p>

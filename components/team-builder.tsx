@@ -27,7 +27,6 @@ export function TeamBuilder({
   owned,
   user,
   avatarUrl,
-  avatarFrame,
 }: {
   artists: Artist[];
   locale: Locale;
@@ -37,8 +36,6 @@ export function TeamBuilder({
   user: string | null;
   // Avatar akun (Google/Discord); null = pakai inisial.
   avatarUrl: string | null;
-  // Frame pilihan user; null = tanpa frame.
-  avatarFrame: string | null;
 }) {
   const C = DICT[locale];
   const [, startOwn] = useTransition();
@@ -124,7 +121,7 @@ export function TeamBuilder({
             href={`/${locale}${user ? "/profile" : "/login"}`}
             className="flex min-h-11 max-w-40 items-center gap-1.5 truncate rounded-lg border border-line px-2 text-xs font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
           >
-            {user && <UserAvatar src={avatarUrl} name={user} frame={avatarFrame} px={24} />}
+            {user && <UserAvatar src={avatarUrl} name={user} px={24} />}
             <span className="truncate">{user ? user : C.auth.login}</span>
           </Link>
           <LocaleSwitcher locale={locale} />
