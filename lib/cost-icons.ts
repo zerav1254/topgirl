@@ -28,9 +28,9 @@ const ICONS: Record<number, string> = {
   11118696: `${ROOT}/renovasi/UI_Item_HB_levelup_item11.webp`,
   // Bintang koleksi
   11116601: `${ROOT}/koleksi/UI_Collection_Icon_UpgradeProps_01.webp`,
-  // Bahan peningkatan koleksi
-  11117206: `${ROOT}/koleksi/UI_Item_Sandstone_1.webp`,
-  11117207: `${ROOT}/koleksi/UI_Item_Tile_1.webp`,
+  // Bahan peningkatan koleksi (lempeng batu + parket, beda dari batu pasir museum)
+  11117206: `${ROOT}/koleksi/UI_Icon_collect_daoju2.webp`,
+  11117207: `${ROOT}/koleksi/UI_Icon_collect_daoju3.webp`,
   // Museum: batu pasir 1-4, ubin 1-4, rencana konstruksi T01-T07
   11118714: `${ROOT}/koleksi/UI_Item_Sandstone_1.webp`,
   11118715: `${ROOT}/koleksi/UI_Item_Sandstone_2.webp`,
@@ -92,8 +92,8 @@ export const carModIcon = (part: number, level: number) =>
     CAR_MOD_LEVEL_EDGES.filter((edge) => level >= edge).length + 1,
   ).padStart(2, "0")}.webp`;
 
-// Platform koleksi (booth showroom): 7 slot pertama; slot 8-9 belum rilis di game.
+// Platform ruang koleksi: 7 booth showroom; slot 8-9 belum rilis di game.
 export const COLLECTION_PLATFORMS = 7;
 
 export const collectionPlatformIcon = (index: number) =>
-  `${ROOT}/koleksi/UI_Item_Construction_Plans_${Math.min(index + 1, COLLECTION_PLATFORMS)}.webp`;
+  `${ROOT}/koleksi/UI_Showcase_${Math.min(index + 1, COLLECTION_PLATFORMS)}_01.webp`;
