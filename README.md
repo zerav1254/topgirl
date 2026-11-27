@@ -20,7 +20,7 @@ Cek bobot skor/tier terhadap DB: `npm run check:scores`.
 | `NEXT_PUBLIC_SUPABASE_URL` | `https://<ref>.supabase.co` |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | publishable key (aman di client) |
 | `SUPABASE_SERVICE_ROLE_KEY` | service role key — **server only**, jangan pernah di-commit |
-| `NEXT_PUBLIC_SITE_URL` | opsional, origin situs untuk callback OAuth; kosong = `VERCEL_*` lalu `localhost:3000` |
+| `NEXT_PUBLIC_SITE_URL` | opsional, origin situs untuk callback OAuth; kosong = `https://zerav.web.id` (dev: `localhost:3000`) |
 
 Login memakai Supabase Auth provider **Google** dan **Discord** (provider email dimatikan).
 Callback OAuth: `https://<ref>.supabase.co/auth/v1/callback`.
