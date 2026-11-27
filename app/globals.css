@@ -40,7 +40,7 @@ body {
 .artist-glyph,
 .team-glyph,
 .lineup-glyph,
-.cost-glyph,
+.upgrade-glyph,
 .profile-glyph,
 .rank-glyph,
 .logout-glyph,
@@ -70,9 +70,9 @@ body {
   mask-image: url("/assets/icons/lineup.png");
 }
 
-.cost-glyph {
-  -webkit-mask-image: url("/assets/icons/cost.png");
-  mask-image: url("/assets/icons/cost.png");
+.upgrade-glyph {
+  -webkit-mask-image: url("/assets/icons/upgrade.png");
+  mask-image: url("/assets/icons/upgrade.png");
 }
 
 .rank-glyph {

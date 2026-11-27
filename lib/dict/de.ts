@@ -16,7 +16,7 @@ export const de: Dict = {
     tabCount: "({n} von {size})",
     info: "Rank-Info",
     lineups: "Lineups",
-    cost: "Kosten",
+    cost: "Upgrade",
   },
   info: {
     metaTitle: "So wird der Rank berechnet — TopGirl",

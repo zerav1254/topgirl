@@ -14,7 +14,7 @@ export const id = {
     tabCount: "({n} dari {size})",
     info: "Info rank",
     lineups: "Lineup",
-    cost: "Biaya",
+    cost: "Upgrade",
   },
   info: {
     metaTitle: "Cara Menghitung Rank — TopGirl",

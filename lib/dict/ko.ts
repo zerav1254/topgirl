@@ -16,7 +16,7 @@ export const ko: Dict = {
     tabCount: "({size}명 중 {n}명)",
     info: "랭크 정보",
     lineups: "라인업",
-    cost: "비용",
+    cost: "업그레이드",
   },
   info: {
     metaTitle: "랭크 계산 방법 — TopGirl",

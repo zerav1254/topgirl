@@ -83,7 +83,7 @@ export function BottomNav({ locale }: { locale: Locale }) {
           aria-current={onCost ? "page" : undefined}
           className={`${ITEM} ${onCost ? ACTIVE : IDLE}`}
         >
-          <span aria-hidden="true" className="cost-glyph h-5 w-5" />
+          <span aria-hidden="true" className="upgrade-glyph h-5 w-5" />
           {C.header.cost}
         </Link>
         <Link
