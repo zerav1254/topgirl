@@ -73,7 +73,7 @@ Saat login, kartu menambah satu tombol koleksi selebar kartu di bawah skill: `mi
 
 ## Logo
 
-Logo **Z ribbon** (identitas `zerav`, bukan game): diagonal silver + pita biru atas/bawah di latar navy, gaya flat. Sumber tunggal: `public/logo.png` (512, PNG — hasil generate AI, bukan SVG); `components/logo-mark.tsx` merendernya via `next/image` (dibungkus `rounded-xl`); `npm run logo` merender `app/icon.png` (512, favicon), `app/apple-icon.png` (180), `app/opengraph-image.png` (1200×630), `app/twitter-image.png` (512) dari file itu — regen setelah mengganti `public/logo.png`. Palet logo: navy `#050a14`, biru `#25d3f8`→`#1736b4`, silver — di luar token `@theme`, dipakai hanya di `scripts/make-logo.mjs`.
+Logo **Z ribbon** (identitas `zerav`, bukan game): diagonal gold + pita red atas/bawah di latar near-black, gaya flat. Sumber tunggal: `public/logo.png` (512, PNG — hasil generate AI, bukan SVG); `components/logo-mark.tsx` merendernya via `next/image` (dibungkus `rounded-xl`); `npm run logo` merender `app/icon.png` (512, favicon), `app/apple-icon.png` (180), `app/opengraph-image.png` (1200×630), `app/twitter-image.png` (512) dari file itu — regen setelah mengganti `public/logo.png`. Palet logo: near-black `#0b0b0f`, gold `#fbbf24`, red `#dc2626` — selaras token `@theme`.
 
 ## Gerak
 
