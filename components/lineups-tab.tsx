@@ -40,7 +40,7 @@ export function LineupsTab({
       router.refresh();
     });
 
-  const btn = "inline-flex min-h-11 cursor-pointer items-center justify-center gap-1.5 rounded-lg border px-3 text-sm font-semibold transition-colors duration-200";
+  const btn = "inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg border transition-colors duration-200";
 
   return (
     <div className="flex flex-col gap-4">
@@ -104,10 +104,11 @@ export function LineupsTab({
                     type="button"
                     disabled={pending}
                     onClick={() => run(() => toggleShare(locale, l.id, !l.shareSlug))}
+                    aria-label={l.shareSlug ? C.unshare : C.share}
+                    title={l.shareSlug ? C.unshare : C.share}
                     className={`${btn} border-line text-zinc-300 hover:border-white/25 hover:text-zinc-100`}
                   >
-                    <Icon d={l.shareSlug ? ICONS.unlink : ICONS.share} className="h-4 w-4 shrink-0" />
-                    {l.shareSlug ? C.unshare : C.share}
+                    <Icon d={l.shareSlug ? ICONS.unlink : ICONS.share} className="h-5 w-5 shrink-0" />
                   </button>
                   {l.shareSlug && (
                     <>
@@ -123,14 +124,21 @@ export function LineupsTab({
                             setMessage(C.copyFailed);
                           }
                         }}
+                        aria-label={copied === l.id ? C.copied : C.copy}
+                        title={copied === l.id ? C.copied : C.copy}
+                        className={`${btn} border-line hover:border-white/25 ${copied === l.id ? "text-emerald-300" : "text-zinc-300 hover:text-zinc-100"}`}
+                      >
+                        <Icon d={ICONS.copy} className="h-5 w-5 shrink-0" />
+                      </button>
+                      <a
+                        href={link}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label={C.open}
+                        title={C.open}
                         className={`${btn} border-line text-zinc-300 hover:border-white/25 hover:text-zinc-100`}
                       >
-                        <Icon d={ICONS.copy} className="h-4 w-4 shrink-0" />
-                        {copied === l.id ? C.copied : C.copy}
-                      </button>
-                      <a href={link} target="_blank" rel="noreferrer" className={`${btn} inline-flex items-center border-line text-zinc-300 hover:border-white/25 hover:text-zinc-100`}>
-                        <Icon d={ICONS.external} className="h-4 w-4 shrink-0" />
-                        {C.open}
+                        <Icon d={ICONS.external} className="h-5 w-5 shrink-0" />
                       </a>
                     </>
                   )}
@@ -140,10 +148,11 @@ export function LineupsTab({
                     onClick={() => {
                       if (window.confirm(C.confirmDelete)) run(() => remove(locale, l.id), "");
                     }}
+                    aria-label={C.delete}
+                    title={C.delete}
                     className={`${btn} ml-auto border-line text-zinc-400 hover:border-red-400/40 hover:text-red-300`}
                   >
-                    <Icon d={ICONS.trash} className="h-4 w-4 shrink-0" />
-                    {C.delete}
+                    <Icon d={ICONS.trash} className="h-5 w-5 shrink-0" />
                   </button>
                 </div>
               </li>
