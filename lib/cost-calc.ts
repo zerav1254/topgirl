@@ -48,12 +48,16 @@ export function modTotals({
   classByLevel,
   from,
   to,
+  count = 1,
 }: {
   items: CostItem[];
   classCosts: Record<number, CostItem[]>;
   classByLevel: number[];
   from: number;
   to: number;
+  // Jumlah bagian yang diupgrade paralel (mis. 4 part mobil). Hanya biaya
+  // level yang dikali; biaya kelas tetap sekali per naik kelas.
+  count?: number;
 }): CostTotal[] {
   if (to <= from) return [];
   const totals = new Map<number, CostTotal>();
@@ -66,7 +70,7 @@ export function modTotals({
   for (const item of items) {
     let amount = 0;
     for (let level = from + 1; level <= to; level++) amount += item.amounts[level] ?? 0;
-    if (amount > 0) add(item, amount);
+    if (amount > 0) add(item, amount * count);
   }
 
   // Tiap pindah kelas, biaya kelas baru (level 0) ikut dihitung sekali.

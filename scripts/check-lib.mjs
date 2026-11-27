@@ -62,6 +62,21 @@ assert.deepEqual(
     { itemId: 3, name: "Gambar", amount: 4 },
   ],
 );
+// Semua 4 part: biaya level ikut ×4, biaya kelas tetap sekali.
+assert.deepEqual(
+  modTotals({
+    items: [{ itemId: 2, itemName: "Bagian", amounts: { "1": 10, "2": 20 } }],
+    classCosts: { 2: [{ itemId: 3, itemName: "Gambar", amounts: { "0": 4 } }] },
+    classByLevel: [1, 1, 2],
+    from: 0,
+    to: 2,
+    count: 4,
+  }),
+  [
+    { itemId: 2, name: "Bagian", amount: 120 },
+    { itemId: 3, name: "Gambar", amount: 4 },
+  ],
+);
 // Helper kelas: level hanya diketahui lewat kelas mod kendaraan.
 const ranges = classLevels([1, 1, 1, 2, 2]);
 assert.deepEqual(ranges.get(1), { from: 0, to: 2 });

@@ -31,13 +31,16 @@ export function CeoPanel({ ceo, C, format }: { ceo: CostBook["ceo"]; C: CostDict
     [appearanceBad, ceo.stages, stageFrom, stageTo],
   );
   const promoItem = ceo.stages.find((item) => item.itemName)?.itemName ?? "";
-  const targetOutfits = ceo.outfits.filter((item) => item.stage === stageTo);
-  const outfit = (outfitId === 0 ? targetOutfits[0] : targetOutfits.find((item) => item.outfit === outfitId)) ?? targetOutfits[0];
-  const outfitCount = outfitId === 0 ? Math.max(targetOutfits.length, 1) : 1;
-  const outfitMax = outfit?.levelMax ?? 10;
-  const outfitBad = outfitTo <= outfitFrom || outfitTo > outfitMax;
+  // Stage 6 ("Tertinggi") tidak punya outfit yang bisa di-upgrade (level_max 0).
+  const targetOutfits = ceo.outfits.filter((item) => item.stage === stageTo && item.levelMax > 0);
+  const hasOutfits = targetOutfits.length > 0;
+  const selectedOutfitId = outfitId === 0 || targetOutfits.some((item) => item.outfit === outfitId) ? outfitId : 0;
+  const outfit = (selectedOutfitId === 0 ? targetOutfits[0] : targetOutfits.find((item) => item.outfit === selectedOutfitId)) ?? targetOutfits[0];
+  const outfitCount = selectedOutfitId === 0 ? Math.max(targetOutfits.length, 1) : 1;
+  const outfitMax = outfit?.levelMax ?? 0;
+  const outfitBad = hasOutfits && (outfitTo <= outfitFrom || outfitTo > outfitMax);
   // Biaya aksesori konstan per level (ClassUpgradeCost), jadi amount x jumlah level x jumlah outfit.
-  const outfitAmount = outfitBad ? 0 : outfit ? outfit.amount * (outfitTo - outfitFrom) * outfitCount : 0;
+  const outfitAmount = outfitBad || !outfit ? 0 : outfit.amount * (outfitTo - outfitFrom) * outfitCount;
   const outfitItem = outfit?.itemName ?? "";
   const totals = [
     promoAmount > 0 && promoItem ? { name: promoItem, amount: promoAmount } : null,
@@ -78,8 +81,10 @@ export function CeoPanel({ ceo, C, format }: { ceo: CostBook["ceo"]; C: CostDict
               value={stageTo}
               onChange={(value) => {
                 setStageTo(value);
-                const max = ceo.outfits.find((item) => item.stage === value && item.outfit === (outfitId === 0 ? 1 : outfitId))?.levelMax ?? 10;
-                setOutfitTo((current) => Math.min(current, max));
+                const max = ceo.outfits.find((item) => item.stage === value && item.levelMax > 0)?.levelMax ?? 0;
+                const from = Math.min(outfitFrom, Math.max(max - 1, 0));
+                setOutfitFrom(from);
+                setOutfitTo(max > 0 && outfitTo <= from ? max : Math.min(outfitTo, max));
               }}
             >
               {ceo.stages.map((item) => (
@@ -90,21 +95,25 @@ export function CeoPanel({ ceo, C, format }: { ceo: CostBook["ceo"]; C: CostDict
             </Select>
           </div>
 
-          <div className="mt-3">
-            <Select id="cost-ceo-outfit" text={C.ceoAppearance} value={outfitId} onChange={setOutfitId}>
-              <option value={0}>{C.ceoAllOutfits}</option>
-              {targetOutfits.map((item) => (
-                <option key={item.outfit} value={item.outfit}>
-                  {item.name}
-                </option>
-              ))}
-            </Select>
-          </div>
+          {hasOutfits ? (
+            <>
+              <div className="mt-3">
+                <Select id="cost-ceo-outfit" text={C.ceoAppearance} value={selectedOutfitId} onChange={setOutfitId}>
+                  <option value={0}>{C.ceoAllOutfits}</option>
+                  {targetOutfits.map((item) => (
+                    <option key={item.outfit} value={item.outfit}>
+                      {item.name}
+                    </option>
+                  ))}
+                </Select>
+              </div>
 
-          <div className="mt-3 grid grid-cols-2 gap-3">
-            <NumberField id="cost-ceo-outfit-from" text={C.levelFrom} value={outfitFrom} min={0} max={outfitMax} invalid={outfitBad} describedBy={outfitBad ? "cost-ceo-error" : undefined} onChange={(v) => setOutfitFrom(clamp(v, 0, outfitMax))} />
-            <NumberField id="cost-ceo-outfit-to" text={C.levelTo} value={outfitTo} min={0} max={outfitMax} invalid={outfitBad} describedBy={outfitBad ? "cost-ceo-error" : undefined} onChange={(v) => setOutfitTo(clamp(v, 0, outfitMax))} />
-          </div>
+              <div className="mt-3 grid grid-cols-2 gap-3">
+                <NumberField id="cost-ceo-outfit-from" text={C.levelFrom} value={outfitFrom} min={0} max={outfitMax} invalid={outfitBad} describedBy={outfitBad ? "cost-ceo-error" : undefined} onChange={(v) => setOutfitFrom(clamp(v, 0, outfitMax))} />
+                <NumberField id="cost-ceo-outfit-to" text={C.levelTo} value={outfitTo} min={0} max={outfitMax} invalid={outfitBad} describedBy={outfitBad ? "cost-ceo-error" : undefined} onChange={(v) => setOutfitTo(clamp(v, 0, outfitMax))} />
+              </div>
+            </>
+          ) : null}
 
           {appearanceBad || outfitBad ? (
             <p id="cost-ceo-error" role="status" className={invalid}>

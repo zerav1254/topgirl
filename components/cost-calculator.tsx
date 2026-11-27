@@ -56,17 +56,18 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
   const artistBad = levelTo <= levelFrom;
   const modBad = modTo <= modFrom;
 
-  const modTotalsResult = useMemo(() => {
-    const totals = modTotals({
-      items: book.costs.carMod[modPart === -1 ? 0 : modPart] ?? [],
-      classCosts: book.costs.carModClass,
-      classByLevel: book.classByLevel,
-      from: modFrom,
-      to: modTo,
-    });
-    const count = modPart === -1 ? MOD_PARTS : 1;
-    return count === 1 ? totals : totals.map((item) => ({ ...item, amount: item.amount * count }));
-  }, [book.classByLevel, book.costs.carMod, book.costs.carModClass, modPart, modFrom, modTo]);
+  const modTotalsResult = useMemo(
+    () =>
+      modTotals({
+        items: book.costs.carMod[modPart === -1 ? 0 : modPart] ?? [],
+        classCosts: book.costs.carModClass,
+        classByLevel: book.classByLevel,
+        from: modFrom,
+        to: modTo,
+        count: modPart === -1 ? MOD_PARTS : 1,
+      }),
+    [book.classByLevel, book.costs.carMod, book.costs.carModClass, modPart, modFrom, modTo],
+  );
 
   // Helper kelas: pemain cukup pilih kelas yang tampil di mod kendaraan, level
   // terisi otomatis (awal = level pertama kelas, target = level terakhir kelas).
