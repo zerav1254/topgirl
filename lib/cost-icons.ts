@@ -91,3 +91,9 @@ export const carModIcon = (part: number, level: number) =>
   `${ROOT}/mobil/UI_Icon_Vehicle_${CAR_MOD_ASSET[part] ?? CAR_MOD_ASSET[0]}_${String(
     CAR_MOD_LEVEL_EDGES.filter((edge) => level >= edge).length + 1,
   ).padStart(2, "0")}.webp`;
+
+// Platform koleksi (booth showroom): 7 slot pertama; slot 8-9 belum rilis di game.
+export const COLLECTION_PLATFORMS = 7;
+
+export const collectionPlatformIcon = (index: number) =>
+  `${ROOT}/koleksi/UI_Item_Construction_Plans_${Math.min(index + 1, COLLECTION_PLATFORMS)}.webp`;

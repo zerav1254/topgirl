@@ -1,16 +1,17 @@
 "use client";
 
+import Image from "next/image";
 import { useMemo, useState } from "react";
 import { sumLevels } from "@/lib/cost-calc";
-import type { CostBook, CostItem } from "@/lib/costs";
-import { clamp, invalid, NumberField, panel, result, Segmented, Select, Totals, type CostDict } from "./fields";
-
-type Mode = "platform" | "star";
+import type { CostBook } from "@/lib/costs";
+import { COLLECTION_PLATFORMS, collectionPlatformIcon } from "@/lib/cost-icons";
+import { clamp, invalid, label, NumberField, panel, result, Totals, type CostDict } from "./fields";
 
 const PLATFORM_MIN = 1;
 const PLATFORM_MAX = 50;
-const EMPTY: CostItem[] = [];
 
+// ponytail: mode bintang disembunyikan (belum jelas di game). Data
+// collection.stars tetap ada di CostBook; tambah mode lagi kalau fitur rilis.
 export function CollectionPanel({
   collection,
   C,
@@ -20,105 +21,79 @@ export function CollectionPanel({
   C: CostDict;
   format: (value: number) => string;
 }) {
-  const [mode, setMode] = useState<Mode>("platform");
   const [slot, setSlot] = useState(1);
   const [platformFrom, setPlatformFrom] = useState(PLATFORM_MIN);
   const [platformTo, setPlatformTo] = useState(PLATFORM_MAX);
-  const [quality, setQuality] = useState(1);
-  const [starFrom, setStarFrom] = useState(0);
-  const [starTo, setStarTo] = useState(1);
 
-  const slots = Object.keys(collection.platforms).map(Number);
-  const qualities = Object.keys(collection.stars).map(Number);
-  const starItems = collection.stars[quality] ?? EMPTY;
-  // Jumlah bintang beda per quality (2/3/4), jadi batas input ikut quality terpilih.
-  const starMaxOf = (qualityId: number) =>
-    Math.max(...(collection.stars[qualityId] ?? EMPTY).map((item) => Object.keys(item.amounts).length), 1);
-  const starMax = starMaxOf(quality);
+  // Slot 8-9 ada di config tapi belum rilis; tampilkan 7 platform pertama saja.
+  const slots = Object.keys(collection.platforms)
+    .map(Number)
+    .filter((index) => index < COLLECTION_PLATFORMS);
   const platformBad = platformTo <= platformFrom;
-  const starBad = starTo <= starFrom;
+  const platformName = `${C.platform} ${slot}`;
 
   const platformTotals = useMemo(
     () => sumLevels(collection.platforms[slot - 1] ?? [], platformFrom, platformTo),
     [collection.platforms, slot, platformFrom, platformTo],
   );
-  const starTotals = useMemo(() => sumLevels(starItems, starFrom, starTo), [starItems, starFrom, starTo]);
 
   return (
     <section aria-label={C.tabCollection} className={panel}>
-      <Segmented
-        text={C.tabCollection}
-        value={mode}
-        onChange={setMode}
-        options={[
-          { id: "platform", label: C.collectionPlatform },
-          { id: "star", label: C.collectionStar },
-        ]}
-      />
+      <div role="group" aria-label={C.platform}>
+        <p className={label}>{C.platform}</p>
+        <div className="mt-1 grid grid-cols-4 gap-2 sm:grid-cols-7">
+          {slots.map((index) => {
+            const active = index + 1 === slot;
+            const name = `${C.platform} ${index + 1}`;
+            return (
+              <button
+                key={index}
+                type="button"
+                aria-pressed={active}
+                aria-label={name}
+                title={name}
+                onClick={() => setSlot(index + 1)}
+                className={`flex min-h-11 flex-col items-center gap-1 rounded-lg border px-1 py-1.5 transition-colors duration-200 ${
+                  active ? "border-gold/50 bg-gold/10" : "border-white/10 bg-panel/80 hover:border-white/25"
+                }`}
+              >
+                <Image
+                  src={collectionPlatformIcon(index)}
+                  alt=""
+                  width={48}
+                  height={48}
+                  sizes="48px"
+                  className="h-12 w-12 object-contain"
+                />
+                <span className={`text-[10px] font-semibold ${active ? "text-gold" : "text-zinc-400"}`}>
+                  {index + 1}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
-      {mode === "platform" ? (
-        <>
-          <Select id="cost-collection-slot" text={C.platform} value={slot} onChange={setSlot}>
-            {slots.map((value) => (
-              <option key={value} value={value + 1}>
-                {C.platform} {value + 1}
-              </option>
-            ))}
-          </Select>
+      <div className="mt-3 grid grid-cols-2 gap-3">
+        <NumberField id="cost-collection-from" text={C.levelFrom} value={platformFrom} min={PLATFORM_MIN} max={PLATFORM_MAX} invalid={platformBad} describedBy={platformBad ? "cost-collection-error" : undefined} onChange={(v) => setPlatformFrom(clamp(v, PLATFORM_MIN, PLATFORM_MAX))} />
+        <NumberField id="cost-collection-to" text={C.levelTo} value={platformTo} min={PLATFORM_MIN} max={PLATFORM_MAX} invalid={platformBad} describedBy={platformBad ? "cost-collection-error" : undefined} onChange={(v) => setPlatformTo(clamp(v, PLATFORM_MIN, PLATFORM_MAX))} />
+      </div>
 
-          <div className="mt-3 grid grid-cols-2 gap-3">
-            <NumberField id="cost-collection-from" text={C.levelFrom} value={platformFrom} min={PLATFORM_MIN} max={PLATFORM_MAX} invalid={platformBad} describedBy={platformBad ? "cost-collection-error" : undefined} onChange={(v) => setPlatformFrom(clamp(v, PLATFORM_MIN, PLATFORM_MAX))} />
-            <NumberField id="cost-collection-to" text={C.levelTo} value={platformTo} min={PLATFORM_MIN} max={PLATFORM_MAX} invalid={platformBad} describedBy={platformBad ? "cost-collection-error" : undefined} onChange={(v) => setPlatformTo(clamp(v, PLATFORM_MIN, PLATFORM_MAX))} />
-          </div>
+      {platformBad ? (
+        <p id="cost-collection-error" role="status" className={invalid}>
+          {C.invalid}
+        </p>
+      ) : null}
 
-          {platformBad ? (
-            <p id="cost-collection-error" role="status" className={invalid}>
-              {C.invalid}
-            </p>
-          ) : null}
-
-          {platformBad ? null : (
-            <div className={result}>
-              <Totals totals={platformTotals} note={C.collectionNote} empty={C.noCost} format={format} />
-            </div>
-          )}
-        </>
-      ) : (
-        <>
-          <Select
-            id="cost-collection-quality"
-            text={C.quality}
-            value={quality}
-            onChange={(v) => {
-              setQuality(v);
-              setStarFrom(0);
-              setStarTo(starMaxOf(v));
-            }}
-          >
-            {qualities.map((value) => (
-              <option key={value} value={value}>
-                {collection.stars[value]?.[0]?.itemName ?? `${C.quality} ${value}`}
-              </option>
-            ))}
-          </Select>
-
-          <div className="mt-3 grid grid-cols-2 gap-3">
-            <NumberField id="cost-collection-star-from" text={C.starFrom} value={starFrom} min={0} max={starMax} invalid={starBad} describedBy={starBad ? "cost-collection-star-error" : undefined} onChange={(v) => setStarFrom(clamp(v, 0, starMax))} />
-            <NumberField id="cost-collection-star-to" text={C.starTo} value={starTo} min={0} max={starMax} invalid={starBad} describedBy={starBad ? "cost-collection-star-error" : undefined} onChange={(v) => setStarTo(clamp(v, 0, starMax))} />
-          </div>
-
-          {starBad ? (
-            <p id="cost-collection-star-error" role="status" className={invalid}>
-              {C.invalid}
-            </p>
-          ) : null}
-
-          {starBad ? null : (
-            <div className={result}>
-              <Totals totals={starTotals} note={C.collectionStarNote} empty={C.noCost} format={format} />
-            </div>
-          )}
-        </>
+      {platformBad ? null : (
+        <div className={result}>
+          <Totals
+            totals={platformTotals}
+            note={`${platformName} · ${C.collectionNote}`}
+            empty={C.noCost}
+            format={format}
+          />
+        </div>
       )}
     </section>
   );
