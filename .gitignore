@@ -54,5 +54,5 @@ next-env.d.ts
 # local game ripping tools + extracted assets
 /.topgirl-ripper/
 
-# local memory index (derived)
-/.opencode/memory/memory.db
+# local agent config + memory (index is derived)
+/.opencode/
