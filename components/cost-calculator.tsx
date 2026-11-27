@@ -37,7 +37,8 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
       mounted.current = true;
       return;
     }
-    tabBar.current?.scrollIntoView({ block: "start", behavior: "smooth" });
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    tabBar.current?.scrollIntoView({ block: "start", behavior: reduce ? "auto" : "smooth" });
   }, [tab]);
 
   const [artistId, setArtistId] = useState(book.artists[0]?.id ?? 0);
