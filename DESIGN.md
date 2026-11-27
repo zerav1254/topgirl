@@ -14,7 +14,7 @@ Dark gaming dashboard: latar hampir hitam, panel berlapis, aksen merah agresif +
 | `panel` | `#14141a` | Kartu, input, dialog |
 | `panel-2` | `#1c1c24` | Hover kartu, slot tim terisi |
 | `brand` | `#dc2626` | Aksen utama, filter genre aktif, skill |
-| `gold` | `#fbbf24` | Tier S+, filter Spesialis aktif, counter tim, focus ring |
+| `gold` | `#fbbf24` | Tier S+, chip season/koleksi aktif, counter tim, focus ring |
 | ikon genre | `zinc-300` (`#d4d4d8`, sudah dibakar di PNG) | `public/assets/images/genres/*.png`, 128 px, alpha dari aset game |
 | teks utama | `zinc-100` | Judul, nama artist |
 | teks sekunder | `zinc-400` | Metadata, label, deskripsi |
@@ -51,7 +51,7 @@ Badge tier: `border-<warna>/45 bg-<warna>/15 text-<warna>-300` (S+ pakai `text-g
 
 ## Komponen
 
-**Artist card** — kartu ringkas yang bisa dibuka (native `<details>`): baris ringkas berisi avatar persegi 56 px, nama + skor sebaris, genre (ikon 16 px + teks), ikon centang bila sudah di tim, dan chevron yang berputar saat terbuka. Grid roster memakai `items-start` supaya kartu lain tidak ikut melar saat satu kartu dibuka. Isi terbuka: badge rank + tier, asal/share season ringkas, peringatan `pool.blocked`, dua baris skill (nama efek `text-zinc-400`, nilai `tabular font-semibold`), lalu tombol tim dan tombol koleksi `min-h-11` dengan `aria-pressed`. Kartu yang sudah di tim: `border-gold/30 bg-gold/5`. `<summary>` punya focus ring `outline-gold`.
+**Artist card** — kartu ringkas yang bisa dibuka (native `<details>`): baris ringkas berisi avatar persegi 56 px, nama + skor sebaris, genre (ikon 16 px + teks), ikon centang bila sudah di tim, dan chevron yang berputar saat terbuka. Grid roster memakai `items-start` supaya kartu lain tidak ikut melar saat satu kartu dibuka. Isi terbuka: badge rank (mode pool) atau tier, asal/share season ringkas, peringatan `pool.blocked`, tiga baris skill (dasar + dua skill tabel; nama efek `text-zinc-400`, nilai `tabular font-semibold`), lalu tombol tim dan tombol koleksi `min-h-11` dengan `aria-pressed`. Kartu yang sudah di tim: `border-gold/30 bg-gold/5`. `<summary>` punya focus ring `outline-gold`.
 
 Saat login, kartu menambah satu tombol koleksi selebar kartu di bawah skill: `min-h-11 rounded-lg` (`rounded-none` mengikuti sudut kartu), `border-t`. Belum punya: `border-white/10 text-zinc-400 hover:text-zinc-200`. Sudah punya: `border-emerald-500/30 bg-emerald-500/10 text-emerald-300`. Status `aria-pressed`, `aria-label` memakai `collection.markOwned`/`markMissing` + nama artist. Tombol ini tidak membuka dialog; ia hanya menandai kepemilikan.
 
@@ -61,15 +61,15 @@ Saat login, kartu menambah satu tombol koleksi selebar kartu di bawah skill: `mi
 
 **Lineup list** — kartu `rounded-xl border-white/10 bg-panel/70 p-3` per lineup: tumpukan avatar 5 slot (slot kosong bergaris putus-putus), nama (truncate) + `n/5` (`tabular`, `TEAM_SIZE`), badge status tautan (`shared`/`private`), progress bar emas, lalu baris tombol `min-h-11`: Bagikan/Cabut, Salin, Buka, dan Hapus (`ml-auto`, hover merah). Hapus wajib konfirmasi `window.confirm`. Salin mengumumkan hasil lewat `role="status"`.
 
-**Slot tim** — daftar `<ol>` 5 baris `min-h-[4rem]`. Kosong: `border-dashed border-white/10` + label "Slot n kosong". Terisi: `border-white/15 bg-panel-2`, avatar, nama, badge tier, genre, skor kategori aktif, tombol hapus. Baris terisi bisa diklik membuka dialog pemilih slot (`<dialog>` `w-[min(100%-2rem,32rem)]` berisi filter bersama + daftar kandidat dengan detail skill).
+**Slot tim** — daftar `<ol>` 5 baris `min-h-[4rem]`. Kosong: `border-dashed border-white/10` + label "Slot n kosong". Terisi: `border-white/15 bg-panel-2`, avatar, nama, badge tier, genre, skor global, tombol hapus. Baris terisi bisa diklik membuka dialog pemilih slot (`<dialog>` `w-[min(100%-2rem,32rem)]` berisi filter bersama + daftar kandidat dengan detail skill).
 
-**Filter dropdown** — empat `<select>` dalam grid `grid-cols-2 sm:grid-cols-4`, urut Genre, Asal, Spesialis, Skill. Tiap sel: label `text-[11px]` uppercase `text-zinc-400` di atas, select `h-11 rounded-lg border bg-panel/80 px-2.5 text-base font-semibold` (`text-base`, bukan `text-sm`, agar Safari iOS tidak auto-zoom saat fokus). Nilai `Semua` (`common.all`) selalu jadi opsi pertama; select terfilter memakai border/bg aksen (Spesialis emas, lainnya merah), tidak terfilter `border-white/10 text-zinc-300`. Filter Spesialis juga menentukan kategori skor/tier yang ditampilkan (`Semua` = SOLO). Satu state filter dipakai bersama tab Artists, tab Team, dan dialog slot. Di bawah `sm`, panel filter (chip koleksi + empat select) dilipat di balik tombol `Filter` dengan jumlah filter aktif; di `sm` ke atas selalu tampil. Tombol `Reset filter` selalu memesan lebar: ikon tutup di mobile, teks di `sm` ke atas, `invisible` saat bersih.
+**Filter dropdown** — tiga `<select>` (Genre, Asal, Skill) dalam grid `grid-cols-2 sm:grid-cols-3`, plus chip cakupan koleksi (Semua/Milik/Belum; `min-h-11`, aktif `border-gold/50 bg-gold/10 text-gold`) saat login. Tiap sel: label `text-[11px]` uppercase `text-zinc-400` di atas, select `h-11 rounded-lg border bg-panel/80 px-2.5 text-base font-semibold` (`text-base`, bukan `text-sm`, agar Safari iOS tidak auto-zoom saat fokus). Nilai `Semua` (`common.all`) selalu jadi opsi pertama; select terfilter memakai `border-brand/50 bg-brand/10 text-zinc-100`, tidak terfilter `border-white/10 text-zinc-300`. Filter tidak mengubah skor/tier: skor tunggal untuk seluruh situs. Satu state filter dipakai bersama tab Artists, tab Team, dan dialog slot. Di bawah `sm`, panel filter dilipat di balik tombol `Filter` dengan jumlah filter aktif; di `sm` ke atas selalu tampil. Tombol `Reset filter` selalu memesan lebar: ikon tutup di mobile, teks di `sm` ke atas, `invisible` saat bersih.
 
 **Input pencarian** — ikon SVG di kiri (`pl-9`), border fokus `focus:border-brand/60`.
 
 **Bottom nav** — 5 menu (Artists/Team/Lineup/Biaya/Profil), `grid-cols-5`, item `min-h-14`, status aktif `text-gold bg-gold/10` + `aria-current="page"`, badge jumlah tim memakai `sr-only` untuk angka.
 
-**Language switcher** — tombol pemicu `h-11 rounded-lg border-white/10 bg-panel/80` berisi bendera SVG (`public/assets/flags/<locale>.svg`, 20×14) + singkatan (`LANG_CODE`: ID/EN/FR/KO) + chevron; menu `role="listbox"` muncul di bawah (rata kanan), tiap opsi `min-h-11` berisi bendera + singkatan (`aria-label` = `LANG_NAME`), opsi aktif `bg-gold/10 text-gold`. Berada di header, rata kanan. Keyboard: Enter/Space/ArrowUp/ArrowDown buka, ArrowUp/Down pindah opsi, Escape tutup dan fokus balik ke tombol; fokus keluar dari grup atau klik di luar menutup. Ganti bahasa = `router.push` path sama dengan segmen locale diganti, query dipertahankan.
+**Language switcher** — tombol pemicu `h-11 rounded-lg border-white/10 bg-panel/80` berisi bendera SVG (`public/assets/flags/<locale>.svg`, 20×14) + singkatan (`LANG_CODE`: ID/EN/FR/KO/ZH/JA/DE) + chevron; menu `role="listbox"` muncul di bawah (rata kanan), tiap opsi `min-h-11` berisi bendera + singkatan (`aria-label` = `LANG_NAME`), opsi aktif `bg-gold/10 text-gold`. Berada di header, rata kanan. Keyboard: Enter/Space/ArrowUp/ArrowDown buka, ArrowUp/Down pindah opsi, Escape tutup dan fokus balik ke tombol; fokus keluar dari grup atau klik di luar menutup. Ganti bahasa = `router.push` path sama dengan segmen locale diganti, query dipertahankan.
 
 ## Gerak
 
@@ -83,11 +83,11 @@ Saat login, kartu menambah satu tombol koleksi selebar kartu di bawah skill: `mi
 - Ikon dekoratif `aria-hidden="true"`; tombol ikon wajib `aria-label`.
 - Status pilihan diumumkan lewat `aria-pressed`, bukan warna saja.
 - Target sentuh minimal 44×44 px (`min-h-11` / `h-11 w-11`).
-- `lang` mengikuti locale aktif (`id`/`en`/`fr`/`ko`), label form eksplisit.
+- `lang` mengikuti locale aktif (`id`/`en`/`fr`/`ko`/`zh`/`ja`/`de`), label form eksplisit.
 
 ## Jangan
 
 - Emoji sebagai ikon; dua set ikon dicampur dalam satu grup tombol (inline SVG untuk utilitas, glyph mask aset game untuk nav).
 - `bg-white/5` sebagai latar kartu utama (tidak terlihat di tema gelap).
-- Shadow tebal, blur kaca, atau gradien pelangi — bukan bahasa visual app ini.
+- Shadow tebal atau blur kaca (`backdrop-blur` pada panel) — bukan bahasa visual app ini. Glow radial dekoratif (orb `blur-3xl`, gradient `body`) tetap boleh.
 - Warna hardcode di luar token, kecuali skala `zinc` untuk teks netral.

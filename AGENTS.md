@@ -36,6 +36,9 @@ app/[locale]/
   info/page.tsx     rumus rank/bobot/tier, tanpa fetch DB
   login/page.tsx    OAuth Google/Discord + gate profil
   profile/page.tsx  profil, tautkan/lepas provider, form nama & ID game
+  profile/edit/page.tsx form edit profil + avatar
+  collection/       tandai artist yang dimiliki user
+  cost/page.tsx     kalkulator biaya
   lineups/page.tsx  daftar lineup + buat/bagikan/hapus
   lineup/actions.ts createLineup/toggleShare/remove
   l/[slug]/page.tsx halaman lineup publik (unlisted)
@@ -48,14 +51,19 @@ proxy.ts            redirect "/" sesuai Accept-Language + refresh sesi Supabase
 components/
   team-builder.tsx  shell /{locale} + /{locale}/team: state tim + header; sumber `Icon` inline SVG
   artists-tab.tsx   tab Artists: cari + filter + roster per tier + tombol tim/koleksi
-  artist-filter.tsx hook + bar filter (genre/asal/spesialis/skill), dilipat di mobile
+  artist-filter.tsx hook + bar filter (genre/asal/skill + cakupan koleksi), dilipat di mobile
   team-tab.tsx      slot tim (klik slot -> dialog pilih) + ringkasan
   lineups-tab.tsx   form simpan lineup + daftar (bagikan/salin/buka/hapus)
   pool-picker.tsx   chip season server (single-select)
   profile-form.tsx  form profil (nama, ID/server, nickname)
   frame-picker.tsx  pilihan frame avatar (client, hidden input avatarFrame)
   user-avatar.tsx   avatar bulat + frame pilihan
-  bottom-nav.tsx    nav Artists/Team/Lineup/Info, dirender root layout
+  bottom-nav.tsx    nav Artists/Team/Lineup/Biaya/Profil, dirender root layout
+  cost-calculator.tsx + cost/  kalkulator biaya per menu game (artist, mobil, HQ, villa, koleksi, CEO)
+  lineup-tags.tsx   tag genre/season/efek pada kartu lineup
+  public-lineups.tsx daftar lineup komunitas yang dibagikan
+  provider-mark.tsx logo Google/Discord untuk tombol OAuth
+  avatar-form.tsx   unggah avatar profil
   artist-ui.tsx     atom: Icon, TierBadge, Avatar, GenreIcon, SearchInput
   locale-switcher.tsx ganti segmen locale di path
 lib/
@@ -98,12 +106,12 @@ Alur data: Supabase → `lib/artists.ts` → server component (props) → client
 | Teks UI / bahasa baru | `lib/dict/*.ts` (+ `LOCALES`/`LANG_NAME` di `lib/i18n.ts`) |
 | Ukuran tim | `TEAM_SIZE` di `lib/team.ts` |
 | Filter/sort/summary | `components/artist-filter.tsx` (filter shared), `components/artists-tab.tsx` (roster), `components/team-tab.tsx` (ringkasan tim) |
-| Bobot skor / ambang tier | `SCORE` per kategori + `BANDS` di `lib/score.ts` |
+| Bobot skor / ambang tier | `SCORE` (satu skor global) + `BANDS` di `lib/score.ts` |
 | Teks halaman info rank | `app/[locale]/info/page.tsx` + `info` di `lib/dict/*.ts` |
 | Warna, font, radius, bayangan | `@theme` di `app/globals.css` |
 | Metadata/SEO/`lang` | `app/[locale]/layout.tsx` + `lib/seo.ts` |
 
-`TIER_ORDER` (`lib/score.ts`) = urutan tier di roster. Tier dihitung per kategori (`CATEGORIES`/`SCORE`). Tier baru: ubah `TIER_ORDER`, `BANDS`, **dan** `TIER_STYLE`/`AVATAR_STYLE` di `components/artist-ui.tsx`. Kategori baru: isi `CATEGORIES`, `SCORE`, label di `lib/dict/*.ts`, pemilih di `components/team-builder.tsx`. `EFFECTS`/`EFFECT_LABEL` juga di `lib/score.ts` (dipakai DB constraint lewat server action).
+`TIER_ORDER` (`lib/score.ts`) = urutan tier di roster. Tier dihitung dari satu skor global (`SCORE` + `BANDS`); tidak ada kategori. Tier baru: ubah `TIER_ORDER`, `BANDS`, **dan** `TIER_STYLE`/`AVATAR_STYLE` di `components/artist-ui.tsx`. Effect baru: tambah ke `EFFECTS` + bobot di `SCORE` + label di `lib/dict/*.ts` (`EFFECT_LABEL` juga dipakai DB constraint lewat server action).
 
 ## Konvensi kode
 
