@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useMemo, useState, type ReactNode } from "react";
 import { expBetween, classLevels, modTotals, starCardsForLevels, sumLevels } from "@/lib/cost-calc";
-import { carModIcon, carPartIcon } from "@/lib/cost-icons";
+import { carModIcon, carPartIcon, tabIcon } from "@/lib/cost-icons";
 import { DICT, numberLocale, type Locale } from "@/lib/i18n";
 import type { CarClass, CarPart, CostBook } from "@/lib/costs";
 import { CeoPanel } from "./cost/ceo";
@@ -298,8 +298,9 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
             type="button"
             aria-pressed={tab === item.id}
             onClick={() => setTab(item.id)}
-            className={chip(tab === item.id)}
+            className={`${chip(tab === item.id)} flex items-center justify-center gap-2`}
           >
+            <Image src={tabIcon(item.id)} alt="" width={24} height={24} sizes="24px" className="h-6 w-6 shrink-0 object-contain" />
             {item.label}
           </button>
         ))}

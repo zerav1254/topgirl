@@ -97,3 +97,7 @@ export const COLLECTION_PLATFORMS = 7;
 
 export const collectionPlatformIcon = (index: number) =>
   `${ROOT}/koleksi/UI_Showcase_${Math.min(index + 1, COLLECTION_PLATFORMS)}_01.webp`;
+
+// Ikon tombol tab kalkulator; sumber: mikrofon artis, setir, gear, galeri,
+// menara markas, vila, brosur koleksi, kartu CEO.
+export const tabIcon = (tab: string) => `${ROOT}/menu/${tab}.webp`;
