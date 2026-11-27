@@ -33,6 +33,8 @@ export function Turnstile({ action }: { action: string }) {
       sitekey: TURNSTILE_SITEKEY,
       action,
       theme: "dark",
+      // Tak terlihat kecuali Cloudflare minta interaksi; token tetap dibuat otomatis.
+      appearance: "interaction-only",
     });
     return () => {
       if (widgetId.current) {
