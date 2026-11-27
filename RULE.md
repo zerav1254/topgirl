@@ -40,7 +40,7 @@ Aturan keras repo ini. Kalau ragu, berhenti dan tanya — jangan improvisasi.
 - Key `localStorage` (`topgirl.team.v1`): naikkan versi bila bentuk data berubah. Jangan hapus/ubah key tanpa migrasi.
 - Jangan `useEffect` untuk hal yang bisa dihitung saat render (`useMemo`/turunan langsung).
 - Jangan menambah `tailwind.config.*`; token hanya di `@theme` pada `app/globals.css`.
-- Ikon wajib inline SVG dari set yang sudah ada. Emoji sebagai ikon dilarang.
+- Ikon: dua set yang diizinkan — inline SVG dari `ICONS` di `components/artist-ui.tsx` untuk ikon utilitas, dan glyph mask PNG aset game (`.artist-glyph` dkk di `app/globals.css`) untuk nav/profil. Emoji sebagai ikon dilarang; jangan mencampur dua set itu dalam satu grup tombol.
 - Teks UI tidak boleh hardcode. Semua string tampil diambil dari `lib/dict/<locale>.ts` lewat `DICT[locale]` + `t()`; `id` default, semua locale (`en`, `fr`, `ko`, `zh`, `ja`, `de`) wajib ikut diisi saat menambah key.
 - Bahasa ditentukan segmen URL pertama (`/id`, `/en`); `<html lang>` mengikuti locale. Jangan baca bahasa dari localStorage. Label data dari DB (`genres.label` dkk.) tidak diterjemah.
 

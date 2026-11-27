@@ -87,7 +87,7 @@ Saat login, kartu menambah satu tombol koleksi selebar kartu di bawah skill: `mi
 
 ## Jangan
 
-- Emoji sebagai ikon; ikon beda set; ukuran ikon campur.
+- Emoji sebagai ikon; dua set ikon dicampur dalam satu grup tombol (inline SVG untuk utilitas, glyph mask aset game untuk nav).
 - `bg-white/5` sebagai latar kartu utama (tidak terlihat di tema gelap).
 - Shadow tebal, blur kaca, atau gradien pelangi — bukan bahasa visual app ini.
 - Warna hardcode di luar token, kecuali skala `zinc` untuk teks netral.
