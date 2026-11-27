@@ -220,8 +220,6 @@ export const ko: Dict = {
     ingameId: "게임 ID",
     ingameServer: "서버",
     ingameNickname: "게임 닉네임",
-    avatarFrame: "아바타 프레임",
-    frameNone: "프레임 없음",
     save: "프로필 저장",
     saving: "저장 중…",
     saved: "저장됨.",

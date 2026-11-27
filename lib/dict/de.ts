@@ -221,8 +221,6 @@ export const de: Dict = {
     ingameId: "Spiel-ID",
     ingameServer: "Server",
     ingameNickname: "Nickname im Spiel",
-    avatarFrame: "Avatar-Rahmen",
-    frameNone: "Kein Rahmen",
     save: "Profil speichern",
     saving: "Wird gespeichert…",
     saved: "Gespeichert.",

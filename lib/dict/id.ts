@@ -219,8 +219,6 @@ export const id = {
     ingameId: "ID game",
     ingameServer: "Server",
     ingameNickname: "Nickname di game",
-    avatarFrame: "Frame avatar",
-    frameNone: "Tanpa frame",
     save: "Simpan profil",
     saving: "Menyimpan…",
     saved: "Tersimpan.",
