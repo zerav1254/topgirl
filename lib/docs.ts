@@ -59,7 +59,7 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
         },
         {
           title: "Menghapus data",
-          body: "Kamu bisa keluar kapan saja dari halaman Profil. Untuk penghapusan akun beserta datanya, hubungi pemilik situs lewat kanal Discord/GitHub repositori.",
+          body: "Kamu bisa keluar kapan saja dari halaman Profil. Untuk penghapusan akun beserta datanya, hubungi pemilik situs lewat email support@zerav.web.id atau kanal Discord/GitHub repositori.",
         },
       ],
     },
@@ -73,7 +73,7 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
         },
         {
           title: "Aset dan hak cipta",
-          body: "Ikon genre, logo, potret artist, dan aset visual lain dari game TopGirl (Apex Girl) adalah milik A3Games serta pemegang haknya. Aset ditampilkan terbatas untuk mengenali artist serta memberi informasi kepada pemain; situs ini tidak mengklaim kepemilikan atas aset tersebut dan tidak disponsori atau diendorse oleh pemegang hak. Pemegang hak yang keberatan atas penggunaan aset tertentu dapat menghubungi kami lewat kanal Discord/GitHub repositori, dan aset akan kami tinjau atau hapus.",
+          body: "Ikon genre, logo, potret artist, dan aset visual lain dari game TopGirl (Apex Girl) adalah milik A3Games serta pemegang haknya. Aset ditampilkan terbatas untuk mengenali artist serta memberi informasi kepada pemain; situs ini tidak mengklaim kepemilikan atas aset tersebut dan tidak disponsori atau diendorse oleh pemegang hak. Pemegang hak yang keberatan atas penggunaan aset tertentu dapat menghubungi kami lewat email support@zerav.web.id atau kanal Discord/GitHub repositori, dan aset akan kami tinjau atau hapus.",
         },
         {
           title: "Akurasi data",
@@ -143,7 +143,7 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
         },
         {
           title: "Deleting data",
-          body: "You can sign out at any time from the Profile page. To delete your account and its data, contact the site owner through the repository's Discord/GitHub channel.",
+          body: "You can sign out at any time from the Profile page. To delete your account and its data, contact the site owner by email at support@zerav.web.id or through the repository's Discord/GitHub channel.",
         },
       ],
     },
@@ -157,7 +157,7 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
         },
         {
           title: "Assets and copyright",
-          body: "Genre icons, the logo, artist portraits, and other visual assets from the game TopGirl (Apex Girl) belong to A3Games and its rights holders. They are shown only to identify artists and inform players; this site claims no ownership over them and is not sponsored or endorsed by the rights holders. Rights holders who object to the use of a specific asset can contact us through the repository's Discord/GitHub channel and we will review or remove it.",
+          body: "Genre icons, the logo, artist portraits, and other visual assets from the game TopGirl (Apex Girl) belong to A3Games and its rights holders. They are shown only to identify artists and inform players; this site claims no ownership over them and is not sponsored or endorsed by the rights holders. Rights holders who object to the use of a specific asset can contact us by email at support@zerav.web.id or through the repository's Discord/GitHub channel and we will review or remove it.",
         },
         {
           title: "Data accuracy",
@@ -227,7 +227,7 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
         },
         {
           title: "Suppression des données",
-          body: "Vous pouvez vous déconnecter à tout moment depuis la page Profil. Pour supprimer le compte et ses données, contactez le propriétaire du site via le canal Discord/GitHub du dépôt.",
+          body: "Vous pouvez vous déconnecter à tout moment depuis la page Profil. Pour supprimer le compte et ses données, contactez le propriétaire du site par e-mail à support@zerav.web.id ou via le canal Discord/GitHub du dépôt.",
         },
       ],
     },
@@ -241,7 +241,7 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
         },
         {
           title: "Ressources et droits d'auteur",
-          body: "Les icônes de genre, le logo, les portraits d'artistes et les autres ressources visuelles du jeu TopGirl (Apex Girl) appartiennent à A3Games et aux détenteurs des droits. Elles sont affichées uniquement pour identifier les artistes et informer les joueurs ; ce site ne revendique aucune propriété sur ces ressources et n'est ni sponsorisé ni approuvé par les détenteurs des droits. Les détenteurs de droits qui s'opposent à l'utilisation d'une ressource précise peuvent nous contacter via le canal Discord/GitHub du dépôt ; nous examinerons ou retirerons la ressource.",
+          body: "Les icônes de genre, le logo, les portraits d'artistes et les autres ressources visuelles du jeu TopGirl (Apex Girl) appartiennent à A3Games et aux détenteurs des droits. Elles sont affichées uniquement pour identifier les artistes et informer les joueurs ; ce site ne revendique aucune propriété sur ces ressources et n'est ni sponsorisé ni approuvé par les détenteurs des droits. Les détenteurs de droits qui s'opposent à l'utilisation d'une ressource précise peuvent nous contacter par e-mail à support@zerav.web.id ou via le canal Discord/GitHub du dépôt ; nous examinerons ou retirerons la ressource.",
         },
         {
           title: "Exactitude des données",
@@ -311,7 +311,7 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
         },
         {
           title: "데이터 삭제",
-          body: "프로필 페이지에서 언제든 로그아웃할 수 있습니다. 계정과 데이터 삭제는 저장소의 Discord/GitHub 채널로 사이트 소유자에게 요청하세요.",
+          body: "프로필 페이지에서 언제든 로그아웃할 수 있습니다. 계정과 데이터 삭제는 이메일 support@zerav.web.id 또는 저장소의 Discord/GitHub 채널로 사이트 소유자에게 요청하세요.",
         },
       ],
     },
@@ -325,7 +325,7 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
         },
         {
           title: "에셋 및 저작권",
-          body: "장르 아이콘, 로고, 아티스트 초상, 기타 시각 에셋은 게임 TopGirl(Apex Girl)의 A3Games 및 권리자에게 있습니다. 이 에셋은 아티스트를 식별하고 플레이어에게 정보를 제공하기 위한 목적으로만 표시되며, 본 사이트는 이에 대한 소유권을 주장하지 않고 권리자의 후원이나 승인을 받지 않았습니다. 특정 에셋의 사용에 이의가 있는 권리자는 저장소의 Discord/GitHub 채널로 연락해 주시면 검토 후 삭제하겠습니다.",
+          body: "장르 아이콘, 로고, 아티스트 초상, 기타 시각 에셋은 게임 TopGirl(Apex Girl)의 A3Games 및 권리자에게 있습니다. 이 에셋은 아티스트를 식별하고 플레이어에게 정보를 제공하기 위한 목적으로만 표시되며, 본 사이트는 이에 대한 소유권을 주장하지 않고 권리자의 후원이나 승인을 받지 않았습니다. 특정 에셋의 사용에 이의가 있는 권리자는 이메일 support@zerav.web.id 또는 저장소의 Discord/GitHub 채널로 연락해 주시면 검토 후 삭제하겠습니다.",
         },
         {
           title: "데이터 정확성",
@@ -395,7 +395,7 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
         },
         {
           title: "删除数据",
-          body: "你可以随时在个人资料页面退出登录。如需删除账户及其数据，请通过仓库的 Discord/GitHub 渠道联系站点所有者。",
+          body: "你可以随时在个人资料页面退出登录。如需删除账户及其数据，请通过电子邮件 support@zerav.web.id 或仓库的 Discord/GitHub 渠道联系站点所有者。",
         },
       ],
     },
@@ -409,7 +409,7 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
         },
         {
           title: "素材与版权",
-          body: "类型图标、标志、艺人肖像及其他视觉素材来自游戏 TopGirl（Apex Girl），归 A3Games 及其权利人所有。这些素材仅用于识别艺人并向玩家提供信息，本站不主张对其拥有所有权，也未获得权利人的赞助或认可。如权利人反对使用特定素材，可通过仓库的 Discord/GitHub 渠道联系我们，我们会审核并删除。",
+          body: "类型图标、标志、艺人肖像及其他视觉素材来自游戏 TopGirl（Apex Girl），归 A3Games 及其权利人所有。这些素材仅用于识别艺人并向玩家提供信息，本站不主张对其拥有所有权，也未获得权利人的赞助或认可。如权利人反对使用特定素材，可通过电子邮件 support@zerav.web.id 或仓库的 Discord/GitHub 渠道联系我们，我们会审核并删除。",
         },
         {
           title: "数据准确性",
@@ -479,7 +479,7 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
         },
         {
           title: "データの削除",
-          body: "プロフィールページからいつでもログアウトできます。アカウントとデータの削除は、リポジトリの Discord/GitHub チャンネルからサイト所有者に連絡してください。",
+          body: "プロフィールページからいつでもログアウトできます。アカウントとデータの削除は、メール（support@zerav.web.id）またはリポジトリの Discord/GitHub チャンネルからサイト所有者に連絡してください。",
         },
       ],
     },
@@ -493,7 +493,7 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
         },
         {
           title: "素材と著作権",
-          body: "ジャンルのアイコン、ロゴ、アーティストの肖像、その他のビジュアル素材は、ゲーム「TopGirl（Apex Girl）」の A3Games および各権利者に帰属します。これらはアーティストの識別とプレイヤーへの情報提供のみを目的として表示しており、本サイトはその所有権を主張せず、権利者によるスポンサーや承認も受けていません。特定の素材の使用に異議がある権利者の方は、リポジトリの Discord/GitHub チャンネルからご連絡ください。確認のうえ削除します。",
+          body: "ジャンルのアイコン、ロゴ、アーティストの肖像、その他のビジュアル素材は、ゲーム「TopGirl（Apex Girl）」の A3Games および各権利者に帰属します。これらはアーティストの識別とプレイヤーへの情報提供のみを目的として表示しており、本サイトはその所有権を主張せず、権利者によるスポンサーや承認も受けていません。特定の素材の使用に異議がある権利者の方は、メール（support@zerav.web.id）またはリポジトリの Discord/GitHub チャンネルからご連絡ください。確認のうえ削除します。",
         },
         {
           title: "データの正確性",
@@ -563,7 +563,7 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
         },
         {
           title: "Daten löschen",
-          body: "Du kannst dich jederzeit auf der Profilseite abmelden. Für die Löschung von Konto und Daten wende dich über den Discord/GitHub-Kanal des Repositories an den Seiteninhaber.",
+          body: "Du kannst dich jederzeit auf der Profilseite abmelden. Für die Löschung von Konto und Daten wende dich per E-Mail an support@zerav.web.id oder über den Discord/GitHub-Kanal des Repositories an den Seiteninhaber.",
         },
       ],
     },
@@ -577,7 +577,7 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
         },
         {
           title: "Assets und Urheberrecht",
-          body: "Genre-Symbole, das Logo, Artist-Porträts und andere visuelle Assets aus dem Spiel TopGirl (Apex Girl) gehören A3Games sowie den jeweiligen Rechteinhabern. Sie werden nur zur Identifikation der Artists und zur Information der Spieler angezeigt; diese Seite erhebt keinen Anspruch auf deren Eigentum und wird von den Rechteinhabern weder gesponsert noch unterstützt. Rechteinhaber, die der Verwendung eines bestimmten Assets widersprechen, können uns über den Discord/GitHub-Kanal des Repositories kontaktieren; wir prüfen und entfernen es.",
+          body: "Genre-Symbole, das Logo, Artist-Porträts und andere visuelle Assets aus dem Spiel TopGirl (Apex Girl) gehören A3Games sowie den jeweiligen Rechteinhabern. Sie werden nur zur Identifikation der Artists und zur Information der Spieler angezeigt; diese Seite erhebt keinen Anspruch auf deren Eigentum und wird von den Rechteinhabern weder gesponsert noch unterstützt. Rechteinhaber, die der Verwendung eines bestimmten Assets widersprechen, können uns per E-Mail an support@zerav.web.id oder über den Discord/GitHub-Kanal des Repositories kontaktieren; wir prüfen und entfernen es.",
         },
         {
           title: "Genauigkeit der Daten",
