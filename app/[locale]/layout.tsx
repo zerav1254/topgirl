@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from "next";
+import Link from "next/link";
 import { Inter, Noto_Sans_KR, Sora } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { BottomNav } from "@/components/bottom-nav";
+import { DOCS } from "@/lib/docs";
 import { DICT, LOCALES, localeOr } from "@/lib/i18n";
 import { SITE_ICON, pageMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
@@ -54,6 +56,15 @@ export default async function LocaleLayout({
           {DICT[locale].common.skip}
         </a>
         {children}
+        <footer className="mx-auto w-full max-w-4xl px-4 pb-28 text-xs leading-relaxed text-zinc-500">
+          <p>{DOCS[locale].legal.sections[0].body}</p>
+          <Link
+            href={`/${locale}/doc/legal`}
+            className="mt-1 inline-block min-h-11 font-semibold text-zinc-400 underline-offset-2 hover:text-gold hover:underline"
+          >
+            {DOCS[locale].legal.title}
+          </Link>
+        </footer>
         <BottomNav locale={locale} />
         <Analytics />
       </body>

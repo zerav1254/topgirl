@@ -2,7 +2,7 @@ import type { Dict } from "./id.ts";
 
 export const en: Dict = {
   meta: {
-    title: "TopGirl Team Builder",
+    title: "TopGirl Team Builder — Fan Site",
     description: "Build the best team of 5 artists: compare tier, genre, and skills.",
   },
   lang: { label: "Language", switch: "Switch language to {name}" },

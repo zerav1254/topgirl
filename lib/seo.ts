@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { LOCALES, type Locale } from "./i18n.ts";
 
-export const SITE_NAME = "TopGirl";
+export const SITE_NAME = "TopGirl Fan Site";
 export const SITE_ICON = "/assets/icon-topgirl.webp";
 
 const OG_LOCALE: Record<Locale, string> = { id: "id_ID", en: "en_US", fr: "fr_FR", ko: "ko_KR", zh: "zh_CN", ja: "ja_JP", de: "de_DE" };

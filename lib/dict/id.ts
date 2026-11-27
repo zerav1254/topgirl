@@ -1,6 +1,6 @@
 export const id = {
   meta: {
-    title: "TopGirl Team Builder",
+    title: "TopGirl Team Builder — Situs Penggemar",
     description: "Susun tim 5 artist terbaik: bandingkan tier, genre, dan skill.",
   },
   lang: { label: "Bahasa", switch: "Ganti bahasa ke {name}" },

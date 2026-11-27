@@ -2,7 +2,7 @@ import type { Dict } from "./id.ts";
 
 export const zh: Dict = {
   meta: {
-    title: "TopGirl 阵容构建器",
+    title: "TopGirl 阵容构建器 — 粉丝站点",
     description: "组建最佳 5 人艺人队伍：对比层级、流派与技能。",
   },
   lang: { label: "语言", switch: "将语言切换为 {name}" },

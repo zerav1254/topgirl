@@ -2,7 +2,7 @@ import type { Dict } from "./id.ts";
 
 export const ko: Dict = {
   meta: {
-    title: "TopGirl Team Builder",
+    title: "TopGirl Team Builder — 팬 사이트",
     description: "최고의 5인 아티스트 팀을 구성하세요: 티어, 장르, 스킬을 비교합니다.",
   },
   lang: { label: "언어", switch: "언어를 {name}(으)로 변경" },
