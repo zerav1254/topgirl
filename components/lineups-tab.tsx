@@ -208,6 +208,10 @@ export function LineupsTab({
           {message}
         </p>
       )}
+
+      <p role="status" className="sr-only">
+        {copied ? C.copied : ""}
+      </p>
     </div>
   );
 }
