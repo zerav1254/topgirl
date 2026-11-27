@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { expBetween, classLevels, modTotals, starCardsForLevels, sumLevels } from "@/lib/cost-calc";
 import { carModIcon, carPartIcon, tabIcon } from "@/lib/cost-icons";
 import { DICT, numberLocale, type Locale } from "@/lib/i18n";
@@ -28,6 +28,18 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
   const format = (value: number) => value.toLocaleString(numberLocale(locale));
 
   const [tab, setTab] = useState<Tab>("artist");
+
+  // Saat ganti tab, balik ke deretan tombol supaya konten tab baru tidak
+  // terbuka di tengah. Lompatan pertama (mount) dilewati.
+  const tabBar = useRef<HTMLDivElement>(null);
+  const mounted = useRef(false);
+  useEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true;
+      return;
+    }
+    tabBar.current?.scrollIntoView({ block: "start", behavior: "smooth" });
+  }, [tab]);
 
   const [artistId, setArtistId] = useState(book.artists[0]?.id ?? 0);
   const [levelFrom, setLevelFrom] = useState(ARTIST_MIN);
@@ -302,7 +314,7 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
 
   return (
     <div className="flex flex-col gap-4">
-      <div role="group" aria-label={C.title} className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+      <div ref={tabBar} role="group" aria-label={C.title} className="grid grid-cols-3 gap-2 sm:grid-cols-6">
         {tabs.map((item) => (
           <button
             key={item.id}

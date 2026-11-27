@@ -96,6 +96,7 @@ export function CollectionPanel({
             );
           })}
         </div>
+        {item ? <p className="mt-2 text-sm font-semibold text-zinc-200">{itemLabel}</p> : null}
       </div>
 
       <div className="mt-3 grid grid-cols-2 gap-3">
