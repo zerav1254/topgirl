@@ -196,8 +196,6 @@ export const ko: Dict = {
     seasonAll: "모든 시즌을 표시합니다.",
     seasonHint: "이 시즌보다 높은 아티스트는 아직 획득 불가로 표시됩니다.",
     rank: "이 시즌에서 {total}명 중 {n}위",
-    best: "이 시즌으로 최고 팀 구성",
-    bestHint: "획득 가능한 아티스트로 가장 높은 점수 조합을 채웁니다.",
     blocked: "아직 획득 불가",
   },
   auth: {
@@ -312,7 +310,6 @@ export const ko: Dict = {
     add: "아티스트 추가",
     full: "팀이 가득 찼습니다",
     confirmReset: "모든 팀 슬롯을 비울까요?",
-    confirmAuto: "현재 팀을 최고 점수 조합으로 바꿀까요?",
     empty: "일치하는 아티스트가 없습니다.",
     statsMax: "최대 레벨 싱 / 댄스",
   },

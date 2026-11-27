@@ -196,8 +196,6 @@ export const zh: Dict = {
     seasonAll: "正在显示所有赛季。",
     seasonHint: "高于该赛季的艺人会被标记为暂时无法获取。",
     rank: "本赛季排名第 #{n}，共 {total} 位",
-    best: "用本赛季组建最佳队伍",
-    bestHint: "用你能获取的最高得分组合填满 {n} 个位置。",
     blocked: "暂时无法获取",
   },
   auth: {
@@ -312,7 +310,6 @@ export const zh: Dict = {
     add: "添加艺人",
     full: "队伍已满",
     confirmReset: "清空所有队伍位置？",
-    confirmAuto: "用最高得分组合替换当前队伍？",
     empty: "没有匹配的艺人。",
     statsMax: "满级演唱 / 舞蹈",
   },

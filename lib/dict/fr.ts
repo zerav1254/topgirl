@@ -197,8 +197,6 @@ export const fr: Dict = {
     seasonAll: "Toutes les saisons sont affichées.",
     seasonHint: "Les artistes au-dessus de cette saison sont marqués comme non disponibles.",
     rank: "Rang #{n} sur {total} dans cette saison",
-    best: "Composer la meilleure équipe de cette saison",
-    bestHint: "Remplit les {n} emplacements avec la meilleure combinaison disponible.",
     blocked: "Pas encore disponible",
   },
   auth: {
@@ -313,7 +311,6 @@ export const fr: Dict = {
     add: "Ajouter un artiste",
     full: "Équipe complète",
     confirmReset: "Vider tous les emplacements de l’équipe ?",
-    confirmAuto: "Remplacer l’équipe actuelle par la meilleure combinaison de score ?",
     empty: "Aucun artiste correspondant.",
     statsMax: "Chant / Danse au niveau max",
   },

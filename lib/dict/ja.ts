@@ -196,8 +196,6 @@ export const ja: Dict = {
     seasonAll: "すべてのシーズンを表示中。",
     seasonHint: "このシーズンより後のアーティストは未入手として表示されます。",
     rank: "このシーズンで {total} 人中 {n} 位",
-    best: "このシーズンで最高のチームを編成",
-    bestHint: "入手可能な中で最高得点の組み合わせで {n} スロットを埋めます。",
     blocked: "まだ入手不可",
   },
   auth: {
@@ -312,7 +310,6 @@ export const ja: Dict = {
     add: "Artist を追加",
     full: "チームが満員です",
     confirmReset: "すべてのチームスロットを空にしますか？",
-    confirmAuto: "現在のチームを最高得点の組み合わせに置き換えますか？",
     empty: "一致するアーティストがいません。",
     statsMax: "最大レベル歌唱 / ダンス",
   },

@@ -26,11 +26,10 @@ type Props = {
   state: ArtistFilterState;
   onToggle: (slug: string) => void;
   onAssign: (index: number, slug: string) => void;
-  onAuto: () => void;
   onReset: () => void;
 };
 
-export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, picked, locale, signedIn, state, onToggle, onAssign, onAuto, onReset }: Props) {
+export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, picked, locale, signedIn, state, onToggle, onAssign, onReset }: Props) {
   const C = DICT[locale];
   const tierOf = (a: Artist) => seasonTiers?.get(a.slug) ?? a.tier;
   // Slot yang sedang dipilih; null = dialog tertutup. Picker menggantikan daftar panjang di bawah.
@@ -96,19 +95,6 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="font-display text-sm font-semibold uppercase tracking-wide text-zinc-300">{C.team.title}</h2>
         <div className="flex items-center gap-1">
-          {scoped.length > 0 && (
-            <button
-              type="button"
-              onClick={() => {
-                if (team.length === 0 || window.confirm(C.team.confirmAuto)) onAuto();
-              }}
-              title={t(C.pool.bestHint, { n: TEAM_SIZE })}
-              className="flex min-h-11 cursor-pointer items-center gap-1 rounded-md border border-brand/40 bg-brand/10 px-2 py-1 text-sm font-semibold text-zinc-100 transition-colors duration-200 hover:border-brand/60"
-            >
-              <Icon d={ICONS.sliders} className="h-4 w-4 shrink-0" />
-              {C.pool.best}
-            </button>
-          )}
           {team.length > 0 && (
             <button
               type="button"

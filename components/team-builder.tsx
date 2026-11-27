@@ -8,7 +8,7 @@ import type { Artist } from "@/lib/artists";
 import { DICT, type Locale } from "@/lib/i18n";
 import { parsePool, getServerPool, readPool, subscribePool, writePool } from "@/lib/pool-store";
 import { blockedOf, poolActive, poolOf, poolTiers, rankInPool } from "@/lib/pool";
-import { bestLineup, TEAM_SIZE } from "@/lib/team";
+import { TEAM_SIZE } from "@/lib/team";
 import { getServerTeam, readTeam, subscribeTeam, writeTeam } from "@/lib/team-store";
 import { useArtistFilter } from "./artist-filter";
 import { ArtistsTab } from "./artists-tab";
@@ -84,12 +84,6 @@ export function TeamBuilder({
     if (next[index] !== undefined) next[index] = slug;
     else next.push(slug);
     writeTeam(next.slice(0, TEAM_SIZE));
-  }
-
-  // Eksplisit lewat tombol: jangan menimpa tim yang sedang disusun tanpa klik.
-  function autoLineup() {
-    const best = bestLineup(scoped);
-    if (best.length > 0) writeTeam(best.map((a) => a.slug));
   }
 
   function markOwned(slug: string, next: boolean) {
@@ -169,7 +163,6 @@ export function TeamBuilder({
           state={state}
           onToggle={toggle}
           onAssign={assign}
-          onAuto={autoLineup}
           onReset={() => writeTeam([])}
         />
       )}

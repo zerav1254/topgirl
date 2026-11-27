@@ -197,8 +197,6 @@ export const de: Dict = {
     seasonAll: "Alle Seasons werden angezeigt.",
     seasonHint: "Artists über dieser Season sind als noch nicht erhältlich markiert.",
     rank: "Platz #{n} von {total} in dieser Season",
-    best: "Das beste Team aus dieser Season zusammenstellen",
-    bestHint: "Füllt die {n} Slots mit der bestbewerteten Kombination, die du erhalten kannst.",
     blocked: "Noch nicht erhältlich",
   },
   auth: {
@@ -313,7 +311,6 @@ export const de: Dict = {
     add: "Artist hinzufügen",
     full: "Team ist voll",
     confirmReset: "Alle Team-Slots leeren?",
-    confirmAuto: "Das aktuelle Team durch die bestbewertete Kombination ersetzen?",
     empty: "Keine passenden Artists.",
     statsMax: "Gesang / Tanz auf Maximallevel",
   },

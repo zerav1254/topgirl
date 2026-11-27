@@ -195,8 +195,6 @@ export const id = {
     seasonAll: "Semua season ditampilkan.",
     seasonHint: "Artis di atas season ini ditandai belum bisa diperoleh.",
     rank: "Peringkat #{n} dari {total} di season ini",
-    best: "Susun tim terbaik dari season ini",
-    bestHint: "Mengisi {n} slot dengan kombinasi skor tertinggi yang bisa diperoleh.",
     blocked: "Belum bisa diperoleh",
   },
   auth: {
@@ -311,7 +309,6 @@ export const id = {
     add: "Tambah Artist",
     full: "Tim penuh",
     confirmReset: "Kosongkan semua slot tim?",
-    confirmAuto: "Ganti tim sekarang dengan kombinasi skor tertinggi?",
     empty: "Tidak ada artist yang cocok.",
     statsMax: "Sing / Dance level maks",
   },

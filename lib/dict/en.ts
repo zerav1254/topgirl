@@ -197,8 +197,6 @@ export const en: Dict = {
     seasonAll: "Showing every season.",
     seasonHint: "Artists above this season are marked as not obtainable yet.",
     rank: "Rank #{n} of {total} in this season",
-    best: "Build the best team from this season",
-    bestHint: "Fills the {n} slots with the highest-scoring combination you can obtain.",
     blocked: "Not obtainable yet",
   },
   auth: {
@@ -313,7 +311,6 @@ export const en: Dict = {
     add: "Add Artist",
     full: "Team is full",
     confirmReset: "Clear every team slot?",
-    confirmAuto: "Replace the current team with the highest-scoring combination?",
     empty: "No matching artists.",
     statsMax: "Sing / Dance at max level",
   },
