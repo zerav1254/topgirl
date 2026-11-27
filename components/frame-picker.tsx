@@ -22,13 +22,13 @@ export function FramePicker({ current, label, noneLabel }: { current: string | n
         >
           {noneLabel}
         </button>
-        {AVATAR_FRAMES.map((frame) => (
+        {AVATAR_FRAMES.map((frame, i) => (
           <button
             key={frame}
             type="button"
             onClick={() => setSelected(frame)}
             aria-pressed={selected === frame}
-            aria-label={frame}
+            aria-label={`${label} ${i + 1}`}
             className={`${tile} ${selected === frame ? "border-gold bg-gold/15" : "border-white/10 bg-panel-2/50 hover:border-white/25"}`}
           >
             <Image src={avatarFrameSrc(frame)} alt="" width={64} height={64} sizes="64px" loading="lazy" className="h-full w-full object-contain" />
