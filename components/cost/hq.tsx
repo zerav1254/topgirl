@@ -26,13 +26,14 @@ export function HqPanel({ hq, C, format }: { hq: CostBook["hq"]; C: CostDict; fo
   const tierRooms = hq.rooms.filter((room) => room.tier === tier);
   // Slot 0 = semua ruangan di tier ini; jumlahnya ikut data, bukan angka tetap.
   const slotCount = slot === 0 ? Math.max(tierRooms.length, 1) : 1;
+  // Rencana renovasi lantai dibayar sekali per kelas; kayu/baja tetap per slot.
   const roomTotals = useMemo(
     () =>
       sumLevels(hq.roomCosts[tier - 1] ?? [], roomFrom, roomTo).map((item) => ({
         ...item,
-        amount: item.amount * slotCount,
+        amount: item.amount * (item.itemId !== undefined && hq.planItemIds.includes(item.itemId) ? 1 : slotCount),
       })),
-    [hq.roomCosts, tier, roomFrom, roomTo, slotCount],
+    [hq.roomCosts, hq.planItemIds, tier, roomFrom, roomTo, slotCount],
   );
   const buildingBad = levelTo <= levelFrom;
   const roomBad = roomTo <= roomFrom;

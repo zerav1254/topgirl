@@ -26,6 +26,15 @@ const ICONS: Record<number, string> = {
   11118694: `${ROOT}/renovasi/UI_Item_HB_levelup_item9.webp`,
   11118695: `${ROOT}/renovasi/UI_Item_HB_levelup_item10.webp`,
   11118696: `${ROOT}/renovasi/UI_Item_HB_levelup_item11.webp`,
+  // Rencana/cetak biru renovasi lantai markas (biaya sekali per kelas).
+  // Ikon t21/t31 = varian aset untuk Asrama/Gym; t4 = Ruang Editing.
+  11118697: `${ROOT}/renovasi/UI_Decoration_Floor_MergeEquip_t1.webp`,
+  11118698: `${ROOT}/renovasi/UI_Decoration_Floor_MergeEquip_t21.webp`,
+  11118699: `${ROOT}/renovasi/UI_Decoration_Floor_MergeEquip_t31.webp`,
+  11118700: `${ROOT}/renovasi/UI_Decoration_Floor_MergeEquip_t4.webp`,
+  11118701: `${ROOT}/renovasi/UI_Decoration_Floor_MergeEquip_t5.webp`,
+  11118702: `${ROOT}/renovasi/UI_Decoration_Floor_MergeEquip_t6.webp`,
+  11118776: `${ROOT}/renovasi/UI_Decoration_Floor_MergeEquip_t7.webp`,
   // Bintang koleksi
   11116601: `${ROOT}/koleksi/UI_Collection_Icon_UpgradeProps_01.webp`,
   // Bahan peningkatan koleksi (lempeng batu + parket, beda dari batu pasir museum)

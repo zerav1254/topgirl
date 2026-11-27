@@ -52,6 +52,8 @@ export type CostBook = {
     rooms: { tier: number; slot: number; room: string; name: string }[];
     // roomCosts[tier - 1] = biaya level; 4 slot per tier berbagi biaya.
     roomCosts: TierCosts;
+    // Rencana renovasi lantai: dibayar sekali per kelas, bukan per slot ruangan.
+    planItemIds: number[];
   };
   villa: {
     stages: VillaStage[];
@@ -209,6 +211,9 @@ export async function loadCostBook(): Promise<CostBook> {
       },
       rooms: hqRoomList.data as HqRoomRow[],
       roomCosts: byTier(hqRooms.data as TierCostRow[]),
+      planItemIds: (hqRooms.data as TierCostRow[])
+        .filter((row) => Object.keys(row.amounts).length === 1 && row.amounts["1"] !== undefined)
+        .map((row) => row.item_id),
     },
     villa: {
       stages: (villaStages.data as VillaStageRow[]).map((r) => ({
@@ -298,7 +303,7 @@ export function artistCostBook(book: CostBook): CostBook {
     classByLevel: [],
     costs: { carPart: [], carMod: {}, carModClass: {} },
     museum: [],
-    hq: { curve: { itemName: "", amounts: [] }, rooms: [], roomCosts: [] },
+    hq: { curve: { itemName: "", amounts: [] }, rooms: [], roomCosts: [], planItemIds: [] },
     villa: { stages: [], suites: [], staff: [], staffCosts: [] },
     collection: { stars: {}, items: [], zones: [] },
     ceo: { stages: [], outfits: [], sportCosts: [] },
