@@ -273,6 +273,7 @@ export const ko: Dict = {
     unshare: "링크 취소",
     copy: "링크 복사",
     copied: "복사됨",
+    copyFailed: "링크를 복사하지 못했습니다.",
     confirmDelete: "이 라인업을 삭제할까요? 되돌릴 수 없습니다.",
     open: "열기",
     empty: "저장된 라인업이 없습니다.",

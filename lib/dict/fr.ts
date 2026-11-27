@@ -274,6 +274,7 @@ export const fr: Dict = {
     unshare: "Révoquer le lien",
     copy: "Copier le lien",
     copied: "Copié",
+    copyFailed: "Impossible de copier le lien.",
     confirmDelete: "Supprimer cette composition ? Action irréversible.",
     open: "Ouvrir",
     empty: "Aucune composition enregistrée.",

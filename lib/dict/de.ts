@@ -274,6 +274,7 @@ export const de: Dict = {
     unshare: "Link widerrufen",
     copy: "Link kopieren",
     copied: "Kopiert",
+    copyFailed: "Link konnte nicht kopiert werden.",
     confirmDelete: "Dieses Lineup löschen? Das kann nicht rückgängig gemacht werden.",
     open: "Öffnen",
     empty: "Noch keine gespeicherten Lineups.",

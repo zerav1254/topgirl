@@ -43,10 +43,11 @@ export function LineupsTab({
     }
   }, [saved]);
 
-  const run = (fn: () => Promise<Result>) =>
+  const run = (fn: () => Promise<Result>, ok?: string) =>
     start(async () => {
+      setCopied("");
       const res = await fn();
-      setMessage(res.ok ? (res.link ? `${C.shared}: ${siteUrl}${res.link}` : C.saved) : res.error);
+      setMessage(res.ok ? (ok ?? (res.link ? `${C.shared}: ${siteUrl}${res.link}` : C.saved)) : res.error);
       router.refresh();
     });
 
@@ -166,8 +167,10 @@ export function LineupsTab({
                           try {
                             await navigator.clipboard.writeText(link);
                             setCopied(l.id);
+                            setMessage("");
                           } catch {
                             setCopied("");
+                            setMessage(C.copyFailed);
                           }
                         }}
                         className={`${btn} border-white/10 text-zinc-300 hover:border-white/25 hover:text-zinc-100`}
@@ -185,7 +188,7 @@ export function LineupsTab({
                     type="button"
                     disabled={pending}
                     onClick={() => {
-                      if (window.confirm(C.confirmDelete)) run(() => remove(locale, l.id));
+                      if (window.confirm(C.confirmDelete)) run(() => remove(locale, l.id), "");
                     }}
                     className={`${btn} ml-auto border-white/10 text-zinc-400 hover:border-red-400/40 hover:text-red-300`}
                   >

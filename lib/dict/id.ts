@@ -272,6 +272,7 @@ export const id = {
     unshare: "Cabut tautan",
     copy: "Salin tautan",
     copied: "Tersalin",
+    copyFailed: "Gagal menyalin tautan.",
     confirmDelete: "Hapus lineup ini? Tindakan tidak bisa dibatalkan.",
     open: "Buka",
     empty: "Belum ada lineup tersimpan.",

@@ -273,6 +273,7 @@ export const ja: Dict = {
     unshare: "リンクを取り消す",
     copy: "リンクをコピー",
     copied: "コピー済み",
+    copyFailed: "リンクをコピーできませんでした。",
     confirmDelete: "この lineup を削除しますか？ 元に戻せません。",
     open: "開く",
     empty: "保存された lineup はまだありません。",

@@ -273,6 +273,7 @@ export const zh: Dict = {
     unshare: "撤销链接",
     copy: "复制链接",
     copied: "已复制",
+    copyFailed: "无法复制链接。",
     confirmDelete: "删除此阵容？此操作无法撤销。",
     open: "打开",
     empty: "还没有保存的阵容。",

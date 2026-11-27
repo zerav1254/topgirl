@@ -274,6 +274,7 @@ export const en: Dict = {
     unshare: "Revoke link",
     copy: "Copy link",
     copied: "Copied",
+    copyFailed: "Could not copy the link.",
     confirmDelete: "Delete this lineup? This cannot be undone.",
     open: "Open",
     empty: "No saved lineups yet.",
