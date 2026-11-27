@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const C = DICT[isLocale(locale) ? locale : "id"];
   const shared = await loadShared(slug);
   return {
-    title: shared ? `${C.lineup.shareTitle.replace("{name}", shared.lineup.name)} — ${C.meta.title}` : C.lineup.notFound,
+    title: shared ? `${t(C.lineup.shareTitle, { name: shared.lineup.name })} — ${C.meta.title}` : C.lineup.notFound,
     robots: { index: false, follow: false },
   };
 }
@@ -52,7 +52,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
           <div className="min-w-0 flex-1">
             <p className="font-display text-[11px] font-semibold uppercase tracking-[0.2em] text-gold">TopGirl</p>
             <h1 className="font-display text-xl font-bold tracking-tight break-words sm:text-2xl">
-              {C.lineup.shareTitle.replace("{name}", shared.lineup.name)}
+              {t(C.lineup.shareTitle, { name: shared.lineup.name })}
             </h1>
             {shared.ownerName && (
               <p className="truncate text-sm text-zinc-400">
