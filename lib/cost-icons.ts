@@ -99,9 +99,11 @@ export const collectionPlatformIcon = (index: number) =>
 // Ikon 30 item koleksi ruang pamer (collection_53010101..53010506).
 export const collectionIcon = (id: number) => `${ROOT}/koleksi/collection_${id}.webp`;
 
-// Peta + ikon area ruang koleksi.
-export const COLLECTION_MAP = `${ROOT}/koleksi/UI_Collection_Bg_Map_01.webp`;
+// Latar kartu item sesuai rarity (Quality): 2 = R, 3 = SR, 4 = SSR.
+export const collectionRarityBg = (rarity: number) =>
+  `${ROOT}/koleksi/UI_Item_Bg0${rarity >= 2 && rarity <= 4 ? rarity : 2}.webp`;
 
+// Peta + ikon area ruang koleksi.
 export const collectionZoneIcon = (icon: string, active = false) => `${ROOT}/koleksi/${icon}${active ? "_a" : ""}.webp`;
 
 // Ikon tombol tab kalkulator: tab artis memakai glyph bottom nav, sisanya

@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useMemo, useState } from "react";
 import { sumLevels } from "@/lib/cost-calc";
 import type { CostBook } from "@/lib/costs";
-import { COLLECTION_MAP, COLLECTION_PLATFORMS, collectionIcon, collectionPlatformIcon, collectionZoneIcon } from "@/lib/cost-icons";
+import { COLLECTION_PLATFORMS, collectionIcon, collectionPlatformIcon, collectionRarityBg, collectionZoneIcon } from "@/lib/cost-icons";
 import { clamp, invalid, label, NumberField, panel, result, Segmented, Totals, type CostDict } from "./fields";
 import { MuseumPanel } from "./museum";
 
@@ -20,15 +20,6 @@ const RARITY_STYLE = {
   3: "border-sky-400/40 text-sky-300",
   4: "border-gold/50 text-gold",
 } as const;
-
-// Posisi penanda zona di atas peta (persen dari kotak peta).
-const ZONE_POS: Record<number, { left: string; top: string }> = {
-  1: { left: "46%", top: "58%" }, // Mediterania
-  2: { left: "51%", top: "26%" }, // Skandinavia
-  3: { left: "78%", top: "48%" }, // Asia Timur
-  4: { left: "20%", top: "46%" }, // Amerika
-  5: { left: "42%", top: "40%" }, // Eropa Barat
-};
 
 // ponytail: mode bintang disembunyikan (belum jelas di game). Data
 // collection.stars tetap ada di CostBook; tambah mode lagi kalau fitur rilis.
@@ -103,11 +94,9 @@ function CollectionRoom({
     <div className={panel}>
       <div role="group" aria-label={C.tabCollection}>
         <p className={label}>{C.tabCollection}</p>
-        <div className="relative mt-1 aspect-[1080/868] w-full overflow-hidden rounded-xl border border-white/10">
-          <Image src={COLLECTION_MAP} alt="" fill sizes="(max-width: 768px) 100vw, 640px" className="object-cover" />
+        <div className="mt-1 flex flex-col gap-2">
           {zones.map((entry) => {
             const active = entry.zone === zone;
-            const pos = ZONE_POS[entry.zone] ?? ZONE_POS[1];
             return (
               <button
                 key={entry.zone}
@@ -116,9 +105,8 @@ function CollectionRoom({
                 aria-label={entry.name}
                 title={entry.name}
                 onClick={() => pickZone(entry.zone)}
-                style={pos}
-                className={`absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-0.5 rounded-full border p-1 transition-colors duration-200 ${
-                  active ? "border-gold bg-gold/20" : "border-white/25 bg-black/40 hover:border-white/50"
+                className={`flex min-h-11 items-center gap-2 rounded-lg border px-2 py-1.5 text-left transition-colors duration-200 ${
+                  active ? "border-gold/50 bg-gold/10" : "border-white/10 bg-panel/80 hover:border-white/25"
                 }`}
               >
                 <Image
@@ -127,16 +115,13 @@ function CollectionRoom({
                   width={40}
                   height={40}
                   sizes="40px"
-                  className="h-10 w-10 object-contain"
+                  className="h-10 w-10 shrink-0 object-contain"
                 />
-                <span className={`max-w-20 truncate rounded px-1 text-[10px] font-semibold ${active ? "text-gold" : "text-zinc-200"}`}>
-                  {entry.name}
-                </span>
+                <span className={`text-sm font-semibold ${active ? "text-gold" : "text-zinc-200"}`}>{entry.name}</span>
               </button>
             );
           })}
         </div>
-        <p className="mt-2 text-sm font-semibold text-zinc-200">{zones.find((entry) => entry.zone === zone)?.name}</p>
       </div>
 
       <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-6">
@@ -155,14 +140,23 @@ function CollectionRoom({
                 active ? "border-gold/50 bg-gold/10" : "border-white/10 bg-panel/80 hover:border-white/25"
               }`}
             >
-              <Image
-                src={collectionIcon(it.id)}
-                alt=""
-                width={48}
-                height={48}
-                sizes="48px"
-                className="h-12 w-12 object-contain"
-              />
+              <span className="relative flex aspect-square w-full items-center justify-center">
+                <Image
+                  src={collectionRarityBg(it.rarity)}
+                  alt=""
+                  fill
+                  sizes="(max-width: 640px) 30vw, 120px"
+                  className="object-contain"
+                />
+                <Image
+                  src={collectionIcon(it.id)}
+                  alt=""
+                  width={48}
+                  height={48}
+                  sizes="48px"
+                  className="relative h-12 w-12 object-contain"
+                />
+              </span>
               <span className={`rounded border px-1 text-[10px] font-semibold ${RARITY_STYLE[rarity]}`}>
                 {RARITY[rarity]}
               </span>
