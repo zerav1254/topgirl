@@ -76,16 +76,13 @@ function Select({
   onChange,
   options,
   locale,
-  tone = "brand",
 }: {
   label: string;
   value: string;
   onChange: (id: string) => void;
   options: { id: string; text: string }[];
   locale: Locale;
-  tone?: "gold" | "brand";
 }) {
-  const active = tone === "gold" ? "border-gold/50 bg-gold/10 text-gold" : "border-brand/50 bg-brand/10 text-zinc-100";
   return (
     <label className="flex min-w-0 flex-col gap-1">
       <span className="text-[11px] font-semibold uppercase tracking-wide text-zinc-400">{label}</span>
@@ -93,7 +90,7 @@ function Select({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className={`h-11 w-full cursor-pointer rounded-lg border bg-panel/80 px-2.5 text-base font-semibold transition-colors duration-200 focus:border-brand/60 ${
-          value === ALL ? "border-white/10 text-zinc-300" : active
+          value === ALL ? "border-white/10 text-zinc-300" : "border-brand/50 bg-brand/10 text-zinc-100"
         }`}
       >
         <option value={ALL}>{DICT[locale].common.all}</option>
