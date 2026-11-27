@@ -157,6 +157,16 @@ export function GenreIcon({ image, className = "h-4 w-4" }: { image: string | nu
   return <Image src={`/assets/images/genres/${image}.png`} alt="" width={16} height={16} sizes="16px" className={`${className} object-contain`} />;
 }
 
+// Ikon atribut sing/dance dari game (ChangGe/TiaoWu).
+const STAT_ICON = {
+  sing: "/assets/images/attributes/UI_Album_GoodAt_Icon_ChangGe.webp",
+  dance: "/assets/images/attributes/UI_Album_GoodAt_Icon_TiaoWu.webp",
+};
+
+export function StatIcon({ stat, className = "h-4 w-4" }: { stat: "sing" | "dance"; className?: string }) {
+  return <Image src={STAT_ICON[stat]} alt="" width={16} height={16} sizes="16px" className={`${className} object-contain`} />;
+}
+
 export function SearchInput({
   value,
   onChange,

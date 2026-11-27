@@ -7,7 +7,7 @@ import type { Rank } from "@/lib/pool";
 import { EFFECT_LABEL, type Tier } from "@/lib/score";
 import { genreSynergy, TEAM_SIZE, teamSkillTotals, withGenreBonus } from "@/lib/team";
 import { ArtistFilterBar, type ArtistFilterState } from "./artist-filter";
-import { Avatar, GenreIcon, ICONS, Icon, RankBadge, SkillList, TierBadge, formatStat, isPercent } from "./artist-ui";
+import { Avatar, GenreIcon, ICONS, Icon, RankBadge, SkillList, StatIcon, TierBadge, formatStat, isPercent } from "./artist-ui";
 import { SaveLineup } from "./save-lineup";
 
 type Props = {
@@ -203,11 +203,15 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
               <div>
                 <dt className="text-zinc-400">{C.team.statsMax}</dt>
                 <dd className="tabular mt-0.5 flex gap-3 font-semibold text-zinc-200">
-                  <span>
-                    {C.artists.sing} {formatStat(summary.sing, locale)}
+                  <span className="inline-flex items-center gap-1">
+                    <StatIcon stat="sing" />
+                    <span className="sr-only">{C.artists.sing}</span>
+                    {formatStat(summary.sing, locale)}
                   </span>
-                  <span>
-                    {C.artists.dance} {formatStat(summary.dance, locale)}
+                  <span className="inline-flex items-center gap-1">
+                    <StatIcon stat="dance" />
+                    <span className="sr-only">{C.artists.dance}</span>
+                    {formatStat(summary.dance, locale)}
                   </span>
                 </dd>
               </div>

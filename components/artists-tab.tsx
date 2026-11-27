@@ -8,7 +8,7 @@ import type { Rank } from "@/lib/pool";
 import { TIER_ORDER, type Tier } from "@/lib/score";
 import { TEAM_SIZE } from "@/lib/team";
 import { ArtistFilterBar, type ArtistFilterState } from "./artist-filter";
-import { GenreIcon, ICONS, Icon, RankBadge, RoleBadge, SkillList, TierBadge, formatStat } from "./artist-ui";
+import { GenreIcon, ICONS, Icon, RankBadge, RoleBadge, SkillList, StatIcon, TierBadge, formatStat } from "./artist-ui";
 
 type Props = {
   artists: Artist[];
@@ -223,11 +223,15 @@ function ArtistCard({
           </p>
           {a.singMax !== null && a.danceMax !== null && (
             <p className="tabular mt-0.5 flex gap-2 text-xs text-zinc-400">
-              <span>
-                {C.artists.sing} <span className="font-semibold text-zinc-200">{formatStat(a.singMax, locale)}</span>
+              <span className="inline-flex items-center gap-1">
+                <StatIcon stat="sing" className="h-3.5 w-3.5" />
+                <span className="sr-only">{C.artists.sing}</span>
+                <span className="font-semibold text-zinc-200">{formatStat(a.singMax, locale)}</span>
               </span>
-              <span>
-                {C.artists.dance} <span className="font-semibold text-zinc-200">{formatStat(a.danceMax, locale)}</span>
+              <span className="inline-flex items-center gap-1">
+                <StatIcon stat="dance" className="h-3.5 w-3.5" />
+                <span className="sr-only">{C.artists.dance}</span>
+                <span className="font-semibold text-zinc-200">{formatStat(a.danceMax, locale)}</span>
               </span>
             </p>
           )}

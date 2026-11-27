@@ -6,7 +6,7 @@ import { DICT, isLocale, t, type Locale } from "@/lib/i18n";
 import { loadShared } from "@/lib/lineups";
 import { genreSynergy, TEAM_SIZE, teamSkillTotals, withGenreBonus } from "@/lib/team";
 import { EFFECT_LABEL, TIER_ORDER } from "@/lib/score";
-import { Avatar, GenreIcon, ICONS, Icon, SkillList, TierBadge, formatStat, isPercent } from "@/components/artist-ui";
+import { Avatar, GenreIcon, ICONS, Icon, SkillList, StatIcon, TierBadge, formatStat, isPercent } from "@/components/artist-ui";
 import { UserAvatar } from "@/components/user-avatar";
 
 export const dynamic = "force-dynamic";
@@ -81,14 +81,20 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
             {hasStats && (
               <>
                 <div className="rounded-xl border border-line bg-panel/70 p-3">
-                  <dt className="text-2xs font-semibold uppercase tracking-wide text-zinc-400">{C.artists.sing}</dt>
+                  <dt className="flex items-center gap-1 text-2xs font-semibold uppercase tracking-wide text-zinc-400">
+                    <StatIcon stat="sing" className="h-3.5 w-3.5" />
+                    {C.artists.sing}
+                  </dt>
                   <dd className="tabular mt-0.5 font-display text-xl font-bold text-zinc-100">
                     {formatStat(totalSing, locale)}
                     {synergy.bonus > 0 && <span className="ml-1 align-middle text-xs font-semibold text-emerald-300">+{synergy.bonus}%</span>}
                   </dd>
                 </div>
                 <div className="rounded-xl border border-line bg-panel/70 p-3">
-                  <dt className="text-2xs font-semibold uppercase tracking-wide text-zinc-400">{C.artists.dance}</dt>
+                  <dt className="flex items-center gap-1 text-2xs font-semibold uppercase tracking-wide text-zinc-400">
+                    <StatIcon stat="dance" className="h-3.5 w-3.5" />
+                    {C.artists.dance}
+                  </dt>
                   <dd className="tabular mt-0.5 font-display text-xl font-bold text-zinc-100">
                     {formatStat(totalDance, locale)}
                     {synergy.bonus > 0 && <span className="ml-1 align-middle text-xs font-semibold text-emerald-300">+{synergy.bonus}%</span>}
@@ -174,11 +180,15 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
                 <SkillList baseDmg={a.baseDmg} skills={a.skills} locale={locale} className="mt-1" />
                 {a.singMax !== null && a.danceMax !== null && (
                   <span className="tabular mt-0.5 flex gap-2 text-xs text-zinc-400">
-                    <span>
-                      {C.artists.sing} <span className="font-semibold text-zinc-200">{formatStat(a.singMax, locale)}</span>
+                    <span className="inline-flex items-center gap-1">
+                      <StatIcon stat="sing" className="h-3.5 w-3.5" />
+                      <span className="sr-only">{C.artists.sing}</span>
+                      <span className="font-semibold text-zinc-200">{formatStat(a.singMax, locale)}</span>
                     </span>
-                    <span>
-                      {C.artists.dance} <span className="font-semibold text-zinc-200">{formatStat(a.danceMax, locale)}</span>
+                    <span className="inline-flex items-center gap-1">
+                      <StatIcon stat="dance" className="h-3.5 w-3.5" />
+                      <span className="sr-only">{C.artists.dance}</span>
+                      <span className="font-semibold text-zinc-200">{formatStat(a.danceMax, locale)}</span>
                     </span>
                   </span>
                 )}
