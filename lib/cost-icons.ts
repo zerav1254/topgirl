@@ -98,6 +98,12 @@ export const villaStageIcon = (stage: number) =>
 export const villaSuiteIcon = (suite: number, stage: number) =>
   `${ROOT}/villa/UI_Icon_base_location${suite}_stage${Math.min(Math.max(stage, 1), 8)}.webp`;
 
+// Ikon komponen mobil (Setir, Chip/ECU, Sistem Suara) per tier 1-7.
+const CAR_PART_ASSET = { steering: "SteeringWheel", chip: "ECU", sound: "CarAudio" } as const;
+
+export const carPartIcon = (slot: keyof typeof CAR_PART_ASSET, tier: number) =>
+  `${ROOT}/mobil/UI_Icon_Vehicle_${CAR_PART_ASSET[slot]}_${String(Math.min(Math.max(tier, 1), 7)).padStart(2, "0")}.webp`;
+
 // Ikon mod mobil: 4 part (Mesin, Sasis, Suspensi, Velg) x 6 tampilan.
 // Config game berganti gambar per rentang level kelas: 0-1, 2-5, 6-14, 15-34, 35-64, 65+.
 const CAR_MOD_ASSET = ["Engine", "CarFrame", "Chassis", "Wheel"] as const;
