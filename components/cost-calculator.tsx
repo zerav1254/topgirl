@@ -18,6 +18,7 @@ type Tab = "artist" | "car" | "hq" | "villa" | "collection" | "ceo";
 
 const MOD_MIN = 0;
 const MOD_MAX = 219;
+const MOD_PARTS = 4;
 const ARTIST_MIN = 1;
 const ARTIST_MAX = 160;
 
@@ -43,7 +44,7 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
   const [levelFrom, setLevelFrom] = useState(ARTIST_MIN);
   const [levelTo, setLevelTo] = useState(ARTIST_MAX);
 
-  const [modPart, setModPart] = useState(0);
+  const [modPart, setModPart] = useState(-1);
   const [modFrom, setModFrom] = useState(MOD_MIN);
   const [modTo, setModTo] = useState(MOD_MAX);
 
@@ -54,17 +55,17 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
   const artistBad = levelTo <= levelFrom;
   const modBad = modTo <= modFrom;
 
-  const modTotalsResult = useMemo(
-    () =>
-      modTotals({
-        items: book.costs.carMod[modPart] ?? [],
-        classCosts: book.costs.carModClass,
-        classByLevel: book.classByLevel,
-        from: modFrom,
-        to: modTo,
-      }),
-    [book.classByLevel, book.costs.carMod, book.costs.carModClass, modPart, modFrom, modTo],
-  );
+  const modTotalsResult = useMemo(() => {
+    const totals = modTotals({
+      items: book.costs.carMod[modPart === -1 ? 0 : modPart] ?? [],
+      classCosts: book.costs.carModClass,
+      classByLevel: book.classByLevel,
+      from: modFrom,
+      to: modTo,
+    });
+    const count = modPart === -1 ? MOD_PARTS : 1;
+    return count === 1 ? totals : totals.map((item) => ({ ...item, amount: item.amount * count }));
+  }, [book.classByLevel, book.costs.carMod, book.costs.carModClass, modPart, modFrom, modTo]);
 
   // Helper kelas: pemain cukup pilih kelas yang tampil di mod kendaraan, level
   // terisi otomatis (awal = level pertama kelas, target = level terakhir kelas).
@@ -146,7 +147,12 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
           <p className={`${label} mb-2`}>{C.tabMods}</p>
           <div role="group" aria-label={C.modPart}>
             <p className={label}>{C.modPart}</p>
-            <div className="mt-1 grid grid-cols-4 gap-2">
+            <div className="mt-1">
+              <button type="button" aria-pressed={modPart === -1} onClick={() => setModPart(-1)} className={chip(modPart === -1, "sm")}>
+                {C.modAllParts}
+              </button>
+            </div>
+            <div className="mt-2 grid grid-cols-4 gap-2">
               {modLabels.map((name, index) => {
                 const active = index === modPart;
                 return (
