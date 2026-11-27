@@ -140,7 +140,6 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
     {
       id: "parts",
       label: C.tabParts,
-      glyph: "team-glyph",
       node: (
         <section aria-label={C.tabParts} className={panel}>
           {partGroups.map((group) => (
@@ -203,7 +202,6 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
     {
       id: "mods",
       label: C.tabMods,
-      glyph: "team-glyph",
       node: (
         <section aria-label={C.tabMods} className={panel}>
           <div role="group" aria-label={C.modPart}>
@@ -289,7 +287,7 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
     { id: "hq", label: C.tabHq, node: <HqPanel hq={book.hq} C={C} format={format} /> },
     { id: "villa", label: C.tabVilla, node: <VillaPanel villa={book.villa} C={C} format={format} /> },
     { id: "collection", label: C.tabCollection, node: <CollectionPanel collection={book.collection} C={C} format={format} /> },
-    { id: "ceo", label: C.tabCeo, glyph: "profile-glyph", node: <CeoPanel ceo={book.ceo} C={C} format={format} /> },
+    { id: "ceo", label: C.tabCeo, node: <CeoPanel ceo={book.ceo} C={C} format={format} /> },
   ];
 
   return (
