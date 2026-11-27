@@ -178,14 +178,14 @@ function ArtistCard({
         }`}
       >
         <summary className="flex cursor-pointer list-none items-center gap-2 rounded-xl p-2 transition-colors duration-200 hover:bg-surface focus-visible:-outline-offset-2 focus-visible:outline-2 focus-visible:outline-gold [&::-webkit-details-marker]:hidden">
-          <span className="relative block h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-panel-2">
+          <span className="relative block h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-panel-2">
             {a.photoUrl ? (
               <Image
                 src={a.photoUrl}
                 alt=""
                 width={96}
                 height={96}
-                sizes="56px"
+                sizes="48px"
                 className={`h-full w-full object-cover ${blocked ? "opacity-60 grayscale" : ""}`}
               />
             ) : (
@@ -195,11 +195,10 @@ function ArtistCard({
             )}
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block truncate text-sm font-semibold">{a.name}</span>
+            <span title={a.name} className="block truncate text-sm font-semibold">{a.name}</span>
             <span className="mt-1 flex items-center gap-1 text-xs text-zinc-400">
               <GenreIcon image={a.genreImage} className="h-4 w-4 shrink-0" />
               <span className="truncate">{a.genre}</span>
-              {a.role && <RoleBadge role={a.role} locale={locale} className="shrink-0" />}
               {inTeam && <Icon d={ICONS.check} className="ml-auto h-3.5 w-3.5 shrink-0 text-gold" />}
             </span>
           </span>
@@ -212,6 +211,7 @@ function ArtistCard({
           <div className="flex items-center justify-between gap-2">
             <span className="flex items-center gap-1">
               {r ? <RankBadge rank={r.rank} size={r.size} label={t(C.pool.rank, { n: r.rank, total: r.size })} /> : <TierBadge tier={tier} />}
+              {a.role && <RoleBadge role={a.role} locale={locale} />}
             </span>
             <span className="tabular shrink-0 text-xs text-zinc-400">
               {C.info.score} <span className="font-semibold text-zinc-100">{formatStat(a.score, locale)}</span>

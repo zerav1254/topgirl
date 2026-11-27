@@ -44,14 +44,14 @@ Badge tier: `border-<warna>/45 bg-<warna>/15 text-<warna>-300` (S+ pakai `text-g
 
 ## Spasi & layout
 
-- Satu kolom: shell `mx-auto flex max-w-4xl flex-col gap-4 px-4 pt-4 pb-28 sm:px-6 sm:pt-6`. Halaman Artists (`/{locale}`) dan Team (`/{locale}/team`) dipilih lewat bottom nav, bukan bar tab di dalam halaman.
+- Satu kolom: shell `mx-auto flex max-w-4xl flex-col gap-3 px-4 pt-3 pb-28 sm:px-6 sm:pt-6`. Halaman Artists (`/{locale}`) dan Team (`/{locale}/team`) dipilih lewat bottom nav, bukan bar tab di dalam halaman.
 - Roster: 2 kolom < 640px, 3 kolom `sm`, 4 kolom `md`.
 - Radius: kartu besar `rounded-2xl`, kartu artist/slot `rounded-xl`, badge/tombol kecil `rounded-lg`/`rounded-md`.
 - Border pemisah: `border-white/10`; hover `border-white/25`.
 
 ## Komponen
 
-**Artist card** — kartu ringkas yang bisa dibuka (native `<details>`): baris ringkas berisi avatar persegi 56 px, nama + skor sebaris, genre (ikon 16 px + teks), ikon centang bila sudah di tim, dan chevron yang berputar saat terbuka. Grid roster memakai `items-start` supaya kartu lain tidak ikut melar saat satu kartu dibuka. Isi terbuka: badge rank (mode pool) atau tier, asal/share season ringkas, peringatan `pool.blocked`, tiga baris skill (dasar + dua skill tabel; nama efek `text-zinc-400`, nilai `tabular font-semibold`), lalu tombol tim dan tombol koleksi `min-h-11` dengan `aria-pressed`. Kartu yang sudah di tim: `border-gold/30 bg-gold/5`. `<summary>` punya focus ring `outline-gold`.
+**Artist card** — kartu ringkas yang bisa dibuka (native `<details>`): baris ringkas berisi avatar persegi 48 px, nama, genre (ikon 16 px + teks), ikon centang bila sudah di tim, dan chevron yang berputar saat terbuka. Grid roster memakai `items-start` supaya kartu lain tidak ikut melar saat satu kartu dibuka. Isi terbuka: badge rank (mode pool) atau tier + badge peran, skor, asal/share season ringkas, peringatan `pool.blocked`, tiga baris skill (dasar + dua skill tabel; nama efek `text-zinc-400`, nilai `tabular font-semibold`), lalu tombol tim dan tombol koleksi `min-h-11` dengan `aria-pressed`. Kartu yang sudah di tim: `border-gold/30 bg-gold/5`. `<summary>` punya focus ring `outline-gold`.
 
 Saat login, kartu menambah satu tombol koleksi selebar kartu di bawah skill: `min-h-11 rounded-lg` (`rounded-none` mengikuti sudut kartu), `border-t`. Belum punya: `border-white/10 text-zinc-400 hover:text-zinc-200`. Sudah punya: `border-emerald-500/30 bg-emerald-500/10 text-emerald-300`. Status `aria-pressed`, `aria-label` memakai `collection.markOwned`/`markMissing` + nama artist. Tombol ini tidak membuka dialog; ia hanya menandai kepemilikan.
 
