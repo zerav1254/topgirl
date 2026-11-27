@@ -6,7 +6,7 @@ import { DICT, type Locale } from "@/lib/i18n";
 import type { Pool } from "@/lib/pool";
 
 const chip = (active: boolean) =>
-  `tabular min-h-11 cursor-pointer rounded-lg border px-3 text-sm font-semibold transition-colors duration-200 ${
+  `tabular min-h-11 min-w-11 cursor-pointer rounded-lg border px-3 text-sm font-semibold transition-colors duration-200 ${
     active
       ? "border-gold/50 bg-gold/10 text-gold"
       : "border-white/10 bg-panel/80 text-zinc-300 hover:border-white/25 hover:text-zinc-100"
