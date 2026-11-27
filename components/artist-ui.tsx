@@ -59,7 +59,7 @@ export function SkillList({
       {rows.map((r) => (
         <span key={r.slot} className="flex items-baseline justify-between gap-2 text-xs">
           <span className="flex min-w-0 items-baseline gap-1.5">
-            <span className="tabular text-[10px] font-semibold text-zinc-500">{r.slot}</span>
+            <span className="tabular text-[10px] font-semibold text-zinc-400">{r.slot}</span>
             <span className="truncate text-zinc-400">{r.label}</span>
           </span>
           <span className="tabular shrink-0 font-semibold text-zinc-200">{r.value}</span>
