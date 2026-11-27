@@ -204,7 +204,7 @@ export function LineupsTab({
       )}
 
       {message && (
-        <p role="status" className="rounded-xl border border-white/10 bg-panel/70 px-3 py-2 text-sm text-zinc-300">
+        <p role="status" className="rounded-xl border border-white/10 bg-panel/70 px-3 py-2 text-sm break-words text-zinc-300">
           {message}
         </p>
       )}
