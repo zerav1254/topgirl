@@ -1,8 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { expBetween, classLevels, modTotals, starCardsForLevels } from "@/lib/cost-calc";
+import { tabIcon } from "@/lib/cost-icons";
 import { DICT, numberLocale, type Locale } from "@/lib/i18n";
 import type { CarClass, CostBook } from "@/lib/costs";
 import { CarPartsPanel } from "./cost/car-parts";
@@ -223,8 +225,8 @@ export function CostCalculator({ book, locale, signedIn }: { book: CostBook; loc
     { tab: "ceo", id: "ceo", node: <CeoPanel ceo={book.ceo} C={C} format={format} /> },
   ];
 
-  const tabs: { id: Tab; label: string }[] = [
-    { id: "artist", label: C.tabArtist },
+  const tabs: { id: Tab; label: string; glyph?: string }[] = [
+    { id: "artist", label: C.tabArtist, glyph: "artist-glyph" },
     { id: "car", label: C.tabCar },
     { id: "hq", label: C.tabHq },
     { id: "villa", label: C.tabVilla },
@@ -255,6 +257,18 @@ export function CostCalculator({ book, locale, signedIn }: { book: CostBook; loc
               onClick={() => setTab(item.id)}
               className={`${chip(tab === item.id, "sm")} flex flex-col items-center justify-center gap-1 text-center leading-tight sm:flex-row sm:gap-2 sm:px-3 sm:text-sm`}
             >
+              {item.glyph ? (
+                <span aria-hidden="true" className={`${item.glyph} h-6 w-6 shrink-0`} />
+              ) : (
+                <Image
+                  src={tabIcon(item.id)}
+                  alt=""
+                  width={24}
+                  height={24}
+                  sizes="24px"
+                  className="h-6 w-6 shrink-0 object-contain"
+                />
+              )}
               {item.label}
             </button>
           ))}
