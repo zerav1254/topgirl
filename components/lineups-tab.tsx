@@ -17,13 +17,11 @@ export function LineupsTab({
   lineups,
   preview,
   locale,
-  signedIn,
   siteUrl,
 }: {
   lineups: Lineup[];
   preview: Artist[];
   locale: Locale;
-  signedIn: boolean;
   siteUrl: string;
 }) {
   const C = DICT[locale].lineup;
@@ -51,8 +49,6 @@ export function LineupsTab({
       setMessage(res.ok ? (res.link ? `${C.shared}: ${siteUrl}${res.link}` : C.saved) : res.error);
       router.refresh();
     });
-
-  if (!signedIn) return <p className="text-sm text-zinc-400">{C.loginHint}</p>;
 
   const btn = "inline-flex min-h-11 cursor-pointer items-center justify-center gap-1.5 rounded-lg border px-3 text-sm font-semibold transition-colors duration-200";
 
