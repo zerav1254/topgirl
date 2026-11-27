@@ -3,14 +3,14 @@
 import { useMemo, useState, useSyncExternalStore } from "react";
 import type { Artist } from "@/lib/artists";
 import { DICT, t, type Locale } from "@/lib/i18n";
-import { CATEGORIES, EFFECTS, EFFECT_LABEL, type Category, type Effect } from "@/lib/score";
+import { EFFECTS, EFFECT_LABEL, type Effect } from "@/lib/score";
 import { ICONS, Icon, SearchInput } from "./artist-ui";
 
 // Sentinel filter, bukan teks tampil: label "Semua" datang dari dict.
 const ALL = "all";
 
-export type ArtistFilter = { genre: string; origin: string; specialty: string; skill: string; scope: string };
-const EMPTY: ArtistFilter = { genre: ALL, origin: ALL, specialty: ALL, skill: ALL, scope: ALL };
+export type ArtistFilter = { genre: string; origin: string; skill: string; scope: string };
+const EMPTY: ArtistFilter = { genre: ALL, origin: ALL, skill: ALL, scope: ALL };
 const OWNED = "owned";
 const MISSING = "missing";
 
@@ -34,13 +34,6 @@ function setState(next: FilterState) {
   emit();
 }
 
-export const isCategory = (value: string): value is Category => (CATEGORIES as readonly string[]).includes(value);
-
-// Spesialis = kategori dengan skor tertinggi; seri dimenangkan urutan CATEGORIES (solo dulu).
-export function specialtyOf(a: Artist): Category {
-  return CATEGORIES.reduce((best, c) => (a.scores[c] > a.scores[best] ? c : best), CATEGORIES[0]);
-}
-
 export function useArtistFilter(artists: Artist[], locale: Locale, owned?: Set<string>) {
   const { query, filter } = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   const q = query.trim().toLowerCase();
@@ -50,7 +43,6 @@ export function useArtistFilter(artists: Artist[], locale: Locale, owned?: Set<s
         (a) =>
           (filter.genre === ALL || a.genre === filter.genre) &&
           (filter.origin === ALL || a.origin === filter.origin) &&
-          (filter.specialty === ALL || specialtyOf(a) === filter.specialty) &&
           (filter.skill === ALL || a.skills.some((s) => s.effect === filter.skill)) &&
           (!owned ||
             filter.scope === ALL ||
@@ -212,7 +204,7 @@ export function ArtistFilterBar({
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           <Select
             label={C.artists.genre}
             value={state.filter.genre}
@@ -226,14 +218,6 @@ export function ArtistFilterBar({
             onChange={set("origin")}
             options={origins.map((r) => ({ id: r, text: r }))}
             locale={locale}
-          />
-          <Select
-            label={C.artists.specialty}
-            value={state.filter.specialty}
-            onChange={set("specialty")}
-            options={CATEGORIES.map((c) => ({ id: c, text: C.categories[c] }))}
-            locale={locale}
-            tone="gold"
           />
           <Select
             label={C.artists.skill}

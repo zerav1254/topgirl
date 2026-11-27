@@ -13,6 +13,24 @@ export function starBetween(amounts: number[], from: number, to: number): number
   return to > from ? sum(amounts.slice(from, to)) : 0;
 }
 
+// stars[level - 1] = star minimal untuk level itu. Rentang level butuh kartu
+// dari star level awal sampai star level target (naik level hanya di batas star).
+export function starCardsForLevels(stars: number[], amounts: number[], from: number, to: number): number {
+  return starBetween(amounts, stars[from - 1] ?? 0, stars[to - 1] ?? 0);
+}
+
+// classByLevel[level] = id kelas mod. Helper: rentang level tiap kelas supaya
+// pemain yang hanya tahu kelas di mod kendaraan tidak perlu tahu nomor level.
+export function classLevels(classByLevel: number[]): Map<number, { from: number; to: number }> {
+  const out = new Map<number, { from: number; to: number }>();
+  classByLevel.forEach((id, level) => {
+    const range = out.get(id);
+    if (range) range.to = level;
+    else out.set(id, { from: level, to: level });
+  });
+  return out;
+}
+
 export function sumLevels(items: CostItem[], from: number, to: number): CostTotal[] {
   if (to <= from) return [];
   return items

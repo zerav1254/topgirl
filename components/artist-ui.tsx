@@ -1,7 +1,7 @@
 import Image from "next/image";
-import type { Artist } from "@/lib/artists";
+import type { Artist, Role } from "@/lib/artists";
 import { DICT, numberLocale, type Locale } from "@/lib/i18n";
-import { BASE_SKILL_INTERVAL, BASE_SKILL_LABEL, DEFAULT_CATEGORY, EFFECT_LABEL, FLAT_EFFECTS, type Effect } from "@/lib/score";
+import { BASE_SKILL_INTERVAL, BASE_SKILL_LABEL, EFFECT_LABEL, FLAT_EFFECTS, type Effect } from "@/lib/score";
 
 const TIER_STYLE: Record<string, string> = {
   "S+": "border-gold/45 bg-gold/15 text-gold",
@@ -19,6 +19,14 @@ const AVATAR_STYLE: Record<string, string> = {
   B: "from-sky-500/80 to-sky-700/50",
   C: "from-emerald-500/80 to-emerald-700/50",
   D: "from-zinc-500/80 to-zinc-700/50",
+};
+
+// Warna per peran panggung; 'support' ikut hijau karena belum ada di roster.
+const ROLE_STYLE: Record<string, string> = {
+  center: "border-gold/45 bg-gold/15 text-gold",
+  singer: "border-sky-500/45 bg-sky-500/15 text-sky-300",
+  dancer: "border-purple-500/45 bg-purple-500/15 text-purple-300",
+  support: "border-emerald-500/45 bg-emerald-500/15 text-emerald-300",
 };
 
 export const isPercent = (effect: Effect) => !FLAT_EFFECTS.has(effect);
@@ -105,6 +113,17 @@ export function TierBadge({ tier, className = "" }: { tier: string; className?: 
   );
 }
 
+// Peran panggung; teks dari dict supaya ikut bahasa aktif.
+export function RoleBadge({ role, locale, className = "" }: { role: Role; locale: Locale; className?: string }) {
+  return (
+    <span
+      className={`inline-flex items-center rounded border px-1.5 py-0.5 text-[11px] font-semibold whitespace-nowrap ${ROLE_STYLE[role] ?? ROLE_STYLE.support} ${className}`}
+    >
+      {DICT[locale].artists.role[role]}
+    </span>
+  );
+}
+
 // Peringkat relatif pool. Label dibaca screen reader; "#3" sendiri ambigu tanpa konteks.
 export function RankBadge({ rank, size, label, className = "" }: { rank: number; size: number; label: string; className?: string }) {
   return (
@@ -119,7 +138,7 @@ export function RankBadge({ rank, size, label, className = "" }: { rank: number;
   );
 }
 
-export function Avatar({ artist, size = "h-12 w-12", tier = artist.tiers[DEFAULT_CATEGORY] }: { artist: Artist; size?: string; tier?: string }) {
+export function Avatar({ artist, size = "h-12 w-12", tier = artist.tier }: { artist: Artist; size?: string; tier?: string }) {
   return (
     <span className={`block shrink-0 overflow-hidden rounded-lg bg-gradient-to-br ${AVATAR_STYLE[tier] ?? AVATAR_STYLE.D} ${size}`}>
       {artist.photoUrl ? (

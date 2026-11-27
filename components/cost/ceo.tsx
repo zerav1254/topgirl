@@ -5,30 +5,37 @@ import { expBetween, sumLevels } from "@/lib/cost-calc";
 import type { CostBook } from "@/lib/costs";
 import { clamp, invalid, NumberField, panel, result, Segmented, Select, Totals, type CostDict } from "./fields";
 
-type Mode = "stage" | "outfit" | "sport";
+type Mode = "appearance" | "sport";
 
 const SPORT_MIN = 1;
 const SPORT_MAX = 60;
 
 export function CeoPanel({ ceo, C, format }: { ceo: CostBook["ceo"]; C: CostDict; format: (value: number) => string }) {
-  const [mode, setMode] = useState<Mode>("stage");
+  const [mode, setMode] = useState<Mode>("appearance");
+  // Helper tampilan: pakai nama stage dari game, bukan nomor. 0 = belum punya.
   const [stageFrom, setStageFrom] = useState(0);
-  const [stageTo, setStageTo] = useState(ceo.stages.length - 1);
-  const [outfitStage, setOutfitStage] = useState(1);
-  const [outfit, setOutfit] = useState(1);
+  const [stageTo, setStageTo] = useState(ceo.stages.at(-1)?.stage ?? 0);
   const [tier, setTier] = useState(1);
   const [sportFrom, setSportFrom] = useState(SPORT_MIN);
   const [sportTo, setSportTo] = useState(SPORT_MAX);
 
-  const stageAmounts = ceo.stages.map((item) => item.amount);
-  const maxStage = stageAmounts.length - 1;
-  // Opsi select outfit memakai semua stage (stage berbiaya 0 tetap punya outfit).
-  const stageTotal = expBetween(stageAmounts, stageFrom, stageTo);
-  const stageBad = stageTo <= stageFrom;
+  const appearanceBad = stageTo <= stageFrom;
   const sportBad = sportTo <= sportFrom;
 
-  const outfits = ceo.outfits.filter((item) => item.stage === outfitStage);
-  const chosenOutfit = outfits.find((item) => item.outfit === outfit) ?? outfits[0];
+  // Promosi = jumlah biaya stage yang dilewati (stage > from dan <= to).
+  const promoAmount = useMemo(
+    () => (appearanceBad ? 0 : expBetween(ceo.stages.map((item) => item.amount), stageFrom, stageTo)),
+    [appearanceBad, ceo.stages, stageFrom, stageTo],
+  );
+  const promoItem = ceo.stages.find((item) => item.itemName)?.itemName ?? "";
+  // Empat outfit pada tampilan target berbagi biaya buka yang sama.
+  const targetOutfits = ceo.outfits.filter((item) => item.stage === stageTo);
+  const outfitAmount = targetOutfits.reduce((total, item) => total + item.amount, 0);
+  const outfitItem = targetOutfits.find((item) => item.itemName)?.itemName ?? "";
+  const totals = [
+    promoAmount > 0 && promoItem ? { name: promoItem, amount: promoAmount } : null,
+    outfitAmount > 0 && outfitItem ? { name: outfitItem, amount: outfitAmount } : null,
+  ].filter((item): item is { name: string; amount: number } => item !== null);
 
   const sportTotals = useMemo(
     () => sumLevels(ceo.sportCosts[tier - 1] ?? [], sportFrom, sportTo),
@@ -42,63 +49,40 @@ export function CeoPanel({ ceo, C, format }: { ceo: CostBook["ceo"]; C: CostDict
         value={mode}
         onChange={setMode}
         options={[
-          { id: "stage", label: C.ceoStage },
-          { id: "outfit", label: C.ceoOutfit },
+          { id: "appearance", label: C.ceoAppearance },
           { id: "sport", label: C.ceoSport },
         ]}
       />
 
-      {mode === "stage" ? (
+      {mode === "appearance" ? (
         <>
           <div className="grid grid-cols-2 gap-3">
-            <NumberField id="cost-ceo-from" text={C.stageFrom} value={stageFrom} min={0} max={maxStage} invalid={stageBad} describedBy={stageBad ? "cost-ceo-error" : undefined} onChange={(v) => setStageFrom(clamp(v, 0, maxStage))} />
-            <NumberField id="cost-ceo-to" text={C.stageTo} value={stageTo} min={0} max={maxStage} invalid={stageBad} describedBy={stageBad ? "cost-ceo-error" : undefined} onChange={(v) => setStageTo(clamp(v, 0, maxStage))} />
-          </div>
-
-          {stageBad ? (
-            <p id="cost-ceo-error" role="status" className={invalid}>
-              {C.invalid}
-            </p>
-          ) : null}
-
-          {stageBad ? null : (
-            <div className={result}>
-              <Totals
-                totals={stageTotal > 0 ? [{ name: ceo.stages[0]?.itemName ?? "", amount: stageTotal }] : []}
-                note={C.ceoStageNote}
-                empty={C.noCost}
-                format={format}
-              />
-            </div>
-          )}
-        </>
-      ) : mode === "outfit" ? (
-        <>
-          <div className="grid grid-cols-2 gap-3">
-            <Select id="cost-ceo-outfit-stage" text={C.ceoStage} value={outfitStage} onChange={setOutfitStage}>
+            <Select id="cost-ceo-from" text={C.appearanceFrom} value={stageFrom} onChange={setStageFrom}>
+              <option value={0}>{C.stageNone}</option>
               {ceo.stages.map((item) => (
                 <option key={item.stage} value={item.stage}>
                   {item.name}
                 </option>
               ))}
             </Select>
-            <Select id="cost-ceo-outfit" text={C.outfit} value={outfit} onChange={setOutfit}>
-              {outfits.map((item) => (
-                <option key={item.outfit} value={item.outfit}>
+            <Select id="cost-ceo-to" text={C.appearanceTo} value={stageTo} onChange={setStageTo}>
+              {ceo.stages.map((item) => (
+                <option key={item.stage} value={item.stage}>
                   {item.name}
                 </option>
               ))}
             </Select>
           </div>
 
-          <div className={result}>
-            <Totals
-              totals={chosenOutfit && chosenOutfit.amount > 0 ? [{ name: chosenOutfit.itemName, amount: chosenOutfit.amount }] : []}
-              note={C.ceoOutfitNote}
-              empty={C.noCost}
-              format={format}
-            />
-          </div>
+          {appearanceBad ? (
+            <p id="cost-ceo-error" role="status" className={invalid}>
+              {C.invalid}
+            </p>
+          ) : (
+            <div className={result}>
+              <Totals totals={totals} note={C.ceoAppearanceNote} empty={C.noCost} format={format} />
+            </div>
+          )}
         </>
       ) : (
         <>

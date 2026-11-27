@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { Artist } from "@/lib/artists";
 import { DICT, t, type Locale } from "@/lib/i18n";
 import type { Rank } from "@/lib/pool";
-import { EFFECT_LABEL, type Category, type Tier } from "@/lib/score";
+import { EFFECT_LABEL, type Tier } from "@/lib/score";
 import { GENRE_BONUS, TEAM_SIZE, teamSkillTotals } from "@/lib/team";
 import { ArtistFilterBar, type ArtistFilterState } from "./artist-filter";
 import { Avatar, GenreIcon, ICONS, Icon, RankBadge, SkillList, TierBadge, formatStat, isPercent } from "./artist-ui";
@@ -20,7 +20,6 @@ type Props = {
   team: Artist[];
   picked: string[];
   locale: Locale;
-  category: Category;
   state: ArtistFilterState;
   onToggle: (slug: string) => void;
   onAssign: (index: number, slug: string) => void;
@@ -28,9 +27,9 @@ type Props = {
   onReset: () => void;
 };
 
-export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, picked, locale, category, state, onToggle, onAssign, onAuto, onReset }: Props) {
+export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, picked, locale, state, onToggle, onAssign, onAuto, onReset }: Props) {
   const C = DICT[locale];
-  const tierOf = (a: Artist) => seasonTiers?.get(a.slug) ?? a.tiers[category];
+  const tierOf = (a: Artist) => seasonTiers?.get(a.slug) ?? a.tier;
   // Slot yang sedang dipilih; null = dialog tertutup. Picker menggantikan daftar panjang di bawah.
   const [slot, setSlot] = useState<number | null>(null);
   const dialog = useRef<HTMLDialogElement>(null);
@@ -46,16 +45,16 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
   // Artist di slot aktif tetap tampil supaya bisa dibatalkan; yang lain sudah dipakai disembunyikan.
   // Kandidat = artis pool; artis di atas season server tetap boleh dipilih tapi diberi peringatan.
   const inPool = useMemo(() => new Set(scoped.map((a) => a.slug)), [scoped]);
-  const sortValue = (a: Artist) => rank?.get(a.slug)?.rank ?? -a.scores[category];
+  const sortValue = (a: Artist) => rank?.get(a.slug)?.rank ?? -a.score;
   const candidates = useMemo(
     () =>
       state.visible
         .filter((a) => inPool.has(a.slug) || blocked.has(a.slug))
         .filter((a) => a.slug === current?.slug || !picked.includes(a.slug))
         .sort((a, b) => sortValue(a) - sortValue(b)),
-    // sortValue hanya bergantung pada rank/category; dimasukkan lewat deps di bawah.
+    // sortValue hanya bergantung pada rank; dimasukkan lewat deps di bawah.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [state.visible, inPool, blocked, current?.slug, picked, rank, category],
+    [state.visible, inPool, blocked, current?.slug, picked, rank],
   );
 
   const genreImages = useMemo(() => new Map(artists.map((a) => [a.genre, a.genreImage])), [artists]);
@@ -68,12 +67,15 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
     return {
       genreList,
       ...teamSkillTotals(team),
+      sing: team.reduce((n, a) => n + (a.singMax ?? 0), 0),
+      dance: team.reduce((n, a) => n + (a.danceMax ?? 0), 0),
+      hasMax: team.some((a) => a.singMax !== null),
       topGenre,
       topCount,
       genreBonus: GENRE_BONUS[topCount] ?? 0,
-      tiers: team.map((a) => seasonTiers?.get(a.slug) ?? a.tiers[category]).join(" · "),
+      tiers: team.map((a) => seasonTiers?.get(a.slug) ?? a.tier).join(" · "),
     };
-  }, [team, category, seasonTiers]);
+  }, [team, seasonTiers]);
 
   function open(index: number) {
     setSlot(index);
@@ -140,7 +142,7 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
                       <span className="flex items-center gap-1.5">
                         <span className="truncate text-base font-semibold">{a.name}</span>
                         <TierBadge tier={tierOf(a)} />
-                        <span className="tabular text-xs text-zinc-400">{formatStat(a.scores[category], locale)}</span>
+                        <span className="tabular text-xs text-zinc-400">{formatStat(a.score, locale)}</span>
                       </span>
                       <span className="block truncate text-sm text-zinc-400">{a.genre}</span>
                       {blocked.has(a.slug) && (
@@ -205,6 +207,19 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
                 <span className="text-zinc-400">{C.team.infoOnly}</span>
               </dd>
             </div>
+            {summary.hasMax && (
+              <div>
+                <dt className="text-zinc-400">{C.team.statsMax}</dt>
+                <dd className="tabular mt-0.5 flex gap-3 font-semibold text-zinc-200">
+                  <span>
+                    {C.artists.sing} {formatStat(summary.sing, locale)}
+                  </span>
+                  <span>
+                    {C.artists.dance} {formatStat(summary.dance, locale)}
+                  </span>
+                </dd>
+              </div>
+            )}
             <div>
               <dt className="text-zinc-400">{C.team.stats}</dt>
               <dd className="mt-1 flex flex-col gap-1.5">
@@ -281,7 +296,7 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
                         <TierBadge tier={tierOf(a)} />
                       </span>
                       <span className="tabular block truncate text-xs text-zinc-400">
-                        {a.genre} · {formatStat(a.scores[category], locale)}
+                        {a.genre} · {formatStat(a.score, locale)}
                       </span>
                       <SkillList baseDmg={a.baseDmg} skills={a.skills} locale={locale} className="mt-1" />
                       {blocked.has(a.slug) && (

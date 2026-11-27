@@ -31,6 +31,11 @@ create table public.artists (
   -- Skill 1 semua artist: damage flat tiap BASE_SKILL_INTERVAL detik. Tidak dipakai
   -- scoreArtist, jadi tidak memengaruhi tier.
   base_dmg integer not null default 1800 check (base_dmg > 0),
+  -- Peran panggung dari CHeroData.Position. Null = data belum dipetakan.
+  role text check (role in ('center', 'dancer', 'singer', 'support')),
+  -- Sing/Dance level maks dari CHeroLevelCard; komponen stat panggung di scoreArtist.
+  sing_max integer check (sing_max >= 0),
+  dance_max integer check (dance_max >= 0),
   photo_path text,
   -- Versi cache foto, terpisah dari updated_at supaya edit stat tidak memicu unduh ulang gambar.
   photo_updated_at timestamptz not null default now(),
@@ -577,6 +582,13 @@ select star, min(item_name) as item_name, min(amount) as amount
   from public.artist_star_costs
  group by star;
 
+-- Syarat star tiap level artis (batas level naik tiap star). Sama untuk semua artis.
+create view public.artist_level_stars
+with (security_invoker = true) as
+select level, min(star) as star
+  from public.artist_level_costs
+ group by level;
+
 -- Biaya item per level, diringkas level -> amount. 1 baris = 1 item per ref.
 create view public.game_cost_items
 with (security_invoker = true) as
@@ -650,8 +662,8 @@ select tier, item_id, min(item_name) as item_name,
  group by tier, item_id;
 
 -- Semua view biaya upgrade: authenticated saja (anon dicabut di blok least privilege).
-grant select on public.artist_exp_curves, public.artist_star_curve, public.game_cost_items,
-                public.museum_cost_items, public.headquarters_level_curve,
+grant select on public.artist_exp_curves, public.artist_star_curve, public.artist_level_stars,
+                public.game_cost_items, public.museum_cost_items, public.headquarters_level_curve,
                 public.headquarters_room_cost_items, public.villa_staff_cost_items,
                 public.ceo_sport_cost_items
   to authenticated;
@@ -681,7 +693,7 @@ revoke select on
   public.villa_staff_levels, public.villa_staff_level_costs,
   public.ceo_appearance_stages, public.ceo_appearance_outfits, public.ceo_appearance_sports,
   public.ceo_appearance_sport_levels, public.ceo_appearance_sport_level_costs,
-  public.artist_exp_curves, public.artist_star_curve, public.game_cost_items,
+  public.artist_exp_curves, public.artist_star_curve, public.artist_level_stars, public.game_cost_items,
   public.museum_cost_items, public.headquarters_level_curve,
   public.headquarters_room_cost_items, public.villa_staff_cost_items,
   public.ceo_sport_cost_items

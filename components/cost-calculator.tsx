@@ -2,12 +2,13 @@
 
 import Image from "next/image";
 import { useMemo, useState, type ReactNode } from "react";
-import { expBetween, modTotals, starBetween, sumLevels } from "@/lib/cost-calc";
+import { expBetween, classLevels, modTotals, starCardsForLevels, sumLevels } from "@/lib/cost-calc";
+import { carPartIcon } from "@/lib/cost-icons";
 import { DICT, numberLocale, type Locale } from "@/lib/i18n";
-import type { CarPart, CostBook } from "@/lib/costs";
+import type { CarClass, CarPart, CostBook } from "@/lib/costs";
 import { CeoPanel } from "./cost/ceo";
 import { CollectionPanel } from "./cost/collection";
-import { chip, clamp, field, invalid, label, NumberField, panel, result, Totals } from "./cost/fields";
+import { chip, clamp, field, invalid, label, NumberField, panel, result, Select, Totals } from "./cost/fields";
 import { HqPanel } from "./cost/hq";
 import { MuseumPanel } from "./cost/museum";
 import { VillaPanel } from "./cost/villa";
@@ -20,8 +21,6 @@ const MOD_MIN = 0;
 const MOD_MAX = 219;
 const ARTIST_MIN = 1;
 const ARTIST_MAX = 160;
-const STAR_MIN = 0;
-const STAR_MAX = 21;
 
 export function CostCalculator({ book, locale }: { book: CostBook; locale: Locale }) {
   const C = DICT[locale].cost;
@@ -32,8 +31,6 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
   const [artistId, setArtistId] = useState(book.artists[0]?.id ?? 0);
   const [levelFrom, setLevelFrom] = useState(ARTIST_MIN);
   const [levelTo, setLevelTo] = useState(ARTIST_MAX);
-  const [starFrom, setStarFrom] = useState(STAR_MIN);
-  const [starTo, setStarTo] = useState(STAR_MAX);
 
   const [partId, setPartId] = useState(book.parts[0]?.id ?? 0);
   const [partFrom, setPartFrom] = useState(PART_MIN);
@@ -46,8 +43,8 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
   const artist = book.artists.find((a) => a.id === artistId) ?? book.artists[0];
   const curve = artist ? (book.curves[artist.curve] ?? []) : [];
   const exp = expBetween(curve, levelFrom, levelTo);
-  const starCards = starBetween(book.star.amounts, starFrom, starTo);
-  const artistBad = levelTo <= levelFrom || starTo <= starFrom;
+  const starCards = starCardsForLevels(book.levelStars, book.star.amounts, levelFrom, levelTo);
+  const artistBad = levelTo <= levelFrom;
   const partBad = partTo <= partFrom;
   const modBad = modTo <= modFrom;
 
@@ -68,13 +65,19 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
     [book.classByLevel, book.costs.carMod, book.costs.carModClass, modPart, modFrom, modTo],
   );
 
-  const targetClass = book.classes.find((c) => c.id === book.classByLevel[modTo]);
+  // Helper kelas: pemain cukup pilih kelas yang tampil di mod kendaraan, level
+  // terisi otomatis (awal = level pertama kelas, target = level terakhir kelas).
+  const classRanges = useMemo(() => classLevels(book.classByLevel), [book.classByLevel]);
+  const classOptions = book.classes.filter((c) => classRanges.has(c.id));
+  const classLabel = (c: CarClass) => (c.star > 0 ? `${c.name} ★${c.star}` : c.name);
   const partGroups = (["steering", "chip", "sound"] as const).map((slot) => ({
     slot,
     label: slot === "steering" ? C.slotSteering : slot === "chip" ? C.slotChip : C.slotSound,
     parts: book.parts.filter((p) => p.slot === slot),
   }));
   const modLabels = [C.partEngine, C.partChassis, C.partSuspension, C.partWheels];
+  // Tier huruf diambil dari nama game: "Setir (A+)" -> "A+".
+  const tierLabel = (name: string) => name.match(/\(([^)]+)\)/)?.[1] ?? "";
 
   // Semua panel tetap ter-mount (disembunyikan) supaya input tidak hilang saat ganti tab.
   const panels: { id: Tab; label: string; node: ReactNode }[] = [
@@ -99,8 +102,6 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
           <div className="mt-3 grid grid-cols-2 gap-3">
             <NumberField id="cost-level-from" text={C.levelFrom} value={levelFrom} min={ARTIST_MIN} max={ARTIST_MAX} invalid={artistBad} describedBy={artistBad ? "cost-artist-error" : undefined} onChange={(v) => setLevelFrom(clamp(v, ARTIST_MIN, ARTIST_MAX))} />
             <NumberField id="cost-level-to" text={C.levelTo} value={levelTo} min={ARTIST_MIN} max={ARTIST_MAX} invalid={artistBad} describedBy={artistBad ? "cost-artist-error" : undefined} onChange={(v) => setLevelTo(clamp(v, ARTIST_MIN, ARTIST_MAX))} />
-            <NumberField id="cost-star-from" text={C.starFrom} value={starFrom} min={STAR_MIN} max={STAR_MAX} invalid={artistBad} describedBy={artistBad ? "cost-artist-error" : undefined} onChange={(v) => setStarFrom(clamp(v, STAR_MIN, STAR_MAX))} />
-            <NumberField id="cost-star-to" text={C.starTo} value={starTo} min={STAR_MIN} max={STAR_MAX} invalid={artistBad} describedBy={artistBad ? "cost-artist-error" : undefined} onChange={(v) => setStarTo(clamp(v, STAR_MIN, STAR_MAX))} />
           </div>
 
           {artistBad ? (
@@ -140,22 +141,43 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
       label: C.tabParts,
       node: (
         <section aria-label={C.tabParts} className={panel}>
-          <div className="flex flex-col gap-1">
-            <label htmlFor="cost-part" className={label}>
-              {C.part}
-            </label>
-            <select id="cost-part" value={partId} onChange={(e) => setPartId(Number(e.target.value))} className={field}>
-              {partGroups.map((group) => (
-                <optgroup key={group.slot} label={group.label}>
-                  {group.parts.map((part: CarPart) => (
-                    <option key={part.id} value={part.id}>
-                      {part.name}
-                    </option>
-                  ))}
-                </optgroup>
-              ))}
-            </select>
-          </div>
+          {partGroups.map((group) => (
+            <div key={group.slot} role="group" aria-label={group.label} className="mb-3 last:mb-0">
+              <p className={label}>{group.label}</p>
+              <div className="mt-1 grid grid-cols-4 gap-2 sm:grid-cols-7">
+                {group.parts.map((part: CarPart) => {
+                  const active = part.id === partId;
+                  return (
+                    <button
+                      key={part.id}
+                      type="button"
+                      aria-pressed={active}
+                      aria-label={part.name}
+                      title={part.name}
+                      onClick={() => setPartId(part.id)}
+                      className={`flex min-h-11 flex-col items-center gap-1 rounded-lg border px-1 py-1.5 transition-colors duration-200 ${
+                        active
+                          ? "border-gold/50 bg-gold/10"
+                          : "border-white/10 bg-panel/80 hover:border-white/25"
+                      }`}
+                    >
+                      <Image
+                        src={carPartIcon(group.slot, part.tier)}
+                        alt=""
+                        width={40}
+                        height={40}
+                        sizes="40px"
+                        className="h-10 w-10 object-contain"
+                      />
+                      <span className={`text-[10px] font-semibold ${active ? "text-gold" : "text-zinc-400"}`}>
+                        {tierLabel(part.name)}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
 
           <div className="mt-3 grid grid-cols-2 gap-3">
             <NumberField id="cost-part-from" text={C.levelFrom} value={partFrom} min={PART_MIN} max={PART_MAX} invalid={partBad} describedBy={partBad ? "cost-part-error" : undefined} onChange={(v) => setPartFrom(clamp(v, PART_MIN, PART_MAX))} />
@@ -195,6 +217,34 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
           </div>
 
           <div className="mt-3 grid grid-cols-2 gap-3">
+            <Select
+              id="cost-mod-class-from"
+              text={C.classFrom}
+              value={book.classByLevel[modFrom]}
+              onChange={(id) => setModFrom(classRanges.get(id)?.from ?? modFrom)}
+            >
+              {classOptions.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {classLabel(c)}
+                </option>
+              ))}
+            </Select>
+            <Select
+              id="cost-mod-class-to"
+              text={C.targetClass}
+              value={book.classByLevel[modTo]}
+              onChange={(id) => setModTo(classRanges.get(id)?.to ?? modTo)}
+            >
+              {classOptions.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {classLabel(c)}
+                </option>
+              ))}
+            </Select>
+          </div>
+          <p className="mt-2 text-xs text-zinc-400">{C.classHint}</p>
+
+          <div className="mt-3 grid grid-cols-2 gap-3">
             <NumberField id="cost-mod-from" text={C.levelFrom} value={modFrom} min={MOD_MIN} max={MOD_MAX} invalid={modBad} describedBy={modBad ? "cost-mod-error" : undefined} onChange={(v) => setModFrom(clamp(v, MOD_MIN, MOD_MAX))} />
             <NumberField id="cost-mod-to" text={C.levelTo} value={modTo} min={MOD_MIN} max={MOD_MAX} invalid={modBad} describedBy={modBad ? "cost-mod-error" : undefined} onChange={(v) => setModTo(clamp(v, MOD_MIN, MOD_MAX))} />
           </div>
@@ -204,12 +254,6 @@ export function CostCalculator({ book, locale }: { book: CostBook; locale: Local
               {C.invalid}
             </p>
           ) : null}
-
-          {modBad || !targetClass ? null : (
-            <p className="mt-3 text-xs text-zinc-400">
-              {C.targetClass}: <span className="font-semibold text-zinc-200">{targetClass.name}</span>
-            </p>
-          )}
 
           {modBad ? null : (
             <div className={result}>

@@ -155,10 +155,14 @@ export function Totals({
               const icon = costIcon(item.itemId, item.name);
               return (
                 <li key={item.itemId ?? item.name} className="flex items-center justify-between gap-3 text-sm">
-                  <span className="flex min-w-0 items-center gap-2">
-                    {icon ? <Image src={icon} alt="" width={24} height={24} sizes="24px" className="h-6 w-6 shrink-0 object-contain" /> : null}
+                  {icon ? (
+                    <span title={item.name} className="flex min-w-0 items-center gap-2">
+                      <Image src={icon} alt="" width={24} height={24} sizes="24px" className="h-6 w-6 shrink-0 object-contain" />
+                      <span className="sr-only">{item.name}</span>
+                    </span>
+                  ) : (
                     <span className="min-w-0 break-words text-zinc-300">{item.name}</span>
-                  </span>
+                  )}
                   <span className="tabular shrink-0 font-bold text-gold">{format(item.amount)}</span>
                 </li>
               );

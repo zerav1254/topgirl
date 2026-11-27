@@ -28,6 +28,8 @@ export type CostBook = {
   curves: number[][];
   // amounts[star] = jumlah item untuk naik dari star itu ke star + 1.
   star: { itemName: string; amounts: number[] };
+  // levelStars[level - 1] = star minimal untuk level artis tersebut.
+  levelStars: number[];
   parts: CarPart[];
   classes: CarClass[];
   // classByLevel[level] = id kelas mod; 220 level, sama untuk keempat part.
@@ -57,6 +59,7 @@ export type CostBook = {
 
 type CurveRow = { artist_ids: number[]; steps: number[] };
 type StarRow = { star: number; item_name: string; amount: number };
+type LevelStarRow = { level: number; star: number };
 type PartRow = { id: number; name: string; slot: CarPart["slot"]; tier: number };
 type ClassRow = { id: number; name: string; star: number };
 type LevelRow = { level: number; class_id: number };
@@ -94,6 +97,7 @@ export async function loadCostBook(): Promise<CostBook> {
   const [
     curves,
     stars,
+    levelStars,
     artists,
     parts,
     classes,
@@ -113,6 +117,7 @@ export async function loadCostBook(): Promise<CostBook> {
   ] = await Promise.all([
     supabase.from("artist_exp_curves").select("artist_ids, steps"),
     supabase.from("artist_star_curve").select("star, item_name, amount").order("star"),
+    supabase.from("artist_level_stars").select("level, star").order("level"),
     supabase.from("artists").select("id, name").order("name"),
     supabase.from("car_parts").select("id, name, slot, tier").order("slot").order("tier"),
     supabase.from("car_mod_classes").select("id, name, star").order("id"),
@@ -133,6 +138,7 @@ export async function loadCostBook(): Promise<CostBook> {
 
   if (curves.error) fail("kurva EXP", curves.error.message);
   if (stars.error) fail("biaya star", stars.error.message);
+  if (levelStars.error) fail("syarat star per level", levelStars.error.message);
   if (artists.error) fail("artis", artists.error.message);
   if (parts.error) fail("komponen mobil", parts.error.message);
   if (classes.error) fail("kelas mod", classes.error.message);
@@ -160,12 +166,16 @@ export async function loadCostBook(): Promise<CostBook> {
     starAmounts[r.star] = r.amount;
   });
 
+  const levelStarRows: number[] = [];
+  for (const row of levelStars.data as LevelStarRow[]) levelStarRows[row.level - 1] = row.star;
+
   const book: CostBook = {
     artists: (artists.data as { id: number; name: string }[])
       .filter((a) => curveOf.has(a.id))
       .map((a) => ({ id: a.id, name: a.name, curve: curveOf.get(a.id)! })),
     curves: curveRows.map((r) => r.steps),
     star: { itemName: starRows[0]?.item_name ?? "", amounts: starAmounts },
+    levelStars: levelStarRows,
     parts: parts.data as PartRow[],
     classes: (classes.data as ClassRow[]).map((c) => ({ id: c.id, name: c.name, star: c.star })),
     classByLevel: (levels.data as LevelRow[]).map((r) => r.class_id),

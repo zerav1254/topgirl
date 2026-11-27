@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { loadArtists } from "../lib/artists.ts";
 import { EMPTY_POOL, blockedOf, poolOf, rankInPool } from "../lib/pool.ts";
-import { CATEGORIES, EFFECTS, SCORE, scoreArtist } from "../lib/score.ts";
+import { EFFECTS, SCORE, scoreArtist } from "../lib/score.ts";
 import { TEAM_SIZE, bestLineup } from "../lib/team.ts";
 
 const artists = await loadArtists();
@@ -9,75 +9,48 @@ assert.ok(artists.length > 0, "expected at least one artist");
 assert.equal(new Set(artists.map((a) => a.slug)).size, artists.length, "slugs must be unique");
 
 const byName = new Map(artists.map((a) => [a.name, a]));
-// Setiap efek wajib punya bobot > 0 di setiap kategori.
-for (const category of CATEGORIES) {
-  for (const effect of EFFECTS) {
-    assert.ok(SCORE[category][effect] > 0, `bobot ${category}.${effect} harus > 0`);
-  }
+// Semua efek wajib punya bobot > 0 supaya tidak ada yang diam-diam 0.
+for (const effect of EFFECTS) {
+  assert.ok(SCORE[effect] > 0, `bobot ${effect} harus > 0`);
 }
-// Satu artist bisa beda tier per kategori; ini mengunci contoh yang disepakati.
-assert.equal(byName.get("Monica").tiers.solo, "S+");
-assert.equal(byName.get("Rhea").tiers.rally, "S+");
-assert.equal(byName.get("Kesnia").tiers.economy, "S+");
-const rallyCapped = artists.filter((a) => a.scores.rally >= 100);
-assert.ok(rallyCapped.length <= 2, `RALLY terlalu banyak skor 100: ${rallyCapped.map((a) => a.name).join(", ")}`);
+// Satu skor/tier untuk seluruh situs; contoh yang disepakati.
+assert.equal(byName.get("Monica").tier, "S+");
+assert.equal(byName.get("Rhea").tier, "S+");
+assert.equal(byName.get("Aoi").tier, "S+");
+assert.equal(byName.get("Kesnia").tier, "D", "gold-only tetap D");
+assert.ok(byName.get("Kesnia").score < 10, "Kesnia gold-only tetap kecil");
 for (const name of ["Ayaka", "Moana"]) {
-  assert.equal(byName.get(name).tiers.solo, "D", `${name} tanpa efek damage SOLO harus D`);
-  assert.ok(byName.get(name).scores.solo > 0, `${name} dapat bobot mitigasi kecil, bukan 0`);
+  assert.equal(byName.get(name).tier, "D", `${name} tanpa efek damage harus D`);
+  assert.ok(byName.get(name).score > 0, `${name} tetap dapat poin dari stat panggung`);
   assert.ok(
-    byName.get(name).scores.solo < scoreArtist([{ effect: "basic_atk", value: 50 }], "solo"),
+    byName.get(name).score < scoreArtist([{ effect: "basic_atk", value: 50 }]),
     `${name} defensif harus di bawah damage murni`,
   );
 }
-// Ekonomi murni hanya dapat bobot pinggiran di SOLO (tidak nol, tapi tetap D).
-assert.ok(byName.get("Kesnia").scores.solo < 1, "Kesnia gold-only hanya bobot pinggiran di SOLO");
-assert.equal(byName.get("Kesnia").tiers.solo, "D", "Kesnia gold-only tetap D di SOLO");
-// DEFENSE: semua efek punya bobot kecil, jadi tidak ada artist berskor 0.
-for (const a of artists) {
-  assert.ok(a.scores.defense > 0, `${a.name} tanpa efek defense tetap harus dapat poin`);
+// Urutan bobot kanal utama.
+const order = ["player_dmg", "skill_dmg", "fan", "basic_atk"];
+const scores = order.map((effect) => scoreArtist([{ effect, value: 20 }]));
+for (let i = 1; i < scores.length; i++) {
+  assert.ok(scores[i] < scores[i - 1], `priority: ${order[i]} must rank below ${order[i - 1]}`);
 }
-assert.equal(byName.get("Ayaka").tiers.defense, "S", "tank murni harus S di DEFENSE");
-assert.ok(byName.get("Aoi").scores.defense > byName.get("Monica").scores.defense, "Aoi (red + damage) di atas Monica (damage murni)");
-
-const orders = {
-  solo: ["fan", "player_dmg", "skill_dmg", "basic_atk"],
-  rally: ["fan_rally", "player_dmg", "skill_dmg", "basic_atk"],
-  defense: ["basic_atk_red", "skill_dmg_red", "player_dmg"],
-  economy: ["gold", "drive"],
-  global: ["player_dmg", "skill_dmg", "fan", "wbg_dmg"],
-  sustain: ["basic_atk_red", "skill_dmg_red", "player_dmg", "fan", "skill_dmg", "basic_atk"],
-};
-for (const [category, order] of Object.entries(orders)) {
-  const scores = order.map((effect) => scoreArtist([{ effect, value: 20 }], category));
-  for (let i = 1; i < scores.length; i++) {
-    assert.ok(scores[i] < scores[i - 1], `priority ${category}: ${order[i]} must rank below ${order[i - 1]}`);
-  }
-}
-// GLOBAL: player_dmg bobot tertinggi mutlak.
-const globalTop = Object.entries(SCORE.global).sort((a, b) => b[1] - a[1])[0];
-assert.equal(globalTop[0], "player_dmg", "GLOBAL: player_dmg harus bobot tertinggi");
-// SUSTAIN: dua reduksi tertinggi, lalu player_dmg.
-assert.deepEqual(
-  Object.entries(SCORE.sustain).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([effect]) => effect),
-  ["basic_atk_red", "skill_dmg_red", "player_dmg"],
-  "SUSTAIN: reduksi serangan lalu player_dmg",
-);
-// Bobot kecil SOLO tidak boleh mengalahkan damage murni.
+// Stat panggung menaikkan skor, tapi tidak bisa menggantikan skill.
+const base = [{ effect: "basic_atk", value: 20 }];
 assert.ok(
-  scoreArtist([{ effect: "wbg_dmg", value: 20 }], "solo") > scoreArtist([{ effect: "dps_def", value: 20 }], "solo"),
-  "wbg_dmg harus di atas dps_def di SOLO",
+  scoreArtist(base, { sing: 52855, dance: 52855 }) > scoreArtist(base),
+  "stat panggung harus menambah skor",
 );
-// player_dmg menambah basic_atk DAN skill_dmg: skill 30 + player 30 == skill 60 + basic 30.
-assert.equal(
-  scoreArtist([{ effect: "skill_dmg", value: 30 }, { effect: "player_dmg", value: 30 }], "solo"),
-  scoreArtist([{ effect: "skill_dmg", value: 60 }, { effect: "basic_atk", value: 30 }], "solo"),
-  "player_dmg harus dihitung di kanal basic dan skill",
+assert.equal(scoreArtist(base, { sing: null, dance: null }), scoreArtist(base), "stat kosong = 0");
+assert.ok(
+  scoreArtist(base, { sing: 20000, dance: 20000 }) > scoreArtist(base, { sing: 10000, dance: 10000 }),
+  "stat lebih tinggi harus skor lebih tinggi",
 );
 for (const a of artists) {
-  for (const category of CATEGORIES) {
-    assert.ok(a.scores[category] >= 0 && a.scores[category] <= 100, `${a.name} ${category} score out of range`);
-    assert.ok(["S+", "S", "A", "B", "C", "D"].includes(a.tiers[category]), `${a.name} ${category} bad tier`);
-  }
+  assert.ok(a.score >= 0 && a.score <= 100, `${a.name} score out of range`);
+  assert.ok(["S+", "S", "A", "B", "C", "D"].includes(a.tier), `${a.name} bad tier`);
+}
+// Sebaran tier harus memakai semua tingkat (tidak kosong di ujung).
+for (const tier of ["S+", "D"]) {
+  assert.ok(artists.some((a) => a.tier === tier), `tier ${tier} tidak boleh kosong`);
 }
 
 // Pool: hanya season server — batas atas artis yang bisa diperoleh.
@@ -98,21 +71,18 @@ assert.equal(blockedSeason.length, artists.filter((a) => a.season !== null && a.
 assert.ok(blockedSeason.every((a) => a.season !== null && a.season > cap), "blocked semua di atas cap");
 assert.equal(allowed.length + blockedSeason.length, artists.length, "artis hanya di satu sisi cap");
 
-for (const category of CATEGORIES) {
-  const rank = rankInPool(artists, capped, category);
-  assert.equal(rank.size, allowed.length, "ukuran peringkat = artis yang bisa diperoleh");
-  const maxScore = Math.max(...allowed.map((a) => a.scores[category]));
-  const first = allowed.find((a) => rank.get(a.slug)?.rank === 1);
-  assert.equal(first?.scores[category], maxScore, `rank 1 ${category} = skor tertinggi season`);
-}
+const rank = rankInPool(artists, capped);
+assert.equal(rank.size, allowed.length, "ukuran peringkat = artis yang bisa diperoleh");
+const maxScore = Math.max(...allowed.map((a) => a.score));
+const first = allowed.find((a) => rank.get(a.slug)?.rank === 1);
+assert.equal(first?.score, maxScore, "rank 1 = skor tertinggi season");
 
-for (const category of CATEGORIES) {
-  const lineup = bestLineup(artists, category);
-  assert.ok(lineup.length <= TEAM_SIZE, "lineup maksimal TEAM_SIZE");
-  assert.equal(new Set(lineup.map((a) => a.slug)).size, lineup.length, "lineup tidak boleh duplikat");
-  if (artists.length > TEAM_SIZE) assert.equal(lineup.length, TEAM_SIZE, "lineup penuh kalau data cukup");
-  const naive = [...artists].sort((a, b) => b.scores[category] - a.scores[category]).slice(0, TEAM_SIZE);
-  const sum = (list) => list.reduce((n, a) => n + a.scores[category], 0);
-  assert.ok(sum(lineup) >= sum(naive) - 1e-9, `lineup ${category} minimal sebaik top-${TEAM_SIZE} naif`);
-}
-console.log("score-check ok:", artists.length, "artists x", CATEGORIES.length, "categories");
+const lineup = bestLineup(artists);
+assert.ok(lineup.length <= TEAM_SIZE, "lineup maksimal TEAM_SIZE");
+assert.equal(new Set(lineup.map((a) => a.slug)).size, lineup.length, "lineup tidak boleh duplikat");
+if (artists.length > TEAM_SIZE) assert.equal(lineup.length, TEAM_SIZE, "lineup penuh kalau data cukup");
+const naive = [...artists].sort((a, b) => b.score - a.score).slice(0, TEAM_SIZE);
+const sum = (list) => list.reduce((n, a) => n + a.score, 0);
+assert.ok(sum(lineup) >= sum(naive) - 1e-9, "lineup minimal sebaik top-5 naif");
+
+console.log("score-check ok:", artists.length, "artists, one score");

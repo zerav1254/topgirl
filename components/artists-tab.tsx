@@ -5,10 +5,10 @@ import Image from "next/image";
 import type { Artist } from "@/lib/artists";
 import { DICT, t, type Locale } from "@/lib/i18n";
 import type { Rank } from "@/lib/pool";
-import { TIER_ORDER, type Category, type Tier } from "@/lib/score";
+import { TIER_ORDER, type Tier } from "@/lib/score";
 import { TEAM_SIZE } from "@/lib/team";
 import { ArtistFilterBar, type ArtistFilterState } from "./artist-filter";
-import { GenreIcon, ICONS, Icon, RankBadge, SkillList, TierBadge, formatStat } from "./artist-ui";
+import { GenreIcon, ICONS, Icon, RankBadge, RoleBadge, SkillList, TierBadge, formatStat } from "./artist-ui";
 
 type Props = {
   artists: Artist[];
@@ -28,24 +28,23 @@ type Props = {
   pendingSlug?: string | null;
   picked: string[];
   locale: Locale;
-  category: Category;
   state: ArtistFilterState;
 };
 
 // Season hanya bermakna untuk artist dari kota tuan rumah; origin lain tidak menampilkannya.
-export function ArtistsTab({ artists, scoped, blocked, rank, seasonTiers, owned, onOwned, onToggle, ownedError, pendingSlug, picked, locale, category, state }: Props) {
+export function ArtistsTab({ artists, scoped, blocked, rank, seasonTiers, owned, onOwned, onToggle, ownedError, pendingSlug, picked, locale, state }: Props) {
   const C = DICT[locale];
-  const tierOf = (a: Artist) => seasonTiers?.get(a.slug) ?? a.tiers[category];
+  const tierOf = (a: Artist) => seasonTiers?.get(a.slug) ?? a.tier;
   // Section tier hanya untuk artis di pool, jadi tier yang tak bisa dicapai tidak muncul.
   const inPool = useMemo(() => new Set(scoped.map((a) => a.slug)), [scoped]);
   const visible = useMemo(() => state.visible.filter((a) => inPool.has(a.slug)), [state.visible, inPool]);
   const unavailable = useMemo(() => state.visible.filter((a) => blocked.has(a.slug)), [state.visible, blocked]);
   // Urutan chip ikut TIER_ORDER, bukan urutan data; tier tanpa artist tidak ditampilkan.
   const tiers = useMemo(() => {
-    const present = new Set(scoped.map((a) => seasonTiers?.get(a.slug) ?? a.tiers[category]));
+    const present = new Set(scoped.map((a) => seasonTiers?.get(a.slug) ?? a.tier));
     return TIER_ORDER.filter((tier) => present.has(tier));
-  }, [scoped, category, seasonTiers]);
-  const sortValue = (a: Artist) => rank?.get(a.slug)?.rank ?? -a.scores[category];
+  }, [scoped, seasonTiers]);
+  const sortValue = (a: Artist) => rank?.get(a.slug)?.rank ?? -a.score;
 
   return (
     <section aria-label={C.artists.section} className="flex min-w-0 flex-col">
@@ -101,7 +100,6 @@ export function ArtistsTab({ artists, scoped, blocked, rank, seasonTiers, owned,
                   inTeam={picked.includes(a.slug)}
                   teamFull={picked.length >= TEAM_SIZE}
                   locale={locale}
-                  category={category}
                 />
               ))}
             </ul>
@@ -135,7 +133,6 @@ export function ArtistsTab({ artists, scoped, blocked, rank, seasonTiers, owned,
                 inTeam={picked.includes(a.slug)}
                 teamFull={picked.length >= TEAM_SIZE}
                 locale={locale}
-                category={category}
               />
             ))}
           </ul>
@@ -157,7 +154,6 @@ function ArtistCard({
   inTeam,
   teamFull,
   locale,
-  category,
 }: {
   artist: Artist;
   rank?: Rank;
@@ -171,7 +167,6 @@ function ArtistCard({
   inTeam: boolean;
   teamFull: boolean;
   locale: Locale;
-  category: Category;
 }) {
   const C = DICT[locale];
   const isOwned = owned?.has(a.slug) ?? false;
@@ -204,6 +199,7 @@ function ArtistCard({
             <span className="mt-1 flex items-center gap-1 text-xs text-zinc-400">
               <GenreIcon image={a.genreImage} className="h-4 w-4 shrink-0" />
               <span className="truncate">{a.genre}</span>
+              {a.role && <RoleBadge role={a.role} locale={locale} className="shrink-0" />}
               {inTeam && <Icon d={ICONS.check} className="ml-auto h-3.5 w-3.5 shrink-0 text-gold" />}
             </span>
           </span>
@@ -219,13 +215,23 @@ function ArtistCard({
               <TierBadge tier={tier} />
             </span>
             <span className="tabular shrink-0 text-xs text-zinc-400">
-              {C.info.score} <span className="font-semibold text-zinc-100">{formatStat(a.scores[category], locale)}</span>
+              {C.info.score} <span className="font-semibold text-zinc-100">{formatStat(a.score, locale)}</span>
             </span>
           </div>
           <p className="min-w-0 truncate text-xs text-zinc-400">
             {a.origin ?? "\u2014"}
             {a.season !== null && ` \u00b7 S${a.season}`}
           </p>
+          {a.singMax !== null && a.danceMax !== null && (
+            <p className="tabular mt-0.5 flex gap-2 text-xs text-zinc-400">
+              <span>
+                {C.artists.sing} <span className="font-semibold text-zinc-200">{formatStat(a.singMax, locale)}</span>
+              </span>
+              <span>
+                {C.artists.dance} <span className="font-semibold text-zinc-200">{formatStat(a.danceMax, locale)}</span>
+              </span>
+            </p>
+          )}
           {blocked && (
             <p className="mt-1.5 rounded-md border border-amber-500/40 bg-ink/85 px-1.5 py-0.5 text-center text-[11px] font-semibold text-amber-300">
               {C.pool.blocked}

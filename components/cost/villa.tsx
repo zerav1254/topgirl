@@ -5,31 +5,37 @@ import { expBetween, sumLevels } from "@/lib/cost-calc";
 import type { CostBook } from "@/lib/costs";
 import { clamp, invalid, NumberField, panel, result, Segmented, Select, Totals, type CostDict, type Total } from "./fields";
 
-type Mode = "stage" | "suite" | "staff";
+type Mode = "villa" | "staff";
 
 const STAFF_MIN = 1;
 const STAFF_MAX = 60;
 
 export function VillaPanel({ villa, C, format }: { villa: CostBook["villa"]; C: CostDict; format: (value: number) => string }) {
-  const [mode, setMode] = useState<Mode>("stage");
+  const [mode, setMode] = useState<Mode>("villa");
+  // Helper stage: pakai nama stage dari game. 0 = belum punya vila.
   const [stageFrom, setStageFrom] = useState(0);
-  const [stageTo, setStageTo] = useState(villa.stages.length - 1);
-  const [suiteStage, setSuiteStage] = useState(1);
-  const [suite, setSuite] = useState(1);
+  const [stageTo, setStageTo] = useState(villa.stages.at(-1)?.stage ?? 0);
   const [staffId, setStaffId] = useState(villa.staff[0]?.id ?? 0);
   const [staffFrom, setStaffFrom] = useState(STAFF_MIN);
   const [staffTo, setStaffTo] = useState(STAFF_MAX);
 
-  const stageAmounts = villa.stages.map((item) => item.amount);
-  const maxStage = stageAmounts.length - 1;
-  // Stage berbiaya 0 tetap punya suite, jadi opsi select memakai semua stage.
-  const stageItems = villa.stages.filter((item) => item.amount > 0);
-  const stageTotal = expBetween(stageAmounts, stageFrom, stageTo);
   const stageBad = stageTo <= stageFrom;
   const staffBad = staffTo <= staffFrom;
 
-  const suites = villa.suites.filter((item) => item.stage === suiteStage);
-  const chosenSuite = suites.find((item) => item.suite === suite) ?? suites[0];
+  // Naik stage = jumlah biaya stage yang dilewati (stage > from dan <= to).
+  const stageAmount = useMemo(
+    () => (stageBad ? 0 : expBetween(villa.stages.map((item) => item.amount), stageFrom, stageTo)),
+    [stageBad, villa.stages, stageFrom, stageTo],
+  );
+  const stageItem = villa.stages.find((item) => item.itemName)?.itemName ?? "";
+  // Empat suite pada stage target berbagi biaya buka yang sama.
+  const targetSuites = villa.suites.filter((item) => item.stage === stageTo);
+  const suiteAmount = targetSuites.reduce((total, item) => total + item.amount, 0);
+  const suiteItem = targetSuites.find((item) => item.itemName)?.itemName ?? "";
+  const totals = [
+    stageAmount > 0 && stageItem ? { name: stageItem, amount: stageAmount } : null,
+    suiteAmount > 0 && suiteItem ? { name: suiteItem, amount: suiteAmount } : null,
+  ].filter((item): item is Total => item !== null);
 
   const staff = villa.staff.find((item) => item.id === staffId) ?? villa.staff[0];
   const staffTotals = useMemo(() => {
@@ -45,67 +51,45 @@ export function VillaPanel({ villa, C, format }: { villa: CostBook["villa"]; C: 
         value={mode}
         onChange={setMode}
         options={[
-          { id: "stage", label: C.villaStage },
-          { id: "suite", label: C.villaSuite },
+          { id: "villa", label: C.tabVilla },
           { id: "staff", label: C.villaStaff },
         ]}
       />
 
-      {mode === "stage" ? (
+      {mode === "villa" ? (
         <>
           <div className="grid grid-cols-2 gap-3">
-            <NumberField id="cost-villa-from" text={C.stageFrom} value={stageFrom} min={0} max={maxStage} invalid={stageBad} describedBy={stageBad ? "cost-villa-stage-error" : undefined} onChange={(v) => setStageFrom(clamp(v, 0, maxStage))} />
-            <NumberField id="cost-villa-to" text={C.stageTo} value={stageTo} min={0} max={maxStage} invalid={stageBad} describedBy={stageBad ? "cost-villa-stage-error" : undefined} onChange={(v) => setStageTo(clamp(v, 0, maxStage))} />
-          </div>
-
-          {stageBad ? (
-            <p id="cost-villa-stage-error" role="status" className={invalid}>
-              {C.invalid}
-            </p>
-          ) : null}
-
-          <p className="mt-3 text-xs text-zinc-400">
-            {C.villaStageList}: <span className="font-semibold text-zinc-200">{stageItems.map((item) => item.name).join(", ")}</span>
-          </p>
-
-          {stageBad ? null : (
-            <div className={result}>
-              <Totals
-                totals={stageTotal > 0 ? [{ name: villa.stages[0]?.itemName ?? "", amount: stageTotal }] : []}
-                note={C.villaStageNote}
-                empty={C.noCost}
-                format={format}
-              />
-            </div>
-          )}
-        </>
-      ) : mode === "suite" ? (
-        <>
-          <div className="grid grid-cols-2 gap-3">
-            <Select id="cost-villa-suite-stage" text={C.villaStage} value={suiteStage} onChange={setSuiteStage}>
+            <Select id="cost-villa-from" text={C.stageFrom} value={stageFrom} onChange={setStageFrom}>
+              <option value={0}>{C.stageNone}</option>
               {villa.stages.map((item) => (
                 <option key={item.stage} value={item.stage}>
                   {item.name}
                 </option>
               ))}
             </Select>
-            <Select id="cost-villa-suite" text={C.suite} value={suite} onChange={setSuite}>
-              {suites.map((item) => (
-                <option key={item.suite} value={item.suite}>
+            <Select id="cost-villa-to" text={C.stageTo} value={stageTo} onChange={setStageTo}>
+              {villa.stages.map((item) => (
+                <option key={item.stage} value={item.stage}>
                   {item.name}
                 </option>
               ))}
             </Select>
           </div>
 
-          <div className={result}>
-            <Totals
-              totals={chosenSuite && chosenSuite.amount > 0 ? [{ name: chosenSuite.itemName, amount: chosenSuite.amount }] : []}
-              note={C.villaSuiteNote}
-              empty={C.noCost}
-              format={format}
-            />
-          </div>
+          {stageBad ? (
+            <p id="cost-villa-stage-error" role="status" className={invalid}>
+              {C.invalid}
+            </p>
+          ) : (
+            <div className={result}>
+              <Totals
+                totals={totals}
+                note={`${C.villaStageNote} ${C.villaSuiteNote}`}
+                empty={C.noCost}
+                format={format}
+              />
+            </div>
+          )}
         </>
       ) : (
         <>

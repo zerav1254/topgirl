@@ -1,5 +1,5 @@
 import type { Artist } from "./artists.ts";
-import type { Category, Effect } from "./score.ts";
+import type { Effect } from "./score.ts";
 
 export const TEAM_SIZE = 5;
 
@@ -46,8 +46,8 @@ export function teamSkillTotals(team: Artist[]) {
 
 // Tim terbaik dari sekumpulan artis. Tujuan: jumlah skor, lalu bonus synergy sebagai
 // tie-break. Brute force karena 5 slot tetap dan pool sudah dipangkas BEST_POOL_LIMIT.
-export function bestLineup(artists: Artist[], category: Category, size = TEAM_SIZE): Artist[] {
-  const top = [...artists].sort((a, b) => b.scores[category] - a.scores[category] || a.name.localeCompare(b.name)).slice(0, BEST_POOL_LIMIT);
+export function bestLineup(artists: Artist[], size = TEAM_SIZE): Artist[] {
+  const top = [...artists].sort((a, b) => b.score - a.score || a.name.localeCompare(b.name)).slice(0, BEST_POOL_LIMIT);
   if (top.length <= size) return top;
 
   let best: Artist[] = [];
@@ -60,7 +60,7 @@ export function bestLineup(artists: Artist[], category: Category, size = TEAM_SI
       let sum = 0;
       const genres = new Map<string, number>();
       for (const a of combo) {
-        sum += a.scores[category];
+        sum += a.score;
         genres.set(a.genre, (genres.get(a.genre) ?? 0) + 1);
       }
       const bonus = GENRE_BONUS[Math.max(...genres.values())] ?? 0;

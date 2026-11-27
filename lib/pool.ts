@@ -1,5 +1,5 @@
 import type { Artist } from "./artists.ts";
-import { tierFromScore, type Category, type Tier } from "./score.ts";
+import { tierFromScore, type Tier } from "./score.ts";
 
 // Pool = batas atas season server pemain. null = semua season.
 export type Pool = { season: number | null };
@@ -24,10 +24,8 @@ export function blockedOf(artists: Artist[], pool: Pool): Artist[] {
 
 // Peringkat dihitung ulang tiap render dari skor absolut; tidak pernah disimpan.
 // Seri dipecah nama supaya urutan stabil antar render.
-export function rankInPool(artists: Artist[], pool: Pool, category: Category): Map<string, Rank> {
-  const list = [...poolOf(artists, pool)].sort(
-    (a, b) => b.scores[category] - a.scores[category] || a.name.localeCompare(b.name),
-  );
+export function rankInPool(artists: Artist[], pool: Pool): Map<string, Rank> {
+  const list = [...poolOf(artists, pool)].sort((a, b) => b.score - a.score || a.name.localeCompare(b.name));
   const out = new Map<string, Rank>();
   list.forEach((a, i) => out.set(a.slug, { rank: i + 1, size: list.length }));
   return out;
@@ -47,15 +45,13 @@ const TIER_CUTOFFS: [Tier, number][] = [
 
 // Pool kecil (server baru) tetap dapat sebaran tier lengkap tanpa mengubah skor absolut.
 // Skor sama selalu mendapat tier sama supaya seri tidak terbelah alfabet nama.
-export function poolTiers(artists: Artist[], pool: Pool, category: Category): Map<string, Tier> {
-  const list = [...poolOf(artists, pool)].sort(
-    (a, b) => b.scores[category] - a.scores[category] || a.name.localeCompare(b.name),
-  );
+export function poolTiers(artists: Artist[], pool: Pool): Map<string, Tier> {
+  const list = [...poolOf(artists, pool)].sort((a, b) => b.score - a.score || a.name.localeCompare(b.name));
   const out = new Map<string, Tier>();
   // Kuota relatif tidak bermakna untuk pool sangat kecil (1 artis akan jadi D);
   // pakai tier absolut supaya skor tinggi tetap tinggi.
   if (list.length <= 5) {
-    list.forEach((a) => out.set(a.slug, tierFromScore(a.scores[category])));
+    list.forEach((a) => out.set(a.slug, tierFromScore(a.score)));
     return out;
   }
   let prevScore = Number.NaN;
@@ -63,9 +59,9 @@ export function poolTiers(artists: Artist[], pool: Pool, category: Category): Ma
   list.forEach((a, i) => {
     const pct = (i + 1) / list.length;
     const share = TIER_CUTOFFS.find(([, max]) => pct <= max)?.[0] ?? "D";
-    const tier = i > 0 && a.scores[category] === prevScore ? prevTier : share;
+    const tier = i > 0 && a.score === prevScore ? prevTier : share;
     out.set(a.slug, tier);
-    prevScore = a.scores[category];
+    prevScore = a.score;
     prevTier = tier;
   });
   return out;

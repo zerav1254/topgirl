@@ -151,117 +151,25 @@ export const BASE_SKILL_LABEL: Record<Locale, string> = {
   de: "Fähigkeit 1",
 };
 
-export const CATEGORIES = ["solo", "rally", "defense", "economy", "global", "sustain"] as const;
-export const DEFAULT_CATEGORY: Category = "global";
-export type Category = (typeof CATEGORIES)[number];
-
-// detail_skill.md: 50% basic_atk = 20% skill_dmg = 10% fan.
-// Jadi bobot per 1%: basic 0.5, skill 1.25, fan 2.5.
-// player_dmg menambah basic_atk DAN skill_dmg, jadi bobotnya 0.5 + 1.25 = 1.75.
-// fan_rally memakai bobot sendiri; RALLY sengaja di atas player_dmg.
-// SOLO tetap damage-first, tapi bertahan hidup diberi bobot kecil supaya unit
-// defensif tidak mentok 0 (dps_def ikut FLAT_SCALE).
-// Semua efek wajib punya bobot > 0 di setiap kategori (tipe Record total).
-// Efek pinggiran tetap diberi bobot kecil supaya tidak ada yang diam-diam 0.
-export const SCORE: Record<Category, Record<Effect, number>> = {
-  solo: {
-    player_dmg: 1.75,
-    fan: 2.5,
-    skill_dmg: 1.25,
-    basic_atk: 0.5,
-    basic_atk_red: 0.25,
-    skill_dmg_red: 0.2,
-    wbg_dmg: 0.2,
-    gold: 0.01,
-    drive: 0.01,
-    fan_rally: 0.01,
-    fan_gain: 0.01,
-    dps_def: 0.05,
-    dps_atk_rally: 0.01,
-    dps_atk_company: 0.01,
-  },
-  rally: {
-    fan_rally: 6,
-    fan_gain: 0.01,
-    player_dmg: 1.75,
-    skill_dmg: 1.25,
-    wbg_dmg: 1,
-    basic_atk: 0.5,
-    fan: 0.01,
-    dps_atk_rally: 0.1,
-    dps_atk_company: 0.1,
-    gold: 0.01,
-    drive: 0.01,
-    basic_atk_red: 0.01,
-    skill_dmg_red: 0.01,
-    dps_def: 0.01,
-  },
-  defense: {
-    player_dmg: 1.2,
-    basic_atk_red: 4,
-    skill_dmg_red: 3,
-    basic_atk: 0.3,
-    skill_dmg: 0.25,
-    fan: 0.3,
-    fan_rally: 0.5,
-    fan_gain: 0.01,
-    wbg_dmg: 0.2,
-    gold: 0.2,
-    drive: 0.2,
-    dps_def: 0.1,
-    dps_atk_rally: 0.05,
-    dps_atk_company: 0.05,
-  },
-  economy: {
-    gold: 2,
-    drive: 1,
-    player_dmg: 0.01,
-    skill_dmg: 0.01,
-    fan: 0.01,
-    fan_rally: 0.01,
-    fan_gain: 0.01,
-    basic_atk: 0.01,
-    basic_atk_red: 0.01,
-    skill_dmg_red: 0.01,
-    wbg_dmg: 0.01,
-    dps_def: 0.01,
-    dps_atk_rally: 0.01,
-    dps_atk_company: 0.01,
-  },
-  // GLOBAL: player_dmg bobot tertinggi mutlak.
-  global: {
-    player_dmg: 3,
-    wbg_dmg: 0.5,
-    skill_dmg: 1.25,
-    fan: 1,
-    basic_atk: 0.5,
-    fan_rally: 0.5,
-    fan_gain: 0.01,
-    basic_atk_red: 0.2,
-    skill_dmg_red: 0.2,
-    dps_atk_rally: 0.1,
-    dps_atk_company: 0.1,
-    dps_def: 0.1,
-    gold: 0.01,
-    drive: 0.01,
-  },
-  // SUSTAIN: reduksi serangan tertinggi, lalu player_dmg, fan, skill, basic.
-  sustain: {
-    basic_atk_red: 4,
-    skill_dmg_red: 3.5,
-    player_dmg: 1.5,
-    fan: 1,
-    skill_dmg: 0.5,
-    basic_atk: 0.3,
-    fan_rally: 0.2,
-    fan_gain: 0.01,
-    wbg_dmg: 0.2,
-    gold: 0.1,
-    drive: 0.1,
-    dps_def: 0.1,
-    dps_atk_rally: 0.05,
-    dps_atk_company: 0.05,
-  },
+// Satu skor untuk seluruh situs (SSOT): bobot warisan kategori global.
+// player_dmg tertinggi (3) karena menambah basic_atk DAN skill_dmg; bobot kanal
+// lain mengikuti detail_skill.md (basic 0.5, skill 1.25, fan 1).
+// Efek pinggiran tetap > 0 supaya tidak diam-diam hilang dari skor.
+export const SCORE: Record<Effect, number> = {
+  player_dmg: 3,
+  wbg_dmg: 0.5,
+  skill_dmg: 1.25,
+  fan: 1,
+  basic_atk: 0.5,
+  fan_rally: 0.5,
+  fan_gain: 0.01,
+  basic_atk_red: 0.2,
+  skill_dmg_red: 0.2,
+  dps_atk_rally: 0.1,
+  dps_atk_company: 0.1,
+  dps_def: 0.1,
+  gold: 0.01,
+  drive: 0.01,
 };
 
 export const EFFECT_SET: ReadonlySet<string> = new Set(EFFECTS);
@@ -286,17 +194,33 @@ export const BANDS: [Tier, number][] = [
   ["C", 11],
 ];
 
-// Score from skills only; base stats are no longer part of ranking.
-export function scoreArtist(skills: Skill[], category: Category = DEFAULT_CATEGORY): number {
-  const weights = SCORE[category];
+// Stat panggung: hot value game memakai singTotal × danceTotal, jadi keduanya
+// digabung sebagai geometric mean lalu dinormalkan ke Sing tertinggi (season 6 singer).
+export const STAT_REF = 52855;
+// Skor skill (0-100) menyumbang 85%, skor stat 15%.
+export const SKILL_WEIGHT = 0.85;
+export const STAT_WEIGHT = 0.15;
+
+export type StageStats = { sing: number | null; dance: number | null };
+
+export function statScore(stats: StageStats | null | undefined): number {
+  const sing = stats?.sing ?? 0;
+  const dance = stats?.dance ?? 0;
+  if (sing <= 0 || dance <= 0) return 0;
+  return Math.min(100, (Math.sqrt(sing * dance) / STAT_REF) * 100);
+}
+
+// Score from skills and stage stats (Sing/Dance at max level).
+export function scoreArtist(skills: Skill[], stats?: StageStats): number {
   let total = 0;
   for (const s of skills) {
     if (s.value === null) continue;
     // dps values are flat (200/240); the scale maps them onto the percent scale.
     const v = s.value * (FLAT_SCALE[s.effect] ?? 1);
-    total += weights[s.effect] * v;
+    total += SCORE[s.effect] * v;
   }
-  return Math.min(100, Math.round(total * SCALE * 10) / 10);
+  const skill = Math.min(100, total * SCALE);
+  return Math.min(100, Math.round((skill * SKILL_WEIGHT + statScore(stats) * STAT_WEIGHT) * 10) / 10);
 }
 
 export function tierFromScore(score: number): Tier {

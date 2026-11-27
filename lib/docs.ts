@@ -33,7 +33,7 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
         },
         {
           title: "Skor dan tier",
-          body: "Rank dihitung dari skill artist, bukan base stat. Rumus, bobot per kategori, dan ambang tier ada di halaman Info rank.",
+          body: "Rank dihitung dari skill artist dan stat panggung (Sing/Dance level maks). Rumus, bobot, dan ambang tier ada di halaman Info rank.",
         },
       ],
     },
@@ -113,7 +113,7 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
         },
         {
           title: "Scores and tiers",
-          body: "Rank comes from artist skills, not base stats. The formula, per-category weights, and tier thresholds live on the Info rank page.",
+          body: "Rank comes from artist skills and stage stats (max-level Sing/Dance). The formula, weights, and tier thresholds live on the Info rank page.",
         },
       ],
     },
@@ -193,7 +193,7 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
         },
         {
           title: "Scores et tiers",
-          body: "Le rang dépend des compétences, pas des stats de base. Formule, poids par catégorie et seuils de tier sont sur la page Info rank.",
+          body: "Le rang dépend des compétences et des stats de scène (Sing/Dance au niveau max). Formule, poids et seuils de tier sont sur la page Info rank.",
         },
       ],
     },
@@ -273,7 +273,7 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
         },
         {
           title: "점수와 티어",
-          body: "순위는 기본 스탯이 아니라 스킬로 계산합니다. 공식, 카테고리별 가중치, 티어 기준은 Info rank 페이지에 있습니다.",
+          body: "순위는 스킬과 무대 스탯(최대 레벨 Sing/Dance)으로 계산합니다. 공식, 가중치, 티어 기준은 Info rank 페이지에 있습니다.",
         },
       ],
     },
@@ -353,7 +353,7 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
         },
         {
           title: "分数与 Tier",
-          body: "排名依据艺术家的技能，而不是基础属性。公式、各分类权重和 Tier 门槛见 Info rank 页面。",
+          body: "排名依据艺人技能与舞台属性（满级 Sing/Dance）。公式、权重与 Tier 门槛见 Info rank 页面。",
         },
       ],
     },
@@ -433,7 +433,7 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
         },
         {
           title: "スコアと Tier",
-          body: "順位は基礎ステータスではなくスキルから算出します。計算式、カテゴリ別の重み、Tier のしきい値は Info rank ページにあります。",
+          body: "順位はスキルとステージ能力（最大レベルの Sing/Dance）から算出します。計算式、重み、Tier のしきい値は Info rank ページにあります。",
         },
       ],
     },
@@ -513,7 +513,7 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
         },
         {
           title: "Punkte und Tier",
-          body: "Das Ranking basiert auf Artist-Skills, nicht auf Basiswerten. Formel, Gewichte je Kategorie und Tier-Schwellen stehen auf der Seite Info rank.",
+          body: "Das Ranking basiert auf Artist-Skills und Bühnenwerten (Sing/Dance auf Maximallevel). Formel, Gewichte und Tier-Schwellen stehen auf der Seite Info rank.",
         },
       ],
     },

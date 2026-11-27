@@ -8,10 +8,9 @@ import type { Artist } from "@/lib/artists";
 import { DICT, type Locale } from "@/lib/i18n";
 import { parsePool, getServerPool, readPool, subscribePool, writePool } from "@/lib/pool-store";
 import { blockedOf, poolActive, poolOf, poolTiers, rankInPool } from "@/lib/pool";
-import { DEFAULT_CATEGORY, type Category } from "@/lib/score";
 import { bestLineup, TEAM_SIZE } from "@/lib/team";
 import { getServerTeam, readTeam, subscribeTeam, writeTeam } from "@/lib/team-store";
-import { isCategory, useArtistFilter } from "./artist-filter";
+import { useArtistFilter } from "./artist-filter";
 import { ArtistsTab } from "./artists-tab";
 import { LocaleSwitcher } from "./locale-switcher";
 import { PoolPicker } from "./pool-picker";
@@ -50,9 +49,8 @@ export function TeamBuilder({
     next ? (list.includes(slug) ? list : [...list, slug]) : list.filter((s) => s !== slug),
   );
   const ownedSet = useMemo(() => (owned ? new Set(ownedSlugs) : null), [owned, ownedSlugs]);
-  // Tidak ada bar kategori terpisah: filter "Spesialis" menentukan kategori skor/tier.
+  // Filter roster (genre/asal/skill/koleksi); skor & tier tunggal untuk seluruh situs.
   const state = useArtistFilter(artists, locale, ownedSet ?? undefined);
-  const category: Category = isCategory(state.filter.specialty) ? state.filter.specialty : DEFAULT_CATEGORY;
 
   const poolRaw = useSyncExternalStore(subscribePool, readPool, getServerPool);
   const pool = useMemo(() => parsePool(poolRaw), [poolRaw]);
@@ -60,14 +58,8 @@ export function TeamBuilder({
   const scoped = useMemo(() => poolOf(artists, pool), [artists, pool]);
   // Artis di atas season server: tetap tampil, tapi tidak masuk peringkat/lineup otomatis.
   const blocked = useMemo(() => new Set(blockedOf(artists, pool).map((a) => a.slug)), [artists, pool]);
-  const rank = useMemo(
-    () => (poolActive(pool) ? rankInPool(artists, pool, category) : null),
-    [artists, pool, category],
-  );
-  const seasonTiers = useMemo(
-    () => (poolActive(pool) ? poolTiers(artists, pool, category) : null),
-    [artists, pool, category],
-  );
+  const rank = useMemo(() => (poolActive(pool) ? rankInPool(artists, pool) : null), [artists, pool]);
+  const seasonTiers = useMemo(() => (poolActive(pool) ? poolTiers(artists, pool) : null), [artists, pool]);
 
   const bySlug = useMemo(() => new Map(artists.map((a) => [a.slug, a])), [artists]);
   const saved = useSyncExternalStore(subscribeTeam, readTeam, getServerTeam);
@@ -96,7 +88,7 @@ export function TeamBuilder({
 
   // Eksplisit lewat tombol: jangan menimpa tim yang sedang disusun tanpa klik.
   function autoLineup() {
-    const best = bestLineup(scoped, category);
+    const best = bestLineup(scoped);
     if (best.length > 0) writeTeam(best.map((a) => a.slug));
   }
 
@@ -161,7 +153,6 @@ export function TeamBuilder({
           pendingSlug={pendingSlug}
           picked={picked}
           locale={locale}
-          category={category}
           state={state}
         />
       ) : (
@@ -174,7 +165,6 @@ export function TeamBuilder({
           team={team}
           picked={picked}
           locale={locale}
-          category={category}
           state={state}
           onToggle={toggle}
           onAssign={assign}
