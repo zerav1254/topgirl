@@ -267,6 +267,7 @@ export const fr: Dict = {
     title: "Mes compositions",
     saveTitle: "Enregistrer l'équipe actuelle",
     subtitle: "Enregistrez votre équipe et partagez-la par un lien non listé.",
+    manageHint: "Gérez vos lineups enregistrés : partagez, copiez le lien ou supprimez.",
     name: "Nom de la composition",
     save: "Enregistrer l'équipe",
     delete: "Supprimer",

@@ -266,6 +266,7 @@ export const ko: Dict = {
     title: "내 라인업",
     saveTitle: "현재 팀 저장",
     subtitle: "팀을 저장하고 비공개 링크로 공유하세요.",
+    manageHint: "저장한 라인업을 관리하세요: 공유, 링크 복사, 삭제.",
     name: "라인업 이름",
     save: "팀 저장",
     delete: "삭제",

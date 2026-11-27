@@ -265,6 +265,7 @@ export const id = {
     title: "Lineup saya",
     saveTitle: "Simpan tim saat ini",
     subtitle: "Simpan tim dan bagikan lewat tautan unlisted.",
+    manageHint: "Kelola lineup tersimpan: bagikan, salin tautan, atau hapus.",
     name: "Nama lineup",
     save: "Simpan tim",
     delete: "Hapus",

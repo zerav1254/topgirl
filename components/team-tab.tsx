@@ -8,6 +8,7 @@ import { EFFECT_LABEL, type Tier } from "@/lib/score";
 import { genreSynergy, TEAM_SIZE, teamSkillTotals, withGenreBonus } from "@/lib/team";
 import { ArtistFilterBar, type ArtistFilterState } from "./artist-filter";
 import { Avatar, GenreIcon, ICONS, Icon, RankBadge, SkillList, TierBadge, formatStat, isPercent } from "./artist-ui";
+import { SaveLineup } from "./save-lineup";
 
 type Props = {
   artists: Artist[];
@@ -20,6 +21,8 @@ type Props = {
   team: Artist[];
   picked: string[];
   locale: Locale;
+  // false = belum login: form simpan lineup diganti hint.
+  signedIn: boolean;
   state: ArtistFilterState;
   onToggle: (slug: string) => void;
   onAssign: (index: number, slug: string) => void;
@@ -27,7 +30,7 @@ type Props = {
   onReset: () => void;
 };
 
-export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, picked, locale, state, onToggle, onAssign, onAuto, onReset }: Props) {
+export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, picked, locale, signedIn, state, onToggle, onAssign, onAuto, onReset }: Props) {
   const C = DICT[locale];
   const tierOf = (a: Artist) => seasonTiers?.get(a.slug) ?? a.tier;
   // Slot yang sedang dipilih; null = dialog tertutup. Picker menggantikan daftar panjang di bawah.
@@ -249,6 +252,8 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
           </dl>
         )}
       </div>
+
+      <SaveLineup slugs={picked} locale={locale} signedIn={signedIn} />
 
       <dialog
         ref={dialog}

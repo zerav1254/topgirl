@@ -266,6 +266,7 @@ export const zh: Dict = {
     title: "我的阵容",
     saveTitle: "保存当前队伍",
     subtitle: "保存你的队伍，并通过不公开链接分享。",
+    manageHint: "管理已保存的阵容：分享、复制链接或删除。",
     name: "阵容名称",
     save: "保存队伍",
     delete: "删除",

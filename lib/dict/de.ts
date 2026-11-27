@@ -267,6 +267,7 @@ export const de: Dict = {
     title: "Meine Lineups",
     saveTitle: "Aktuelles Team speichern",
     subtitle: "Speichere dein Team und teile es über einen nicht gelisteten Link.",
+    manageHint: "Gespeicherte Lineups verwalten: teilen, Link kopieren oder löschen.",
     name: "Lineup-Name",
     save: "Team speichern",
     delete: "Löschen",

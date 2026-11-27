@@ -53,7 +53,8 @@ components/
   artists-tab.tsx   tab Artists: cari + filter + roster per tier + tombol tim/koleksi
   artist-filter.tsx hook + bar filter (genre/asal/skill + cakupan koleksi), dilipat di mobile
   team-tab.tsx      slot tim (klik slot -> dialog pilih) + ringkasan
-  lineups-tab.tsx   form simpan lineup + daftar (bagikan/salin/buka/hapus)
+  lineups-tab.tsx   daftar lineup tersimpan: bagikan/salin/buka/hapus
+  save-lineup.tsx   form simpan tim aktif sebagai lineup (dipakai tab Team)
   pool-picker.tsx   chip season server (single-select)
   profile-form.tsx  form profil (nama, ID/server, nickname)
   frame-picker.tsx  pilihan frame avatar (client, hidden input avatarFrame)

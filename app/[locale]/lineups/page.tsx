@@ -68,7 +68,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
         </div>
         <LocaleSwitcher locale={locale} />
       </header>
-      <p className="text-sm text-zinc-400">{C.lineup.subtitle}</p>
+      <p className="text-sm text-zinc-400">{C.lineup.manageHint}</p>
       <LineupsTab lineups={lineups} preview={preview} locale={locale} siteUrl={SITE_URL} />
       <PublicLineups lineups={publicLineups} preview={publicPreview} locale={locale} />
       <Link

@@ -267,6 +267,7 @@ export const en: Dict = {
     title: "My lineups",
     saveTitle: "Save current team",
     subtitle: "Save your team and share it through an unlisted link.",
+    manageHint: "Manage saved lineups: share, copy the link, or delete.",
     name: "Lineup name",
     save: "Save team",
     delete: "Delete",

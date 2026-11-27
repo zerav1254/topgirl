@@ -266,6 +266,7 @@ export const ja: Dict = {
     title: "マイ lineup",
     saveTitle: "現在のチームを保存",
     subtitle: "チームを保存し、非公開リンクで共有。",
+    manageHint: "保存したラインナップを管理できます：共有、リンクのコピー、削除。",
     name: "Lineup 名",
     save: "チームを保存",
     delete: "削除",

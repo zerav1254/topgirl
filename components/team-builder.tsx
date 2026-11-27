@@ -165,6 +165,7 @@ export function TeamBuilder({
           team={team}
           picked={picked}
           locale={locale}
+          signedIn={user !== null}
           state={state}
           onToggle={toggle}
           onAssign={assign}
