@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { ICONS, Icon } from "@/components/artist-ui";
-import { DICT, LANG_CODE, LANG_NAME, LOCALES, type Locale } from "@/lib/i18n";
+import { DICT, LANG_CODE, LANG_NAME, LOCALES, t, type Locale } from "@/lib/i18n";
 
 const FLAG: Record<Locale, string> = { id: "id", en: "en", fr: "fr", ko: "ko", zh: "zh", ja: "ja", de: "de" };
 
@@ -57,12 +57,19 @@ export function LocaleSwitcher({ locale, className = "" }: { locale: Locale; cla
   }
 
   function onListKey(e: React.KeyboardEvent<HTMLDivElement>) {
-    if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
+    if (e.key !== "ArrowDown" && e.key !== "ArrowUp" && e.key !== "Home" && e.key !== "End") return;
     e.preventDefault();
     const items = [...(list.current?.querySelectorAll<HTMLElement>('[role="option"]') ?? [])];
     if (!items.length) return;
     const at = items.indexOf(document.activeElement as HTMLElement);
-    const next = e.key === "ArrowDown" ? (at + 1) % items.length : (at - 1 + items.length) % items.length;
+    const next =
+      e.key === "Home"
+        ? 0
+        : e.key === "End"
+          ? items.length - 1
+          : e.key === "ArrowDown"
+            ? (at + 1) % items.length
+            : (at - 1 + items.length) % items.length;
     items[next]?.focus();
   }
 
@@ -84,7 +91,7 @@ export function LocaleSwitcher({ locale, className = "" }: { locale: Locale; cla
         }}
         aria-haspopup="listbox"
         aria-expanded={open}
-        aria-label={DICT[locale].lang.label}
+        aria-label={t(DICT[locale].lang.switch, { name: LANG_NAME[locale] })}
         className="inline-flex h-11 cursor-pointer items-center gap-1.5 rounded-lg border border-line bg-panel/80 px-2.5 transition-colors duration-200 hover:border-white/25 focus:border-brand/60"
       >
         <Flag locale={locale} />

@@ -161,7 +161,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
       )}
 
       {team.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-line p-4 text-sm text-zinc-400">{C.lineup.notFound}</p>
+        <p className="rounded-xl border border-dashed border-line p-4 text-sm text-zinc-400">{C.lineup.emptyTeam}</p>
       ) : (
         <ol className="flex flex-col gap-2">
           {team.map((a, i) => (

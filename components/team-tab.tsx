@@ -79,9 +79,8 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
   }, [team, seasonTiers]);
 
   function open(index: number) {
-    // Tim disimpan rapat tanpa slot kosong: klik slot setelah celah mengisi posisi berikutnya,
-    // jadi judul dialog memakai slot tujuan yang sebenarnya.
-    setSlot(Math.min(index, team.length));
+    // Tim disimpan rapat tanpa slot kosong: klik slot setelah celah tetap mengisi posisi berikutnya.
+    setSlot(index);
   }
 
   function choose(a: Artist) {
