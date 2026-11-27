@@ -39,7 +39,7 @@ export default async function Page({
   const onlyIdentity = identities.length < 2;
   const providers = [
     { id: "google" as const, label: "Google", mark: <GoogleMark /> },
-    { id: "discord" as const, label: "Discord", mark: <DiscordMark className="h-5 w-5 text-[#5865f2]" /> },
+    { id: "discord" as const, label: "Discord", mark: <DiscordMark className="h-5 w-5 text-discord" /> },
   ];
 
   const name = profile.ingameNickname ?? profile.name ?? profile.email ?? C.profile.userRole;

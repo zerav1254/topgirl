@@ -16,6 +16,7 @@ export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }));
 }
 
+// Hex literal: metadata viewport tidak bisa membaca custom property @theme.
 export const viewport: Viewport = { themeColor: "#0b0b0f", colorScheme: "dark" };
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {

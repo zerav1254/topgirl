@@ -6,6 +6,13 @@
   --color-panel-2: #1c1c24;
   --color-brand: #dc2626;
   --color-gold: #fbbf24;
+  /* Warna brand penyedia OAuth: identitas pihak ketiga, bukan bagian palet app. */
+  --color-google-surface: #ffffff;
+  --color-google-border: #dadce0;
+  --color-google-text: #1f1f1f;
+  --color-google-hover: #f1f3f4;
+  --color-discord: #5865f2;
+  --color-discord-hover: #4752c4;
   --font-sans: var(--font-inter), var(--font-ko), ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-display: var(--font-sora), var(--font-inter), var(--font-ko), ui-sans-serif, system-ui, sans-serif;
 }

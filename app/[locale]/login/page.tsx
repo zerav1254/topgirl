@@ -86,13 +86,13 @@ export default async function Page({
             ) : null}
             <div className="mt-5 flex flex-col gap-2.5">
               <form action={signIn.bind(null, locale, "google")}>
-                <button type="submit" className={`${providerButton} border-[#dadce0] bg-white text-[#1f1f1f] hover:bg-[#f1f3f4]`}>
+                <button type="submit" className={`${providerButton} border-google-border bg-google-surface text-google-text hover:bg-google-hover`}>
                   <GoogleMark />
                   {C.auth.google}
                 </button>
               </form>
               <form action={signIn.bind(null, locale, "discord")}>
-                <button type="submit" className={`${providerButton} border-[#4752c4] bg-[#5865f2] text-white hover:bg-[#4752c4]`}>
+                <button type="submit" className={`${providerButton} border-discord-hover bg-discord text-white hover:bg-discord-hover`}>
                   <DiscordMark />
                   {C.auth.discord}
                 </button>
