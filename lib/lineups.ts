@@ -86,6 +86,51 @@ export const loadShared = cache(async (shareSlug: string): Promise<{ lineup: Lin
   };
 });
 
+export type PublicLineup = Lineup & {
+  ownerId: string;
+  ownerName: string | null;
+  ownerAvatarUrl: string | null;
+  ownerAvatarFrame: string | null;
+};
+
+// Jelajah lineup: semua baris ber-share_slug, terbaru dulu. Profil diambil sekali untuk
+// seluruh batch (hindari N+1), bukan per lineup.
+export async function loadPublicLineups(limit = 12): Promise<PublicLineup[]> {
+  const sb = adminClient();
+  const { data, error } = await sb
+    .from("lineups")
+    .select(`${COLS},user_id`)
+    .not("share_slug", "is", null)
+    .order("updated_at", { ascending: false })
+    .limit(limit);
+  if (error || !data) return [];
+
+  const rows = data as (Row & { user_id: string })[];
+  if (rows.length === 0) return [];
+
+  const ids = [...new Set(rows.map((r) => r.user_id))];
+  const { data: profileRows } = await sb
+    .from("profiles")
+    .select("user_id,ingame_nickname,name,avatar_url,avatar_frame")
+    .in("user_id", ids);
+  const profiles = new Map(
+    ((profileRows ?? []) as { user_id: string; ingame_nickname: string | null; name: string | null; avatar_url: string | null; avatar_frame: string | null }[]).map(
+      (p) => [p.user_id, p],
+    ),
+  );
+
+  return rows.map((r) => {
+    const p = profiles.get(r.user_id);
+    return {
+      ...toLineup(r),
+      ownerId: r.user_id,
+      ownerName: p?.ingame_nickname ?? p?.name ?? null,
+      ownerAvatarUrl: p?.avatar_url ?? null,
+      ownerAvatarFrame: p?.avatar_frame ?? null,
+    };
+  });
+}
+
 export type PublicProfile = {
   name: string | null;
   ingameNickname: string | null;

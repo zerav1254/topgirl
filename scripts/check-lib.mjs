@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { classLevels, expBetween, modTotals, starBetween, starCardsForLevels, sumLevels } from "../lib/cost-calc.ts";
 import { poolTiers } from "../lib/pool.ts";
-import { genreSynergy, withGenreBonus } from "../lib/team.ts";
+import { genreSynergy, lineupEffects, withGenreBonus } from "../lib/team.ts";
 import { allow } from "../lib/rate-limit.ts";
 import { safeNextPath } from "../lib/redirect.ts";
 
@@ -26,6 +26,18 @@ assert.equal(genreSynergy([{ genre: "Pop" }, { genre: "Pop" }, { genre: "Pop" }]
 assert.equal(genreSynergy([{ genre: "Pop" }, { genre: "Pop" }, { genre: "Pop" }, { genre: "Pop" }]).bonus, 15);
 assert.equal(withGenreBonus(100_000, 25), 125_000);
 assert.equal(withGenreBonus(100_001, 10), 110_001);
+
+// Tag lineup: efek dihitung sekali per artis, urut jumlah lalu urutan stat.
+assert.deepEqual(
+  lineupEffects([
+    { skills: [{ effect: "player_dmg", value: 10 }, { effect: "fan", value: 5 }, { effect: "fan", value: 5 }] },
+    { skills: [{ effect: "fan", value: 5 }] },
+  ]),
+  [
+    { effect: "fan", count: 2 },
+    { effect: "player_dmg", count: 1 },
+  ],
+);
 
 // Kalkulator biaya: rentang level/star dijumlahkan, biaya kelas mod ditagih sekali per naik kelas.
 assert.equal(expBetween([0, 120, 120], 1, 3), 240);

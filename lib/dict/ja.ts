@@ -288,6 +288,10 @@ export const ja: Dict = {
     loginHint: "サインインして lineup を保存。",
     private: "非公開",
     shared: "リンク有効",
+    communityTitle: "コミュニティ編成",
+    communityHint: "プレイヤーが共有した編成です。",
+    communityEmpty: "共有された編成はまだありません。",
+    communityAnon: "TopGirl プレイヤー",
   },
   team: {
     section: "Team Builder",

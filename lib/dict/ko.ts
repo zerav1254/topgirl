@@ -288,6 +288,10 @@ export const ko: Dict = {
     needTeam: "먼저 Team Builder에서 팀을 구성하세요.",
     private: "비공개",
     shared: "링크 활성",
+    communityTitle: "커뮤니티 라인업",
+    communityHint: "플레이어가 공유한 라인업입니다.",
+    communityEmpty: "아직 공유된 라인업이 없습니다.",
+    communityAnon: "TopGirl 플레이어",
   },
   team: {
     section: "팀 빌더",

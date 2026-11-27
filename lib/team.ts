@@ -57,6 +57,18 @@ export function teamSkillTotals(team: Artist[]) {
   };
 }
 
+// Tag lineup: efek skill yang ada di tim, dihitung per artis (satu artis dengan efek
+// sama tetap 1). Urut jumlah terbanyak, lalu urutan tampil stat.
+export function lineupEffects(team: Artist[]) {
+  const counts = new Map<Effect, number>();
+  for (const a of team) {
+    for (const effect of new Set(a.skills.map((s) => s.effect))) counts.set(effect, (counts.get(effect) ?? 0) + 1);
+  }
+  return [...counts.entries()]
+    .map(([effect, count]) => ({ effect, count }))
+    .sort((a, b) => b.count - a.count || STAT_ORDER.indexOf(a.effect) - STAT_ORDER.indexOf(b.effect));
+}
+
 // Tim terbaik dari sekumpulan artis. Tujuan: jumlah skor, lalu bonus synergy sebagai
 // tie-break. Brute force karena 5 slot tetap dan pool sudah dipangkas BEST_POOL_LIMIT.
 export function bestLineup(artists: Artist[], size = TEAM_SIZE): Artist[] {

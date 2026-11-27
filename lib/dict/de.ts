@@ -289,6 +289,10 @@ export const de: Dict = {
     loginHint: "Melde dich an, um Lineups zu speichern.",
     private: "Privat",
     shared: "Link aktiv",
+    communityTitle: "Community-Lineups",
+    communityHint: "Von Spielern geteilte Lineups.",
+    communityEmpty: "Noch keine geteilten Lineups.",
+    communityAnon: "TopGirl-Spieler",
   },
   team: {
     section: "Team Builder",

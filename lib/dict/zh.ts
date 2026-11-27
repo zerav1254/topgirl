@@ -288,6 +288,10 @@ export const zh: Dict = {
     loginHint: "登录后可保存阵容。",
     private: "私密",
     shared: "链接有效",
+    communityTitle: "社区阵容",
+    communityHint: "玩家分享的阵容。",
+    communityEmpty: "还没有共享的阵容。",
+    communityAnon: "TopGirl 玩家",
   },
   team: {
     section: "阵容构建器",

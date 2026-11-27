@@ -9,6 +9,7 @@ import type { Lineup } from "@/lib/lineups";
 import { TEAM_SIZE } from "@/lib/team";
 import { getServerTeam, readTeam, subscribeTeam } from "@/lib/team-store";
 import { Avatar, ICONS, Icon } from "./artist-ui";
+import { LineupTags } from "./lineup-tags";
 
 type Result = { ok: boolean; error: string; link?: string };
 
@@ -113,6 +114,7 @@ export function LineupsTab({
         <ul className="flex flex-col gap-2">
           {lineups.map((l) => {
             const link = l.shareSlug ? `${siteUrl}/${locale}/l/${l.shareSlug}` : "";
+            const team = l.slugs.map((s) => bySlug.get(s)).filter((a) => a !== undefined);
             return (
               <li key={l.id} className="flex flex-col gap-2 rounded-xl border border-white/10 bg-panel/70 p-3">
                 <div className="flex items-center gap-3">
@@ -146,6 +148,7 @@ export function LineupsTab({
                     </span>
                   </span>
                 </div>
+                <LineupTags team={team} locale={locale} />
                 <span aria-hidden="true" className="block h-1 overflow-hidden rounded-full bg-white/10">
                   <span className="block h-full rounded-full bg-gold" style={{ width: `${(l.slugs.length / TEAM_SIZE) * 100}%` }} />
                 </span>

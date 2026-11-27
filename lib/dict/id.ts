@@ -287,6 +287,10 @@ export const id = {
     loginHint: "Masuk untuk menyimpan lineup.",
     private: "Privat",
     shared: "Tautan aktif",
+    communityTitle: "Lineup komunitas",
+    communityHint: "Lineup yang dibagikan pengguna.",
+    communityEmpty: "Belum ada lineup dibagikan.",
+    communityAnon: "Pengguna TopGirl",
   },
   team: {
     section: "Team Builder",

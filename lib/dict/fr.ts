@@ -289,6 +289,10 @@ export const fr: Dict = {
     needTeam: "Composez d’abord une équipe dans Team Builder.",
     private: "Privé",
     shared: "Lien actif",
+    communityTitle: "Compositions de la communauté",
+    communityHint: "Compositions partagées par les joueurs.",
+    communityEmpty: "Aucune composition partagée pour l'instant.",
+    communityAnon: "Joueur TopGirl",
   },
   team: {
     section: "Team Builder",
