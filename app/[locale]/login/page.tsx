@@ -115,7 +115,7 @@ export default async function Page({
             <Link
               key={k}
               href={`/${locale}/doc/${k}`}
-              className="inline-flex items-center gap-1 text-zinc-400 underline-offset-2 transition-colors duration-200 hover:text-zinc-200 hover:underline"
+              className="inline-flex min-h-11 items-center gap-1 text-zinc-400 underline-offset-2 transition-colors duration-200 hover:text-zinc-200 hover:underline"
             >
               <Icon d={k === "privacy" ? ICONS.shield : k === "legal" ? ICONS.file : ICONS.info} className="h-4 w-4 shrink-0" />
               {DOCS[locale][k].title}
