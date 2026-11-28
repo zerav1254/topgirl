@@ -1,9 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { sumLevels } from "@/lib/cost-calc";
+import { statSum, sumLevels } from "@/lib/cost-calc";
 import type { CostBook } from "@/lib/costs";
-import { clamp, heading, invalid, NumberField, panel, result, Select, Totals, type CostDict } from "./fields";
+import { clamp, heading, invalid, NumberField, panel, result, Select, Stats, Totals, type CostDict } from "./fields";
 
 const LEVEL_MIN = 1;
 const LEVEL_MAX = 60;
@@ -12,14 +12,18 @@ type Slot = CostBook["parts"][number]["slot"];
 
 export function CarPartsPanel({
   parts,
+  partStats,
   costs,
   C,
   format,
+  formatPct,
 }: {
   parts: CostBook["parts"];
+  partStats: CostBook["partStats"];
   costs: CostBook["costs"]["carPart"];
   C: CostDict;
   format: (value: number) => string;
+  formatPct: (value: number) => string;
 }) {
   const [tier, setTier] = useState(parts[0]?.tier ?? 1);
   // 0 = semua slot di tier ini; selain itu indeks slot + 1.
@@ -40,6 +44,31 @@ export function CarPartsPanel({
     [costs, tier, from, to, slotCount],
   );
   const bad = to <= from;
+
+  // Inti: nilai tabel = tambahan per level, jadi stat dijumlahkan dalam rentang.
+  const stats = useMemo(() => {
+    const selected = slot === 0 ? tierParts : [tierParts[slot - 1]].filter(Boolean);
+    const total = { sing: 0, dance: 0, management: 0 };
+    for (const part of selected) {
+      const sum = statSum(
+        partStats.filter((row) => row.partId === part.id),
+        from,
+        to,
+      );
+      total.sing += sum.sing;
+      total.dance += sum.dance;
+      total.management += sum.management;
+    }
+    return total;
+  }, [tierParts, slot, partStats, from, to]);
+
+  const statRows = [
+    { label: C.statSing, value: stats.sing },
+    { label: C.statDance, value: stats.dance },
+    { label: C.statManage, value: stats.management },
+  ]
+    .filter((row) => row.value > 0)
+    .map((row) => ({ label: row.label, value: `+${formatPct(row.value)}%` }));
 
   // Tier huruf diambil dari nama game: "Setir (A+)" -> "A+".
   const tierLabel = (name: string) => name.match(/\(([^)]+)\)/)?.[1] ?? "";
@@ -82,6 +111,7 @@ export function CarPartsPanel({
       {bad ? null : (
         <div className={result}>
           <Totals totals={totals} note={C.partNote} empty={C.noCost} format={format} />
+          <Stats title={C.statsTitle} rows={statRows} note={C.coreStatNote} />
         </div>
       )}
     </section>

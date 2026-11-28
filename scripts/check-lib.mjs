@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { classLevels, expBetween, modTotals, stagePromotionCost, starBetween, starCardsForLevels, sumLevels } from "../lib/cost-calc.ts";
+import { classLevels, expBetween, modTotals, stagePromotionCost, starBetween, starCardsForLevels, statDelta, statSum, sumLevels } from "../lib/cost-calc.ts";
 import { poolTiers } from "../lib/pool.ts";
 import { genreSynergy, lineupEffects, teamFanCap, withGenreBonus } from "../lib/team.ts";
 import { allow } from "../lib/rate-limit.ts";
@@ -101,6 +101,16 @@ assert.deepEqual(
     { itemId: 2, name: "Bagian", amount: 120 },
     { itemId: 3, name: "Gambar", amount: 4 },
   ],
+);
+// Stat mobil: komponen menyimpan total kumulatif (selisih target - awal),
+// inti menyimpan tambahan per level (dijumlahkan dalam rentang).
+assert.deepEqual(
+  statDelta([{ level: 0, sing: 0, fan: 0 }, { level: 1, sing: 20, fan: 100 }, { level: 2, sing: 25, fan: 100 }], 1, 2),
+  { sing: 5, dance: 0, management: 0, fan: 0, speed: 0 },
+);
+assert.deepEqual(
+  statSum([{ level: 1, sing: 930 }, { level: 2, sing: 20 }, { level: 3, sing: 20 }], 1, 3),
+  { sing: 40, dance: 0, management: 0, fan: 0, speed: 0 },
 );
 // Helper kelas: level hanya diketahui lewat kelas mod kendaraan.
 const ranges = classLevels([1, 1, 1, 2, 2]);

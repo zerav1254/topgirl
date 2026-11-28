@@ -11,6 +11,12 @@ export type CarPart = { id: number; name: string; slot: "steering" | "chip" | "s
 
 export type CarClass = { id: number; name: string; star: number };
 
+// Stat per level komponen mobil (CCarEquipLevel); nilai = tambahan per level.
+export type CarPartStat = { partId: number; level: number; sing: number; dance: number; management: number };
+
+// Stat per level mod mobil (CCarModLevel); nilai = total kumulatif per level.
+export type CarModStat = { part: number; level: number; classId: number; sing: number; dance: number; management: number; fan: number; speed: number };
+
 // Biaya per tier; indeks array = tier - 1 (tier mulai 1).
 export type TierCosts = CostItem[][];
 
@@ -41,6 +47,8 @@ export type CostBook = {
   levelStars: number[];
   parts: CarPart[];
   classes: CarClass[];
+  partStats: CarPartStat[];
+  modStats: CarModStat[];
   // classByLevel[level] = id kelas mod; 220 level, sama untuk keempat part.
   classByLevel: number[];
   costs: {
@@ -74,7 +82,6 @@ type StarRow = { star: number; item_name: string; amount: number };
 type LevelStarRow = { level: number; star: number };
 type PartRow = { id: number; name: string; slot: CarPart["slot"]; tier: number };
 type ClassRow = { id: number; name: string; star: number };
-type LevelRow = { level: number; class_id: number };
 type CostScope = "car_part" | "car_mod" | "car_mod_class" | "collection_platform" | "collection_star";
 type CostRow = { scope: CostScope; ref_id: number; item_id: number; item_name: string; amounts: Record<string, number> };
 type TierCostRow = { tier: number; item_id: number; item_name: string; amounts: Record<string, number> };
@@ -163,8 +170,9 @@ export async function loadCostBook(locale: Locale): Promise<CostBook> {
     levelStars,
     artists,
     parts,
+    partStats,
     classes,
-    levels,
+    modStats,
     costs,
     museum,
     hqCurve,
@@ -186,8 +194,9 @@ export async function loadCostBook(locale: Locale): Promise<CostBook> {
     supabase.from("artist_level_stars").select("level, star").order("level"),
     supabase.from("artists").select("id, name").order("name"),
     supabase.from("car_parts").select("id, name, slot, tier").order("slot").order("tier"),
+    supabase.from("car_part_levels").select("part_id, level, sing, dance, management").order("part_id").order("level"),
     supabase.from("car_mod_classes").select("id, name, star").order("id"),
-    supabase.from("car_mod_levels").select("level, class_id").eq("part", 0).order("level"),
+    supabase.from("car_mod_levels").select("part, level, class_id, sing, dance, management, fan, speed").order("part").order("level"),
     supabase.from("game_cost_items").select("scope, ref_id, item_id, item_name, amounts"),
     supabase.from("museum_cost_items").select("tier, item_id, item_name, amounts").order("tier"),
     supabase.from("headquarters_level_curve").select("amounts, item_name").single(),
@@ -210,8 +219,9 @@ export async function loadCostBook(locale: Locale): Promise<CostBook> {
   if (levelStars.error) fail("syarat star per level", levelStars.error.message);
   if (artists.error) fail("artis", artists.error.message);
   if (parts.error) fail("komponen mobil", parts.error.message);
+  if (partStats.error) fail("stat komponen mobil", partStats.error.message);
   if (classes.error) fail("kelas mod", classes.error.message);
-  if (levels.error) fail("level mod", levels.error.message);
+  if (modStats.error) fail("level mod", modStats.error.message);
   if (costs.error) fail("biaya item", costs.error.message);
   if (museum.error) fail("biaya museum", museum.error.message);
   if (hqCurve.error) fail("kurva markas", hqCurve.error.message);
@@ -244,6 +254,25 @@ export async function loadCostBook(locale: Locale): Promise<CostBook> {
   const collectionAmounts: Record<string, number> = {};
   for (const row of collectionLevels.data as { level: number; amount: string }[]) collectionAmounts[row.level] = Number(row.amount);
 
+  const partRows: CarPartStat[] = (partStats.data as { part_id: number; level: number; sing: number; dance: number; management: number }[]).map((r) => ({
+    partId: r.part_id,
+    level: r.level,
+    sing: r.sing,
+    dance: r.dance,
+    management: r.management,
+  }));
+
+  const modRows: CarModStat[] = (modStats.data as (Omit<CarModStat, "classId"> & { class_id: number })[]).map((r) => ({
+    part: r.part,
+    level: r.level,
+    classId: r.class_id,
+    sing: r.sing,
+    dance: r.dance,
+    management: r.management,
+    fan: r.fan,
+    speed: r.speed,
+  }));
+
   const book: CostBook = {
     artists: (artists.data as { id: number; name: string }[])
       .filter((a) => curveOf.has(a.id))
@@ -252,8 +281,10 @@ export async function loadCostBook(locale: Locale): Promise<CostBook> {
     star: { itemName: starRows[0]?.item_name ?? "", amounts: starAmounts },
     levelStars: levelStarRows,
     parts: parts.data as PartRow[],
+    partStats: partRows,
+    modStats: modRows,
     classes: (classes.data as ClassRow[]).map((c) => ({ id: c.id, name: c.name, star: c.star })),
-    classByLevel: (levels.data as LevelRow[]).map((r) => r.class_id),
+    classByLevel: modRows.filter((r) => r.part === 0).map((r) => r.classId),
     costs: { carPart: [], carMod: {}, carModClass: {} },
     museum: byTier(museum.data as TierCostRow[]),
     hq: {
@@ -354,6 +385,8 @@ export function artistCostBook(book: CostBook): CostBook {
     ...book,
     parts: [],
     classes: [],
+    partStats: [],
+    modStats: [],
     classByLevel: [],
     costs: { carPart: [], carMod: {}, carModClass: {} },
     museum: [],

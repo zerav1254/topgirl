@@ -134,6 +134,25 @@ export function Segmented<T extends string>({
   );
 }
 
+// Daftar stat ringkas hasil upgrade (mis. mobil). Baris bernilai nol dibuang pemanggil.
+export function Stats({ title, rows, note }: { title: string; rows: { label: string; value: string }[]; note?: string }) {
+  if (rows.length === 0) return null;
+  return (
+    <div className="mt-3">
+      <p className={label}>{title}</p>
+      <dl aria-live="polite" className="mt-1 flex flex-col gap-1 text-sm">
+        {rows.map((row) => (
+          <div key={row.label} className="flex items-baseline justify-between gap-3">
+            <dt className="min-w-0 truncate text-zinc-400">{row.label}</dt>
+            <dd className="tabular shrink-0 font-semibold text-zinc-200">{row.value}</dd>
+          </div>
+        ))}
+      </dl>
+      {note ? <p className="mt-1 text-xs text-zinc-400">{note}</p> : null}
+    </div>
+  );
+}
+
 export function Totals({
   totals,
   note,

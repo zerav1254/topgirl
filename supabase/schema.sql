@@ -315,6 +315,8 @@ create table public.car_mod_classes (
 );
 
 -- Level mod mobil (CCarModLevel): part 0 mesin, 1 sasis, 2 suspensi, 3 velg; 220 level.
+-- sing/dance/management = total kumulatif per level; fan = kapasitas penggemar;
+-- speed = kecepatan mengemudi mentah (persen × 100).
 create table public.car_mod_levels (
   part smallint not null check (part between 0 and 3),
   level smallint not null check (level between 0 and 219),
@@ -322,6 +324,8 @@ create table public.car_mod_levels (
   sing integer not null default 0 check (sing >= 0),
   dance integer not null default 0 check (dance >= 0),
   management integer not null default 0 check (management >= 0),
+  fan integer not null default 0 check (fan >= 0),
+  speed smallint not null default 0 check (speed >= 0),
   primary key (part, level)
 );
 

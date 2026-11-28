@@ -54,6 +54,41 @@ export function sumLevels(items: CostItem[], from: number, to: number): CostTota
     .filter((item) => item.amount > 0);
 }
 
+export type StatValues = { sing: number; dance: number; management: number; fan: number; speed: number };
+// Baris stat dari DB: fan/speed hanya ada di tabel mod, bukan komponen.
+export type LevelStat = { level: number } & Partial<StatValues>;
+
+const ZERO_STAT: StatValues = { sing: 0, dance: 0, management: 0, fan: 0, speed: 0 };
+
+// Komponen mobil menyimpan total kumulatif per level -> pakai selisih target - awal.
+export function statDelta(rows: LevelStat[], from: number, to: number): StatValues {
+  const at = (level: number) => rows.find((row) => row.level === level) ?? ZERO_STAT;
+  const a = at(from);
+  const b = at(to);
+  return {
+    sing: (b.sing ?? 0) - (a.sing ?? 0),
+    dance: (b.dance ?? 0) - (a.dance ?? 0),
+    management: (b.management ?? 0) - (a.management ?? 0),
+    fan: (b.fan ?? 0) - (a.fan ?? 0),
+    speed: (b.speed ?? 0) - (a.speed ?? 0),
+  };
+}
+
+// Inti mobil menyimpan tambahan per level -> jumlahkan level dari + 1 sampai target.
+export function statSum(rows: LevelStat[], from: number, to: number): StatValues {
+  const total = { ...ZERO_STAT };
+  if (to <= from) return total;
+  for (const row of rows) {
+    if (row.level <= from || row.level > to) continue;
+    total.sing += row.sing ?? 0;
+    total.dance += row.dance ?? 0;
+    total.management += row.management ?? 0;
+    total.fan += row.fan ?? 0;
+    total.speed += row.speed ?? 0;
+  }
+  return total;
+}
+
 export function modTotals({
   items,
   classCosts,

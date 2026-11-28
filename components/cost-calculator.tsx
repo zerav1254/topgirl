@@ -3,14 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { expBetween, classLevels, modTotals, starCardsForLevels } from "@/lib/cost-calc";
+import { expBetween, classLevels, modTotals, starCardsForLevels, statDelta } from "@/lib/cost-calc";
 import { tabIcon } from "@/lib/cost-icons";
 import { DICT, numberLocale, type Locale } from "@/lib/i18n";
 import type { CarClass, CostBook } from "@/lib/costs";
 import { CarPartsPanel } from "./cost/car-parts";
 import { CeoPanel } from "./cost/ceo";
 import { CollectionPanel } from "./cost/collection";
-import { chip, clamp, field, heading, invalid, label, NumberField, panel, result, Select, Totals } from "./cost/fields";
+import { chip, clamp, field, heading, invalid, label, NumberField, panel, result, Select, Stats, Totals } from "./cost/fields";
 import { HqPanel } from "./cost/hq";
 import { VillaPanel } from "./cost/villa";
 
@@ -26,6 +26,8 @@ const ARTIST_MAX = 160;
 export function CostCalculator({ book, locale, signedIn }: { book: CostBook; locale: Locale; signedIn: boolean }) {
   const C = DICT[locale].cost;
   const format = (value: number) => value.toLocaleString(numberLocale(locale));
+  // Nilai persen game disimpan ×100 (mis. 250 = 2,5%).
+  const formatPct = (value: number) => (value / 100).toLocaleString(numberLocale(locale), { maximumFractionDigits: 1 });
 
   const [tab, setTab] = useState<Tab>("artist");
 
@@ -76,6 +78,37 @@ export function CostCalculator({ book, locale, signedIn }: { book: CostBook; loc
   const classOptions = book.classes.filter((c) => classRanges.has(c.id));
   const classLabel = (c: CarClass) => (c.star > 0 ? `${c.name} ★${c.star}` : c.name);
   const modLabels = [C.partEngine, C.partChassis, C.partSuspension, C.partWheels];
+
+  // Komponen: nilai tabel = total kumulatif per level, jadi pakai selisih target - awal.
+  const modStats = useMemo(() => {
+    const total = { sing: 0, dance: 0, management: 0, fan: 0, speed: 0 };
+    for (const part of modPart === -1 ? [0, 1, 2, 3] : [modPart]) {
+      const delta = statDelta(
+        book.modStats.filter((row) => row.part === part),
+        modFrom,
+        modTo,
+      );
+      total.sing += delta.sing;
+      total.dance += delta.dance;
+      total.management += delta.management;
+      total.fan += delta.fan;
+      total.speed += delta.speed;
+    }
+    return total;
+  }, [book.modStats, modPart, modFrom, modTo]);
+
+  const modStatRows = [
+    { label: C.statSing, value: modStats.sing },
+    { label: C.statDance, value: modStats.dance },
+    { label: C.statManage, value: modStats.management },
+    { label: C.statFan, value: modStats.fan },
+    { label: C.statSpeed, value: modStats.speed },
+  ]
+    .filter((row) => row.value > 0)
+    .map((row) => ({
+      label: row.label,
+      value: row.label === C.statSpeed ? `+${formatPct(row.value)}%` : `+${format(row.value)}`,
+    }));
 
   // Semua panel tetap ter-mount (disembunyikan) supaya input tidak hilang saat ganti tab.
   // Museum ikut menu Koleksi: koleksi menambah stat flat, museum mengalikannya (persentase).
@@ -134,7 +167,7 @@ export function CostCalculator({ book, locale, signedIn }: { book: CostBook; loc
       tab: "car",
       id: "parts",
       node: (
-        <CarPartsPanel parts={book.parts} costs={book.costs.carPart} C={C} format={format} />
+        <CarPartsPanel parts={book.parts} partStats={book.partStats} costs={book.costs.carPart} C={C} format={format} formatPct={formatPct} />
       ),
     },
     {
@@ -214,6 +247,7 @@ export function CostCalculator({ book, locale, signedIn }: { book: CostBook; loc
           {modBad ? null : (
             <div className={result}>
               <Totals totals={modTotalsResult} note={C.modNote} empty={C.noCost} format={format} />
+              <Stats title={C.statsTitle} rows={modStatRows} note={C.statsNote} />
             </div>
           )}
         </section>
