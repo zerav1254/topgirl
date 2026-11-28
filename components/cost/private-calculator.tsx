@@ -62,8 +62,8 @@ export function PrivateCalculator({ tab, options, locale }: { tab: Tab; options:
       } catch { setError("server_error"); }
     });
   }
-  function stats(value: PrivateCostResult["stats"] | undefined, percent = false, icon: string | null = null) {
-    return value ? [{ label: C.statSing, stat: "sing" as const, value: value.sing }, { label: C.statDance, stat: "dance" as const, value: value.dance }, { label: C.statManage, value: value.management }, { label: C.statFan, value: value.fan ?? 0 }, { label: C.statSpeed, value: value.speed ?? 0 }].filter((row) => row.value > 0).map((row) => ({ ...row, value: `+${percent || row.label === C.statSpeed ? `${formatPct(row.value)}%` : format(row.value)}`, icon })) : [];
+  function stats(value: PrivateCostResult["stats"] | undefined, percent = false, genre: string | null = null) {
+    return value ? [{ label: C.statSing, stat: "sing" as const, value: value.sing }, { label: C.statDance, stat: "dance" as const, value: value.dance }, { label: C.statManage, stat: "manage" as const, value: value.management }, { label: C.statFan, value: value.fan ?? 0 }, { label: C.statSpeed, stat: "speed" as const, value: value.speed ?? 0 }].filter((row) => row.value > 0).map((row) => ({ ...row, value: `+${percent || row.label === C.statSpeed ? `${formatPct(row.value)}%` : format(row.value)}`, genre })) : [];
   }
 
   const stageDomain = tab === "villa" || tab === "ceo" ? tab : null;
@@ -91,6 +91,6 @@ export function PrivateCalculator({ tab, options, locale }: { tab: Tab; options:
     {bad ? <p role="status" className={invalid}>{C.invalid}</p> : null}
     <button type="button" disabled={bad || pending || !max && (key === "suite" || key === "appearance")} onClick={run} className={`${chip(true)} mt-4 w-full disabled:cursor-wait disabled:opacity-60`}>{pending ? DICT[locale].common.loading : C.total}</button>
     {error ? <p role="alert" className={invalid}>{{ unauthenticated: C.errorUnauthenticated, invalid_request: C.errorInvalid, rate_limited: C.errorRateLimited, server_error: C.errorServer }[error]}</p> : null}
-    {data[mode] ? <div className={result}><Totals totals={data[mode]!.totals} empty={C.noCost} format={format}/><Stats title={C.statsTitle} rows={stats(data[mode]!.stats, ["part", "room", "staff", "museum", "sport"].includes(key), key === "item" ? options.collection.zones.find((item) => item.id === zone)?.genreImage ?? null : null)} note={C.statsNote}/>{data[mode]!.secondaryStats ? <Stats title={tab === "hq" ? t(C.hqFloorGain, { level: buildingLevel }) : tab === "villa" ? C.villaStaffGain : C.ceoSportGain} rows={stats(data[mode]!.secondaryStats)}/> : null}</div> : null}
+    {data[mode] ? <div className={result}><Totals totals={data[mode]!.totals} empty={C.noCost} format={format}/><Stats title={C.statsTitle} rows={stats(data[mode]!.stats, ["part", "room", "staff", "museum", "sport"].includes(key), key === "item" ? options.collection.zones.find((item) => item.id === zone)?.genre ?? null : null)} note={C.statsNote}/>{data[mode]!.secondaryStats ? <Stats title={tab === "hq" ? t(C.hqFloorGain, { level: buildingLevel }) : tab === "villa" ? C.villaStaffGain : C.ceoSportGain} rows={stats(data[mode]!.secondaryStats)}/> : null}</div> : null}
   </section>;
 }

@@ -45,14 +45,14 @@ export function PeakPanel({
   const statRows = [
     { label: C.statSing, stat: "sing" as const, value: flat.sing },
     { label: C.statDance, stat: "dance" as const, value: flat.dance },
-    { label: C.statManage, value: flat.management },
+    { label: C.statManage, stat: "manage" as const, value: flat.management },
   ]
     .filter((row) => row.value > 0)
     .map((row) => ({ ...row, value: `+${format(row.value)}` }));
   const pctRows = [
     { label: C.statSing, stat: "sing" as const, value: pct.sing },
     { label: C.statDance, stat: "dance" as const, value: pct.dance },
-    { label: C.statManage, value: pct.management },
+    { label: C.statManage, stat: "manage" as const, value: pct.management },
   ]
     .filter((row) => row.value > 0)
     .map((row) => ({ ...row, value: `+${formatPct(row.value)}%` }));

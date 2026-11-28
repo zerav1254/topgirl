@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { DICT } from "@/lib/i18n";
-import { GenreIcon, StatIcon } from "../artist-ui";
+import { StatIcon, type StatKey } from "../artist-ui";
 
 export type CostDict = (typeof DICT)["id"]["cost"];
 export type Total = { itemId?: number; name: string; amount: number };
@@ -136,7 +136,7 @@ export function Segmented<T extends string>({
 }
 
 // Daftar stat ringkas hasil upgrade (mis. mobil). Baris bernilai nol dibuang pemanggil.
-export function Stats({ title, rows, note }: { title: string; rows: { label: string; value: string; icon?: string | null; stat?: "sing" | "dance" }[]; note?: string }) {
+export function Stats({ title, rows, note }: { title: string; rows: { label: string; value: string; stat?: StatKey; genre?: string | null }[]; note?: string }) {
   if (rows.length === 0) return null;
   return (
     <div className="mt-3">
@@ -145,8 +145,7 @@ export function Stats({ title, rows, note }: { title: string; rows: { label: str
         {rows.map((row) => (
           <div key={row.label} className="flex items-baseline justify-between gap-3">
             <dt className="flex min-w-0 items-center gap-1 truncate text-zinc-400">
-              {row.icon ? <GenreIcon image={row.icon} className="h-3.5 w-3.5 shrink-0" /> : null}
-              {row.stat ? <StatIcon stat={row.stat} className="h-3.5 w-3.5 shrink-0" /> : null}
+              {row.stat ? <StatIcon stat={row.stat} genre={row.genre} className="h-3.5 w-3.5 shrink-0" /> : null}
               <span className="truncate">{row.label}</span>
             </dt>
             <dd className="tabular shrink-0 font-semibold text-zinc-200">{row.value}</dd>
