@@ -23,6 +23,16 @@ export function genreSynergy(team: Artist[]) {
 export const withGenreBonus = (value: number, bonus: number) =>
   Math.round(value * (1 + bonus / 100));
 
+// Kapasitas fan tim: basis semua artis + bonus persen dari skill "fan".
+export function teamFanCap(team: Artist[]) {
+  const base = team.reduce((n, a) => n + a.fanCap, 0);
+  const pct = team.reduce(
+    (n, a) => n + a.skills.filter((s) => s.effect === "fan").reduce((m, s) => m + (s.value ?? 0), 0),
+    0,
+  );
+  return { base, pct, total: Math.round(base * (1 + pct / 100)) };
+}
+
 export const STAT_ORDER: Effect[] = [
   "player_dmg",
   "skill_dmg",

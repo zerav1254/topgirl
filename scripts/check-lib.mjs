@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { classLevels, expBetween, modTotals, stagePromotionCost, starBetween, starCardsForLevels, sumLevels } from "../lib/cost-calc.ts";
 import { poolTiers } from "../lib/pool.ts";
-import { genreSynergy, lineupEffects, withGenreBonus } from "../lib/team.ts";
+import { genreSynergy, lineupEffects, teamFanCap, withGenreBonus } from "../lib/team.ts";
 import { allow } from "../lib/rate-limit.ts";
 import { safeNextPath } from "../lib/redirect.ts";
 import { localizedName } from "../lib/cost-names.ts";
@@ -33,6 +33,15 @@ assert.equal(genreSynergy([{ genre: "Pop" }, { genre: "Pop" }, { genre: "Pop" }]
 assert.equal(genreSynergy([{ genre: "Pop" }, { genre: "Pop" }, { genre: "Pop" }, { genre: "Pop" }]).bonus, 15);
 assert.equal(withGenreBonus(100_000, 25), 125_000);
 assert.equal(withGenreBonus(100_001, 10), 110_001);
+
+// Total fans tim: basis semua artis + bonus persen dari skill "fan".
+assert.deepEqual(
+  teamFanCap([
+    { fanCap: 202_000, skills: [{ effect: "fan", value: 10 }] },
+    { fanCap: 202_000, skills: [{ effect: "fan", value: 5 }] },
+  ]),
+  { base: 404_000, pct: 15, total: 464_600 },
+);
 
 // Tag lineup: efek dihitung sekali per artis, urut jumlah lalu urutan stat.
 assert.deepEqual(

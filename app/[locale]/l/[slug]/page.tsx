@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { getArtists } from "@/lib/artists-cache";
 import { DICT, isLocale, t, type Locale } from "@/lib/i18n";
 import { loadShared } from "@/lib/lineups";
-import { genreSynergy, TEAM_SIZE, teamSkillTotals, withGenreBonus } from "@/lib/team";
+import { genreSynergy, TEAM_SIZE, teamFanCap, teamSkillTotals, withGenreBonus } from "@/lib/team";
 import { EFFECT_LABEL, TIER_ORDER } from "@/lib/score";
 import { pageMetadata } from "@/lib/seo";
 import { Avatar, GenreIcon, ICONS, Icon, SkillList, StatIcon, TierBadge, formatStat, isPercent } from "@/components/artist-ui";
@@ -43,6 +43,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
   const tierCounts = TIER_ORDER.map((tier) => [tier, team.filter((a) => a.tier === tier).length] as const).filter(([, n]) => n > 0);
   const synergy = genreSynergy(team);
   const { playerDmg, stats } = teamSkillTotals(team);
+  const fans = teamFanCap(team);
   const totalSing = withGenreBonus(team.reduce((n, a) => n + (a.singMax ?? 0), 0), synergy.bonus);
   const totalDance = withGenreBonus(team.reduce((n, a) => n + (a.danceMax ?? 0), 0), synergy.bonus);
   const hasStats = team.some((a) => a.singMax !== null);
@@ -137,29 +138,30 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
 
           <section className="rounded-xl border border-line bg-panel/70 p-3">
             <h2 className="text-2xs font-semibold uppercase tracking-wide text-zinc-400">{C.team.stats}</h2>
-            {stats.length === 0 ? (
-              <p className="mt-1.5 text-sm text-zinc-400">{C.team.noStats}</p>
-            ) : (
-              <dl className="mt-1.5 flex flex-col gap-1.5 text-sm">
-                {stats.map(([effect, value]) => {
-                  const boosted = (effect === "skill_dmg" || effect === "basic_atk") && playerDmg > 0;
-                  return (
-                    <div key={effect} className="flex items-baseline justify-between gap-2">
-                      <dt className="min-w-0 truncate text-zinc-400">{EFFECT_LABEL[effect][locale]}</dt>
-                      <dd className="tabular shrink-0 whitespace-nowrap font-semibold text-zinc-200">
-                        {formatStat(value, locale)}
-                        {isPercent(effect) && "%"}
-                        {boosted && (
-                          <span className="ml-1 font-normal text-emerald-300">
-                            +{formatStat(playerDmg, locale)}% = {formatStat(value + playerDmg, locale)}%
-                          </span>
-                        )}
-                      </dd>
-                    </div>
-                  );
-                })}
-              </dl>
-            )}
+            <dl className="mt-1.5 flex flex-col gap-1.5 text-sm">
+              <div className="flex items-baseline justify-between gap-2">
+                <dt className="min-w-0 truncate text-zinc-400">{C.team.fanCap}</dt>
+                <dd className="tabular shrink-0 whitespace-nowrap font-semibold text-zinc-200">{formatStat(fans.total, locale)}</dd>
+              </div>
+              {stats.length === 0 && fans.total === 0 && <span className="text-sm text-zinc-400">{C.team.noStats}</span>}
+              {stats.map(([effect, value]) => {
+                const boosted = (effect === "skill_dmg" || effect === "basic_atk") && playerDmg > 0;
+                return (
+                  <div key={effect} className="flex items-baseline justify-between gap-2">
+                    <dt className="min-w-0 truncate text-zinc-400">{EFFECT_LABEL[effect][locale]}</dt>
+                    <dd className="tabular shrink-0 whitespace-nowrap font-semibold text-zinc-200">
+                      {formatStat(value, locale)}
+                      {isPercent(effect) && "%"}
+                      {boosted && (
+                        <span className="ml-1 font-normal text-emerald-300">
+                          +{formatStat(playerDmg, locale)}% = {formatStat(value + playerDmg, locale)}%
+                        </span>
+                      )}
+                    </dd>
+                  </div>
+                );
+              })}
+            </dl>
           </section>
         </>
       )}

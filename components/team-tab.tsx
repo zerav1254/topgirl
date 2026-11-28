@@ -6,7 +6,7 @@ import { FAN_CAP_MAX } from "@/lib/artists";
 import { DICT, t, type Locale } from "@/lib/i18n";
 import type { Rank } from "@/lib/pool";
 import { EFFECT_LABEL, type Tier } from "@/lib/score";
-import { genreSynergy, TEAM_SIZE, teamSkillTotals, withGenreBonus } from "@/lib/team";
+import { genreSynergy, TEAM_SIZE, teamFanCap, teamSkillTotals, withGenreBonus } from "@/lib/team";
 import { ArtistFilterBar, type ArtistFilterState } from "./artist-filter";
 import { Avatar, GenreIcon, ICONS, Icon, RankBadge, SkillList, StatIcon, TierBadge, formatStat, isPercent } from "./artist-ui";
 import { SaveLineup } from "./save-lineup";
@@ -66,19 +66,12 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
     const synergy = genreSynergy(team);
     const sing = team.reduce((n, a) => n + (a.singMax ?? 0), 0);
     const dance = team.reduce((n, a) => n + (a.danceMax ?? 0), 0);
-    const fanPct = team.reduce(
-      (n, a) => n + a.skills.filter((s) => s.effect === "fan").reduce((m, s) => m + (s.value ?? 0), 0),
-      0,
-    );
-    const fanCap = team.reduce((n, a) => n + a.fanCap, 0);
     return {
       genreList: synergy.genres,
       ...teamSkillTotals(team),
       sing: withGenreBonus(sing, synergy.bonus),
       dance: withGenreBonus(dance, synergy.bonus),
-      fanCap,
-      fanPct,
-      fanCapTotal: Math.round(fanCap * (1 + fanPct / 100)),
+      fans: teamFanCap(team),
       hasMax: team.some((a) => a.singMax !== null),
       topGenre: synergy.genre,
       topCount: synergy.count,
@@ -225,17 +218,17 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
               </div>
             )}
             <div>
-              <dt className="text-zinc-400">{C.team.fanCap}</dt>
-              <dd className="tabular mt-0.5 font-semibold text-zinc-200">{formatStat(summary.fanCapTotal, locale)}</dd>
-              <dd className="mt-0.5 text-xs text-zinc-400">
-                {t(C.team.fanCapNote, { base: formatStat(FAN_CAP_MAX, locale) })}
-                {summary.fanPct > 0 && ` ${t(C.team.fanCapBoost, { n: formatStat(summary.fanPct, locale) })}`}
-              </dd>
-            </div>
-            <div>
               <dt className="text-zinc-400">{C.team.stats}</dt>
               <dd className="mt-1 flex flex-col gap-1.5">
-                {summary.stats.length === 0 && <span className="text-zinc-400">{C.team.noStats}</span>}
+                <div className="flex items-baseline justify-between gap-2">
+                  <span className="min-w-0 truncate text-zinc-400">{C.team.fanCap}</span>
+                  <span className="tabular shrink-0 whitespace-nowrap font-semibold text-zinc-200">
+                    {formatStat(summary.fans.total, locale)}
+                  </span>
+                </div>
+                {summary.stats.length === 0 && summary.fans.total === 0 && (
+                  <span className="text-zinc-400">{C.team.noStats}</span>
+                )}
                 {summary.stats.map(([effect, value]) => {
                   const boosted = (effect === "skill_dmg" || effect === "basic_atk") && summary.playerDmg > 0;
                   return (
@@ -253,6 +246,10 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
                     </div>
                   );
                 })}
+              </dd>
+              <dd className="mt-1 text-xs text-zinc-400">
+                {t(C.team.fanCapNote, { base: formatStat(FAN_CAP_MAX, locale) })}
+                {summary.fans.pct > 0 && ` ${t(C.team.fanCapBoost, { n: formatStat(summary.fans.pct, locale) })}`}
               </dd>
             </div>
           </dl>
