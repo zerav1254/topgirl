@@ -159,8 +159,8 @@ export function GenreIcon({ image, className = "h-4 w-4" }: { image: string | nu
 
 // Ikon atribut sing/dance dari game (ChangGe/TiaoWu) untuk roster, tim, lineup.
 const STAT_ICON = {
-  sing: "/assets/images/attributes/UI_Album_GoodAt_Icon_ChangGe.webp",
-  dance: "/assets/images/attributes/UI_Album_GoodAt_Icon_TiaoWu.webp",
+  sing: "/assets/images/attributes/stat-sing.webp",
+  dance: "/assets/images/attributes/stat-dance.webp",
 };
 
 export function StatIcon({ stat, className = "h-4 w-4" }: { stat: "sing" | "dance"; className?: string }) {
@@ -170,25 +170,24 @@ export function StatIcon({ stat, className = "h-4 w-4" }: { stat: "sing" | "danc
 // Ikon buff kalkulator dari UI_Icon_Common_StatusInfo; buff koleksi memakai
 // varian per genre untuk Menyanyi/Menari, Kelola memakai ikon umum.
 const BUFF_ICON = {
-  sing: "/assets/images/attributes/UI_Icon_Common_StatusInfo_01.png",
-  dance: "/assets/images/attributes/UI_Icon_Common_StatusInfo_02.png",
-  manage: "/assets/images/attributes/UI_Icon_Common_StatusInfo_03.png",
-  speed: "/assets/images/attributes/UI_Icon_Common_StatusInfo_06.png",
+  sing: "/assets/images/attributes/buff-sing.png",
+  dance: "/assets/images/attributes/buff-dance.png",
+  manage: "/assets/images/attributes/buff-manage.png",
+  speed: "/assets/images/attributes/buff-speed.png",
 } as const;
 
 const GENRE_BUFF_ICON: Record<string, { sing: string; dance: string }> = {
-  Rock: { sing: "13", dance: "14" },
-  EDM: { sing: "15", dance: "16" },
-  Pop: { sing: "17", dance: "18" },
-  "R&B": { sing: "19", dance: "20" },
-  "Hip Hop": { sing: "21", dance: "22" },
+  Rock: { sing: "/assets/images/attributes/buff-rock-sing.png", dance: "/assets/images/attributes/buff-rock-dance.png" },
+  EDM: { sing: "/assets/images/attributes/buff-edm-sing.png", dance: "/assets/images/attributes/buff-edm-dance.png" },
+  Pop: { sing: "/assets/images/attributes/buff-pop-sing.png", dance: "/assets/images/attributes/buff-pop-dance.png" },
+  "R&B": { sing: "/assets/images/attributes/buff-rnb-sing.png", dance: "/assets/images/attributes/buff-rnb-dance.png" },
+  "Hip Hop": { sing: "/assets/images/attributes/buff-hiphop-sing.png", dance: "/assets/images/attributes/buff-hiphop-dance.png" },
 };
 
 export type BuffKey = keyof typeof BUFF_ICON;
 
 export function BuffIcon({ stat, genre, className = "h-4 w-4" }: { stat: BuffKey; genre?: string | null; className?: string }) {
-  const variant = genre && (stat === "sing" || stat === "dance") ? GENRE_BUFF_ICON[genre]?.[stat] : undefined;
-  const src = variant ? `/assets/images/attributes/UI_Icon_Common_StatusInfo_${variant}.png` : BUFF_ICON[stat];
+  const src = (genre && (stat === "sing" || stat === "dance") ? GENRE_BUFF_ICON[genre]?.[stat] : undefined) ?? BUFF_ICON[stat];
   return <Image src={src} alt="" width={16} height={16} sizes="16px" className={`${className} object-contain`} />;
 }
 
