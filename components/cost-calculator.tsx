@@ -245,8 +245,8 @@ export function CostCalculator({ book, locale, signedIn }: { book: CostBook; loc
     { tab: "ceo", id: "ceo", node: <CeoPanel ceo={book.ceo} C={C} format={format} formatPct={formatPct} /> },
   ];
 
-  const tabs: { id: Tab; label: string; glyph?: string }[] = [
-    { id: "artist", label: C.tabArtist, glyph: "artist-glyph" },
+  const tabs: { id: Tab; label: string }[] = [
+    { id: "artist", label: C.tabArtist },
     { id: "car", label: C.tabCar },
     { id: "hq", label: C.tabHq },
     { id: "villa", label: C.tabVilla },
@@ -277,18 +277,14 @@ export function CostCalculator({ book, locale, signedIn }: { book: CostBook; loc
               onClick={() => setTab(item.id)}
               className={`${chip(tab === item.id, "sm")} flex flex-col items-center justify-center gap-1 text-center leading-tight sm:flex-row sm:gap-2 sm:px-3 sm:text-sm`}
             >
-              {item.glyph ? (
-                <span aria-hidden="true" className={`${item.glyph} h-6 w-6 shrink-0`} />
-              ) : (
-                <Image
-                  src={tabIcon(item.id)}
-                  alt=""
-                  width={24}
-                  height={24}
-                  sizes="24px"
-                  className="h-6 w-6 shrink-0 object-contain"
-                />
-              )}
+              <Image
+                src={tabIcon(item.id)}
+                alt=""
+                width={24}
+                height={24}
+                sizes="24px"
+                className="h-6 w-6 shrink-0 object-contain"
+              />
               {item.label}
             </button>
           ))}
