@@ -42,21 +42,21 @@ export async function saveLineup(userId: string, name: string, slugs: string[]):
 }
 
 export async function deleteLineup(userId: string, id: string): Promise<boolean> {
-  const { error } = await adminClient().from("lineups").delete().eq("id", id).eq("user_id", userId);
-  return !error;
+  const { data, error } = await adminClient().from("lineups").delete().eq("id", id).eq("user_id", userId).select("id").maybeSingle();
+  return !error && data?.id === id;
 }
 
 // 12 byte base64url: tidak bisa ditebak berurutan. null = privat.
 export async function setShare(userId: string, id: string, share: boolean): Promise<string | null> {
   const sb = adminClient();
   if (!share) {
-    const { error } = await sb.from("lineups").update({ share_slug: null }).eq("id", id).eq("user_id", userId);
-    return error ? null : "";
+    const { data, error } = await sb.from("lineups").update({ share_slug: null }).eq("id", id).eq("user_id", userId).select("id").maybeSingle();
+    return error || data?.id !== id ? null : "";
   }
   for (let attempt = 0; attempt < 2; attempt++) {
     const slug = randomBytes(12).toString("base64url");
-    const { error } = await sb.from("lineups").update({ share_slug: slug }).eq("id", id).eq("user_id", userId);
-    if (!error) return slug;
+    const { data, error } = await sb.from("lineups").update({ share_slug: slug }).eq("id", id).eq("user_id", userId).select("id").maybeSingle();
+    if (!error && data?.id === id) return slug;
     if (error.code !== "23505") return null;
   }
   return null;
