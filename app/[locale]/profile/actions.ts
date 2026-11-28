@@ -41,9 +41,12 @@ export async function saveProfile(locale: Locale, fd: FormData): Promise<Profile
   const ingameServer = num(fd, "ingameServer", 32767);
   if (Number.isNaN(ingameId) || Number.isNaN(ingameServer)) return { ok: false, error: C.error };
 
-  const name = String(fd.get("name") ?? "").trim() || null;
-  const nickname = String(fd.get("ingameNickname") ?? "").trim() || null;
-  if ((name && name.length > 60) || (nickname && nickname.length > 40)) return { ok: false, error: C.error };
+  const name = String(fd.get("name") ?? "").normalize("NFKC").trim() || null;
+  const nickname = String(fd.get("ingameNickname") ?? "").normalize("NFKC").trim() || null;
+  const unsafeText = /[\u0000-\u001f\u007f-\u009f\u202a-\u202e\u2066-\u2069]/;
+  if ((name && (name.length > 60 || unsafeText.test(name))) || (nickname && (nickname.length > 40 || unsafeText.test(nickname)))) {
+    return { ok: false, error: C.error };
+  }
 
   const { error } = await adminClient()
     .from("profiles")
