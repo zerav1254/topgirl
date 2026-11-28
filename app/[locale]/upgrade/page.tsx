@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     title: C.metaTitle,
     description: C.metaDescription,
     robots: { index: false, follow: false },
-    ...pageMetadata({ locale: l, basePath: "/cost", title: C.metaTitle, description: C.metaDescription }),
+    ...pageMetadata({ locale: l, basePath: "/upgrade", title: C.metaTitle, description: C.metaDescription }),
   };
 }
 

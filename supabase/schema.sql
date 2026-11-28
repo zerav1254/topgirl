@@ -661,7 +661,7 @@ create policy "read ceo appearance sports" on public.ceo_appearance_sports for s
 create policy "read ceo appearance sport levels" on public.ceo_appearance_sport_levels for select to authenticated using (true);
 create policy "read ceo appearance sport level costs" on public.ceo_appearance_sport_level_costs for select to authenticated using (true);
 
--- ── Kalkulator biaya (view ringkas untuk halaman /cost) ─────────────────────
+-- ── Kalkulator biaya (view ringkas untuk halaman /upgrade) ──────────────────
 -- Kurva EXP unik per artis; artis dengan urutan exp_step sama berbagi satu baris.
 create view public.artist_exp_curves
 with (security_invoker = true) as

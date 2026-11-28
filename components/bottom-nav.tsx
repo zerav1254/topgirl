@@ -28,7 +28,7 @@ export function BottomNav({ locale }: { locale: Locale }) {
 
   const onArtists = pathname === base || pathname === `${base}/`;
   const onTeam = pathname === `${base}/team`;
-  const onCost = pathname === `${base}/cost`;
+  const onCost = pathname === `${base}/upgrade`;
   const onProfile = pathname.startsWith(`${base}/profile`);
   const full = count >= TEAM_SIZE;
 
@@ -79,7 +79,7 @@ export function BottomNav({ locale }: { locale: Locale }) {
           <span className="max-w-full break-words">{C.header.lineups}</span>
         </Link>
         <Link
-          href={`${base}/cost`}
+          href={`${base}/upgrade`}
           aria-current={onCost ? "page" : undefined}
           className={`${ITEM} ${onCost ? ACTIVE : IDLE}`}
         >
