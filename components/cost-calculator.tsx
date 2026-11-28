@@ -182,34 +182,14 @@ export function CostCalculator({ book, locale, signedIn }: { book: CostBook; loc
       node: (
         <section aria-label={C.tabMods} className={panel}>
           <h2 className={`${heading} mb-2`}>{C.tabMods}</h2>
-          <div role="group" aria-label={C.modPart}>
-            <p className={label}>{C.modPart}</p>
-            <div className="mt-1">
-              <button type="button" aria-pressed={modPart === -1} onClick={() => setModPart(-1)} className={chip(modPart === -1, "sm")}>
-                {C.modAllParts}
-              </button>
-            </div>
-            <div className="mt-2 grid grid-cols-4 gap-2">
-              {modLabels.map((name, index) => {
-                const active = index === modPart;
-                return (
-                  <button
-                    key={name}
-                    type="button"
-                    aria-pressed={active}
-                    aria-label={name}
-                    title={name}
-                    onClick={() => setModPart(index)}
-                    className={`flex min-h-11 flex-col items-center gap-1 rounded-lg border px-1 py-1.5 transition-colors duration-200 ${
-                      active ? "border-gold/50 bg-gold/10" : "border-line bg-panel/80 hover:border-white/25"
-                    }`}
-                  >
-                    <span className={`text-2xs font-semibold ${active ? "text-gold" : "text-zinc-400"}`}>{name}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+          <Select id="cost-mod-part" text={C.modPart} value={modPart} onChange={setModPart}>
+            <option value={-1}>{C.modAllParts}</option>
+            {modLabels.map((name, index) => (
+              <option key={name} value={index}>
+                {name}
+              </option>
+            ))}
+          </Select>
 
           <div className="mt-3 grid grid-cols-2 gap-3">
             <Select
