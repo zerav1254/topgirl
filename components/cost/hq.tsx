@@ -1,9 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { expBetween, sumLevels } from "@/lib/cost-calc";
+import { expBetween, statSum, sumLevels } from "@/lib/cost-calc";
 import type { CostBook } from "@/lib/costs";
-import { clamp, invalid, NumberField, panel, result, Segmented, Select, Totals, type CostDict } from "./fields";
+import { clamp, invalid, NumberField, panel, result, Segmented, Select, Stats, Totals, type CostDict } from "./fields";
 
 type Mode = "building" | "rooms";
 
@@ -37,6 +37,35 @@ export function HqPanel({ hq, C, format }: { hq: CostBook["hq"]; C: CostDict; fo
   );
   const buildingBad = levelTo <= levelFrom;
   const roomBad = roomTo <= roomFrom;
+
+  // Gedung: nilai tabel = total kumulatif per level, jadi selisih target - awal.
+  const buildingStats = useMemo(() => {
+    const at = (level: number) => level - 1;
+    return {
+      sing: (hq.curve.sing[at(levelTo)] ?? 0) - (hq.curve.sing[at(levelFrom)] ?? 0),
+      dance: (hq.curve.dance[at(levelTo)] ?? 0) - (hq.curve.dance[at(levelFrom)] ?? 0),
+      management: (hq.curve.management[at(levelTo)] ?? 0) - (hq.curve.management[at(levelFrom)] ?? 0),
+    };
+  }, [hq.curve, levelFrom, levelTo]);
+
+  // Ruangan: nilai tabel = tambahan per level; 4 slot berbagi nilai yang sama.
+  const roomStats = useMemo(() => {
+    const sum = statSum(
+      hq.roomStats.filter((row) => row.tier === tier),
+      roomFrom,
+      roomTo,
+    );
+    return { sing: sum.sing * slotCount, dance: sum.dance * slotCount, management: sum.management * slotCount };
+  }, [hq.roomStats, tier, roomFrom, roomTo, slotCount]);
+
+  const statRows = (stats: { sing: number; dance: number; management: number }) =>
+    [
+      { label: C.statSing, value: stats.sing },
+      { label: C.statDance, value: stats.dance },
+      { label: C.statManage, value: stats.management },
+    ]
+      .filter((row) => row.value > 0)
+      .map((row) => ({ label: row.label, value: `+${format(row.value)}` }));
 
   return (
     <section aria-label={C.tabHq} className={panel}>
@@ -72,6 +101,7 @@ export function HqPanel({ hq, C, format }: { hq: CostBook["hq"]; C: CostDict; fo
                 empty={C.noCost}
                 format={format}
               />
+              <Stats title={C.statsTitle} rows={statRows(buildingStats)} note={C.statsNote} />
             </div>
           )}
         </>
@@ -114,6 +144,7 @@ export function HqPanel({ hq, C, format }: { hq: CostBook["hq"]; C: CostDict; fo
           {roomBad ? null : (
             <div className={result}>
               <Totals totals={roomTotals} note={C.hqRoomNote} empty={C.noCost} format={format} />
+              <Stats title={C.statsTitle} rows={statRows(roomStats)} note={C.statsNote} />
             </div>
           )}
         </>

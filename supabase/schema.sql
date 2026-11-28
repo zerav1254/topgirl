@@ -421,6 +421,17 @@ create table public.headquarters_room_costs (
   foreign key (tier, slot) references public.headquarters_rooms (tier, slot) on delete cascade
 );
 
+-- Stat per level dekorasi ruangan (CHeadquartersBeautifyEquip). Keempat slot di
+-- tier yang sama punya stat identik; nilai = tambahan per level (dijumlahkan).
+create table public.headquarters_room_levels (
+  tier smallint not null check (tier between 1 and 7),
+  level smallint not null check (level between 1 and 60),
+  sing integer not null default 0 check (sing >= 0),
+  dance integer not null default 0 check (dance >= 0),
+  management integer not null default 0 check (management >= 0),
+  primary key (tier, level)
+);
+
 -- Vila (CVillaBaseStage/CVillaBaseSuite/CVillaStaff/CVillaStaffLevel).
 -- 10 stage vila, tiap stage punya 4 suite; biaya per level staf di tabel terpisah.
 create table public.villa_stages (
@@ -555,6 +566,7 @@ alter table public.collection_zones enable row level security;
 alter table public.headquarters_levels enable row level security;
 alter table public.headquarters_rooms enable row level security;
 alter table public.headquarters_room_costs enable row level security;
+alter table public.headquarters_room_levels enable row level security;
 alter table public.villa_stages enable row level security;
 alter table public.villa_suites enable row level security;
 alter table public.villa_staff enable row level security;
@@ -579,6 +591,7 @@ create policy "read collection zones" on public.collection_zones for select to a
 create policy "read headquarters levels" on public.headquarters_levels for select to authenticated using (true);
 create policy "read headquarters rooms" on public.headquarters_rooms for select to authenticated using (true);
 create policy "read headquarters room costs" on public.headquarters_room_costs for select to authenticated using (true);
+create policy "read headquarters room levels" on public.headquarters_room_levels for select to authenticated using (true);
 create policy "read villa stages" on public.villa_stages for select to authenticated using (true);
 create policy "read villa suites" on public.villa_suites for select to authenticated using (true);
 create policy "read villa staff" on public.villa_staff for select to authenticated using (true);
@@ -644,13 +657,17 @@ select tier, item_id, min(item_name) as item_name,
   from per_level
  group by tier, item_id;
 
--- Markas: 800 level, satu baris array. amounts[level - 1] = biaya level itu.
+-- Markas: 800 level, satu baris array. amounts[level - 1] = biaya level itu,
+-- sing/dance/management[level - 1] = total stat kumulatif di level itu.
 create view public.headquarters_level_curve
 with (security_invoker = true) as
 select array_agg(amount order by level) as amounts,
        min(level) as min_level,
        max(level) as max_level,
-       min(item_name) filter (where item_name is not null) as item_name
+       min(item_name) filter (where item_name is not null) as item_name,
+       array_agg(sing order by level) as sing,
+       array_agg(dance order by level) as dance,
+       array_agg(management order by level) as management
   from public.headquarters_levels;
 
 -- Markas ruangan: 4 slot per tier berbagi biaya, jadi ringkas per tier + item.
@@ -722,6 +739,7 @@ revoke select on
   public.car_parts, public.car_part_levels, public.car_mod_classes, public.car_mod_levels,
   public.game_costs, public.museum_parts, public.museum_costs,
   public.headquarters_levels, public.headquarters_rooms, public.headquarters_room_costs,
+  public.headquarters_room_levels,
   public.villa_stages, public.villa_suites, public.villa_staff,
   public.villa_staff_levels, public.villa_staff_level_costs,
   public.ceo_appearance_stages, public.ceo_appearance_outfits, public.ceo_appearance_sports,

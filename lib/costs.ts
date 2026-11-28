@@ -59,10 +59,13 @@ export type CostBook = {
   };
   museum: TierCosts;
   hq: {
-    curve: { itemName: string; amounts: number[] };
+    // amounts[level - 1] = biaya naik ke level itu; sing/dance/management = total kumulatif level itu.
+    curve: { itemName: string; amounts: number[]; sing: number[]; dance: number[]; management: number[] };
     rooms: { tier: number; slot: number; room: string; name: string }[];
     // roomCosts[tier - 1] = biaya level; 4 slot per tier berbagi biaya.
     roomCosts: TierCosts;
+    // Stat dekorasi per tier + level; keempat slot berbagi nilai yang sama.
+    roomStats: { tier: number; level: number; sing: number; dance: number; management: number }[];
     // Rencana renovasi lantai: dibayar sekali per kelas, bukan per slot ruangan.
     planItemIds: number[];
   };
@@ -85,7 +88,7 @@ type ClassRow = { id: number; name: string; star: number };
 type CostScope = "car_part" | "car_mod" | "car_mod_class" | "collection_platform" | "collection_star";
 type CostRow = { scope: CostScope; ref_id: number; item_id: number; item_name: string; amounts: Record<string, number> };
 type TierCostRow = { tier: number; item_id: number; item_name: string; amounts: Record<string, number> };
-type HqCurveRow = { amounts: number[]; item_name: string | null };
+type HqCurveRow = { amounts: number[]; item_name: string | null; sing: number[]; dance: number[]; management: number[] };
 type HqRoomRow = { tier: number; slot: number; room: string; name: string };
 type VillaStageRow = { stage: number; name: string; item_name: string; amount: number; advance_max: number };
 // Relasi embed bisa berbentuk objek atau array tergantung tipe yang digenerate Supabase.
@@ -136,6 +139,7 @@ function localizeBook(book: CostBook, locale: Locale): CostBook {
       curve: { ...book.hq.curve, itemName: n(book.hq.curve.itemName) },
       rooms: book.hq.rooms.map((room) => ({ ...room, room: n(room.room), name: n(room.name) })),
       roomCosts: tiers(book.hq.roomCosts),
+      roomStats: book.hq.roomStats,
       planItemIds: book.hq.planItemIds,
     },
     villa: {
@@ -177,6 +181,7 @@ export async function loadCostBook(locale: Locale): Promise<CostBook> {
     museum,
     hqCurve,
     hqRooms,
+    hqRoomStats,
     hqRoomList,
     villaStages,
     villaSuites,
@@ -199,8 +204,9 @@ export async function loadCostBook(locale: Locale): Promise<CostBook> {
     supabase.from("car_mod_levels").select("part, level, class_id, sing, dance, management, fan, speed").order("part").order("level"),
     supabase.from("game_cost_items").select("scope, ref_id, item_id, item_name, amounts"),
     supabase.from("museum_cost_items").select("tier, item_id, item_name, amounts").order("tier"),
-    supabase.from("headquarters_level_curve").select("amounts, item_name").single(),
+    supabase.from("headquarters_level_curve").select("amounts, item_name, sing, dance, management").single(),
     supabase.from("headquarters_room_cost_items").select("tier, item_id, item_name, amounts").order("tier"),
+    supabase.from("headquarters_room_levels").select("tier, level, sing, dance, management").order("tier").order("level"),
     supabase.from("headquarters_rooms").select("tier, slot, room, name").order("tier").order("slot"),
     supabase.from("villa_stages").select("stage, name, item_name, amount, advance_max").order("stage"),
     supabase.from("villa_suites").select("suite, name, item_name, level_max, amount, villa_stages!inner(stage)").order("id"),
@@ -226,6 +232,7 @@ export async function loadCostBook(locale: Locale): Promise<CostBook> {
   if (museum.error) fail("biaya museum", museum.error.message);
   if (hqCurve.error) fail("kurva markas", hqCurve.error.message);
   if (hqRooms.error) fail("biaya ruangan markas", hqRooms.error.message);
+  if (hqRoomStats.error) fail("stat ruangan markas", hqRoomStats.error.message);
   if (hqRoomList.error) fail("daftar ruangan markas", hqRoomList.error.message);
   if (villaStages.error) fail("stage vila", villaStages.error.message);
   if (villaSuites.error) fail("suite vila", villaSuites.error.message);
@@ -291,9 +298,19 @@ export async function loadCostBook(locale: Locale): Promise<CostBook> {
       curve: {
         itemName: (hqCurve.data as HqCurveRow).item_name ?? "",
         amounts: (hqCurve.data as HqCurveRow).amounts.map(Number),
+        sing: (hqCurve.data as HqCurveRow).sing.map(Number),
+        dance: (hqCurve.data as HqCurveRow).dance.map(Number),
+        management: (hqCurve.data as HqCurveRow).management.map(Number),
       },
       rooms: hqRoomList.data as HqRoomRow[],
       roomCosts: byTier(hqRooms.data as TierCostRow[]),
+      roomStats: (hqRoomStats.data as { tier: number; level: number; sing: number; dance: number; management: number }[]).map((r) => ({
+        tier: r.tier,
+        level: r.level,
+        sing: r.sing,
+        dance: r.dance,
+        management: r.management,
+      })),
       planItemIds: (hqRooms.data as TierCostRow[])
         .filter((row) => Object.keys(row.amounts).length === 1 && row.amounts["1"] !== undefined)
         .map((row) => row.item_id),
@@ -390,7 +407,7 @@ export function artistCostBook(book: CostBook): CostBook {
     classByLevel: [],
     costs: { carPart: [], carMod: {}, carModClass: {} },
     museum: [],
-    hq: { curve: { itemName: "", amounts: [] }, rooms: [], roomCosts: [], planItemIds: [] },
+    hq: { curve: { itemName: "", amounts: [], sing: [], dance: [], management: [] }, rooms: [], roomCosts: [], roomStats: [], planItemIds: [] },
     villa: { stages: [], suites: [], staff: [], staffCosts: [] },
     collection: { stars: {}, items: [], zones: [] },
     ceo: { stages: [], outfits: [], sportCosts: [] },
