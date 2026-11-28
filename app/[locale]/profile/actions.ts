@@ -16,6 +16,8 @@ export type ProfileResult = { ok: boolean; error: string };
 
 type Provider = "google" | "discord";
 
+const isProvider = (provider: unknown): provider is Provider => provider === "google" || provider === "discord";
+
 // Kosong = null (hapus nilai). Bukan angka bulat positif = NaN (tolak).
 const num = (fd: FormData, key: string, max = Number.MAX_SAFE_INTEGER): number | null => {
   const raw = String(fd.get(key) ?? "").trim();
@@ -101,6 +103,12 @@ export async function uploadAvatar(locale: Locale, fd: FormData): Promise<Profil
 // Bind provider kedua ke akun yang sedang login. Butuh "manual linking" aktif di Supabase.
 export async function linkProvider(locale: Locale, provider: Provider): Promise<void> {
   const l = localeOr(locale);
+  if (!isProvider(provider)) redirect(`/${l}/profile?error=link`);
+  try {
+    await requireUser();
+  } catch {
+    redirect(`/${l}/login`);
+  }
   const supabase = await createSupabaseServer();
   const { data, error } = await supabase.auth.linkIdentity({
     provider,
@@ -113,6 +121,12 @@ export async function linkProvider(locale: Locale, provider: Provider): Promise<
 // Lepas provider; identitas terakhir tidak boleh dilepas (akun jadi tidak bisa masuk).
 export async function unlinkProvider(locale: Locale, provider: Provider): Promise<void> {
   const l = localeOr(locale);
+  if (!isProvider(provider)) redirect(`/${l}/profile?error=unlink`);
+  try {
+    await requireUser();
+  } catch {
+    redirect(`/${l}/login`);
+  }
   const supabase = await createSupabaseServer();
   const { data } = await supabase.auth.getUserIdentities();
   const identities = data?.identities ?? [];

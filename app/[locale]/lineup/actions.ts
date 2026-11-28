@@ -11,6 +11,7 @@ import { clientIp, verifyTurnstile } from "@/lib/turnstile";
 export type LineupResult = { ok: boolean; error: string; link?: string };
 
 const SLUG_RE = /^[a-z0-9-]+$/;
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 async function userId(): Promise<string | null> {
   try {
@@ -51,6 +52,7 @@ export async function remove(locale: Locale, id: string): Promise<LineupResult> 
   const C = DICT[l].lineup;
   const uid = await userId();
   if (!uid) return { ok: false, error: C.loginHint };
+  if (!UUID_RE.test(id)) return { ok: false, error: C.error };
   if (!allow(`lineup:${uid}`, 20, 60_000)) return { ok: false, error: C.error };
   if (!(await deleteLineup(uid, id))) return { ok: false, error: C.error };
   revalidatePath(`/${l}/lineups`);
@@ -62,6 +64,7 @@ export async function toggleShare(locale: Locale, id: string, share: boolean): P
   const C = DICT[l].lineup;
   const uid = await userId();
   if (!uid) return { ok: false, error: C.loginHint };
+  if (!UUID_RE.test(id) || typeof share !== "boolean") return { ok: false, error: C.error };
   if (!allow(`lineup:${uid}`, 20, 60_000)) return { ok: false, error: C.error };
   const slug = await setShare(uid, id, share);
   if (slug === null) return { ok: false, error: C.error };

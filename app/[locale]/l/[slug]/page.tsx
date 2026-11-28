@@ -12,11 +12,13 @@ import { UserAvatar } from "@/components/user-avatar";
 
 export const dynamic = "force-dynamic";
 
+const SHARE_SLUG_RE = /^[A-Za-z0-9_-]{16}$/;
+
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
   const { locale, slug } = await params;
   const l = isLocale(locale) ? locale : "id";
   const C = DICT[l];
-  const shared = await loadShared(slug);
+  const shared = SHARE_SLUG_RE.test(slug) ? await loadShared(slug) : null;
   const title = shared ? `${t(C.lineup.shareTitle, { name: shared.lineup.name })} — ${C.meta.title}` : C.lineup.notFound;
   return {
     title,
@@ -27,7 +29,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 export default async function Page({ params }: { params: Promise<{ locale: string; slug: string }> }) {
   const { locale: raw, slug } = await params;
-  if (!isLocale(raw)) notFound();
+  if (!isLocale(raw) || !SHARE_SLUG_RE.test(slug)) notFound();
   const locale: Locale = raw;
   const C = DICT[locale];
 

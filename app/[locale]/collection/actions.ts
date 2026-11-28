@@ -14,7 +14,7 @@ export async function toggleOwned(locale: Locale, slug: string, owned: boolean):
   const l = localeOr(locale);
   const C = DICT[l].collection;
   // Slug divalidasi sebelum menyentuh DB: FK sudah menjaga, tapi regex menolak input sampah lebih awal.
-  if (!SLUG_RE.test(slug)) return { ok: false, error: C.error };
+  if (!SLUG_RE.test(slug) || typeof owned !== "boolean") return { ok: false, error: C.error };
 
   let userId: string;
   try {

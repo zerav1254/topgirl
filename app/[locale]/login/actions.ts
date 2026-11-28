@@ -8,6 +8,7 @@ import { createSupabaseServer } from "@/lib/supabase/server";
 // Provider ditentukan di server, bukan dari FormData: klien tidak boleh memilih provider sembarangan.
 export async function signIn(locale: Locale, provider: "google" | "discord"): Promise<void> {
   const l = localeOr(locale);
+  if (provider !== "google" && provider !== "discord") redirect(`/${l}/login?error=auth`);
   const supabase = await createSupabaseServer();
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,
