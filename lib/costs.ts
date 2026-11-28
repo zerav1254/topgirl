@@ -558,8 +558,3 @@ export async function loadArtistCostBook(locale: Locale): Promise<ArtistCostBook
 }
 
 export const getArtistCostBook = cache(unstable_cache(loadArtistCostBook, ["artist-cost-book"], { revalidate: 3600 }));
-
-// Adapter UI sementara: hanya membentuk bagian private kosong, tanpa membaca data private.
-export function artistCostBook(book: ArtistCostBook): CostBook {
-  return { ...book, parts: [], classes: [], partStats: [], modStats: [], classByLevel: [], costs: { carPart: [], carMod: {}, carModClass: {} }, museum: [], museumStats: [], hq: { curve: { itemName: "", amounts: [], sing: [], dance: [], management: [] }, rooms: [], roomCosts: [], roomStats: [], planItemIds: [] }, villa: { stages: [], suites: [], staff: [], staffCosts: [], staffStats: [] }, collection: { stars: {}, items: [], zones: [] }, collectionStats: [], ceo: { stages: [], outfits: [], sports: [], sportCosts: [], sportStats: [] } };
-}
