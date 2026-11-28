@@ -22,5 +22,8 @@ for (const tab of ["artist", "car", "hq", "villa", "collection", "ceo"]) {
   const icon = tabIcon(tab);
   if (icon) await access(`public${icon}`);
 }
+// Tab artis memakai glyph bottom nav, bukan berkas menu.
+await access("public/assets/icons/artist.png");
+await access("public/assets/icons/artist.png");
 
 console.log("check-cost-boundary ok");
