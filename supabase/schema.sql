@@ -863,3 +863,51 @@ revoke select on
   public.headquarters_room_cost_items, public.villa_staff_cost_items,
   public.ceo_sport_cost_items
   from anon;
+
+-- Data kalkulator hanya dibaca server. Pengguna login tidak mendapat akses REST
+-- ke tabel atau view mentah; browser hanya menerima hasil agregat server action.
+drop policy if exists "read artist level costs" on public.artist_level_costs;
+drop policy if exists "read artist star costs" on public.artist_star_costs;
+drop policy if exists "read car parts" on public.car_parts;
+drop policy if exists "read car part levels" on public.car_part_levels;
+drop policy if exists "read car mod classes" on public.car_mod_classes;
+drop policy if exists "read car mod levels" on public.car_mod_levels;
+drop policy if exists "read game costs" on public.game_costs;
+drop policy if exists "read museum parts" on public.museum_parts;
+drop policy if exists "read museum costs" on public.museum_costs;
+drop policy if exists "read museum levels" on public.museum_levels;
+drop policy if exists "read collection items" on public.collection_items;
+drop policy if exists "read collection levels" on public.collection_levels;
+drop policy if exists "read collection zones" on public.collection_zones;
+drop policy if exists "read collection item levels" on public.collection_item_levels;
+drop policy if exists "read peak position boosts" on public.peak_position_boosts;
+drop policy if exists "read peak stage boosts" on public.peak_stage_boosts;
+drop policy if exists "read headquarters levels" on public.headquarters_levels;
+drop policy if exists "read headquarters rooms" on public.headquarters_rooms;
+drop policy if exists "read headquarters room costs" on public.headquarters_room_costs;
+drop policy if exists "read headquarters room levels" on public.headquarters_room_levels;
+drop policy if exists "read villa stages" on public.villa_stages;
+drop policy if exists "read villa suites" on public.villa_suites;
+drop policy if exists "read villa staff" on public.villa_staff;
+drop policy if exists "read villa staff levels" on public.villa_staff_levels;
+drop policy if exists "read villa staff level costs" on public.villa_staff_level_costs;
+drop policy if exists "read ceo appearance stages" on public.ceo_appearance_stages;
+drop policy if exists "read ceo appearance outfits" on public.ceo_appearance_outfits;
+drop policy if exists "read ceo appearance sports" on public.ceo_appearance_sports;
+drop policy if exists "read ceo appearance sport levels" on public.ceo_appearance_sport_levels;
+drop policy if exists "read ceo appearance sport level costs" on public.ceo_appearance_sport_level_costs;
+
+revoke select on
+  public.artist_level_costs, public.artist_star_costs,
+  public.car_parts, public.car_part_levels, public.car_mod_classes, public.car_mod_levels,
+  public.game_costs, public.museum_parts, public.museum_costs, public.museum_levels,
+  public.collection_items, public.collection_levels, public.collection_zones, public.collection_item_levels,
+  public.peak_position_boosts, public.peak_stage_boosts,
+  public.headquarters_levels, public.headquarters_rooms, public.headquarters_room_costs, public.headquarters_room_levels,
+  public.villa_stages, public.villa_suites, public.villa_staff, public.villa_staff_levels, public.villa_staff_level_costs,
+  public.ceo_appearance_stages, public.ceo_appearance_outfits, public.ceo_appearance_sports,
+  public.ceo_appearance_sport_levels, public.ceo_appearance_sport_level_costs,
+  public.artist_exp_curves, public.artist_star_curve, public.artist_level_stars, public.game_cost_items,
+  public.museum_cost_items, public.headquarters_level_curve, public.headquarters_room_cost_items,
+  public.villa_staff_cost_items, public.ceo_sport_cost_items
+from anon, authenticated;
