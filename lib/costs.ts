@@ -52,6 +52,8 @@ export type PeakStageBoost = { stageLevel: number; attributeType: number; allPer
 // Item koleksi ruang pamer; rarity 2/3/4 = R/SR/SSR, biaya per level pakai permata sesuai rarity.
 export type CollectionItem = { id: number; zone: number; name: string; rarity: number; cost: CostItem };
 
+export type ArtistCostBook = Pick<CostBook, "artists" | "curves" | "star" | "levelStars" | "peak">;
+
 export type CostBook = {
   artists: { id: number; name: string; curve: number; generation: number | null; position: number | null; photoItem: number | null }[];
   // steps[level - 1] = EXP untuk naik ke level tersebut. Indeks 0 (level 1) bernilai 0.
@@ -521,23 +523,43 @@ export async function loadCostBook(locale: Locale): Promise<CostBook> {
 // Data config game hampir statis; cache satu jam per locale supaya query view tidak diulang tiap request.
 export const getCostBook = cache(unstable_cache(loadCostBook, ["cost-book"], { revalidate: 3600 }));
 
-// Pengunjung tanpa login hanya boleh menerima data biaya artist + level puncak;
-// bagian lain dikosongkan supaya tidak ikut terkirim di payload server component.
-export function artistCostBook(book: CostBook): CostBook {
+export async function loadArtistCostBook(locale: Locale): Promise<ArtistCostBook> {
+  const supabase = adminClient();
+  const [curves, stars, levelStars, artists, positions, stages] = await Promise.all([
+    supabase.from("artist_exp_curves").select("artist_ids, steps"),
+    supabase.from("artist_star_curve").select("star, item_name, amount").order("star"),
+    supabase.from("artist_level_stars").select("level, star").order("level"),
+    supabase.from("artists").select("id, name, hero_generation, hero_position, photo_item").order("name"),
+    supabase.from("peak_position_boosts").select("hero_generation, position, sing, dance, management").order("hero_generation").order("position"),
+    supabase.from("peak_stage_boosts").select("stage_level, attribute_type, all_percent, style_percent").order("stage_level"),
+  ]);
+  for (const [name, result] of [["kurva EXP", curves], ["biaya star", stars], ["syarat star", levelStars], ["artis", artists], ["peak posisi", positions], ["peak stage", stages]] as const) if (result.error) fail(name, result.error.message);
+  const curveRows = (curves.data as CurveRow[]).map((row) => ({ artistIds: row.artist_ids, steps: row.steps.map(Number) }));
+  const curveOf = new Map<number, number>();
+  curveRows.forEach((row, index) => row.artistIds.forEach((id) => curveOf.set(id, index)));
+  const amounts: number[] = [];
+  const starRows = stars.data as StarRow[];
+  starRows.forEach((row) => { amounts[row.star] = Number(row.amount); });
+  const requiredStars: number[] = [];
+  for (const row of levelStars.data as LevelStarRow[]) requiredStars[row.level - 1] = row.star;
   return {
-    ...book,
-    parts: [],
-    classes: [],
-    partStats: [],
-    modStats: [],
-    classByLevel: [],
-    costs: { carPart: [], carMod: {}, carModClass: {} },
-    museum: [],
-    museumStats: [],
-    hq: { curve: { itemName: "", amounts: [], sing: [], dance: [], management: [] }, rooms: [], roomCosts: [], roomStats: [], planItemIds: [] },
-    villa: { stages: [], suites: [], staff: [], staffCosts: [], staffStats: [] },
-    collection: { stars: {}, items: [], zones: [] },
-    collectionStats: [],
-    ceo: { stages: [], outfits: [], sports: [], sportCosts: [], sportStats: [] },
+    artists: (artists.data as ArtistRow[]).flatMap((artist) => {
+      const curve = curveOf.get(artist.id);
+      return curve === undefined ? [] : [{ id: artist.id, name: artist.name, curve, generation: artist.hero_generation, position: artist.hero_position, photoItem: artist.photo_item }];
+    }),
+    curves: curveRows.map((row) => row.steps),
+    star: { itemName: localizedName(locale, starRows[0]?.item_name ?? ""), amounts },
+    levelStars: requiredStars,
+    peak: {
+      positions: (positions.data as PeakPositionRow[]).map((row) => ({ generation: row.hero_generation, position: row.position, sing: row.sing, dance: row.dance, management: row.management })),
+      stages: (stages.data as PeakStageRow[]).map((row) => ({ stageLevel: row.stage_level, attributeType: row.attribute_type, allPercent: row.all_percent, stylePercent: row.style_percent })),
+    },
   };
+}
+
+export const getArtistCostBook = cache(unstable_cache(loadArtistCostBook, ["artist-cost-book"], { revalidate: 3600 }));
+
+// Adapter UI sementara: hanya membentuk bagian private kosong, tanpa membaca data private.
+export function artistCostBook(book: ArtistCostBook): CostBook {
+  return { ...book, parts: [], classes: [], partStats: [], modStats: [], classByLevel: [], costs: { carPart: [], carMod: {}, carModClass: {} }, museum: [], museumStats: [], hq: { curve: { itemName: "", amounts: [], sing: [], dance: [], management: [] }, rooms: [], roomCosts: [], roomStats: [], planItemIds: [] }, villa: { stages: [], suites: [], staff: [], staffCosts: [], staffStats: [] }, collection: { stars: {}, items: [], zones: [] }, collectionStats: [], ceo: { stages: [], outfits: [], sports: [], sportCosts: [], sportStats: [] } };
 }

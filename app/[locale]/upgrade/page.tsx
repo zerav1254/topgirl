@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getUser } from "@/lib/auth";
-import { artistCostBook, getCostBook } from "@/lib/costs";
+import { artistCostBook, getArtistCostBook, getCostBook } from "@/lib/costs";
 import { DICT, isLocale, type Locale } from "@/lib/i18n";
 import { pageMetadata } from "@/lib/seo";
 import { ICONS, Icon } from "@/components/artist-ui";
@@ -31,7 +31,7 @@ export default async function CostPage({ params }: { params: Promise<{ locale: s
   // Tab artist (termasuk level puncak) boleh diakses publik; tab biaya lain hanya untuk user login.
   const user = await getUser();
   const C = DICT[locale].cost;
-  const book = await getCostBook(locale);
+  const book = user ? await getCostBook(locale) : artistCostBook(await getArtistCostBook(locale));
 
   return (
     <main id="main" className="mx-auto flex w-full max-w-4xl flex-col gap-4 px-4 pt-3 pb-28 sm:px-6 sm:pt-6">
@@ -52,7 +52,7 @@ export default async function CostPage({ params }: { params: Promise<{ locale: s
         <p className="max-w-2xl text-sm text-zinc-400">{C.intro}</p>
       </header>
 
-      <CostCalculator book={user ? book : artistCostBook(book)} signedIn={Boolean(user)} locale={locale} />
+      <CostCalculator book={book} signedIn={Boolean(user)} locale={locale} />
     </main>
   );
 }
