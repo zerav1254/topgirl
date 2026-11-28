@@ -74,8 +74,8 @@ export default async function Page({
         <div className="relative flex items-center gap-4">
           <UserAvatar src={profile.avatarUrl} name={name} />
           <div className="min-w-0 flex-1">
-            <p className="font-display truncate text-xl font-bold tracking-tight sm:text-2xl">{name}</p>
-            <p className="truncate text-sm text-zinc-400">{secondary || C.profile.publicHint}</p>
+            <p className="font-display break-words text-xl font-bold tracking-tight sm:text-2xl">{name}</p>
+            <p className="break-words text-sm text-zinc-400">{secondary || C.profile.publicHint}</p>
             <span
               className={`mt-2 inline-flex rounded-md border px-2 py-0.5 text-xs font-semibold ${
                 profile.role === "admin"
