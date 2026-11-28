@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { expBetween, statSum, sumLevels } from "@/lib/cost-calc";
 import type { CostBook } from "@/lib/costs";
+import { t } from "@/lib/i18n";
 import { clamp, invalid, NumberField, panel, result, Segmented, Select, Stats, Totals, type CostDict } from "./fields";
 
 type Mode = "building" | "rooms";
@@ -12,7 +13,17 @@ const LEVEL_MAX = 800;
 const ROOM_MIN = 1;
 const ROOM_MAX = 60;
 
-export function HqPanel({ hq, C, format }: { hq: CostBook["hq"]; C: CostDict; format: (value: number) => string }) {
+export function HqPanel({
+  hq,
+  C,
+  format,
+  formatPct,
+}: {
+  hq: CostBook["hq"];
+  C: CostDict;
+  format: (value: number) => string;
+  formatPct: (value: number) => string;
+}) {
   const [mode, setMode] = useState<Mode>("building");
   const [levelFrom, setLevelFrom] = useState(LEVEL_MIN);
   const [levelTo, setLevelTo] = useState(LEVEL_MAX);
@@ -49,6 +60,7 @@ export function HqPanel({ hq, C, format }: { hq: CostBook["hq"]; C: CostDict; fo
   }, [hq.curve, levelFrom, levelTo]);
 
   // Ruangan: nilai tabel = tambahan per level; 4 slot berbagi nilai yang sama.
+  // Nilai ini persen (mis. 1.500 = 15,00%), bukan flat.
   const roomStats = useMemo(() => {
     const sum = statSum(
       hq.roomStats.filter((row) => row.tier === tier),
@@ -58,6 +70,25 @@ export function HqPanel({ hq, C, format }: { hq: CostBook["hq"]; C: CostDict; fo
     return { sing: sum.sing * slotCount, dance: sum.dance * slotCount, management: sum.management * slotCount };
   }, [hq.roomStats, tier, roomFrom, roomTo, slotCount]);
 
+  // Renovasi kumulatif pada level target; dasar pengali persen dekorasi.
+  const renovationTotal = useMemo(
+    () => ({
+      sing: hq.curve.sing[levelTo - 1] ?? 0,
+      dance: hq.curve.dance[levelTo - 1] ?? 0,
+      management: hq.curve.management[levelTo - 1] ?? 0,
+    }),
+    [hq.curve, levelTo],
+  );
+  // Persen dekorasi hanya mengalikan stat renovasi markas, bukan total artis.
+  const floorContribution = useMemo(
+    () => ({
+      sing: Math.round((renovationTotal.sing * roomStats.sing) / 10000),
+      dance: Math.round((renovationTotal.dance * roomStats.dance) / 10000),
+      management: Math.round((renovationTotal.management * roomStats.management) / 10000),
+    }),
+    [renovationTotal, roomStats],
+  );
+
   const statRows = (stats: { sing: number; dance: number; management: number }) =>
     [
       { label: C.statSing, value: stats.sing },
@@ -66,6 +97,15 @@ export function HqPanel({ hq, C, format }: { hq: CostBook["hq"]; C: CostDict; fo
     ]
       .filter((row) => row.value > 0)
       .map((row) => ({ label: row.label, value: `+${format(row.value)}` }));
+
+  const pctRows = (stats: { sing: number; dance: number; management: number }) =>
+    [
+      { label: C.statSing, value: stats.sing },
+      { label: C.statDance, value: stats.dance },
+      { label: C.statManage, value: stats.management },
+    ]
+      .filter((row) => row.value > 0)
+      .map((row) => ({ label: row.label, value: `+${formatPct(row.value)}%` }));
 
   return (
     <section aria-label={C.tabHq} className={panel}>
@@ -144,7 +184,12 @@ export function HqPanel({ hq, C, format }: { hq: CostBook["hq"]; C: CostDict; fo
           {roomBad ? null : (
             <div className={result}>
               <Totals totals={roomTotals} note={C.hqRoomNote} empty={C.noCost} format={format} />
-              <Stats title={C.statsTitle} rows={statRows(roomStats)} note={C.statsNote} />
+              <Stats title={C.statsTitle} rows={pctRows(roomStats)} note={C.hqRoomStatNote} />
+              <Stats
+                title={t(C.hqFloorGain, { level: levelTo })}
+                rows={statRows(floorContribution)}
+                note={C.hqFloorGainNote}
+              />
             </div>
           )}
         </>
