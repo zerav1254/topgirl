@@ -43,19 +43,19 @@ export function PeakPanel({
   const pct = useMemo(() => peakStageBetween(peak.stages, from, to), [peak.stages, from, to]);
 
   const statRows = [
-    { label: C.statSing, value: flat.sing },
-    { label: C.statDance, value: flat.dance },
+    { label: C.statSing, stat: "sing" as const, value: flat.sing },
+    { label: C.statDance, stat: "dance" as const, value: flat.dance },
     { label: C.statManage, value: flat.management },
   ]
     .filter((row) => row.value > 0)
-    .map((row) => ({ label: row.label, value: `+${format(row.value)}` }));
+    .map((row) => ({ ...row, value: `+${format(row.value)}` }));
   const pctRows = [
-    { label: C.statSing, value: pct.sing },
-    { label: C.statDance, value: pct.dance },
+    { label: C.statSing, stat: "sing" as const, value: pct.sing },
+    { label: C.statDance, stat: "dance" as const, value: pct.dance },
     { label: C.statManage, value: pct.management },
   ]
     .filter((row) => row.value > 0)
-    .map((row) => ({ label: row.label, value: `+${formatPct(row.value)}%` }));
+    .map((row) => ({ ...row, value: `+${formatPct(row.value)}%` }));
 
   const totals = artist?.photoItem && levels > 0
     ? [{ itemId: artist.photoItem, name: `${C.peakPhoto} ${artist.name}`, amount: levels * PHOTOS_PER_LEVEL }]
