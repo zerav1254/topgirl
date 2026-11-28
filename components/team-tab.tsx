@@ -221,10 +221,8 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
               <dt className="text-zinc-400">{C.team.stats}</dt>
               <dd className="mt-1 flex flex-col gap-1.5">
                 <div className="flex items-baseline justify-between gap-2">
-                  <span className="min-w-0 truncate text-zinc-400">{C.team.fanCap}</span>
-                  <span className="tabular shrink-0 whitespace-nowrap font-semibold text-zinc-200">
-                    {formatStat(summary.fans.total, locale)}
-                  </span>
+                  <span className="min-w-0 text-zinc-400">{C.team.fanCap}</span>
+                  <span className="tabular text-right font-semibold text-zinc-200">{formatStat(summary.fans.total, locale)}</span>
                 </div>
                 {summary.stats.length === 0 && summary.fans.total === 0 && (
                   <span className="text-zinc-400">{C.team.noStats}</span>
@@ -233,8 +231,8 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
                   const boosted = (effect === "skill_dmg" || effect === "basic_atk") && summary.playerDmg > 0;
                   return (
                     <div key={effect} className="flex items-baseline justify-between gap-2">
-                      <span className="min-w-0 truncate text-zinc-400">{EFFECT_LABEL[effect][locale]}</span>
-                      <span className="tabular shrink-0 whitespace-nowrap font-semibold text-zinc-200">
+                      <span className="min-w-0 text-zinc-400">{EFFECT_LABEL[effect][locale]}</span>
+                      <span className="tabular text-right font-semibold text-zinc-200">
                         {formatStat(value, locale)}
                         {isPercent(effect) && "%"}
                         {boosted && (
