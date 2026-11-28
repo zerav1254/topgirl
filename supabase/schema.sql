@@ -410,6 +410,26 @@ create table public.collection_item_levels (
   primary key (item_id, level)
 );
 
+-- Peak level (CPeakLevelPositionBoost): stat flat per peak level.
+-- Posisi 1 center (rata), 2 singer (sing+), 3 dancer (dance+).
+create table public.peak_position_boosts (
+  hero_generation smallint not null,
+  position smallint not null check (position between 1 and 3),
+  sing integer not null default 0 check (sing >= 0),
+  dance integer not null default 0 check (dance >= 0),
+  management integer not null default 0 check (management >= 0),
+  primary key (hero_generation, position)
+);
+
+-- Persen global per ambang peak level (CPeakLevelStageBoost); nilai mentah /10000.
+-- attribute_type: 1 Menyanyi, 2 Menari, 3 Kelola, 4 tanpa stat.
+create table public.peak_stage_boosts (
+  stage_level smallint primary key check (stage_level > 0),
+  attribute_type smallint not null check (attribute_type between 1 and 4),
+  all_percent integer not null default 0 check (all_percent >= 0),
+  style_percent integer not null default 0 check (style_percent >= 0)
+);
+
 -- Renovasi markas (CHeadquartersBeautifyLevel): 800 level, biaya Kaca,
 -- menambah stat semua artis. level 1 gratis.
 create table public.headquarters_levels (
@@ -588,6 +608,8 @@ alter table public.collection_items enable row level security;
 alter table public.collection_levels enable row level security;
 alter table public.collection_zones enable row level security;
 alter table public.collection_item_levels enable row level security;
+alter table public.peak_position_boosts enable row level security;
+alter table public.peak_stage_boosts enable row level security;
 alter table public.headquarters_levels enable row level security;
 alter table public.headquarters_rooms enable row level security;
 alter table public.headquarters_room_costs enable row level security;
@@ -615,6 +637,8 @@ create policy "read collection items" on public.collection_items for select to a
 create policy "read collection levels" on public.collection_levels for select to authenticated using (true);
 create policy "read collection zones" on public.collection_zones for select to authenticated using (true);
 create policy "read collection item levels" on public.collection_item_levels for select to authenticated using (true);
+create policy "read peak position boosts" on public.peak_position_boosts for select to authenticated using (true);
+create policy "read peak stage boosts" on public.peak_stage_boosts for select to authenticated using (true);
 create policy "read headquarters levels" on public.headquarters_levels for select to authenticated using (true);
 create policy "read headquarters rooms" on public.headquarters_rooms for select to authenticated using (true);
 create policy "read headquarters room costs" on public.headquarters_room_costs for select to authenticated using (true);
@@ -767,6 +791,7 @@ revoke select on
   public.game_costs, public.museum_parts, public.museum_costs, public.museum_levels,
   public.collection_items, public.collection_levels, public.collection_zones,
   public.collection_item_levels,
+  public.peak_position_boosts, public.peak_stage_boosts,
   public.headquarters_levels, public.headquarters_rooms, public.headquarters_room_costs,
   public.headquarters_room_levels,
   public.villa_stages, public.villa_suites, public.villa_staff,
