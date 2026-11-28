@@ -26,7 +26,7 @@ export async function createLineup(locale: Locale, fd: FormData): Promise<Lineup
   const C = DICT[l].lineup;
   const uid = await userId();
   if (!uid) return { ok: false, error: C.loginHint };
-  if (!allow(`lineup:${uid}`, 20, 60_000)) return { ok: false, error: C.error };
+  if (!(await allow(`lineup:${uid}`, 20, 60_000))) return { ok: false, error: C.error };
   if (!(await verifyTurnstile(fd.get("cf-turnstile-response"), "lineup-create", await clientIp()))) {
     return { ok: false, error: C.error };
   }
@@ -53,7 +53,7 @@ export async function remove(locale: Locale, id: string): Promise<LineupResult> 
   const uid = await userId();
   if (!uid) return { ok: false, error: C.loginHint };
   if (!UUID_RE.test(id)) return { ok: false, error: C.error };
-  if (!allow(`lineup:${uid}`, 20, 60_000)) return { ok: false, error: C.error };
+  if (!(await allow(`lineup:${uid}`, 20, 60_000))) return { ok: false, error: C.error };
   if (!(await deleteLineup(uid, id))) return { ok: false, error: C.error };
   revalidatePath(`/${l}/lineups`);
   return { ok: true, error: "" };
@@ -65,7 +65,7 @@ export async function toggleShare(locale: Locale, id: string, share: boolean): P
   const uid = await userId();
   if (!uid) return { ok: false, error: C.loginHint };
   if (!UUID_RE.test(id) || typeof share !== "boolean") return { ok: false, error: C.error };
-  if (!allow(`lineup:${uid}`, 20, 60_000)) return { ok: false, error: C.error };
+  if (!(await allow(`lineup:${uid}`, 20, 60_000))) return { ok: false, error: C.error };
   const slug = await setShare(uid, id, share);
   if (slug === null) return { ok: false, error: C.error };
   revalidatePath(`/${l}/lineups`);

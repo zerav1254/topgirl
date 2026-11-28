@@ -35,7 +35,7 @@ export async function saveProfile(locale: Locale, fd: FormData): Promise<Profile
     return { ok: false, error: C.error };
   }
 
-  if (!allow(`profile:${userId}`, 20, 60_000)) return { ok: false, error: C.error };
+  if (!(await allow(`profile:${userId}`, 20, 60_000))) return { ok: false, error: C.error };
 
   const ingameId = num(fd, "ingameId");
   const ingameServer = num(fd, "ingameServer", 32767);
@@ -70,7 +70,7 @@ export async function uploadAvatar(locale: Locale, fd: FormData): Promise<Profil
 
   const file = fd.get("avatar");
   if (!(file instanceof File) || file.size === 0 || file.size > 10 * 1024 * 1024) return { ok: false, error: C.avatarError };
-  if (!allow(`avatar:${userId}`, 5, 10 * 60_000)) return { ok: false, error: C.avatarError };
+  if (!(await allow(`avatar:${userId}`, 5, 10 * 60_000))) return { ok: false, error: C.avatarError };
   if (!(await verifyTurnstile(fd.get("cf-turnstile-response"), "avatar-upload", await clientIp()))) {
     return { ok: false, error: C.avatarError };
   }

@@ -23,7 +23,7 @@ export async function toggleOwned(locale: Locale, slug: string, owned: boolean):
     return { ok: false, error: C.loginHint };
   }
 
-  if (!allow(`owned:${userId}`, 120, 60_000)) return { ok: false, error: C.error };
+  if (!(await allow(`owned:${userId}`, 120, 60_000))) return { ok: false, error: C.error };
 
   if (!(await setOwned(userId, slug, owned))) return { ok: false, error: C.error };
 
