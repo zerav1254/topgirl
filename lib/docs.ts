@@ -76,6 +76,10 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
           body: "Ikon genre, logo, potret artist, dan aset visual lain dari game TopGirl (Apex Girl) adalah milik A3Games serta pemegang haknya. Aset ditampilkan terbatas untuk mengenali artist serta memberi informasi kepada pemain; situs ini tidak mengklaim kepemilikan atas aset tersebut dan tidak disponsori atau diendorse oleh pemegang hak. Pemegang hak yang keberatan atas penggunaan aset tertentu dapat menghubungi kami lewat email support@zerav.web.id atau kanal Discord/GitHub repositori, dan aset akan kami tinjau atau hapus.",
         },
         {
+          title: "Sumber data",
+          body: "Stat, skill, biaya, dan aset visual diambil dari berkas game TopGirl (A3Games). Tidak ada data di situs ini yang bersumber dari pihak ketiga.",
+        },
+        {
           title: "Akurasi data",
           body: "Stat dan season dikumpulkan manual dan bisa berbeda dengan versi game terbaru. Gunakan sebagai perkiraan, bukan patokan resmi.",
         },
@@ -158,6 +162,10 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
         {
           title: "Assets and copyright",
           body: "Genre icons, the logo, artist portraits, and other visual assets from the game TopGirl (Apex Girl) belong to A3Games and its rights holders. They are shown only to identify artists and inform players; this site claims no ownership over them and is not sponsored or endorsed by the rights holders. Rights holders who object to the use of a specific asset can contact us by email at support@zerav.web.id or through the repository's Discord/GitHub channel and we will review or remove it.",
+        },
+        {
+          title: "Data sources",
+          body: "Stats, skills, costs, and visual assets are taken from the TopGirl game files (A3Games). No data on this site comes from third parties.",
         },
         {
           title: "Data accuracy",
@@ -244,6 +252,10 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
           body: "Les icônes de genre, le logo, les portraits d'artistes et les autres ressources visuelles du jeu TopGirl (Apex Girl) appartiennent à A3Games et aux détenteurs des droits. Elles sont affichées uniquement pour identifier les artistes et informer les joueurs ; ce site ne revendique aucune propriété sur ces ressources et n'est ni sponsorisé ni approuvé par les détenteurs des droits. Les détenteurs de droits qui s'opposent à l'utilisation d'une ressource précise peuvent nous contacter par e-mail à support@zerav.web.id ou via le canal Discord/GitHub du dépôt ; nous examinerons ou retirerons la ressource.",
         },
         {
+          title: "Sources des données",
+          body: "Les stats, compétences, coûts et ressources visuelles proviennent des fichiers du jeu TopGirl (A3Games). Aucune donnée de ce site ne provient de tiers.",
+        },
+        {
           title: "Exactitude des données",
           body: "Les stats et saisons sont collectées manuellement et peuvent différer de la dernière version du jeu. À utiliser comme estimation, pas comme référence officielle.",
         },
@@ -326,6 +338,10 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
         {
           title: "에셋 및 저작권",
           body: "장르 아이콘, 로고, 아티스트 초상, 기타 시각 에셋은 게임 TopGirl(Apex Girl)의 A3Games 및 권리자에게 있습니다. 이 에셋은 아티스트를 식별하고 플레이어에게 정보를 제공하기 위한 목적으로만 표시되며, 본 사이트는 이에 대한 소유권을 주장하지 않고 권리자의 후원이나 승인을 받지 않았습니다. 특정 에셋의 사용에 이의가 있는 권리자는 이메일 support@zerav.web.id 또는 저장소의 Discord/GitHub 채널로 연락해 주시면 검토 후 삭제하겠습니다.",
+        },
+        {
+          title: "데이터 출처",
+          body: "스탯, 스킬, 비용, 시각 에셋은 게임 TopGirl(Apex Girl)의 파일에서 가져왔습니다. 본 사이트의 데이터 중 제3자에게서 온 것은 없습니다.",
         },
         {
           title: "데이터 정확성",
@@ -412,6 +428,10 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
           body: "类型图标、标志、艺人肖像及其他视觉素材来自游戏 TopGirl（Apex Girl），归 A3Games 及其权利人所有。这些素材仅用于识别艺人并向玩家提供信息，本站不主张对其拥有所有权，也未获得权利人的赞助或认可。如权利人反对使用特定素材，可通过电子邮件 support@zerav.web.id 或仓库的 Discord/GitHub 渠道联系我们，我们会审核并删除。",
         },
         {
+          title: "数据来源",
+          body: "属性、技能、费用和视觉素材均取自游戏 TopGirl（Apex Girl）的文件。本站数据没有任何一项来自第三方。",
+        },
+        {
           title: "数据准确性",
           body: "属性和赛季为手动收集，可能与最新游戏版本不同。请作为参考而非官方依据。",
         },
@@ -496,6 +516,10 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
           body: "ジャンルのアイコン、ロゴ、アーティストの肖像、その他のビジュアル素材は、ゲーム「TopGirl（Apex Girl）」の A3Games および各権利者に帰属します。これらはアーティストの識別とプレイヤーへの情報提供のみを目的として表示しており、本サイトはその所有権を主張せず、権利者によるスポンサーや承認も受けていません。特定の素材の使用に異議がある権利者の方は、メール（support@zerav.web.id）またはリポジトリの Discord/GitHub チャンネルからご連絡ください。確認のうえ削除します。",
         },
         {
+          title: "データの出典",
+          body: "ステータス、スキル、コスト、ビジュアル素材はゲーム「TopGirl（Apex Girl）」のファイルから取得しています。本サイトのデータに第三者由来のものはありません。",
+        },
+        {
           title: "データの正確性",
           body: "ステータスとシーズンは手作業で収集しており、最新のゲームバージョンと異なる場合があります。公式な基準ではなく目安としてご利用ください。",
         },
@@ -578,6 +602,10 @@ export const DOCS: Record<Locale, Record<DocKey, Doc>> = {
         {
           title: "Assets und Urheberrecht",
           body: "Genre-Symbole, das Logo, Artist-Porträts und andere visuelle Assets aus dem Spiel TopGirl (Apex Girl) gehören A3Games sowie den jeweiligen Rechteinhabern. Sie werden nur zur Identifikation der Artists und zur Information der Spieler angezeigt; diese Seite erhebt keinen Anspruch auf deren Eigentum und wird von den Rechteinhabern weder gesponsert noch unterstützt. Rechteinhaber, die der Verwendung eines bestimmten Assets widersprechen, können uns per E-Mail an support@zerav.web.id oder über den Discord/GitHub-Kanal des Repositories kontaktieren; wir prüfen und entfernen es.",
+        },
+        {
+          title: "Datenquellen",
+          body: "Werte, Skills, Kosten und visuelle Assets stammen aus den Spieldateien von TopGirl (Apex Girl). Keine Daten auf dieser Seite stammen von Dritten.",
         },
         {
           title: "Genauigkeit der Daten",

@@ -39,6 +39,7 @@ Callback OAuth: `https://<ref>.supabase.co/auth/v1/callback`.
 `supabase/schema.sql` — tabel `artists`, `artist_skills`, `artist_seasons` (season artis aboard, read-only), tabel opsi `genres` (termasuk `image` ikon)/`origins`/`effects`, bucket `artist-thumb` dan `avatar`, RLS select-only untuk anon. Ditambah `profiles`, `user_artists`, `lineups` dengan RLS aktif **tanpa policy** (akses hanya lewat server action `service_role`). Perubahan skema lewat migration di Supabase, lalu file ini diperbarui di commit yang sama.
 
 `data/artists.csv` = bahan seed, bukan sumber runtime. Foto runtime hanya dari bucket `artist-thumb`.
+Asal data & aset: `SUMBER.md`.
 
 ## Deploy
 
