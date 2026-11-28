@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { statDelta, sumLevels } from "@/lib/cost-calc";
 import type { CostBook } from "@/lib/costs";
 import { t } from "@/lib/i18n";
-import { clamp, heading, invalid, NumberField, panel, result, Segmented, Stats, Totals, type CostDict } from "./fields";
+import { clamp, heading, invalid, NumberField, panel, result, Stats, Totals, type CostDict } from "./fields";
 import { MuseumPanel } from "./museum";
 
 const ITEM_MIN = 1;
@@ -18,8 +18,6 @@ const RARITY_STYLE = {
   4: "border-gold/50 text-gold",
 } as const;
 
-// ponytail: mode bintang disembunyikan (belum jelas di game). Data
-// collection.stars tetap ada di CostBook; tambah mode lagi kalau fitur rilis.
 export function CollectionPanel({
   collection,
   collectionStats,
@@ -37,26 +35,10 @@ export function CollectionPanel({
   format: (value: number) => string;
   formatPct: (value: number) => string;
 }) {
-  const [mode, setMode] = useState<"room" | "museum">("room");
-
   return (
     <section aria-label={C.tabCollection} className="flex flex-col gap-4">
-      <Segmented
-        text={C.tabCollection}
-        value={mode}
-        onChange={setMode}
-        options={[
-          { id: "room", label: C.item },
-          { id: "museum", label: C.tabMuseum },
-        ]}
-      />
-      {/* Kedua cabang tetap ter-mount supaya input tidak hilang saat ganti mode. */}
-      <div hidden={mode !== "room"}>
-        <CollectionRoom collection={collection} collectionStats={collectionStats} C={C} format={format} />
-      </div>
-      <div hidden={mode !== "museum"}>
-        <MuseumPanel tiers={museum} stats={museumStats} C={C} format={format} formatPct={formatPct} />
-      </div>
+      <CollectionRoom collection={collection} collectionStats={collectionStats} C={C} format={format} />
+      <MuseumPanel tiers={museum} stats={museumStats} C={C} format={format} formatPct={formatPct} />
     </section>
   );
 }
