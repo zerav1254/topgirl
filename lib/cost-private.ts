@@ -1,6 +1,6 @@
 import "server-only";
 
-import { statDelta, statSum, sumLevels, type CostTotal, type StatValues } from "./cost-calc.ts";
+import type { CostTotal, StatValues } from "./cost-calc.ts";
 import { getCostBook } from "./costs.ts";
 import type { Locale } from "./i18n.ts";
 
