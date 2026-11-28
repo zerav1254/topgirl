@@ -27,7 +27,7 @@ export function VillaPanel({
   const [stageTo, setStageTo] = useState(villa.stages.at(-1)?.stage ?? 0);
   const [suiteId, setSuiteId] = useState(1);
   const [suiteFrom, setSuiteFrom] = useState(0);
-  const [suiteTo, setSuiteTo] = useState(5);
+  const [suiteTo, setSuiteTo] = useState(10);
   const [staffTier, setStaffTier] = useState(villa.staff[0]?.tier ?? 1);
   // 0 = semua tipe staf di tier ini.
   const [staffSlot, setStaffSlot] = useState(0);
@@ -50,7 +50,10 @@ export function VillaPanel({
   const selectedSuiteId = suiteId === 0 || targetSuites.some((item) => item.suite === suiteId) ? suiteId : 0;
   const suite = (selectedSuiteId === 0 ? targetSuites[0] : targetSuites.find((item) => item.suite === selectedSuiteId)) ?? targetSuites[0];
   const suiteCount = selectedSuiteId === 0 ? Math.max(targetSuites.length, 1) : 1;
-  const suiteMax = suite?.levelMax ?? 0;
+  // LevelMax = level per peningkatan; AdvanceMax = berapa kali peningkatan harus
+  // diulang sebelum naik stage. Total level suite = LevelMax × AdvanceMax.
+  const advanceOf = (stage: number) => Math.max(villa.stages.find((item) => item.stage === stage)?.advanceMax ?? 1, 1);
+  const suiteMax = (suite?.levelMax ?? 0) * advanceOf(stageTo);
   const suiteLevelBad = hasSuites && (suiteTo <= suiteFrom || suiteTo > suiteMax);
   // Biaya suite konstan per level (ClassUpgradeCost), jadi amount x jumlah level x jumlah suite.
   const suiteAmount = suiteLevelBad || !suite ? 0 : suite.amount * (suiteTo - suiteFrom) * suiteCount;
@@ -60,12 +63,25 @@ export function VillaPanel({
     suiteAmount > 0 && suiteItem ? { name: suiteItem, amount: suiteAmount } : null,
   ].filter((item): item is Total => item !== null);
 
-  // Stage: stat statis per stage yang dilewati. Suite: stat statis per level.
-  const stageStats = statSum(
-    villa.stages.map((item) => ({ level: item.stage, sing: item.sing, dance: item.dance, management: item.management })),
-    stageFrom,
-    stageTo,
-  );
+  // Stat vila menumpuk per bintang (peningkatan): tiap bintang memberi stat
+  // stage + 4 suite sampai LevelMax. AdvanceMax = jumlah bintang sebelum naik
+  // stage, jadi stat stage sebelumnya dikali AdvanceMax.
+  const stackStats = villa.stages
+    .filter((item) => item.stage >= stageFrom && item.stage < stageTo)
+    .reduce(
+      (sum, item) => {
+        const advance = Math.max(item.advanceMax, 1);
+        const suites = villa.suites.filter((row) => row.stage === item.stage && row.levelMax > 0);
+        const perStar = (key: "sing" | "dance" | "management") =>
+          suites.reduce((acc, row) => acc + row[key] * row.levelMax, 0);
+        return {
+          sing: sum.sing + advance * (item.sing + perStar("sing")),
+          dance: sum.dance + advance * (item.dance + perStar("dance")),
+          management: sum.management + advance * (item.management + perStar("management")),
+        };
+      },
+      { sing: 0, dance: 0, management: 0 },
+    );
   const suiteLevels = Math.max(suiteTo - suiteFrom, 0);
   const pickedSuites = selectedSuiteId === 0 ? targetSuites : suite ? [suite] : [];
   const suiteStats = pickedSuites.reduce(
@@ -76,10 +92,17 @@ export function VillaPanel({
     }),
     { sing: 0, dance: 0, management: 0 },
   );
+  // Bintang stage terpilih baru selesai kalau 4 suite dituntaskan sampai LevelMax.
+  const levelMax = suite?.levelMax ?? 0;
+  const stars =
+    hasSuites && selectedSuiteId === 0 && suiteFrom === 0 && levelMax > 0
+      ? Math.min(Math.floor(suiteTo / levelMax), advanceOf(stageTo))
+      : 0;
+  const targetStage = villa.stages.find((item) => item.stage === stageTo);
   const suiteTotal = {
-    sing: stageStats.sing + suiteStats.sing,
-    dance: stageStats.dance + suiteStats.dance,
-    management: stageStats.management + suiteStats.management,
+    sing: stackStats.sing + suiteStats.sing + (targetStage?.sing ?? 0) * stars,
+    dance: stackStats.dance + suiteStats.dance + (targetStage?.dance ?? 0) * stars,
+    management: stackStats.management + suiteStats.management + (targetStage?.management ?? 0) * stars,
   };
 
   const statRows = (stats: { sing: number; dance: number; management: number }) =>
@@ -121,6 +144,13 @@ export function VillaPanel({
     staffFrom,
     staffTo,
   );
+  // Persen staf (mis. 6.020 = 60,2%) mengalikan stat vila dari pilihan
+  // Stage/Suite; game menampilkan hasil flat-nya (dibulatkan ke bawah).
+  const staffFlat = {
+    sing: Math.floor((suiteTotal.sing * staffStats.sing) / 10000),
+    dance: Math.floor((suiteTotal.dance * staffStats.dance) / 10000),
+    management: Math.floor((suiteTotal.management * staffStats.management) / 10000),
+  };
 
   return (
     <section aria-label={C.tabVilla} className={panel}>
@@ -152,10 +182,14 @@ export function VillaPanel({
               value={stageTo}
               onChange={(value) => {
                 setStageTo(value);
-                const max = villa.suites.find((item) => item.stage === value && item.levelMax > 0)?.levelMax ?? 0;
-                const from = Math.min(suiteFrom, Math.max(max - 1, 0));
-                setSuiteFrom(from);
-                setSuiteTo(max > 0 && suiteTo <= from ? max : Math.min(suiteTo, max));
+                const target = villa.suites.find((item) => item.stage === value && item.levelMax > 0);
+                const advance = Math.max(villa.stages.find((item) => item.stage === value)?.advanceMax ?? 1, 1);
+                // Default tampil sampai total level (LevelMax × peningkatan) stage terpilih.
+                const max = target ? target.levelMax * advance : 0;
+                if (max > 0) {
+                  setSuiteFrom(0);
+                  setSuiteTo(max);
+                }
               }}
             >
               {villa.stages.map((item) => (
@@ -245,6 +279,7 @@ export function VillaPanel({
             <div className={result}>
               <Totals totals={staffTotals} note={C.villaStaffNote} empty={C.noCost} format={format} />
               <Stats title={C.statsTitle} rows={pctRows(staffStats)} note={C.villaStaffStatNote} />
+              <Stats title={C.villaStaffGain} rows={statRows(staffFlat)} note={C.villaStaffGainNote} />
             </div>
           )}
         </>

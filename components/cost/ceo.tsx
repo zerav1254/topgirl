@@ -48,7 +48,10 @@ export function CeoPanel({
   const selectedOutfitId = outfitId === 0 || targetOutfits.some((item) => item.outfit === outfitId) ? outfitId : 0;
   const outfit = (selectedOutfitId === 0 ? targetOutfits[0] : targetOutfits.find((item) => item.outfit === selectedOutfitId)) ?? targetOutfits[0];
   const outfitCount = selectedOutfitId === 0 ? Math.max(targetOutfits.length, 1) : 1;
-  const outfitMax = outfit?.levelMax ?? 0;
+  // LevelMax = level per peningkatan; AdvanceMax = berapa kali peningkatan
+  // diulang sebelum naik stage. Total level outfit = LevelMax × AdvanceMax.
+  const advanceOf = (stage: number) => Math.max(ceo.stages.find((item) => item.stage === stage)?.advanceMax ?? 1, 1);
+  const outfitMax = (outfit?.levelMax ?? 0) * advanceOf(stageTo);
   const outfitBad = hasOutfits && (outfitTo <= outfitFrom || outfitTo > outfitMax);
   // Biaya aksesori konstan per level (ClassUpgradeCost), jadi amount x jumlah level x jumlah outfit.
   const outfitAmount = outfitBad || !outfit ? 0 : outfit.amount * (outfitTo - outfitFrom) * outfitCount;
@@ -58,12 +61,24 @@ export function CeoPanel({
     outfitAmount > 0 && outfitItem ? { name: outfitItem, amount: outfitAmount } : null,
   ].filter((item): item is Total => item !== null);
 
-  // Stage: stat statis per stage. Aksesori: stat statis per level.
-  const stageStats = statSum(
-    ceo.stages.map((item) => ({ level: item.stage, sing: item.sing, dance: item.dance, management: item.management })),
-    stageFrom,
-    stageTo,
-  );
+  // Stat CEO menumpuk per bintang (peningkatan): tiap bintang memberi stat
+  // stage + 4 outfit sampai LevelMax, diulang AdvanceMax kali.
+  const stackStats = ceo.stages
+    .filter((item) => item.stage >= stageFrom && item.stage < stageTo)
+    .reduce(
+      (sum, item) => {
+        const advance = Math.max(item.advanceMax, 1);
+        const outfits = ceo.outfits.filter((row) => row.stage === item.stage && row.levelMax > 0);
+        const perStar = (key: "sing" | "dance" | "management") =>
+          outfits.reduce((acc, row) => acc + row[key] * row.levelMax, 0);
+        return {
+          sing: sum.sing + advance * (item.sing + perStar("sing")),
+          dance: sum.dance + advance * (item.dance + perStar("dance")),
+          management: sum.management + advance * (item.management + perStar("management")),
+        };
+      },
+      { sing: 0, dance: 0, management: 0 },
+    );
   const outfitLevels = Math.max(outfitTo - outfitFrom, 0);
   const pickedOutfits = selectedOutfitId === 0 ? targetOutfits : outfit ? [outfit] : [];
   const outfitStats = pickedOutfits.reduce(
@@ -74,10 +89,17 @@ export function CeoPanel({
     }),
     { sing: 0, dance: 0, management: 0 },
   );
+  // Bintang stage terpilih baru selesai kalau 4 outfit dituntaskan sampai LevelMax.
+  const outfitLevelMax = outfit?.levelMax ?? 0;
+  const stars =
+    hasOutfits && selectedOutfitId === 0 && outfitFrom === 0 && outfitLevelMax > 0
+      ? Math.min(Math.floor(outfitTo / outfitLevelMax), advanceOf(stageTo))
+      : 0;
+  const targetStage = ceo.stages.find((item) => item.stage === stageTo);
   const appearanceTotal = {
-    sing: stageStats.sing + outfitStats.sing,
-    dance: stageStats.dance + outfitStats.dance,
-    management: stageStats.management + outfitStats.management,
+    sing: stackStats.sing + outfitStats.sing + (targetStage?.sing ?? 0) * stars,
+    dance: stackStats.dance + outfitStats.dance + (targetStage?.dance ?? 0) * stars,
+    management: stackStats.management + outfitStats.management + (targetStage?.management ?? 0) * stars,
   };
 
   const statRows = (stats: { sing: number; dance: number; management: number }) =>
@@ -99,10 +121,18 @@ export function CeoPanel({
       .filter((row) => row.value > 0)
       .map((row) => ({ label: row.label, value: `+${formatPct(row.value)}%` }));
 
-  const sportTotals = useMemo(
-    () => sumLevels(ceo.sportCosts[tier - 1] ?? [], sportFrom, sportTo),
-    [ceo.sportCosts, tier, sportFrom, sportTo],
-  );
+  // Tiga jenis olahraga per tier berbagi tabel biaya; stat digabung per jenis,
+  // jadi biaya level & rekrut dihitung per jenis.
+  const tierSports = ceo.sports.filter((item) => item.tier === tier);
+  const sportCount = Math.max(tierSports.length, 1);
+  const recruit = tierSports[0];
+  const sportTotals: Total[] = [
+    ...(recruit && recruit.amount > 0 && recruit.itemName ? [{ name: recruit.itemName, amount: recruit.amount * sportCount }] : []),
+    ...sumLevels(ceo.sportCosts[tier - 1] ?? [], sportFrom, sportTo).map((item) => ({
+      ...item,
+      amount: item.amount * sportCount,
+    })),
+  ];
 
   // Jenis olahraga dalam satu tier berbagi biaya; tiap jenis menambah satu stat.
   const sportStats = statSum(
@@ -110,6 +140,13 @@ export function CeoPanel({
     sportFrom,
     sportTo,
   );
+  // Persen olahraga mengalikan stat outfit CEO (pilihan Stage/Outfit); game
+  // menampilkan hasil flat-nya (dibulatkan ke bawah).
+  const sportFlat = {
+    sing: Math.floor((appearanceTotal.sing * sportStats.sing) / 10000),
+    dance: Math.floor((appearanceTotal.dance * sportStats.dance) / 10000),
+    management: Math.floor((appearanceTotal.management * sportStats.management) / 10000),
+  };
 
   return (
     <section aria-label={C.tabCeo} className={panel}>
@@ -141,10 +178,14 @@ export function CeoPanel({
               value={stageTo}
               onChange={(value) => {
                 setStageTo(value);
-                const max = ceo.outfits.find((item) => item.stage === value && item.levelMax > 0)?.levelMax ?? 0;
-                const from = Math.min(outfitFrom, Math.max(max - 1, 0));
-                setOutfitFrom(from);
-                setOutfitTo(max > 0 && outfitTo <= from ? max : Math.min(outfitTo, max));
+                const target = ceo.outfits.find((item) => item.stage === value && item.levelMax > 0);
+                const advance = Math.max(ceo.stages.find((item) => item.stage === value)?.advanceMax ?? 1, 1);
+                // Default tampil sampai total level (LevelMax × peningkatan) stage terpilih.
+                const max = target ? target.levelMax * advance : 0;
+                if (max > 0) {
+                  setOutfitFrom(0);
+                  setOutfitTo(max);
+                }
               }}
             >
               {ceo.stages.map((item) => (
@@ -211,6 +252,7 @@ export function CeoPanel({
             <div className={result}>
               <Totals totals={sportTotals} note={C.ceoSportNote} empty={C.noCost} format={format} />
               <Stats title={C.statsTitle} rows={pctRows(sportStats)} note={C.ceoSportStatNote} />
+              <Stats title={C.ceoSportGain} rows={statRows(sportFlat)} note={C.ceoSportGainNote} />
             </div>
           )}
         </>
