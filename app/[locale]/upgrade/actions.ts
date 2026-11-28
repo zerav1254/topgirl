@@ -86,7 +86,9 @@ export async function calculateHqCost(input: HqCostInput): Promise<PrivateCostRe
 }
 
 function stageResult(stages: { stage: number; amount: number; advanceMax: number; itemName: string; sing: number; dance: number; management: number }[], children: { stage: number; id: number; levelMax: number; amount: number; itemName: string; sing: number; dance: number; management: number }[], input: StageInput): PrivateCostResult {
-  if (!integer(input.stageFrom, 0, stages.length) || !integer(input.stageTo, 1, stages.length) || input.stageTo <= input.stageFrom) throw new Error("invalid_request");
+  const validFrom = input.stageFrom === 0 || stages.some((item) => item.stage === input.stageFrom);
+  const validTo = stages.some((item) => item.stage === input.stageTo);
+  if (!validFrom || !validTo || input.stageTo <= input.stageFrom) throw new Error("invalid_request");
   const target = children.filter((item) => item.stage === input.stageTo && item.levelMax > 0);
   const picked = input.itemId === 0 ? target : target.filter((item) => item.id === input.itemId);
   const advance = Math.max(stages.find((item) => item.stage === input.stageTo)?.advanceMax ?? 1, 1);
