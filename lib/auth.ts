@@ -1,6 +1,7 @@
 import { cache } from "react";
 import type { User } from "@supabase/supabase-js";
 import { adminClient } from "./supabase-admin.ts";
+import { avatarUrl } from "./avatar.ts";
 import { createSupabaseServer } from "./supabase/server.ts";
 
 export type Role = "admin" | "user";
@@ -22,6 +23,7 @@ type Row = {
   email: string | null;
   name: string | null;
   avatar_url: string | null;
+  avatar_path: string | null;
   avatar_frame: string | null;
   ingame_id: number | null;
   ingame_server: number | null;
@@ -29,13 +31,13 @@ type Row = {
   role: Role;
 };
 
-const COLUMNS = "user_id,email,name,avatar_url,avatar_frame,ingame_id,ingame_server,ingame_nickname,role";
+const COLUMNS = "user_id,email,name,avatar_url,avatar_path,avatar_frame,ingame_id,ingame_server,ingame_nickname,role";
 
-const toProfile = (r: Row): Profile => ({
+const toProfile = async (r: Row): Promise<Profile> => ({
   userId: r.user_id,
   email: r.email,
   name: r.name,
-  avatarUrl: r.avatar_url,
+  avatarUrl: await avatarUrl(r.avatar_path, r.avatar_url),
   avatarFrame: r.avatar_frame,
   ingameId: r.ingame_id,
   ingameServer: r.ingame_server,
@@ -56,7 +58,7 @@ export const getProfile = cache(async (): Promise<Profile | null> => {
   if (!user) return null;
   const { data, error } = await adminClient().from("profiles").select(COLUMNS).eq("user_id", user.id).maybeSingle();
   if (error || !data) return null;
-  return toProfile(data as Row);
+  return await toProfile(data as Row);
 });
 
 export type Identity = { id: string; provider: string };

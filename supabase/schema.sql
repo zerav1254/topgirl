@@ -168,12 +168,18 @@ grant execute on function public.save_artist_stats(text, text, text, text, jsonb
 
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values ('artist-thumb', 'artist-thumb', true, 5242880, array['image/webp'])
-on conflict (id) do nothing;
+on conflict (id) do update
+set public = excluded.public,
+    file_size_limit = excluded.file_size_limit,
+    allowed_mime_types = excluded.allowed_mime_types;
 
 -- Avatar user: publik (dipakai halaman profil), satu file per akun (<user_id>.webp).
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-values ('avatar', 'avatar', true, 5242880, array['image/webp'])
-on conflict (id) do nothing;
+values ('avatar', 'avatar', false, 5242880, array['image/webp'])
+on conflict (id) do update
+set public = excluded.public,
+    file_size_limit = excluded.file_size_limit,
+    allowed_mime_types = excluded.allowed_mime_types;
 
 -- catatan: pgvector dipasang Supabase di schema extensions, bukan public.
 -- helper public.rls_auto_enable() milik Supabase; execute-nya dicabut dari anon/authenticated.
@@ -187,6 +193,7 @@ create table public.profiles (
   email text check (char_length(email) <= 254),   -- opsional: Discord bisa tanpa email
   name text check (char_length(name) <= 80),
   avatar_url text check (char_length(avatar_url) <= 500),
+  avatar_path text check (char_length(avatar_path) <= 200),
   avatar_frame text check (char_length(avatar_frame) <= 40),
   provider text,                                 -- 'google' | 'discord'
   provider_id text,                              -- id stabil provider, bukan username

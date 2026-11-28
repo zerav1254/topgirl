@@ -1,6 +1,7 @@
 import { randomBytes } from "node:crypto";
 import { cache } from "react";
 import { adminClient } from "./supabase-admin.ts";
+import { avatarUrl, avatarUrls } from "./avatar.ts";
 
 export type Lineup = {
   id: string;
@@ -57,7 +58,7 @@ export async function setShare(userId: string, id: string, share: boolean): Prom
     const slug = randomBytes(12).toString("base64url");
     const { data, error } = await sb.from("lineups").update({ share_slug: slug }).eq("id", id).eq("user_id", userId).select("id").maybeSingle();
     if (!error && data?.id === id) return slug;
-    if (error.code !== "23505") return null;
+    if (!error || error.code !== "23505") return null;
   }
   return null;
 }
@@ -71,17 +72,17 @@ export const loadShared = cache(async (shareSlug: string): Promise<{ lineup: Lin
   const row = data as Row & { user_id: string };
   const { data: profile } = await sb
     .from("profiles")
-    .select("ingame_nickname,name,ingame_server,avatar_url,avatar_frame")
+    .select("ingame_nickname,name,ingame_server,avatar_url,avatar_path,avatar_frame")
     .eq("user_id", row.user_id)
     .maybeSingle();
 
-  const owner = profile as { ingame_nickname: string | null; name: string | null; ingame_server: number | null; avatar_url: string | null; avatar_frame: string | null } | null;
+  const owner = profile as { ingame_nickname: string | null; name: string | null; ingame_server: number | null; avatar_url: string | null; avatar_path: string | null; avatar_frame: string | null } | null;
   return {
     lineup: toLineup(row),
     // Koleksi tidak ditampilkan di halaman share: status milik penonton, bukan pemilik lineup.
     ownerName: owner?.ingame_nickname ?? owner?.name ?? null,
     ownerServer: owner?.ingame_server ?? null,
-    ownerAvatarUrl: owner?.avatar_url ?? null,
+    ownerAvatarUrl: owner ? await avatarUrl(owner.avatar_path, owner.avatar_url) : null,
     ownerAvatarFrame: owner?.avatar_frame ?? null,
   };
 });
@@ -111,13 +112,11 @@ export async function loadPublicLineups(limit = 12): Promise<PublicLineup[]> {
   const ids = [...new Set(rows.map((r) => r.user_id))];
   const { data: profileRows } = await sb
     .from("profiles")
-    .select("user_id,ingame_nickname,name,avatar_url,avatar_frame")
+    .select("user_id,ingame_nickname,name,avatar_url,avatar_path,avatar_frame")
     .in("user_id", ids);
-  const profiles = new Map(
-    ((profileRows ?? []) as { user_id: string; ingame_nickname: string | null; name: string | null; avatar_url: string | null; avatar_frame: string | null }[]).map(
-      (p) => [p.user_id, p],
-    ),
-  );
+  const typedProfiles = (profileRows ?? []) as { user_id: string; ingame_nickname: string | null; name: string | null; avatar_url: string | null; avatar_path: string | null; avatar_frame: string | null }[];
+  const profiles = new Map(typedProfiles.map((p) => [p.user_id, p]));
+  const signedAvatars = await avatarUrls(typedProfiles);
 
   return rows.map((r) => {
     const p = profiles.get(r.user_id);
@@ -125,7 +124,7 @@ export async function loadPublicLineups(limit = 12): Promise<PublicLineup[]> {
       ...toLineup(r),
       ownerId: r.user_id,
       ownerName: p?.ingame_nickname ?? p?.name ?? null,
-      ownerAvatarUrl: p?.avatar_url ?? null,
+      ownerAvatarUrl: signedAvatars.get(r.user_id) ?? null,
       ownerAvatarFrame: p?.avatar_frame ?? null,
     };
   });
@@ -146,7 +145,7 @@ export type PublicProfile = {
 export const loadPublicProfile = cache(async (userId: string): Promise<PublicProfile | null> => {
   const sb = adminClient();
   const [profile, rows] = await Promise.all([
-    sb.from("profiles").select("name,ingame_nickname,ingame_server,avatar_url,avatar_frame").eq("user_id", userId).maybeSingle(),
+    sb.from("profiles").select("name,ingame_nickname,ingame_server,avatar_url,avatar_path,avatar_frame").eq("user_id", userId).maybeSingle(),
     sb.from("lineups").select(COLS).eq("user_id", userId).not("share_slug", "is", null).order("updated_at", { ascending: false }),
   ]);
   if (profile.error || !profile.data) return null;
@@ -158,13 +157,14 @@ export const loadPublicProfile = cache(async (userId: string): Promise<PublicPro
     ingame_nickname: string | null;
     ingame_server: number | null;
     avatar_url: string | null;
+    avatar_path: string | null;
     avatar_frame: string | null;
   };
   return {
     name: p.name,
     ingameNickname: p.ingame_nickname,
     ingameServer: p.ingame_server,
-    avatarUrl: p.avatar_url,
+    avatarUrl: await avatarUrl(p.avatar_path, p.avatar_url),
     avatarFrame: p.avatar_frame,
     lineups,
   };

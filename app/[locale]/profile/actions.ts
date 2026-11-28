@@ -9,7 +9,7 @@ import { allow } from "@/lib/rate-limit";
 import { clientIp, verifyTurnstile } from "@/lib/turnstile";
 import { SITE_URL } from "@/lib/site";
 import { adminClient } from "@/lib/supabase-admin";
-import { AVATAR_BUCKET, SUPABASE_URL } from "@/lib/supabase";
+import { AVATAR_BUCKET } from "@/lib/supabase";
 import { createSupabaseServer } from "@/lib/supabase/server";
 
 export type ProfileResult = { ok: boolean; error: string };
@@ -90,9 +90,7 @@ export async function uploadAvatar(locale: Locale, fd: FormData): Promise<Profil
   const upload = await sb.storage.from(AVATAR_BUCKET).upload(path, webp, { contentType: "image/webp", upsert: true });
   if (upload.error) return { ok: false, error: C.avatarError };
 
-  // Query versi: path tetap, tanpa ini browser/CDN menyajikan avatar lama.
-  const url = `${SUPABASE_URL}/storage/v1/object/public/${AVATAR_BUCKET}/${path}?v=${Date.now()}`;
-  const { error } = await sb.from("profiles").update({ avatar_url: url }).eq("user_id", userId);
+  const { error } = await sb.from("profiles").update({ avatar_path: path }).eq("user_id", userId);
   if (error) return { ok: false, error: C.avatarError };
 
   revalidatePath(`/${l}/profile`);
