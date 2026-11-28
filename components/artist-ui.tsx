@@ -170,18 +170,18 @@ export function StatIcon({ stat, className = "h-4 w-4" }: { stat: "sing" | "danc
 // Ikon buff kalkulator dari UI_Icon_Common_StatusInfo; buff koleksi memakai
 // varian per genre untuk Menyanyi/Menari, Kelola memakai ikon umum.
 const BUFF_ICON = {
-  sing: "/assets/images/attributes/buff-sing.png",
-  dance: "/assets/images/attributes/buff-dance.png",
-  manage: "/assets/images/attributes/buff-manage.png",
-  speed: "/assets/images/attributes/buff-speed.png",
+  sing: "/assets/images/attributes/buff-sing.webp",
+  dance: "/assets/images/attributes/buff-dance.webp",
+  manage: "/assets/images/attributes/buff-manage.webp",
+  speed: "/assets/images/attributes/buff-speed.webp",
 } as const;
 
 const GENRE_BUFF_ICON: Record<string, { sing: string; dance: string }> = {
-  Rock: { sing: "/assets/images/attributes/buff-rock-sing.png", dance: "/assets/images/attributes/buff-rock-dance.png" },
-  EDM: { sing: "/assets/images/attributes/buff-edm-sing.png", dance: "/assets/images/attributes/buff-edm-dance.png" },
-  Pop: { sing: "/assets/images/attributes/buff-pop-sing.png", dance: "/assets/images/attributes/buff-pop-dance.png" },
-  "R&B": { sing: "/assets/images/attributes/buff-rnb-sing.png", dance: "/assets/images/attributes/buff-rnb-dance.png" },
-  "Hip Hop": { sing: "/assets/images/attributes/buff-hiphop-sing.png", dance: "/assets/images/attributes/buff-hiphop-dance.png" },
+  Rock: { sing: "/assets/images/attributes/buff-rock-sing.webp", dance: "/assets/images/attributes/buff-rock-dance.webp" },
+  EDM: { sing: "/assets/images/attributes/buff-edm-sing.webp", dance: "/assets/images/attributes/buff-edm-dance.webp" },
+  Pop: { sing: "/assets/images/attributes/buff-pop-sing.webp", dance: "/assets/images/attributes/buff-pop-dance.webp" },
+  "R&B": { sing: "/assets/images/attributes/buff-rnb-sing.webp", dance: "/assets/images/attributes/buff-rnb-dance.webp" },
+  "Hip Hop": { sing: "/assets/images/attributes/buff-hiphop-sing.webp", dance: "/assets/images/attributes/buff-hiphop-dance.webp" },
 };
 
 export type BuffKey = keyof typeof BUFF_ICON;
