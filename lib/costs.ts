@@ -3,7 +3,7 @@ import { cache } from "react";
 import type { CostItem } from "./cost-calc.ts";
 import { localizedName } from "./cost-names.ts";
 import type { Locale } from "./i18n.ts";
-import { adminClient } from "./supabase.ts";
+import { adminClient } from "./supabase-admin.ts";
 
 export type { CostItem } from "./cost-calc.ts";
 

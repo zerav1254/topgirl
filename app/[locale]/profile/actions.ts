@@ -8,7 +8,8 @@ import { DICT, localeOr, type Locale } from "@/lib/i18n";
 import { allow } from "@/lib/rate-limit";
 import { clientIp, verifyTurnstile } from "@/lib/turnstile";
 import { SITE_URL } from "@/lib/site";
-import { AVATAR_BUCKET, SUPABASE_URL, adminClient } from "@/lib/supabase";
+import { adminClient } from "@/lib/supabase-admin";
+import { AVATAR_BUCKET, SUPABASE_URL } from "@/lib/supabase";
 import { createSupabaseServer } from "@/lib/supabase/server";
 
 export type ProfileResult = { ok: boolean; error: string };

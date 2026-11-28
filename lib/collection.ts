@@ -1,4 +1,4 @@
-import { adminClient } from "./supabase.ts";
+import { adminClient } from "./supabase-admin.ts";
 
 // Koleksi = daftar slug yang dimiliki user. Baris ada = punya.
 export async function loadOwned(userId: string): Promise<string[]> {

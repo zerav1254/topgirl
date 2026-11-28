@@ -1,6 +1,6 @@
 import { randomBytes } from "node:crypto";
 import { cache } from "react";
-import { adminClient } from "./supabase.ts";
+import { adminClient } from "./supabase-admin.ts";
 
 export type Lineup = {
   id: string;

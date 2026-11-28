@@ -1,6 +1,6 @@
 import { cache } from "react";
 import type { User } from "@supabase/supabase-js";
-import { adminClient } from "./supabase.ts";
+import { adminClient } from "./supabase-admin.ts";
 import { createSupabaseServer } from "./supabase/server.ts";
 
 export type Role = "admin" | "user";
