@@ -49,33 +49,34 @@ export function HqPanel({
   const buildingBad = levelTo <= levelFrom;
   const roomBad = roomTo <= roomFrom;
 
-  // Gedung: nilai tabel = total kumulatif per level, jadi selisih target - awal.
-  const buildingStats = useMemo(() => {
-    const at = (level: number) => level - 1;
-    return {
-      sing: (hq.curve.sing[at(levelTo)] ?? 0) - (hq.curve.sing[at(levelFrom)] ?? 0),
-      dance: (hq.curve.dance[at(levelTo)] ?? 0) - (hq.curve.dance[at(levelFrom)] ?? 0),
-      management: (hq.curve.management[at(levelTo)] ?? 0) - (hq.curve.management[at(levelFrom)] ?? 0),
-    };
-  }, [hq.curve, levelFrom, levelTo]);
+  // Gedung: nilai tabel = tambahan per level, jadi jumlahkan level awal+1 .. target.
+  const buildingStats = useMemo(
+    () => ({
+      sing: expBetween(hq.curve.sing, levelFrom, levelTo),
+      dance: expBetween(hq.curve.dance, levelFrom, levelTo),
+      management: expBetween(hq.curve.management, levelFrom, levelTo),
+    }),
+    [hq.curve, levelFrom, levelTo],
+  );
 
   // Ruangan: nilai tabel = tambahan per level; 4 slot berbagi nilai yang sama.
-  // Nilai ini persen (mis. 1.500 = 15,00%), bukan flat.
+  // Nilai ini persen (mis. 1.500 = 15,00%), bukan flat. Persen total = akumulasi
+  // level 1..target (level 1 sudah bernilai), sesuai angka di UI game.
   const roomStats = useMemo(() => {
     const sum = statSum(
       hq.roomStats.filter((row) => row.tier === tier),
-      roomFrom,
+      0,
       roomTo,
     );
     return { sing: sum.sing * slotCount, dance: sum.dance * slotCount, management: sum.management * slotCount };
-  }, [hq.roomStats, tier, roomFrom, roomTo, slotCount]);
+  }, [hq.roomStats, tier, roomTo, slotCount]);
 
-  // Renovasi kumulatif pada level target; dasar pengali persen dekorasi.
+  // Renovasi kumulatif level 1..target; dasar pengali persen dekorasi.
   const renovationTotal = useMemo(
     () => ({
-      sing: hq.curve.sing[levelTo - 1] ?? 0,
-      dance: hq.curve.dance[levelTo - 1] ?? 0,
-      management: hq.curve.management[levelTo - 1] ?? 0,
+      sing: expBetween(hq.curve.sing, 0, levelTo),
+      dance: expBetween(hq.curve.dance, 0, levelTo),
+      management: expBetween(hq.curve.management, 0, levelTo),
     }),
     [hq.curve, levelTo],
   );
