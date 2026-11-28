@@ -175,7 +175,7 @@ export function ArtistFilterBar({
         )}
       </div>
 
-      <div id="artist-filter-panel" className={`flex flex-col gap-1.5 ${bare || open ? "" : "hidden sm:flex"}`}>
+      <div id={bare ? undefined : "artist-filter-panel"} className={`flex flex-col gap-1.5 ${bare || open ? "" : "hidden sm:flex"}`}>
         {ownedTotal !== undefined && (
           <div className="flex flex-wrap items-center gap-1.5">
             {[
