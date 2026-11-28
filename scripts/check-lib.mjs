@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { classLevels, expBetween, modTotals, stagePromotionCost, starBetween, starCardsForLevels, statDelta, statSum, sumLevels } from "../lib/cost-calc.ts";
+import { classLevels, expBetween, modTotals, peakStageBetween, stagePromotionCost, starBetween, starCardsForLevels, statDelta, statSum, sumLevels } from "../lib/cost-calc.ts";
 import { poolTiers } from "../lib/pool.ts";
 import { genreSynergy, lineupEffects, teamFanCap, withGenreBonus } from "../lib/team.ts";
 import { allow } from "../lib/rate-limit.ts";
@@ -112,6 +112,16 @@ assert.deepEqual(
   statSum([{ level: 1, sing: 930 }, { level: 2, sing: 20 }, { level: 3, sing: 20 }], 1, 3),
   { sing: 40, dance: 0, management: 0, fan: 0, speed: 0 },
 );
+// Peak stage: ambang level, hanya baris di (from, to] yang dijumlahkan.
+const peakStages = [
+  { stageLevel: 5, attributeType: 1, allPercent: 50, stylePercent: 0 },
+  { stageLevel: 40, attributeType: 1, allPercent: 0, stylePercent: 300 },
+  { stageLevel: 80, attributeType: 4, allPercent: 0, stylePercent: 0 },
+  { stageLevel: 100, attributeType: 2, allPercent: 150, stylePercent: 0 },
+];
+assert.deepEqual(peakStageBetween(peakStages, 0, 5), { sing: 50, dance: 0, management: 0, fan: 0, speed: 0 });
+assert.deepEqual(peakStageBetween(peakStages, 5, 100), { sing: 300, dance: 150, management: 0, fan: 0, speed: 0 });
+assert.deepEqual(peakStageBetween(peakStages, 100, 100), { sing: 0, dance: 0, management: 0, fan: 0, speed: 0 });
 // Helper kelas: level hanya diketahui lewat kelas mod kendaraan.
 const ranges = classLevels([1, 1, 1, 2, 2]);
 assert.deepEqual(ranges.get(1), { from: 0, to: 2 });

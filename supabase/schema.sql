@@ -41,7 +41,14 @@ create table public.artists (
   photo_updated_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   -- Id hero di config game (CHeroData.Id) sebagai sumber data biaya level; null = belum dipetakan.
-  game_hero_id integer unique
+  game_hero_id integer unique,
+  -- CHeroData.HeroGeneration: menentukan nilai buff posisi level puncak.
+  hero_generation smallint check (hero_generation between 1 and 6),
+  -- Posisi panggung 1 center, 2 singer, 3 dancer; dari CHeroData.Position.
+  hero_position smallint check (hero_position between 1 and 3),
+  -- Item foto pribadi artis (CHeroData.Unit.Id); 100 buah per level puncak.
+  photo_item integer,
+  check ((hero_generation is null) = (hero_position is null))
 );
 
 create table public.artist_skills (

@@ -163,6 +163,11 @@ export const en: Dict = {
     ceoSport: "Sports",
     ceoSportNote: "Sport level cost. Sport types in the same tier share costs.",
     ceoSportStatNote: "Percentage that multiplies CEO outfit stats, not a flat addition.",
+    peakTitle: "Peak Level",
+    peakPhoto: "Personal photo",
+    peakNote: "100 artist photos per level, the same at every level.",
+    peakStage: "Threshold buff",
+    peakStageNote: "Global percentage per level threshold; stacks for each SSR artist with a peak level.",
     loginHint: "Sign in to unlock car, HQ, villa, collection, and CEO tabs.",
   },
   common: {

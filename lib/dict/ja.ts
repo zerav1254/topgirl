@@ -162,6 +162,11 @@ export const ja: Dict = {
     ceoSport: "スポーツ",
     ceoSportNote: "スポーツのレベル費用。同じティアのスポーツ種別は費用を共有します。",
     ceoSportStatNote: "CEO衣装のステータスに掛かる割合で、固定加算ではありません。",
+    peakTitle: "ピークレベル",
+    peakPhoto: "個人写真",
+    peakNote: "1レベルにつきアーティストの写真100枚。全レベルで変わりません。",
+    peakStage: "しきい値バフ",
+    peakStageNote: "レベルしきい値ごとの全体割合。ピークレベルを持つSSRアーティストごとに加算されます。",
     loginHint: "サインインすると車、HQ、ヴィラ、コレクション、CEO タブが使えます。",
   },
   common: {

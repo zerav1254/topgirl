@@ -40,11 +40,17 @@ export type CeoSportStat = { tier: number; sportsType: number; level: number; si
 // Zona ruang koleksi (CCollectDispatchCollectionZone).
 export type CollectionZone = { zone: number; name: string; icon: string; genre: string };
 
+// Buff flat per peak level (CPeakLevelPositionBoost); stat = peak level × nilai.
+export type PeakPositionBoost = { generation: number; position: number; sing: number; dance: number; management: number };
+
+// Persen global per ambang peak level (CPeakLevelStageBoost); nilai mentah /100.
+export type PeakStageBoost = { stageLevel: number; attributeType: number; allPercent: number; stylePercent: number };
+
 // Item koleksi ruang pamer; rarity 2/3/4 = R/SR/SSR, biaya per level pakai permata sesuai rarity.
 export type CollectionItem = { id: number; zone: number; name: string; rarity: number; cost: CostItem };
 
 export type CostBook = {
-  artists: { id: number; name: string; curve: number }[];
+  artists: { id: number; name: string; curve: number; generation: number | null; position: number | null; photoItem: number | null }[];
   // steps[level - 1] = EXP untuk naik ke level tersebut. Indeks 0 (level 1) bernilai 0.
   curves: number[][];
   // amounts[star] = jumlah item untuk naik dari star itu ke star + 1.
@@ -89,6 +95,8 @@ export type CostBook = {
   // Stat flat per level item koleksi; nilai = total kumulatif.
   collectionStats: { itemId: number; level: number; sing: number; dance: number; management: number }[];
   ceo: { stages: CeoStage[]; outfits: CeoOutfit[]; sportCosts: TierCosts; sportStats: CeoSportStat[] };
+  // Peak level: buff posisi (flat, per generasi) + persen ambang stage.
+  peak: { positions: PeakPositionBoost[]; stages: PeakStageBoost[] };
 };
 
 type CurveRow = { artist_ids: number[]; steps: number[] };
@@ -114,6 +122,9 @@ type CollectionItemRow = { id: number; zone: number; name: string; rarity: numbe
 type CollectionZoneRow = { zone: number; name: string; icon: string; genre: string };
 type MuseumLevelRow = { tier: number; level: number; percent: number };
 type CollectionStatRow = { item_id: number; level: number; sing: number; dance: number; management: number };
+type ArtistRow = { id: number; name: string; hero_generation: number | null; hero_position: number | null; photo_item: number | null };
+type PeakPositionRow = { hero_generation: number; position: number; sing: number; dance: number; management: number };
+type PeakStageRow = { stage_level: number; attribute_type: number; all_percent: number; style_percent: number };
 
 const stageOf = (ref: StageRef) => (Array.isArray(ref) ? (ref[0]?.stage ?? 0) : ref.stage);
 const first = <T>(ref: T | T[]) => (Array.isArray(ref) ? ref[0] : ref);
@@ -215,11 +226,13 @@ export async function loadCostBook(locale: Locale): Promise<CostBook> {
     collectionLevels,
     collectionZones,
     collectionStats,
+    peakPositions,
+    peakStages,
   ] = await Promise.all([
     supabase.from("artist_exp_curves").select("artist_ids, steps"),
     supabase.from("artist_star_curve").select("star, item_name, amount").order("star"),
     supabase.from("artist_level_stars").select("level, star").order("level"),
-    supabase.from("artists").select("id, name").order("name"),
+    supabase.from("artists").select("id, name, hero_generation, hero_position, photo_item").order("name"),
     supabase.from("car_parts").select("id, name, slot, tier").order("slot").order("tier"),
     supabase.from("car_part_levels").select("part_id, level, sing, dance, management").order("part_id").order("level"),
     supabase.from("car_mod_classes").select("id, name, star").order("id"),
@@ -244,6 +257,8 @@ export async function loadCostBook(locale: Locale): Promise<CostBook> {
     supabase.from("collection_levels").select("level, amount").order("level"),
     supabase.from("collection_zones").select("zone, name, icon, genre").order("zone"),
     supabase.from("collection_item_levels").select("item_id, level, sing, dance, management").order("item_id").order("level"),
+    supabase.from("peak_position_boosts").select("hero_generation, position, sing, dance, management").order("hero_generation").order("position"),
+    supabase.from("peak_stage_boosts").select("stage_level, attribute_type, all_percent, style_percent").order("stage_level"),
   ]);
 
   if (curves.error) fail("kurva EXP", curves.error.message);
@@ -274,6 +289,8 @@ export async function loadCostBook(locale: Locale): Promise<CostBook> {
   if (collectionLevels.error) fail("biaya level koleksi", collectionLevels.error.message);
   if (collectionZones.error) fail("zona koleksi", collectionZones.error.message);
   if (collectionStats.error) fail("stat item koleksi", collectionStats.error.message);
+  if (peakPositions.error) fail("buff posisi peak level", peakPositions.error.message);
+  if (peakStages.error) fail("buff stage peak level", peakStages.error.message);
 
   const curveRows = (curves.data as CurveRow[]).map((r) => ({ artistIds: r.artist_ids, steps: r.steps.map(Number) }));
   const curveOf = new Map<number, number>();
@@ -311,9 +328,16 @@ export async function loadCostBook(locale: Locale): Promise<CostBook> {
   }));
 
   const book: CostBook = {
-    artists: (artists.data as { id: number; name: string }[])
+    artists: (artists.data as ArtistRow[])
       .filter((a) => curveOf.has(a.id))
-      .map((a) => ({ id: a.id, name: a.name, curve: curveOf.get(a.id)! })),
+      .map((a) => ({
+        id: a.id,
+        name: a.name,
+        curve: curveOf.get(a.id)!,
+        generation: a.hero_generation,
+        position: a.hero_position,
+        photoItem: a.photo_item,
+      })),
     curves: curveRows.map((r) => r.steps),
     star: { itemName: starRows[0]?.item_name ?? "", amounts: starAmounts },
     levelStars: levelStarRows,
@@ -436,6 +460,21 @@ export async function loadCostBook(locale: Locale): Promise<CostBook> {
           : [];
       }),
     },
+    peak: {
+      positions: (peakPositions.data as PeakPositionRow[]).map((r) => ({
+        generation: r.hero_generation,
+        position: r.position,
+        sing: r.sing,
+        dance: r.dance,
+        management: r.management,
+      })),
+      stages: (peakStages.data as PeakStageRow[]).map((r) => ({
+        stageLevel: r.stage_level,
+        attributeType: r.attribute_type,
+        allPercent: r.all_percent,
+        stylePercent: r.style_percent,
+      })),
+    },
   };
 
   for (const row of costs.data as CostRow[]) {
@@ -479,5 +518,6 @@ export function artistCostBook(book: CostBook): CostBook {
     collection: { stars: {}, items: [], zones: [] },
     collectionStats: [],
     ceo: { stages: [], outfits: [], sportCosts: [], sportStats: [] },
+    peak: { positions: [], stages: [] },
   };
 }

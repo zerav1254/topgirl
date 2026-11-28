@@ -161,6 +161,11 @@ export const id = {
     ceoSport: "Olahraga",
     ceoSportNote: "Biaya level olahraga. Jenis olahraga dalam tier yang sama berbagi biaya.",
     ceoSportStatNote: "Persen yang mengalikan stat outfit CEO, bukan tambahan flat.",
+    peakTitle: "Level Puncak",
+    peakPhoto: "Foto pribadi",
+    peakNote: "100 foto artis per level, sama di semua level.",
+    peakStage: "Buff ambang",
+    peakStageNote: "Persen global per ambang level; menumpuk untuk tiap artis SSR berlevel puncak.",
     loginHint: "Masuk untuk membuka tab mobil, markas, vila, koleksi, dan CEO.",
   },
   common: {

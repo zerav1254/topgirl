@@ -163,6 +163,11 @@ export const fr: Dict = {
     ceoSport: "Sport",
     ceoSportNote: "Coût des niveaux de sport. Les sports d'un même palier partagent les coûts.",
     ceoSportStatNote: "Pourcentage qui multiplie les stats de la tenue du PDG, pas un ajout fixe.",
+    peakTitle: "Niveau de pointe",
+    peakPhoto: "Photo personnelle",
+    peakNote: "100 photos de l'artiste par niveau, identique à tous les niveaux.",
+    peakStage: "Bonus de palier",
+    peakStageNote: "Pourcentage global par palier de niveau ; se cumule pour chaque artiste SSR ayant un niveau de pointe.",
     loginHint: "Connectez-vous pour débloquer les onglets voiture, QG, villa, collection et CEO.",
   },
   common: {

@@ -89,6 +89,20 @@ export function statSum(rows: LevelStat[], from: number, to: number): StatValues
   return total;
 }
 
+// Persen buff stage peak level bersifat ambang: semua baris dengan
+// stageLevel <= level dijumlahkan. Nilai mentah (dibagi 100 untuk tampil persen).
+export type PeakStageRow = { stageLevel: number; attributeType: number; allPercent: number; stylePercent: number };
+export function peakStageBetween(rows: PeakStageRow[], from: number, to: number): StatValues {
+  const total = { ...ZERO_STAT };
+  if (to <= from) return total;
+  for (const row of rows) {
+    if (row.stageLevel <= from || row.stageLevel > to) continue;
+    const key = row.attributeType === 1 ? "sing" : row.attributeType === 2 ? "dance" : row.attributeType === 3 ? "management" : null;
+    if (key) total[key] += row.allPercent + row.stylePercent;
+  }
+  return total;
+}
+
 export function modTotals({
   items,
   classCosts,

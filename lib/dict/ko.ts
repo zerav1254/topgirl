@@ -162,6 +162,11 @@ export const ko: Dict = {
     ceoSport: "운동",
     ceoSportNote: "운동 레벨 비용. 같은 티어의 운동 유형은 비용을 공유합니다.",
     ceoSportStatNote: "CEO 의상 스탯에 곱해지는 퍼센트이며 고정 추가가 아닙니다.",
+    peakTitle: "피크 레벨",
+    peakPhoto: "개인 사진",
+    peakNote: "레벨당 아티스트 사진 100장, 모든 레벨에서 동일합니다.",
+    peakStage: "임계 버프",
+    peakStageNote: "레벨 임계값마다 적용되는 전역 퍼센트이며, 피크 레벨이 있는 SSR 아티스트마다 중첩됩니다.",
     loginHint: "로그인하면 자동차, 본부, 빌라, 컬렉션, CEO 탭을 사용할 수 있습니다.",
   },
   common: {

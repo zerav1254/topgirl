@@ -162,6 +162,11 @@ export const zh: Dict = {
     ceoSport: "运动",
     ceoSportNote: "运动等级费用。同一层级的运动类型费用相同。",
     ceoSportStatNote: "按百分比乘以总裁服装属性，不是固定加成。",
+    peakTitle: "巅峰等级",
+    peakPhoto: "个人照片",
+    peakNote: "每级需要 100 张该艺人照片，所有等级固定不变。",
+    peakStage: "阈值加成",
+    peakStageNote: "每个等级阈值提供全局百分比；每位拥有巅峰等级的 SSR 艺人都会叠加。",
     loginHint: "登录后可解锁车辆、总部、别墅、收藏和 CEO 标签页。",
   },
   common: {

@@ -12,6 +12,7 @@ import { CeoPanel } from "./cost/ceo";
 import { CollectionPanel } from "./cost/collection";
 import { chip, clamp, field, heading, invalid, label, NumberField, panel, result, Select, Stats, Totals } from "./cost/fields";
 import { HqPanel } from "./cost/hq";
+import { PeakPanel } from "./cost/peak";
 import { VillaPanel } from "./cost/villa";
 
 // Satu tab = satu menu game; isinya beberapa panel (flat + persentase).
@@ -162,6 +163,11 @@ export function CostCalculator({ book, locale, signedIn }: { book: CostBook; loc
           )}
         </section>
       ),
+    },
+    {
+      tab: "artist",
+      id: "peak",
+      node: signedIn ? <PeakPanel peak={book.peak} artist={artist} C={C} format={format} formatPct={formatPct} /> : null,
     },
     {
       tab: "car",

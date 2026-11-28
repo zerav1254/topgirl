@@ -163,6 +163,11 @@ export const de: Dict = {
     ceoSport: "Sport",
     ceoSportNote: "Levelkosten für Sport. Sportarten derselben Stufe teilen Kosten.",
     ceoSportStatNote: "Prozent, das die CEO-Outfit-Stats multipliziert, kein fester Zuschlag.",
+    peakTitle: "Peak-Level",
+    peakPhoto: "Persönliches Foto",
+    peakNote: "100 Künstlerfotos pro Level, auf jedem Level gleich.",
+    peakStage: "Schwellen-Buff",
+    peakStageNote: "Globaler Prozentwert pro Levelschwelle; summiert sich für jeden SSR-Künstler mit Peak-Level.",
     loginHint: "Melde dich an, um die Tabs Auto, HQ, Villa, Sammlung und CEO freizuschalten.",
   },
   common: {
