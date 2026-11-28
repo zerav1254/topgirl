@@ -153,7 +153,6 @@ export const id = {
     quality: "Kualitas",
     collectionZone: "Zona",
     collectionItemNote: "Biaya naik level koleksi; permata mengikuti rarity item.",
-    collectionStatNote: "Item SSR menambah buff genre {genre} + semua artis; item lain hanya genre {genre}.",
     collectionStarNote: "Biaya naik bintang item koleksi.",
     ceoAppearance: "Outfit",
     ceoAllOutfits: "Semua outfit (4)",

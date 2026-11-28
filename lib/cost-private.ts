@@ -3,6 +3,7 @@ import "server-only";
 import type { CostTotal, StatValues } from "./cost-calc.ts";
 import { getCostBook } from "./costs.ts";
 import type { Locale } from "./i18n.ts";
+import { supabase } from "./supabase.ts";
 
 export type CostStats = Pick<StatValues, "sing" | "dance" | "management"> & Partial<Pick<StatValues, "fan" | "speed">>;
 export type PrivateCostResult = { totals: CostTotal[]; stats: CostStats; secondaryStats?: CostStats };
@@ -12,12 +13,16 @@ export type PrivateCostOptions = {
   car: { partTiers: number[]; modClasses: { id: number; name: string; star: number; from: number; to: number }[] };
   hq: { rooms: { tier: number; slot: number; room: string; name: string }[] };
   villa: { stages: { id: number; name: string }[]; suites: { stage: number; id: number; name: string; max: number }[]; staff: { tier: number; id: number; name: string }[] };
-  collection: { zones: { id: number; name: string; genre: string }[]; items: { zone: number; id: number; name: string; rarity: number }[]; museumTiers: number[] };
+  collection: { zones: { id: number; name: string; genre: string; genreImage: string | null }[]; items: { zone: number; id: number; name: string; rarity: number }[]; museumTiers: number[] };
   ceo: { stages: { id: number; name: string }[]; outfits: { stage: number; id: number; name: string; max: number }[]; sportTiers: number[] };
 };
 
 export async function getPrivateCostOptions(locale: Locale): Promise<PrivateCostOptions> {
-  const book = await getCostBook(locale);
+  const [book, genres] = await Promise.all([
+    getCostBook(locale),
+    supabase.from("genres").select("id, image"),
+  ]);
+  const genreImages = new Map(((genres.data ?? []) as { id: string; image: string | null }[]).map((item) => [item.id, item.image]));
   const ranges = new Map<number, { from: number; to: number }>();
   book.classByLevel.forEach((id, level) => {
     const range = ranges.get(id);
@@ -39,8 +44,9 @@ export async function getPrivateCostOptions(locale: Locale): Promise<PrivateCost
       staff: book.villa.staff.map((item) => ({ tier: item.tier, id: item.staffType, name: item.name })),
     },
     collection: {
-      zones: book.collection.zones.map((item) => ({ id: item.zone, name: item.name, genre: item.genre })),
-      items: book.collection.items.map((item) => ({ zone: item.zone, id: item.id, name: item.name, rarity: item.rarity })),
+      zones: book.collection.zones.map((item) => ({ id: item.zone, name: item.name, genre: item.genre, genreImage: genreImages.get(item.genre) ?? null })),
+      // Item R hanya menambah Skor Demo, bukan stat artis; sembunyikan dari pilihan.
+      items: book.collection.items.filter((item) => item.rarity > 2).map((item) => ({ zone: item.zone, id: item.id, name: item.name, rarity: item.rarity })),
       museumTiers: book.museum.map((_, index) => index + 1),
     },
     ceo: {

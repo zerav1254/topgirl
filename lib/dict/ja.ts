@@ -154,7 +154,6 @@ export const ja: Dict = {
     quality: "品質",
     collectionZone: "ゾーン",
     collectionItemNote: "コレクションのレベル費用。宝石はレアリティに対応します。",
-    collectionStatNote: "SSRアイテムは{genre}ジャンル＋全アーティストに加算。他のレアリティは{genre}ジャンルのみ。",
     collectionStarNote: "コレクションアイテムのスター上げ費用。",
     ceoAppearance: "衣装",
     ceoAllOutfits: "すべての衣装 (4)",
