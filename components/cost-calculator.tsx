@@ -171,13 +171,6 @@ export function CostCalculator({ book, locale, signedIn }: { book: CostBook; loc
     },
     {
       tab: "car",
-      id: "parts",
-      node: (
-        <CarPartsPanel parts={book.parts} partStats={book.partStats} costs={book.costs.carPart} C={C} format={format} formatPct={formatPct} />
-      ),
-    },
-    {
-      tab: "car",
       id: "mods",
       node: (
         <section aria-label={C.tabMods} className={panel}>
@@ -237,6 +230,13 @@ export function CostCalculator({ book, locale, signedIn }: { book: CostBook; loc
             </div>
           )}
         </section>
+      ),
+    },
+    {
+      tab: "car",
+      id: "parts",
+      node: (
+        <CarPartsPanel parts={book.parts} partStats={book.partStats} costs={book.costs.carPart} C={C} format={format} formatPct={formatPct} />
       ),
     },
     { tab: "hq", id: "hq", node: <HqPanel hq={book.hq} C={C} format={format} formatPct={formatPct} /> },
