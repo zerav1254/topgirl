@@ -28,7 +28,7 @@ export default async function CostPage({ params }: { params: Promise<{ locale: s
   if (!isLocale(raw)) notFound();
   const locale: Locale = raw;
 
-  // Tab artist boleh diakses publik; tab biaya lain hanya untuk user login.
+  // Tab artist (termasuk level puncak) boleh diakses publik; tab biaya lain hanya untuk user login.
   const user = await getUser();
   const C = DICT[locale].cost;
   const book = await getCostBook(locale);

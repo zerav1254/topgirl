@@ -167,7 +167,7 @@ export function CostCalculator({ book, locale, signedIn }: { book: CostBook; loc
     {
       tab: "artist",
       id: "peak",
-      node: signedIn ? <PeakPanel peak={book.peak} artist={artist} C={C} format={format} formatPct={formatPct} /> : null,
+      node: <PeakPanel peak={book.peak} artist={artist} C={C} format={format} formatPct={formatPct} />,
     },
     {
       tab: "car",
