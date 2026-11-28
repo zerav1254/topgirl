@@ -150,26 +150,32 @@ function errorCode(error: unknown): PrivateCostError {
   return "server_error";
 }
 
-async function run(calculate: () => Promise<PrivateCostResult>): Promise<PrivateCostResponse> {
+// Ringkasan agregat untuk Vercel logs; input pengguna dan identitas tidak dicatat.
+async function run(domain: Domain, calculate: () => Promise<PrivateCostResult>): Promise<PrivateCostResponse> {
+  const started = performance.now();
   try {
-    return { ok: true, data: await calculate() };
+    const data = await calculate();
+    console.info("private_cost_calculation", { domain, outcome: "success", durationMs: Math.round(performance.now() - started) });
+    return { ok: true, data };
   } catch (error) {
-    return { ok: false, error: errorCode(error) };
+    const code = errorCode(error);
+    console[code === "server_error" ? "error" : "info"]("private_cost_calculation", { domain, outcome: code, durationMs: Math.round(performance.now() - started) });
+    return { ok: false, error: code };
   }
 }
 
 export async function calculateCarCost(input: CarCostInput): Promise<PrivateCostResponse> {
-  return run(() => carCost(input));
+  return run("car", () => carCost(input));
 }
 export async function calculateHqCost(input: HqCostInput): Promise<PrivateCostResponse> {
-  return run(() => hqCost(input));
+  return run("hq", () => hqCost(input));
 }
 export async function calculateVillaCost(input: VillaCostInput): Promise<PrivateCostResponse> {
-  return run(() => villaCost(input));
+  return run("villa", () => villaCost(input));
 }
 export async function calculateCollectionCost(input: CollectionCostInput): Promise<PrivateCostResponse> {
-  return run(() => collectionCost(input));
+  return run("collection", () => collectionCost(input));
 }
 export async function calculateCeoCost(input: CeoCostInput): Promise<PrivateCostResponse> {
-  return run(() => ceoCost(input));
+  return run("ceo", () => ceoCost(input));
 }
