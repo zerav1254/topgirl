@@ -151,6 +151,7 @@ export const id = {
     villaStaffGainNote: "Stat vila (pilihan Stage/Suite) × persen staf, dibulatkan ke bawah.",
     collectionStar: "Bintang",
     quality: "Kualitas",
+    collectionZone: "Zona",
     collectionItemNote: "Biaya naik level koleksi; permata mengikuti rarity item.",
     collectionStatNote: "Item SSR menambah buff genre {genre} + semua artis; item lain hanya genre {genre}.",
     collectionStarNote: "Biaya naik bintang item koleksi.",

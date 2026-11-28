@@ -153,6 +153,7 @@ export const fr: Dict = {
     villaStaffGainNote: "Stats de la villa (sélection Étape/Suite) × pourcentage du personnel, arrondi à l'inférieur.",
     collectionStar: "Étoile",
     quality: "Qualité",
+    collectionZone: "Zone",
     collectionItemNote: "Coût de niveau de collection ; les gemmes suivent la rareté de l'objet.",
     collectionStatNote: "Les objets SSR ajoutent un bonus {genre} et à tous les artistes ; les autres raretés seulement au genre {genre}.",
     collectionStarNote: "Coût pour monter les étoiles d'un objet de collection.",

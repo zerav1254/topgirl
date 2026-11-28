@@ -152,6 +152,7 @@ export const ko: Dict = {
     villaStaffGainNote: "빌라 스탯(스테이지/스위트 선택) × 스태프 퍼센트(내림).",
     collectionStar: "별",
     quality: "품질",
+    collectionZone: "구역",
     collectionItemNote: "컬렉션 레벨 상승 비용. 보석은 등급에 따라 다릅니다.",
     collectionStatNote: "SSR 아이템은 {genre} 장르와 모든 아티스트에게 적용되며, 다른 등급은 {genre} 장르에만 적용됩니다.",
     collectionStarNote: "컬렉션 아이템 별 상승 비용.",

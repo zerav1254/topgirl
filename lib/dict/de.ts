@@ -153,6 +153,7 @@ export const de: Dict = {
     villaStaffGainNote: "Villa-Stats (Stage/Suite-Auswahl) × Personal-Prozent, abgerundet.",
     collectionStar: "Stern",
     quality: "Qualität",
+    collectionZone: "Zone",
     collectionItemNote: "Levelkosten der Sammlung; Edelsteine richten sich nach der Seltenheit.",
     collectionStatNote: "SSR-Items geben einen {genre}-Genre-Bonus plus allen Artists; andere Seltenheiten nur dem Genre {genre}.",
     collectionStarNote: "Sternkosten für Sammlungsobjekte.",

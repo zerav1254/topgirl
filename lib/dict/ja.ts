@@ -152,6 +152,7 @@ export const ja: Dict = {
     villaStaffGainNote: "ヴィラのステータス（ステージ/スイート選択）× スタッフの割合（切り捨て）。",
     collectionStar: "スター",
     quality: "品質",
+    collectionZone: "ゾーン",
     collectionItemNote: "コレクションのレベル費用。宝石はレアリティに対応します。",
     collectionStatNote: "SSRアイテムは{genre}ジャンル＋全アーティストに加算。他のレアリティは{genre}ジャンルのみ。",
     collectionStarNote: "コレクションアイテムのスター上げ費用。",

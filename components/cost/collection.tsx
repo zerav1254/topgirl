@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { statDelta, sumLevels } from "@/lib/cost-calc";
 import type { CostBook } from "@/lib/costs";
 import { t } from "@/lib/i18n";
-import { clamp, heading, invalid, NumberField, panel, result, Stats, Totals, type CostDict } from "./fields";
+import { clamp, heading, invalid, NumberField, panel, result, Select, Stats, Totals, type CostDict } from "./fields";
 import { MuseumPanel } from "./museum";
 
 const ITEM_MIN = 1;
@@ -12,11 +12,6 @@ const ITEM_MAX = 65;
 
 // Rarity config 2/3/4 = R/SR/SSR.
 const RARITY = { 2: "R", 3: "SR", 4: "SSR" } as const;
-const RARITY_STYLE = {
-  2: "border-zinc-400/40 text-zinc-300",
-  3: "border-sky-400/40 text-sky-300",
-  4: "border-gold/50 text-gold",
-} as const;
 
 export function CollectionPanel({
   collection,
@@ -92,55 +87,24 @@ function CollectionRoom({
 
   return (
     <div className={panel}>
-      <div role="group" aria-label={C.tabCollection}>
-        <h2 className={heading}>{C.tabCollection}</h2>
-        <div className="mt-1 flex flex-col gap-2">
-          {zones.map((entry) => {
-            const active = entry.zone === zone;
-            return (
-              <button
-                key={entry.zone}
-                type="button"
-                aria-pressed={active}
-                aria-label={entry.name}
-                title={entry.name}
-                onClick={() => pickZone(entry.zone)}
-                className={`flex min-h-11 items-center gap-2 rounded-lg border px-2 py-1.5 text-left transition-colors duration-200 ${
-                  active ? "border-gold/50 bg-gold/10" : "border-line bg-panel/80 hover:border-white/25"
-                }`}
-              >
-                <span className={`text-sm font-semibold ${active ? "text-gold" : "text-zinc-200"}`}>{entry.name}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      <h2 className={heading}>{C.tabCollection}</h2>
 
-      <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-6">
-        {zoneItems.map((it) => {
-          const active = it.id === item?.id;
-          const rarity = it.rarity as keyof typeof RARITY;
-          return (
-            <button
-              key={it.id}
-              type="button"
-              aria-pressed={active}
-              aria-label={`${it.name} (${RARITY[rarity]})`}
-              title={it.name}
-              onClick={() => setItemId(it.id)}
-              className={`flex min-h-14 flex-col items-center justify-center gap-1 rounded-lg border px-1 py-1.5 text-center transition-colors duration-200 ${
-                active ? "border-gold/50 bg-gold/10" : "border-line bg-panel/80 hover:border-white/25"
-              }`}
-            >
-              <span className={`rounded border px-1 text-2xs font-semibold ${RARITY_STYLE[rarity]}`}>
-                {RARITY[rarity]}
-              </span>
-              <span className="line-clamp-2 text-2xs font-medium leading-tight text-zinc-300">{it.name}</span>
-            </button>
-          );
-        })}
+      <div className="mt-3 grid grid-cols-2 gap-3">
+        <Select id="cost-collection-zone" text={C.collectionZone} value={zone} onChange={pickZone}>
+          {zones.map((entry) => (
+            <option key={entry.zone} value={entry.zone}>
+              {`${entry.name} · ${entry.genre}`}
+            </option>
+          ))}
+        </Select>
+        <Select id="cost-collection-item" text={C.item} value={item?.id ?? 0} onChange={setItemId}>
+          {zoneItems.map((it) => (
+            <option key={it.id} value={it.id}>
+              {`${RARITY[it.rarity as keyof typeof RARITY]} · ${it.name}`}
+            </option>
+          ))}
+        </Select>
       </div>
-      {item ? <p className="mt-2 text-sm font-semibold text-zinc-200">{itemLabel}</p> : null}
 
       <div className="mt-3 grid grid-cols-2 gap-3">
         <NumberField id="cost-collection-item-from" text={C.levelFrom} value={itemFrom} min={ITEM_MIN} max={ITEM_MAX} invalid={itemBad} describedBy={itemBad ? "cost-collection-item-error" : undefined} onChange={(v) => setItemFrom(clamp(v, ITEM_MIN, ITEM_MAX))} />

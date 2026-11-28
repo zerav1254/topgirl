@@ -152,6 +152,7 @@ export const zh: Dict = {
     villaStaffGainNote: "别墅属性（所选阶段/套房）× 员工百分比（向下取整）。",
     collectionStar: "星星",
     quality: "品质",
+    collectionZone: "区域",
     collectionItemNote: "收藏升级费用；宝石随稀有度而定。",
     collectionStatNote: "SSR 道具同时增加 {genre} 艺人和所有艺人加成；其他稀有度仅增加 {genre} 艺人加成。",
     collectionStarNote: "收藏物品升星费用。",

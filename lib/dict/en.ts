@@ -153,6 +153,7 @@ export const en: Dict = {
     villaStaffGainNote: "Villa stats (Stage/Suite selection) × staff percentage, rounded down.",
     collectionStar: "Star",
     quality: "Quality",
+    collectionZone: "Zone",
     collectionItemNote: "Collection level-up cost; gems follow the item rarity.",
     collectionStatNote: "SSR items add a {genre} genre buff plus all artists; other rarities only the {genre} genre.",
     collectionStarNote: "Collection item star-up cost.",
