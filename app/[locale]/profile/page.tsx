@@ -191,12 +191,11 @@ export default async function Page({
         </h2>
         <nav aria-label={C.profile.links} className="grid grid-cols-1 gap-2">
           {[
-            { href: `/${locale}/info`, label: C.header.info, icon: ICONS.info, rank: true },
+            { href: `/${locale}/info`, label: C.header.info, icon: ICONS.info },
             ...DOC_KEYS.map((k) => ({
               href: `/${locale}/doc/${k}`,
               label: DOCS[locale][k].title,
               icon: k === "privacy" ? ICONS.shield : k === "legal" ? ICONS.file : ICONS.info,
-              rank: false,
             })),
           ].map((item) => (
             <Link
@@ -204,11 +203,7 @@ export default async function Page({
               href={item.href}
               className="inline-flex min-h-11 items-center justify-start gap-1.5 rounded-lg border border-line bg-panel/80 px-3 text-sm font-semibold text-zinc-300 transition-colors duration-200 hover:border-white/25 hover:text-zinc-100"
             >
-              {item.rank ? (
-                <span aria-hidden="true" className="rank-glyph h-4 w-4 shrink-0" />
-              ) : (
-                <Icon d={item.icon} className="h-4 w-4 shrink-0" />
-              )}
+              <Icon d={item.icon} className="h-4 w-4 shrink-0" />
               {item.label}
             </Link>
           ))}
