@@ -253,12 +253,12 @@ begin
     new.id,
     new.email,
     coalesce(
-      new.raw_user_meta_data ->> 'full_name',
-      new.raw_user_meta_data ->> 'name',
-      new.raw_user_meta_data ->> 'user_name',
-      pg_catalog.split_part(coalesce(new.email, ''), '@', 1)
+      pg_catalog.left(new.raw_user_meta_data ->> 'full_name', 80),
+      pg_catalog.left(new.raw_user_meta_data ->> 'name', 80),
+      pg_catalog.left(new.raw_user_meta_data ->> 'user_name', 80),
+      pg_catalog.left(pg_catalog.split_part(coalesce(new.email, ''), '@', 1), 80)
     ),
-    new.raw_user_meta_data ->> 'avatar_url',
+    pg_catalog.left(new.raw_user_meta_data ->> 'avatar_url', 500),
     new.raw_app_meta_data ->> 'provider',
     new.raw_app_meta_data ->> 'provider_id'
   )
@@ -832,6 +832,8 @@ grant execute on function public.consume_rate_limit(text, integer, integer) to s
 -- Semua tulis (profil, lineup, koleksi) lewat service_role di server.
 -- TRUNCATE tidak tunduk pada RLS, jadi wajib dicabut walaupun tabel ber-RLS.
 revoke insert, update, delete, truncate, references, trigger on all tables in schema public
+  from anon, authenticated;
+revoke select on public.profiles, public.user_artists, public.lineups, public.rate_limits
   from anon, authenticated;
 revoke usage, update on all sequences in schema public from anon, authenticated;
 
