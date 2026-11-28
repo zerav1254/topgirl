@@ -192,6 +192,7 @@ export const ja: Dict = {
     },
     sing: "歌唱",
     dance: "ダンス",
+    statNote: "ステータスはゲーム設定に準拠します：一部のセンターはダンスがシンより高いです。",
   },
   pool: {
     season: "サーバーシーズン",
@@ -313,6 +314,9 @@ export const ja: Dict = {
     confirmReset: "すべてのチームスロットを空にしますか？",
     empty: "一致するアーティストがいません。",
     statsMax: "最大レベル歌唱 / ダンス",
+    fanCap: "ファン容量（最大レベル）",
+    fanCapNote: "最大レベルで1人あたり {base} が基本。",
+    fanCapBoost: "スキルのファン +{n}% を含みます。",
   },
   editor: {
     progressLabel: "写真の進捗",

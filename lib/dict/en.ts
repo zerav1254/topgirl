@@ -193,6 +193,7 @@ export const en: Dict = {
     },
     sing: "Sing",
     dance: "Dance",
+    statNote: "Stats follow game config: some Centers have higher Dance than Sing.",
   },
   pool: {
     season: "Server season",
@@ -314,6 +315,9 @@ export const en: Dict = {
     confirmReset: "Clear every team slot?",
     empty: "No matching artists.",
     statsMax: "Sing / Dance at max level",
+    fanCap: "Fan capacity (max level)",
+    fanCapNote: "Base {base} per artist at max level.",
+    fanCapBoost: "Includes fan bonus +{n}% from skills.",
   },
   editor: {
     progressLabel: "Photo progress",

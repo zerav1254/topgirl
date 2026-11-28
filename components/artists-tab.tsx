@@ -235,6 +235,9 @@ function ArtistCard({
               </span>
             </p>
           )}
+          {a.role === "center" && a.singMax !== null && a.danceMax !== null && a.danceMax > a.singMax && (
+            <p className="mt-1 text-2xs text-zinc-400">{C.artists.statNote}</p>
+          )}
           {blocked && (
             <p className="mt-1.5 rounded-md border border-amber-500/40 bg-ink/85 px-1.5 py-0.5 text-center text-2xs font-semibold text-amber-300">
               {C.pool.blocked}

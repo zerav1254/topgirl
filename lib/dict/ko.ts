@@ -192,6 +192,7 @@ export const ko: Dict = {
     },
     sing: "싱",
     dance: "댄스",
+    statNote: "스탯은 게임 설정을 따릅니다: 일부 센터는 싱보다 댄스가 높습니다.",
   },
   pool: {
     season: "서버 시즌",
@@ -313,6 +314,9 @@ export const ko: Dict = {
     confirmReset: "모든 팀 슬롯을 비울까요?",
     empty: "일치하는 아티스트가 없습니다.",
     statsMax: "최대 레벨 싱 / 댄스",
+    fanCap: "팬 수용량 (최대 레벨)",
+    fanCapNote: "아티스트당 최대 레벨 기준 {base}.",
+    fanCapBoost: "스킬의 팬 보너스 +{n}% 포함.",
   },
   editor: {
     progressLabel: "사진 진행률",

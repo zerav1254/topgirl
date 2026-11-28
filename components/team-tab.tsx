@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Artist } from "@/lib/artists";
+import { FAN_CAP_MAX } from "@/lib/artists";
 import { DICT, t, type Locale } from "@/lib/i18n";
 import type { Rank } from "@/lib/pool";
 import { EFFECT_LABEL, type Tier } from "@/lib/score";
@@ -65,11 +66,19 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
     const synergy = genreSynergy(team);
     const sing = team.reduce((n, a) => n + (a.singMax ?? 0), 0);
     const dance = team.reduce((n, a) => n + (a.danceMax ?? 0), 0);
+    const fanPct = team.reduce(
+      (n, a) => n + a.skills.filter((s) => s.effect === "fan").reduce((m, s) => m + (s.value ?? 0), 0),
+      0,
+    );
+    const fanCap = team.reduce((n, a) => n + a.fanCap, 0);
     return {
       genreList: synergy.genres,
       ...teamSkillTotals(team),
       sing: withGenreBonus(sing, synergy.bonus),
       dance: withGenreBonus(dance, synergy.bonus),
+      fanCap,
+      fanPct,
+      fanCapTotal: Math.round(fanCap * (1 + fanPct / 100)),
       hasMax: team.some((a) => a.singMax !== null),
       topGenre: synergy.genre,
       topCount: synergy.count,
@@ -215,6 +224,14 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
                 </dd>
               </div>
             )}
+            <div>
+              <dt className="text-zinc-400">{C.team.fanCap}</dt>
+              <dd className="tabular mt-0.5 font-semibold text-zinc-200">{formatStat(summary.fanCapTotal, locale)}</dd>
+              <dd className="mt-0.5 text-xs text-zinc-400">
+                {t(C.team.fanCapNote, { base: formatStat(FAN_CAP_MAX, locale) })}
+                {summary.fanPct > 0 && ` ${t(C.team.fanCapBoost, { n: formatStat(summary.fanPct, locale) })}`}
+              </dd>
+            </div>
             <div>
               <dt className="text-zinc-400">{C.team.stats}</dt>
               <dd className="mt-1 flex flex-col gap-1.5">

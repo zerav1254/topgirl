@@ -191,6 +191,7 @@ export const id = {
     },
     sing: "Sing",
     dance: "Dance",
+    statNote: "Stat mengikuti config game: sebagian Center punya Dance lebih tinggi dari Sing.",
   },
   pool: {
     season: "Season server",
@@ -312,6 +313,9 @@ export const id = {
     confirmReset: "Kosongkan semua slot tim?",
     empty: "Tidak ada artist yang cocok.",
     statsMax: "Sing / Dance level maks",
+    fanCap: "Kapasitas fan (level maks)",
+    fanCapNote: "Basis {base} per artis di level maks.",
+    fanCapBoost: "Sudah termasuk bonus fan +{n}% dari skill.",
   },
   editor: {
     progressLabel: "Kemajuan foto",

@@ -192,6 +192,7 @@ export const zh: Dict = {
     },
     sing: "演唱",
     dance: "舞蹈",
+    statNote: "属性依据游戏配置：部分中心的舞蹈高于歌唱。",
   },
   pool: {
     season: "服务器赛季",
@@ -313,6 +314,9 @@ export const zh: Dict = {
     confirmReset: "清空所有队伍位置？",
     empty: "没有匹配的艺人。",
     statsMax: "满级演唱 / 舞蹈",
+    fanCap: "粉丝容量（满级）",
+    fanCapNote: "每名艺人满级基础 {base}。",
+    fanCapBoost: "已包含技能粉丝加成 +{n}%。",
   },
   editor: {
     progressLabel: "照片进度",

@@ -12,6 +12,11 @@ import { PHOTO_BUCKET, SUPABASE_URL, supabase } from "./supabase.ts";
 // Peran panggung dari CHeroData.Position; 'support' ada di config tapi belum dipakai roster.
 export type Role = "center" | "dancer" | "singer" | "support";
 
+// Kapasitas fan per artis di level maks: CHeroStarLevel Lvl 160 buff 12118004 (180.000)
+// + CHeroStar Star 21 (22.000). Nilainya sama untuk semua hero di dump; kalau game
+// membedakan per hero, ambil dari Status kedua tabel itu alih-alih konstanta ini.
+export const FAN_CAP_MAX = 202_000;
+
 export type Artist = {
   id: number;
   slug: string;
@@ -27,6 +32,8 @@ export type Artist = {
   // Sing/Dance di level maks; dipakai scoreArtist sebagai komponen stat panggung.
   singMax: number | null;
   danceMax: number | null;
+  // Kapasitas fan di level maks (lihat FAN_CAP_MAX); dipakai ringkasan lineup.
+  fanCap: number;
   skills: Skill[];
   photoUrl: string | null;
   // Nama file ikon genre dari tabel genres; null = tanpa ikon.
@@ -84,6 +91,7 @@ export async function loadArtists(): Promise<Artist[]> {
         role: r.role,
         singMax: r.sing_max,
         danceMax: r.dance_max,
+        fanCap: FAN_CAP_MAX,
         season,
         skills,
         genreImage,

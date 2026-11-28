@@ -193,6 +193,7 @@ export const fr: Dict = {
     },
     sing: "Chant",
     dance: "Danse",
+    statNote: "Stats selon la config du jeu : certains Center ont plus de Danse que de Chant.",
   },
   pool: {
     season: "Saison du serveur",
@@ -314,6 +315,9 @@ export const fr: Dict = {
     confirmReset: "Vider tous les emplacements de l’équipe ?",
     empty: "Aucun artiste correspondant.",
     statsMax: "Chant / Danse au niveau max",
+    fanCap: "Capacité de fans (niveau max)",
+    fanCapNote: "Base {base} par artiste au niveau max.",
+    fanCapBoost: "Inclut le bonus de fans +{n}% des compétences.",
   },
   editor: {
     progressLabel: "Progression des photos",

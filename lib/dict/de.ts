@@ -193,6 +193,7 @@ export const de: Dict = {
     },
     sing: "Gesang",
     dance: "Tanz",
+    statNote: "Werte folgen der Spielkonfiguration: Manche Center haben mehr Tanz als Gesang.",
   },
   pool: {
     season: "Server-Season",
@@ -314,6 +315,9 @@ export const de: Dict = {
     confirmReset: "Alle Team-Slots leeren?",
     empty: "Keine passenden Artists.",
     statsMax: "Gesang / Tanz auf Maximallevel",
+    fanCap: "Fan-Kapazität (Maximallevel)",
+    fanCapNote: "Basis {base} pro Artist auf Maximallevel.",
+    fanCapBoost: "Fan-Bonus +{n}% aus Skills enthalten.",
   },
   editor: {
     progressLabel: "Foto-Fortschritt",
