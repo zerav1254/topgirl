@@ -157,16 +157,26 @@ export function GenreIcon({ image, className = "h-4 w-4" }: { image: string | nu
   return <Image src={`/assets/images/genres/${image}.png`} alt="" width={16} height={16} sizes="16px" className={`${className} object-contain`} />;
 }
 
-// Ikon atribut dari game (UI_Icon_Common_StatusInfo). Buff koleksi memakai
-// varian per genre untuk Menyanyi/Menari; Kelola memakai ikon umum.
+// Ikon atribut sing/dance dari game (ChangGe/TiaoWu) untuk roster, tim, lineup.
 const STAT_ICON = {
+  sing: "/assets/images/attributes/UI_Album_GoodAt_Icon_ChangGe.webp",
+  dance: "/assets/images/attributes/UI_Album_GoodAt_Icon_TiaoWu.webp",
+};
+
+export function StatIcon({ stat, className = "h-4 w-4" }: { stat: "sing" | "dance"; className?: string }) {
+  return <Image src={STAT_ICON[stat]} alt="" width={16} height={16} sizes="16px" className={`${className} object-contain`} />;
+}
+
+// Ikon buff kalkulator dari UI_Icon_Common_StatusInfo; buff koleksi memakai
+// varian per genre untuk Menyanyi/Menari, Kelola memakai ikon umum.
+const BUFF_ICON = {
   sing: "/assets/images/attributes/UI_Icon_Common_StatusInfo_01.png",
   dance: "/assets/images/attributes/UI_Icon_Common_StatusInfo_02.png",
   manage: "/assets/images/attributes/UI_Icon_Common_StatusInfo_03.png",
   speed: "/assets/images/attributes/UI_Icon_Common_StatusInfo_06.png",
 } as const;
 
-const GENRE_STAT_ICON: Record<string, { sing: string; dance: string }> = {
+const GENRE_BUFF_ICON: Record<string, { sing: string; dance: string }> = {
   Rock: { sing: "13", dance: "14" },
   EDM: { sing: "15", dance: "16" },
   Pop: { sing: "17", dance: "18" },
@@ -174,11 +184,11 @@ const GENRE_STAT_ICON: Record<string, { sing: string; dance: string }> = {
   "Hip Hop": { sing: "21", dance: "22" },
 };
 
-export type StatKey = keyof typeof STAT_ICON;
+export type BuffKey = keyof typeof BUFF_ICON;
 
-export function StatIcon({ stat, genre, className = "h-4 w-4" }: { stat: StatKey; genre?: string | null; className?: string }) {
-  const variant = genre && (stat === "sing" || stat === "dance") ? GENRE_STAT_ICON[genre]?.[stat] : undefined;
-  const src = variant ? `/assets/images/attributes/UI_Icon_Common_StatusInfo_${variant}.png` : STAT_ICON[stat];
+export function BuffIcon({ stat, genre, className = "h-4 w-4" }: { stat: BuffKey; genre?: string | null; className?: string }) {
+  const variant = genre && (stat === "sing" || stat === "dance") ? GENRE_BUFF_ICON[genre]?.[stat] : undefined;
+  const src = variant ? `/assets/images/attributes/UI_Icon_Common_StatusInfo_${variant}.png` : BUFF_ICON[stat];
   return <Image src={src} alt="" width={16} height={16} sizes="16px" className={`${className} object-contain`} />;
 }
 
