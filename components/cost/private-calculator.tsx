@@ -63,7 +63,7 @@ export function PrivateCalculator({ tab, options, locale }: { tab: Tab; options:
     });
   }
   function stats(value: PrivateCostResult["stats"] | undefined, percent = false) {
-    return value ? [{ label: C.statSing, value: value.sing }, { label: C.statDance, value: value.dance }, { label: C.statManage, value: value.management }, { label: C.statFan, value: value.fan ?? 0 }, { label: C.statSpeed, value: value.speed ?? 0 }].filter((row) => row.value > 0).map((row) => ({ label: row.label, value: `+${percent ? `${formatPct(row.value)}%` : format(row.value)}` })) : [];
+    return value ? [{ label: C.statSing, value: value.sing }, { label: C.statDance, value: value.dance }, { label: C.statManage, value: value.management }, { label: C.statFan, value: value.fan ?? 0 }, { label: C.statSpeed, value: value.speed ?? 0 }].filter((row) => row.value > 0).map((row) => ({ label: row.label, value: `+${percent || row.label === C.statSpeed ? `${formatPct(row.value)}%` : format(row.value)}` })) : [];
   }
 
   const stageDomain = tab === "villa" || tab === "ceo" ? tab : null;
