@@ -147,7 +147,7 @@ export const ko: Dict = {
     collectionStar: "별",
     quality: "품질",
     collectionItemNote: "컬렉션 레벨 상승 비용. 보석은 등급에 따라 다릅니다.",
-    collectionStatNote: "{genre} 장르 아티스트에게 적용되는 고정 수치(일부는 모든 아티스트 적용).",
+    collectionStatNote: "SSR 아이템은 {genre} 장르와 모든 아티스트에게 적용되며, 다른 등급은 {genre} 장르에만 적용됩니다.",
     collectionStarNote: "컬렉션 아이템 별 상승 비용.",
     ceoAppearance: "의상",
     ceoAllOutfits: "모든 의상 (4)",

@@ -148,7 +148,7 @@ export const de: Dict = {
     collectionStar: "Stern",
     quality: "Qualität",
     collectionItemNote: "Levelkosten der Sammlung; Edelsteine richten sich nach der Seltenheit.",
-    collectionStatNote: "Flacher Bonus für {genre}-Artists (ein kleiner Teil gilt für alle).",
+    collectionStatNote: "SSR-Items geben einen {genre}-Genre-Bonus plus allen Artists; andere Seltenheiten nur dem Genre {genre}.",
     collectionStarNote: "Sternkosten für Sammlungsobjekte.",
     ceoAppearance: "Outfit",
     ceoAllOutfits: "Alle Outfits (4)",

@@ -147,7 +147,7 @@ export const ja: Dict = {
     collectionStar: "スター",
     quality: "品質",
     collectionItemNote: "コレクションのレベル費用。宝石はレアリティに対応します。",
-    collectionStatNote: "{genre}ジャンルのアーティストへの固定値（一部は全アーティスト対象）。",
+    collectionStatNote: "SSRアイテムは{genre}ジャンル＋全アーティストに加算。他のレアリティは{genre}ジャンルのみ。",
     collectionStarNote: "コレクションアイテムのスター上げ費用。",
     ceoAppearance: "衣装",
     ceoAllOutfits: "すべての衣装 (4)",

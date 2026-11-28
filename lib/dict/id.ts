@@ -146,7 +146,7 @@ export const id = {
     collectionStar: "Bintang",
     quality: "Kualitas",
     collectionItemNote: "Biaya naik level koleksi; permata mengikuti rarity item.",
-    collectionStatNote: "Buff flat untuk artis genre {genre} (sebagian kecil untuk semua artis).",
+    collectionStatNote: "Item SSR menambah buff genre {genre} + semua artis; item lain hanya genre {genre}.",
     collectionStarNote: "Biaya naik bintang item koleksi.",
     ceoAppearance: "Outfit",
     ceoAllOutfits: "Semua outfit (4)",

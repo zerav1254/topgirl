@@ -147,7 +147,7 @@ export const zh: Dict = {
     collectionStar: "星星",
     quality: "品质",
     collectionItemNote: "收藏升级费用；宝石随稀有度而定。",
-    collectionStatNote: "{genre} 艺人的固定加成（其中一部分适用于所有艺人）。",
+    collectionStatNote: "SSR 道具同时增加 {genre} 艺人和所有艺人加成；其他稀有度仅增加 {genre} 艺人加成。",
     collectionStarNote: "收藏物品升星费用。",
     ceoAppearance: "服装",
     ceoAllOutfits: "全部服装 (4)",
