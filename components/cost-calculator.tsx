@@ -255,7 +255,7 @@ export function CostCalculator({ book, locale, signedIn }: { book: CostBook; loc
     },
     { tab: "hq", id: "hq", node: <HqPanel hq={book.hq} C={C} format={format} /> },
     { tab: "villa", id: "villa", node: <VillaPanel villa={book.villa} C={C} format={format} /> },
-    { tab: "collection", id: "collection", node: <CollectionPanel collection={book.collection} museum={book.museum} C={C} format={format} /> },
+    { tab: "collection", id: "collection", node: <CollectionPanel collection={book.collection} collectionStats={book.collectionStats} museum={book.museum} museumStats={book.museumStats} C={C} format={format} formatPct={formatPct} /> },
     { tab: "ceo", id: "ceo", node: <CeoPanel ceo={book.ceo} C={C} format={format} /> },
   ];
 

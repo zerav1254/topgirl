@@ -1,9 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { sumLevels } from "@/lib/cost-calc";
-import type { CostItem } from "@/lib/costs";
-import { clamp, invalid, NumberField, panel, result, Segmented, Select, Totals, type CostDict } from "./fields";
+import { statSum, sumLevels } from "@/lib/cost-calc";
+import type { CostItem, CostBook } from "@/lib/costs";
+import { clamp, invalid, NumberField, panel, result, Segmented, Select, Stats, Totals, type CostDict } from "./fields";
 
 const MIN = 1;
 const MAX = 60;
@@ -13,12 +13,16 @@ type Part = "all" | "case" | "wall" | "floor";
 
 export function MuseumPanel({
   tiers,
+  stats,
   C,
   format,
+  formatPct,
 }: {
   tiers: CostItem[][];
+  stats: CostBook["museumStats"];
   C: CostDict;
   format: (value: number) => string;
+  formatPct: (value: number) => string;
 }) {
   const [part, setPart] = useState<Part>("all");
   const [tier, setTier] = useState(1);
@@ -33,6 +37,20 @@ export function MuseumPanel({
     return sumLevels(tiers[tier - 1] ?? [], from, to).map((item) => ({ ...item, amount: item.amount * count }));
   }, [tiers, tier, from, to, part]);
   const bad = to <= from;
+
+  // Persen museum = tambahan per level; tiap bagian hanya menambah satu stat.
+  const statRows = useMemo(() => {
+    const sumPct = () => statSum(stats.map((row) => ({ level: row.level, sing: row.percent })), from, to).sing;
+    const value = sumPct();
+    const parts: { part: Part; label: string }[] = [
+      { part: "case", label: C.statSing },
+      { part: "wall", label: C.statDance },
+      { part: "floor", label: C.statManage },
+    ];
+    return parts
+      .filter((entry) => part === "all" || part === entry.part)
+      .map((entry) => ({ label: entry.label, value: `+${formatPct(value)}%` }));
+  }, [stats, part, from, to, C, formatPct]);
 
   return (
     <section aria-label={C.tabMuseum} className={panel}>
@@ -70,6 +88,7 @@ export function MuseumPanel({
       {bad ? null : (
         <div className={result}>
           <Totals totals={totals} note={`${partName} · ${C.museumNote}`} empty={C.noCost} format={format} />
+          <Stats title={C.statsTitle} rows={statRows} note={C.museumStatNote} />
         </div>
       )}
     </section>

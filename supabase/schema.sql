@@ -364,12 +364,24 @@ create table public.museum_costs (
   primary key (part, tier, level, item_id)
 );
 
+-- Buff persen museum (CCollectDispatchMuseumLevel.PartBuffPer), per (tier, level).
+-- Ketiga bagian memakai kurva sama; tiap bagian hanya menambah satu stat
+-- (Etalase Menyanyi, Dinding Menari, Lantai Kelola).
+create table public.museum_levels (
+  tier smallint not null check (tier between 1 and 7),
+  level smallint not null check (level between 1 and 60),
+  percent integer not null default 0 check (percent >= 0),
+  primary key (tier, level)
+);
+
 -- Koleksi ruang pamer (CCollectDispatchCollectionType): 5 zona x 6 item.
 -- rarity = Quality config: 2 = R, 3 = SR, 4 = SSR; biaya memakai permata sesuai rarity.
+-- genre = genre artis yang mendapat buff flat dari item zona ini.
 create table public.collection_zones (
   zone smallint primary key check (zone between 1 and 5),
   name text not null,
-  icon text not null
+  icon text not null,
+  genre text not null default ''
 );
 
 create table public.collection_items (
@@ -385,6 +397,17 @@ create table public.collection_items (
 create table public.collection_levels (
   level smallint primary key check (level between 1 and 65),
   amount bigint not null check (amount > 0)
+);
+
+-- Stat flat per level item koleksi (CCollectDispatchCollectionLevel.PartBuff):
+-- buff genre zona + buff semua artis, sudah dijumlahkan. Nilai = total kumulatif.
+create table public.collection_item_levels (
+  item_id integer not null references public.collection_items (id) on delete cascade,
+  level smallint not null check (level between 1 and 65),
+  sing integer not null default 0 check (sing >= 0),
+  dance integer not null default 0 check (dance >= 0),
+  management integer not null default 0 check (management >= 0),
+  primary key (item_id, level)
 );
 
 -- Renovasi markas (CHeadquartersBeautifyLevel): 800 level, biaya Kaca,
@@ -560,9 +583,11 @@ alter table public.car_mod_levels enable row level security;
 alter table public.game_costs enable row level security;
 alter table public.museum_parts enable row level security;
 alter table public.museum_costs enable row level security;
+alter table public.museum_levels enable row level security;
 alter table public.collection_items enable row level security;
 alter table public.collection_levels enable row level security;
 alter table public.collection_zones enable row level security;
+alter table public.collection_item_levels enable row level security;
 alter table public.headquarters_levels enable row level security;
 alter table public.headquarters_rooms enable row level security;
 alter table public.headquarters_room_costs enable row level security;
@@ -585,9 +610,11 @@ create policy "read car mod levels" on public.car_mod_levels for select to authe
 create policy "read game costs" on public.game_costs for select to authenticated using (true);
 create policy "read museum parts" on public.museum_parts for select to authenticated using (true);
 create policy "read museum costs" on public.museum_costs for select to authenticated using (true);
+create policy "read museum levels" on public.museum_levels for select to authenticated using (true);
 create policy "read collection items" on public.collection_items for select to authenticated using (true);
 create policy "read collection levels" on public.collection_levels for select to authenticated using (true);
 create policy "read collection zones" on public.collection_zones for select to authenticated using (true);
+create policy "read collection item levels" on public.collection_item_levels for select to authenticated using (true);
 create policy "read headquarters levels" on public.headquarters_levels for select to authenticated using (true);
 create policy "read headquarters rooms" on public.headquarters_rooms for select to authenticated using (true);
 create policy "read headquarters room costs" on public.headquarters_room_costs for select to authenticated using (true);
@@ -737,7 +764,9 @@ alter default privileges for role postgres in schema public
 revoke select on
   public.artist_level_costs, public.artist_star_costs,
   public.car_parts, public.car_part_levels, public.car_mod_classes, public.car_mod_levels,
-  public.game_costs, public.museum_parts, public.museum_costs,
+  public.game_costs, public.museum_parts, public.museum_costs, public.museum_levels,
+  public.collection_items, public.collection_levels, public.collection_zones,
+  public.collection_item_levels,
   public.headquarters_levels, public.headquarters_rooms, public.headquarters_room_costs,
   public.headquarters_room_levels,
   public.villa_stages, public.villa_suites, public.villa_staff,

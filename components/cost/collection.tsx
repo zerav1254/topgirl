@@ -1,9 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { sumLevels } from "@/lib/cost-calc";
+import { statDelta, sumLevels } from "@/lib/cost-calc";
 import type { CostBook } from "@/lib/costs";
-import { clamp, heading, invalid, NumberField, panel, result, Segmented, Totals, type CostDict } from "./fields";
+import { t } from "@/lib/i18n";
+import { clamp, heading, invalid, NumberField, panel, result, Segmented, Stats, Totals, type CostDict } from "./fields";
 import { MuseumPanel } from "./museum";
 
 const ITEM_MIN = 1;
@@ -21,14 +22,20 @@ const RARITY_STYLE = {
 // collection.stars tetap ada di CostBook; tambah mode lagi kalau fitur rilis.
 export function CollectionPanel({
   collection,
+  collectionStats,
   museum,
+  museumStats,
   C,
   format,
+  formatPct,
 }: {
   collection: CostBook["collection"];
+  collectionStats: CostBook["collectionStats"];
   museum: CostBook["museum"];
+  museumStats: CostBook["museumStats"];
   C: CostDict;
   format: (value: number) => string;
+  formatPct: (value: number) => string;
 }) {
   const [mode, setMode] = useState<"room" | "museum">("room");
 
@@ -45,10 +52,10 @@ export function CollectionPanel({
       />
       {/* Kedua cabang tetap ter-mount supaya input tidak hilang saat ganti mode. */}
       <div hidden={mode !== "room"}>
-        <CollectionRoom collection={collection} C={C} format={format} />
+        <CollectionRoom collection={collection} collectionStats={collectionStats} C={C} format={format} />
       </div>
       <div hidden={mode !== "museum"}>
-        <MuseumPanel tiers={museum} C={C} format={format} />
+        <MuseumPanel tiers={museum} stats={museumStats} C={C} format={format} formatPct={formatPct} />
       </div>
     </section>
   );
@@ -56,10 +63,12 @@ export function CollectionPanel({
 
 function CollectionRoom({
   collection,
+  collectionStats,
   C,
   format,
 }: {
   collection: CostBook["collection"];
+  collectionStats: CostBook["collectionStats"];
   C: CostDict;
   format: (value: number) => string;
 }) {
@@ -78,6 +87,20 @@ function CollectionRoom({
     () => sumLevels(item ? [item.cost] : [], itemFrom, itemTo),
     [item, itemFrom, itemTo],
   );
+
+  // Stat flat item = total kumulatif per level -> pakai selisih target - awal.
+  const stats = useMemo(() => {
+    const rows = item ? collectionStats.filter((row) => row.itemId === item.id) : [];
+    return statDelta(rows, itemFrom, itemTo);
+  }, [collectionStats, item, itemFrom, itemTo]);
+  const zoneGenre = zones.find((entry) => entry.zone === zone)?.genre ?? "";
+  const statRows = [
+    { label: `${C.statSing} (${zoneGenre})`, value: stats.sing },
+    { label: `${C.statDance} (${zoneGenre})`, value: stats.dance },
+    { label: `${C.statManage} (${zoneGenre})`, value: stats.management },
+  ]
+    .filter((row) => row.value > 0)
+    .map((row) => ({ label: row.label, value: `+${format(row.value)}` }));
 
   const pickZone = (next: number) => {
     setZone(next);
@@ -151,6 +174,7 @@ function CollectionRoom({
       {itemBad ? null : (
         <div className={result}>
           <Totals totals={itemTotals} note={`${itemLabel} · ${C.collectionItemNote}`} empty={C.noCost} format={format} />
+          <Stats title={C.statsTitle} rows={statRows} note={t(C.collectionStatNote, { genre: zoneGenre })} />
         </div>
       )}
     </div>

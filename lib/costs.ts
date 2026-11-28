@@ -32,7 +32,7 @@ export type CeoStage = { stage: number; name: string; itemName: string; amount: 
 export type CeoOutfit = { stage: number; outfit: number; name: string; itemName: string; levelMax: number; amount: number };
 
 // Zona ruang koleksi (CCollectDispatchCollectionZone).
-export type CollectionZone = { zone: number; name: string; icon: string };
+export type CollectionZone = { zone: number; name: string; icon: string; genre: string };
 
 // Item koleksi ruang pamer; rarity 2/3/4 = R/SR/SSR, biaya per level pakai permata sesuai rarity.
 export type CollectionItem = { id: number; zone: number; name: string; rarity: number; cost: CostItem };
@@ -58,6 +58,8 @@ export type CostBook = {
     carModClass: Record<number, CostItem[]>;
   };
   museum: TierCosts;
+  // Buff persen museum per (tier, level); tiap bagian menambah satu stat.
+  museumStats: { tier: number; level: number; percent: number }[];
   hq: {
     // amounts[level - 1] = biaya naik ke level itu; sing/dance/management = total kumulatif level itu.
     curve: { itemName: string; amounts: number[]; sing: number[]; dance: number[]; management: number[] };
@@ -77,6 +79,8 @@ export type CostBook = {
     staffCosts: TierCosts;
   };
   collection: { stars: Record<number, CostItem[]>; items: CollectionItem[]; zones: CollectionZone[] };
+  // Stat flat per level item koleksi; nilai = total kumulatif.
+  collectionStats: { itemId: number; level: number; sing: number; dance: number; management: number }[];
   ceo: { stages: CeoStage[]; outfits: CeoOutfit[]; sportCosts: TierCosts };
 };
 
@@ -98,7 +102,9 @@ type VillaStaffRow = { id: number; name: string; staff_type: number; tier: numbe
 type CeoStageRow = { stage: number; name: string; item_name: string; amount: number; advance_max: number };
 type CeoOutfitRow = { outfit: number; name: string; item_name: string; level_max: number; amount: number; ceo_appearance_stages: StageRef };
 type CollectionItemRow = { id: number; zone: number; name: string; rarity: number; gem_item: number; gem_name: string };
-type CollectionZoneRow = { zone: number; name: string; icon: string };
+type CollectionZoneRow = { zone: number; name: string; icon: string; genre: string };
+type MuseumLevelRow = { tier: number; level: number; percent: number };
+type CollectionStatRow = { item_id: number; level: number; sing: number; dance: number; management: number };
 
 const stageOf = (ref: StageRef) => (Array.isArray(ref) ? (ref[0]?.stage ?? 0) : ref.stage);
 
@@ -179,6 +185,7 @@ export async function loadCostBook(locale: Locale): Promise<CostBook> {
     modStats,
     costs,
     museum,
+    museumStats,
     hqCurve,
     hqRooms,
     hqRoomStats,
@@ -193,6 +200,7 @@ export async function loadCostBook(locale: Locale): Promise<CostBook> {
     collectionItems,
     collectionLevels,
     collectionZones,
+    collectionStats,
   ] = await Promise.all([
     supabase.from("artist_exp_curves").select("artist_ids, steps"),
     supabase.from("artist_star_curve").select("star, item_name, amount").order("star"),
@@ -204,6 +212,7 @@ export async function loadCostBook(locale: Locale): Promise<CostBook> {
     supabase.from("car_mod_levels").select("part, level, class_id, sing, dance, management, fan, speed").order("part").order("level"),
     supabase.from("game_cost_items").select("scope, ref_id, item_id, item_name, amounts"),
     supabase.from("museum_cost_items").select("tier, item_id, item_name, amounts").order("tier"),
+    supabase.from("museum_levels").select("tier, level, percent").order("tier").order("level"),
     supabase.from("headquarters_level_curve").select("amounts, item_name, sing, dance, management").single(),
     supabase.from("headquarters_room_cost_items").select("tier, item_id, item_name, amounts").order("tier"),
     supabase.from("headquarters_room_levels").select("tier, level, sing, dance, management").order("tier").order("level"),
@@ -217,7 +226,8 @@ export async function loadCostBook(locale: Locale): Promise<CostBook> {
     supabase.from("ceo_sport_cost_items").select("tier, item_id, item_name, amounts").order("tier"),
     supabase.from("collection_items").select("id, zone, name, rarity, gem_item, gem_name").order("id"),
     supabase.from("collection_levels").select("level, amount").order("level"),
-    supabase.from("collection_zones").select("zone, name, icon").order("zone"),
+    supabase.from("collection_zones").select("zone, name, icon, genre").order("zone"),
+    supabase.from("collection_item_levels").select("item_id, level, sing, dance, management").order("item_id").order("level"),
   ]);
 
   if (curves.error) fail("kurva EXP", curves.error.message);
@@ -230,6 +240,7 @@ export async function loadCostBook(locale: Locale): Promise<CostBook> {
   if (modStats.error) fail("level mod", modStats.error.message);
   if (costs.error) fail("biaya item", costs.error.message);
   if (museum.error) fail("biaya museum", museum.error.message);
+  if (museumStats.error) fail("stat museum", museumStats.error.message);
   if (hqCurve.error) fail("kurva markas", hqCurve.error.message);
   if (hqRooms.error) fail("biaya ruangan markas", hqRooms.error.message);
   if (hqRoomStats.error) fail("stat ruangan markas", hqRoomStats.error.message);
@@ -244,6 +255,7 @@ export async function loadCostBook(locale: Locale): Promise<CostBook> {
   if (collectionItems.error) fail("item koleksi", collectionItems.error.message);
   if (collectionLevels.error) fail("biaya level koleksi", collectionLevels.error.message);
   if (collectionZones.error) fail("zona koleksi", collectionZones.error.message);
+  if (collectionStats.error) fail("stat item koleksi", collectionStats.error.message);
 
   const curveRows = (curves.data as CurveRow[]).map((r) => ({ artistIds: r.artist_ids, steps: r.steps.map(Number) }));
   const curveOf = new Map<number, number>();
@@ -294,6 +306,11 @@ export async function loadCostBook(locale: Locale): Promise<CostBook> {
     classByLevel: modRows.filter((r) => r.part === 0).map((r) => r.classId),
     costs: { carPart: [], carMod: {}, carModClass: {} },
     museum: byTier(museum.data as TierCostRow[]),
+    museumStats: (museumStats.data as MuseumLevelRow[]).map((r) => ({
+      tier: r.tier,
+      level: r.level,
+      percent: r.percent,
+    })),
     hq: {
       curve: {
         itemName: (hqCurve.data as HqCurveRow).item_name ?? "",
@@ -352,6 +369,13 @@ export async function loadCostBook(locale: Locale): Promise<CostBook> {
       })),
       zones: collectionZones.data as CollectionZoneRow[],
     },
+    collectionStats: (collectionStats.data as CollectionStatRow[]).map((r) => ({
+      itemId: r.item_id,
+      level: r.level,
+      sing: r.sing,
+      dance: r.dance,
+      management: r.management,
+    })),
     ceo: {
       stages: (ceoStages.data as CeoStageRow[]).map((r) => ({
         stage: r.stage,
@@ -407,9 +431,11 @@ export function artistCostBook(book: CostBook): CostBook {
     classByLevel: [],
     costs: { carPart: [], carMod: {}, carModClass: {} },
     museum: [],
+    museumStats: [],
     hq: { curve: { itemName: "", amounts: [], sing: [], dance: [], management: [] }, rooms: [], roomCosts: [], roomStats: [], planItemIds: [] },
     villa: { stages: [], suites: [], staff: [], staffCosts: [] },
     collection: { stars: {}, items: [], zones: [] },
+    collectionStats: [],
     ceo: { stages: [], outfits: [], sportCosts: [] },
   };
 }
