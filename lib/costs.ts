@@ -21,15 +21,21 @@ export type CarModStat = { part: number; level: number; classId: number; sing: n
 export type TierCosts = CostItem[][];
 
 // amount = biaya per bintang; amount × advanceMax = biaya penuh satu stage.
-export type VillaStage = { stage: number; name: string; itemName: string; amount: number; advanceMax: number };
+export type VillaStage = { stage: number; name: string; itemName: string; amount: number; advanceMax: number; sing: number; dance: number; management: number };
 
-export type VillaSuite = { stage: number; suite: number; name: string; itemName: string; levelMax: number; amount: number };
+export type VillaSuite = { stage: number; suite: number; name: string; itemName: string; levelMax: number; amount: number; sing: number; dance: number; management: number };
 
 export type VillaStaff = { id: number; name: string; staffType: number; tier: number; itemName: string; amount: number };
 
-export type CeoStage = { stage: number; name: string; itemName: string; amount: number; advanceMax: number };
+// Stat staf vila per level (CVillaStaffLevel); nilai = tambahan per level.
+export type VillaStaffStat = { tier: number; staffType: number; level: number; sing: number; dance: number; management: number };
 
-export type CeoOutfit = { stage: number; outfit: number; name: string; itemName: string; levelMax: number; amount: number };
+export type CeoStage = { stage: number; name: string; itemName: string; amount: number; advanceMax: number; sing: number; dance: number; management: number };
+
+export type CeoOutfit = { stage: number; outfit: number; name: string; itemName: string; levelMax: number; amount: number; sing: number; dance: number; management: number };
+
+// Stat olahraga CEO per level (CCeoAppearanceSportsLevel); nilai = tambahan per level.
+export type CeoSportStat = { tier: number; sportsType: number; level: number; sing: number; dance: number; management: number };
 
 // Zona ruang koleksi (CCollectDispatchCollectionZone).
 export type CollectionZone = { zone: number; name: string; icon: string; genre: string };
@@ -77,11 +83,12 @@ export type CostBook = {
     staff: VillaStaff[];
     // staffCosts[tier - 1] = biaya level staf; 3 tipe staf berbagi biaya.
     staffCosts: TierCosts;
+    staffStats: VillaStaffStat[];
   };
   collection: { stars: Record<number, CostItem[]>; items: CollectionItem[]; zones: CollectionZone[] };
   // Stat flat per level item koleksi; nilai = total kumulatif.
   collectionStats: { itemId: number; level: number; sing: number; dance: number; management: number }[];
-  ceo: { stages: CeoStage[]; outfits: CeoOutfit[]; sportCosts: TierCosts };
+  ceo: { stages: CeoStage[]; outfits: CeoOutfit[]; sportCosts: TierCosts; sportStats: CeoSportStat[] };
 };
 
 type CurveRow = { artist_ids: number[]; steps: number[] };
@@ -94,19 +101,22 @@ type CostRow = { scope: CostScope; ref_id: number; item_id: number; item_name: s
 type TierCostRow = { tier: number; item_id: number; item_name: string; amounts: Record<string, number> };
 type HqCurveRow = { amounts: number[]; item_name: string | null; sing: number[]; dance: number[]; management: number[] };
 type HqRoomRow = { tier: number; slot: number; room: string; name: string };
-type VillaStageRow = { stage: number; name: string; item_name: string; amount: number; advance_max: number };
+type VillaStageRow = { stage: number; name: string; item_name: string; amount: number; advance_max: number; sing: number; dance: number; management: number };
 // Relasi embed bisa berbentuk objek atau array tergantung tipe yang digenerate Supabase.
 type StageRef = { stage: number } | { stage: number }[];
-type VillaSuiteRow = { suite: number; name: string; item_name: string; level_max: number; amount: number; villa_stages: StageRef };
+type VillaSuiteRow = { suite: number; name: string; item_name: string; level_max: number; amount: number; sing: number; dance: number; management: number; villa_stages: StageRef };
 type VillaStaffRow = { id: number; name: string; staff_type: number; tier: number; item_name: string; amount: number };
-type CeoStageRow = { stage: number; name: string; item_name: string; amount: number; advance_max: number };
-type CeoOutfitRow = { outfit: number; name: string; item_name: string; level_max: number; amount: number; ceo_appearance_stages: StageRef };
+type VillaStaffLevelRow = { level: number; sing: number; dance: number; management: number; villa_staff: { tier: number; staff_type: number } | { tier: number; staff_type: number }[] };
+type CeoStageRow = { stage: number; name: string; item_name: string; amount: number; advance_max: number; sing: number; dance: number; management: number };
+type CeoOutfitRow = { outfit: number; name: string; item_name: string; level_max: number; amount: number; sing: number; dance: number; management: number; ceo_appearance_stages: StageRef };
+type CeoSportLevelRow = { level: number; sing: number; dance: number; management: number; ceo_appearance_sports: { tier: number; sports_type: number } | { tier: number; sports_type: number }[] };
 type CollectionItemRow = { id: number; zone: number; name: string; rarity: number; gem_item: number; gem_name: string };
 type CollectionZoneRow = { zone: number; name: string; icon: string; genre: string };
 type MuseumLevelRow = { tier: number; level: number; percent: number };
 type CollectionStatRow = { item_id: number; level: number; sing: number; dance: number; management: number };
 
 const stageOf = (ref: StageRef) => (Array.isArray(ref) ? (ref[0]?.stage ?? 0) : ref.stage);
+const first = <T>(ref: T | T[]) => (Array.isArray(ref) ? ref[0] : ref);
 
 function fail(what: string, message: string): never {
   throw new Error(`Gagal memuat ${what}: ${message}`);
@@ -153,6 +163,7 @@ function localizeBook(book: CostBook, locale: Locale): CostBook {
       suites: book.villa.suites.map((suite) => ({ ...suite, name: n(suite.name), itemName: n(suite.itemName) })),
       staff: book.villa.staff.map((member) => ({ ...member, name: n(member.name), itemName: n(member.itemName) })),
       staffCosts: tiers(book.villa.staffCosts),
+      staffStats: book.villa.staffStats,
     },
     collection: {
       stars: groups(book.collection.stars),
@@ -167,6 +178,7 @@ function localizeBook(book: CostBook, locale: Locale): CostBook {
       stages: book.ceo.stages.map((stage) => ({ ...stage, name: n(stage.name), itemName: n(stage.itemName) })),
       outfits: book.ceo.outfits.map((outfit) => ({ ...outfit, name: n(outfit.name), itemName: n(outfit.itemName) })),
       sportCosts: tiers(book.ceo.sportCosts),
+      sportStats: book.ceo.sportStats,
     },
   };
 }
@@ -194,9 +206,11 @@ export async function loadCostBook(locale: Locale): Promise<CostBook> {
     villaSuites,
     villaStaff,
     villaStaffCosts,
+    villaStaffLevels,
     ceoStages,
     ceoOutfits,
     ceoSportCosts,
+    ceoSportLevels,
     collectionItems,
     collectionLevels,
     collectionZones,
@@ -217,13 +231,15 @@ export async function loadCostBook(locale: Locale): Promise<CostBook> {
     supabase.from("headquarters_room_cost_items").select("tier, item_id, item_name, amounts").order("tier"),
     supabase.from("headquarters_room_levels").select("tier, level, sing, dance, management").order("tier").order("level"),
     supabase.from("headquarters_rooms").select("tier, slot, room, name").order("tier").order("slot"),
-    supabase.from("villa_stages").select("stage, name, item_name, amount, advance_max").order("stage"),
-    supabase.from("villa_suites").select("suite, name, item_name, level_max, amount, villa_stages!inner(stage)").order("id"),
+    supabase.from("villa_stages").select("stage, name, item_name, amount, advance_max, sing, dance, management").order("stage"),
+    supabase.from("villa_suites").select("suite, name, item_name, level_max, amount, sing, dance, management, villa_stages!inner(stage)").order("id"),
     supabase.from("villa_staff").select("id, name, staff_type, tier, item_name, amount").order("id"),
     supabase.from("villa_staff_cost_items").select("tier, item_id, item_name, amounts").order("tier"),
-    supabase.from("ceo_appearance_stages").select("stage, name, item_name, amount, advance_max").order("stage"),
-    supabase.from("ceo_appearance_outfits").select("outfit, name, item_name, level_max, amount, ceo_appearance_stages!inner(stage)").order("id"),
+    supabase.from("villa_staff_levels").select("level, sing, dance, management, villa_staff!inner(tier, staff_type)").order("level"),
+    supabase.from("ceo_appearance_stages").select("stage, name, item_name, amount, advance_max, sing, dance, management").order("stage"),
+    supabase.from("ceo_appearance_outfits").select("outfit, name, item_name, level_max, amount, sing, dance, management, ceo_appearance_stages!inner(stage)").order("id"),
     supabase.from("ceo_sport_cost_items").select("tier, item_id, item_name, amounts").order("tier"),
+    supabase.from("ceo_appearance_sport_levels").select("level, sing, dance, management, ceo_appearance_sports!inner(tier, sports_type)").order("level"),
     supabase.from("collection_items").select("id, zone, name, rarity, gem_item, gem_name").order("id"),
     supabase.from("collection_levels").select("level, amount").order("level"),
     supabase.from("collection_zones").select("zone, name, icon, genre").order("zone"),
@@ -249,9 +265,11 @@ export async function loadCostBook(locale: Locale): Promise<CostBook> {
   if (villaSuites.error) fail("suite vila", villaSuites.error.message);
   if (villaStaff.error) fail("staf vila", villaStaff.error.message);
   if (villaStaffCosts.error) fail("biaya level staf vila", villaStaffCosts.error.message);
+  if (villaStaffLevels.error) fail("stat staf vila", villaStaffLevels.error.message);
   if (ceoStages.error) fail("stage penampilan CEO", ceoStages.error.message);
   if (ceoOutfits.error) fail("outfit penampilan CEO", ceoOutfits.error.message);
   if (ceoSportCosts.error) fail("biaya olahraga CEO", ceoSportCosts.error.message);
+  if (ceoSportLevels.error) fail("stat olahraga CEO", ceoSportLevels.error.message);
   if (collectionItems.error) fail("item koleksi", collectionItems.error.message);
   if (collectionLevels.error) fail("biaya level koleksi", collectionLevels.error.message);
   if (collectionZones.error) fail("zona koleksi", collectionZones.error.message);
@@ -339,6 +357,9 @@ export async function loadCostBook(locale: Locale): Promise<CostBook> {
         itemName: r.item_name,
         amount: Number(r.amount),
         advanceMax: r.advance_max,
+        sing: r.sing,
+        dance: r.dance,
+        management: r.management,
       })),
       suites: (villaSuites.data as VillaSuiteRow[]).map((r) => ({
         stage: stageOf(r.villa_stages),
@@ -347,6 +368,9 @@ export async function loadCostBook(locale: Locale): Promise<CostBook> {
         itemName: r.item_name,
         levelMax: r.level_max,
         amount: Number(r.amount),
+        sing: r.sing,
+        dance: r.dance,
+        management: r.management,
       })),
       staff: (villaStaff.data as VillaStaffRow[]).map((r) => ({
         id: r.id,
@@ -357,6 +381,12 @@ export async function loadCostBook(locale: Locale): Promise<CostBook> {
         amount: Number(r.amount),
       })),
       staffCosts: byTier(villaStaffCosts.data as TierCostRow[]),
+      staffStats: (villaStaffLevels.data as VillaStaffLevelRow[]).flatMap((r) => {
+        const ref = first(r.villa_staff);
+        return ref
+          ? [{ tier: ref.tier, staffType: ref.staff_type, level: r.level, sing: r.sing, dance: r.dance, management: r.management }]
+          : [];
+      }),
     },
     collection: {
       stars: {},
@@ -383,6 +413,9 @@ export async function loadCostBook(locale: Locale): Promise<CostBook> {
         itemName: r.item_name,
         amount: Number(r.amount),
         advanceMax: r.advance_max,
+        sing: r.sing,
+        dance: r.dance,
+        management: r.management,
       })),
       outfits: (ceoOutfits.data as CeoOutfitRow[]).map((r) => ({
         stage: stageOf(r.ceo_appearance_stages),
@@ -391,8 +424,17 @@ export async function loadCostBook(locale: Locale): Promise<CostBook> {
         itemName: r.item_name,
         levelMax: r.level_max,
         amount: Number(r.amount),
+        sing: r.sing,
+        dance: r.dance,
+        management: r.management,
       })),
       sportCosts: byTier(ceoSportCosts.data as TierCostRow[]),
+      sportStats: (ceoSportLevels.data as CeoSportLevelRow[]).flatMap((r) => {
+        const ref = first(r.ceo_appearance_sports);
+        return ref
+          ? [{ tier: ref.tier, sportsType: ref.sports_type, level: r.level, sing: r.sing, dance: r.dance, management: r.management }]
+          : [];
+      }),
     },
   };
 
@@ -433,9 +475,9 @@ export function artistCostBook(book: CostBook): CostBook {
     museum: [],
     museumStats: [],
     hq: { curve: { itemName: "", amounts: [], sing: [], dance: [], management: [] }, rooms: [], roomCosts: [], roomStats: [], planItemIds: [] },
-    villa: { stages: [], suites: [], staff: [], staffCosts: [] },
+    villa: { stages: [], suites: [], staff: [], staffCosts: [], staffStats: [] },
     collection: { stars: {}, items: [], zones: [] },
     collectionStats: [],
-    ceo: { stages: [], outfits: [], sportCosts: [] },
+    ceo: { stages: [], outfits: [], sportCosts: [], sportStats: [] },
   };
 }

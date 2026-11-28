@@ -1,9 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { stagePromotionCost, sumLevels } from "@/lib/cost-calc";
+import { stagePromotionCost, statSum, sumLevels } from "@/lib/cost-calc";
 import type { CostBook } from "@/lib/costs";
-import { clamp, invalid, NumberField, panel, result, Segmented, Select, Totals, type CostDict, type Total } from "./fields";
+import { clamp, invalid, NumberField, panel, result, Segmented, Select, Stats, Totals, type CostDict, type Total } from "./fields";
 
 type Mode = "appearance" | "sport";
 
@@ -48,9 +48,47 @@ export function CeoPanel({ ceo, C, format }: { ceo: CostBook["ceo"]; C: CostDict
     outfitAmount > 0 && outfitItem ? { name: outfitItem, amount: outfitAmount } : null,
   ].filter((item): item is Total => item !== null);
 
+  // Stage: stat statis per stage. Aksesori: stat statis per level.
+  const stageStats = statSum(
+    ceo.stages.map((item) => ({ level: item.stage, sing: item.sing, dance: item.dance, management: item.management })),
+    stageFrom,
+    stageTo,
+  );
+  const outfitLevels = Math.max(outfitTo - outfitFrom, 0);
+  const pickedOutfits = selectedOutfitId === 0 ? targetOutfits : outfit ? [outfit] : [];
+  const outfitStats = pickedOutfits.reduce(
+    (sum, item) => ({
+      sing: sum.sing + item.sing * outfitLevels,
+      dance: sum.dance + item.dance * outfitLevels,
+      management: sum.management + item.management * outfitLevels,
+    }),
+    { sing: 0, dance: 0, management: 0 },
+  );
+  const appearanceTotal = {
+    sing: stageStats.sing + outfitStats.sing,
+    dance: stageStats.dance + outfitStats.dance,
+    management: stageStats.management + outfitStats.management,
+  };
+
+  const statRows = (stats: { sing: number; dance: number; management: number }) =>
+    [
+      { label: C.statSing, value: stats.sing },
+      { label: C.statDance, value: stats.dance },
+      { label: C.statManage, value: stats.management },
+    ]
+      .filter((row) => row.value > 0)
+      .map((row) => ({ label: row.label, value: `+${format(row.value)}` }));
+
   const sportTotals = useMemo(
     () => sumLevels(ceo.sportCosts[tier - 1] ?? [], sportFrom, sportTo),
     [ceo.sportCosts, tier, sportFrom, sportTo],
+  );
+
+  // Jenis olahraga dalam satu tier berbagi biaya; tiap jenis menambah satu stat.
+  const sportStats = statSum(
+    ceo.sportStats.filter((row) => row.tier === tier),
+    sportFrom,
+    sportTo,
   );
 
   return (
@@ -124,6 +162,7 @@ export function CeoPanel({ ceo, C, format }: { ceo: CostBook["ceo"]; C: CostDict
           ) : (
             <div className={result}>
               <Totals totals={totals} note={hasOutfits ? C.ceoAppearanceNote : undefined} empty={C.noCost} format={format} />
+              <Stats title={C.statsTitle} rows={statRows(appearanceTotal)} note={C.statsNote} />
             </div>
           )}
         </>
@@ -151,6 +190,7 @@ export function CeoPanel({ ceo, C, format }: { ceo: CostBook["ceo"]; C: CostDict
           {sportBad ? null : (
             <div className={result}>
               <Totals totals={sportTotals} note={C.ceoSportNote} empty={C.noCost} format={format} />
+              <Stats title={C.statsTitle} rows={statRows(sportStats)} note={C.statsNote} />
             </div>
           )}
         </>

@@ -1,9 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { stagePromotionCost, sumLevels } from "@/lib/cost-calc";
+import { stagePromotionCost, statSum, sumLevels } from "@/lib/cost-calc";
 import type { CostBook } from "@/lib/costs";
-import { clamp, invalid, NumberField, panel, result, Segmented, Select, Totals, type CostDict, type Total } from "./fields";
+import { clamp, invalid, NumberField, panel, result, Segmented, Select, Stats, Totals, type CostDict, type Total } from "./fields";
 
 type Mode = "suite" | "staff";
 
@@ -50,6 +50,37 @@ export function VillaPanel({ villa, C, format }: { villa: CostBook["villa"]; C: 
     suiteAmount > 0 && suiteItem ? { name: suiteItem, amount: suiteAmount } : null,
   ].filter((item): item is Total => item !== null);
 
+  // Stage: stat statis per stage yang dilewati. Suite: stat statis per level.
+  const stageStats = statSum(
+    villa.stages.map((item) => ({ level: item.stage, sing: item.sing, dance: item.dance, management: item.management })),
+    stageFrom,
+    stageTo,
+  );
+  const suiteLevels = Math.max(suiteTo - suiteFrom, 0);
+  const pickedSuites = selectedSuiteId === 0 ? targetSuites : suite ? [suite] : [];
+  const suiteStats = pickedSuites.reduce(
+    (sum, item) => ({
+      sing: sum.sing + item.sing * suiteLevels,
+      dance: sum.dance + item.dance * suiteLevels,
+      management: sum.management + item.management * suiteLevels,
+    }),
+    { sing: 0, dance: 0, management: 0 },
+  );
+  const suiteTotal = {
+    sing: stageStats.sing + suiteStats.sing,
+    dance: stageStats.dance + suiteStats.dance,
+    management: stageStats.management + suiteStats.management,
+  };
+
+  const statRows = (stats: { sing: number; dance: number; management: number }) =>
+    [
+      { label: C.statSing, value: stats.sing },
+      { label: C.statDance, value: stats.dance },
+      { label: C.statManage, value: stats.management },
+    ]
+      .filter((row) => row.value > 0)
+      .map((row) => ({ label: row.label, value: `+${format(row.value)}` }));
+
   const staffTiers = useMemo(() => [...new Set(villa.staff.map((item) => item.tier))].sort((a, b) => a - b), [villa.staff]);
   const tierStaff = villa.staff.filter((item) => item.tier === staffTier);
   const staffCount = staffSlot === 0 ? Math.max(tierStaff.length, 1) : 1;
@@ -64,6 +95,12 @@ export function VillaPanel({ villa, C, format }: { villa: CostBook["villa"]; C: 
       })),
     );
   }
+
+  const staffStats = statSum(
+    villa.staffStats.filter((row) => row.tier === staffTier && (staffSlot === 0 || row.staffType === staffSlot)),
+    staffFrom,
+    staffTo,
+  );
 
   return (
     <section aria-label={C.tabVilla} className={panel}>
@@ -141,6 +178,7 @@ export function VillaPanel({ villa, C, format }: { villa: CostBook["villa"]; C: 
                 empty={C.noCost}
                 format={format}
               />
+              <Stats title={C.statsTitle} rows={statRows(suiteTotal)} note={C.statsNote} />
             </div>
           )}
         </>
@@ -186,6 +224,7 @@ export function VillaPanel({ villa, C, format }: { villa: CostBook["villa"]; C: 
           {staffBad ? null : (
             <div className={result}>
               <Totals totals={staffTotals} note={C.villaStaffNote} empty={C.noCost} format={format} />
+              <Stats title={C.statsTitle} rows={statRows(staffStats)} note={C.statsNote} />
             </div>
           )}
         </>
