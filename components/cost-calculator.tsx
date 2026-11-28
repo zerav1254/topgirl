@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { expBetween, classLevels, modTotals, starCardsForLevels, statDelta } from "@/lib/cost-calc";
+import { expBetween, classLevels, modTotals, starCardsForLevels, statSum } from "@/lib/cost-calc";
 import { tabIcon } from "@/lib/cost-icons";
 import { DICT, numberLocale, type Locale } from "@/lib/i18n";
 import type { CarClass, CostBook } from "@/lib/costs";
@@ -80,20 +80,20 @@ export function CostCalculator({ book, locale, signedIn }: { book: CostBook; loc
   const classLabel = (c: CarClass) => (c.star > 0 ? `${c.name} ★${c.star}` : c.name);
   const modLabels = [C.partEngine, C.partChassis, C.partSuspension, C.partWheels];
 
-  // Komponen: nilai tabel = total kumulatif per level, jadi pakai selisih target - awal.
+  // Mod: nilai tabel = tambahan per level (seperti markas gedung), jadi dijumlahkan.
   const modStats = useMemo(() => {
     const total = { sing: 0, dance: 0, management: 0, fan: 0, speed: 0 };
     for (const part of modPart === -1 ? [0, 1, 2, 3] : [modPart]) {
-      const delta = statDelta(
+      const sum = statSum(
         book.modStats.filter((row) => row.part === part),
         modFrom,
         modTo,
       );
-      total.sing += delta.sing;
-      total.dance += delta.dance;
-      total.management += delta.management;
-      total.fan += delta.fan;
-      total.speed += delta.speed;
+      total.sing += sum.sing;
+      total.dance += sum.dance;
+      total.management += sum.management;
+      total.fan += sum.fan;
+      total.speed += sum.speed;
     }
     return total;
   }, [book.modStats, modPart, modFrom, modTo]);

@@ -494,7 +494,12 @@ export async function loadCostBook(locale: Locale): Promise<CostBook> {
   };
 
   for (const row of costs.data as CostRow[]) {
-    const item = { itemId: row.item_id, itemName: row.item_name, amounts: row.amounts };
+    // Biaya level mod kunci 0 = biaya naik dari level 0 ke 1; geser +1 supaya
+    // amounts[level] = biaya menuju level itu (sama seperti tabel biaya lain).
+    const amounts = row.scope === "car_mod"
+      ? Object.fromEntries(Object.entries(row.amounts).map(([level, amount]) => [String(Number(level) + 1), amount]))
+      : row.amounts;
+    const item = { itemId: row.item_id, itemName: row.item_name, amounts };
     if (row.scope === "collection_platform") continue;
     if (row.scope === "collection_star") (book.collection.stars[row.ref_id] ??= []).push(item);
     else if (row.scope === "car_part") {
