@@ -43,6 +43,6 @@ export async function verifyTurnstile(token: unknown, action: string, ip: string
 // IP klien untuk remoteip (header Vercel/proxy standar).
 export async function clientIp(): Promise<string | null> {
   const { headers } = await import("next/headers");
-  const forwarded = (await headers()).get("x-forwarded-for");
+  const forwarded = (await headers()).get("x-vercel-forwarded-for");
   return forwarded?.split(",")[0]?.trim() || null;
 }
