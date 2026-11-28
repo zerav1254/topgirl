@@ -174,6 +174,10 @@ export const en: Dict = {
     peakStage: "Threshold buff",
     peakStageNote: "Global percentage per level threshold; stacks for each SSR artist with a peak level.",
     loginHint: "Sign in to unlock car, HQ, villa, collection, and CEO tabs.",
+    errorUnauthenticated: "Your session expired. Sign in again.",
+    errorInvalid: "The selection or range is invalid.",
+    errorRateLimited: "Too many calculations. Try again later.",
+    errorServer: "Calculation failed. Try again.",
   },
   common: {
     loading: "Loading…",

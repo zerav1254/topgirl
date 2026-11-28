@@ -2,7 +2,7 @@
 
 import { requireUser } from "@/lib/auth";
 import { modTotals, stagePromotionCost, statDelta, statSum, sumLevels, type CostTotal, type StatValues } from "@/lib/cost-calc";
-import type { PrivateCostResult } from "@/lib/cost-private";
+import type { PrivateCostError, PrivateCostResponse, PrivateCostResult } from "@/lib/cost-private";
 import { addStageStats, multiplyTotals, museumStats, percentStats, sumCurveRange } from "@/lib/cost-private-calc";
 import { getCostBook } from "@/lib/costs";
 import { isLocale, type Locale } from "@/lib/i18n";
@@ -44,7 +44,7 @@ async function context(domain: Domain, locale: string) {
   return getCostBook(locale);
 }
 
-export async function calculateCarCost(input: CarCostInput): Promise<PrivateCostResult> {
+async function carCost(input: CarCostInput): Promise<PrivateCostResult> {
   const book = await context("car", input.locale);
   if (input.kind === "part") {
     if (!range(input, 1, 60) || !integer(input.tier, 1, book.costs.carPart.length) || !integer(input.slot, 0, 3)) throw new Error("invalid_request");
@@ -66,7 +66,7 @@ export async function calculateCarCost(input: CarCostInput): Promise<PrivateCost
   return { totals: modTotals({ items: book.costs.carMod[input.part === -1 ? 0 : input.part] ?? [], classCosts: book.costs.carModClass, classByLevel: book.classByLevel, from: input.from, to: input.to, count: parts.length }), stats: cleanStats(total) };
 }
 
-export async function calculateHqCost(input: HqCostInput): Promise<PrivateCostResult> {
+async function hqCost(input: HqCostInput): Promise<PrivateCostResult> {
   const book = await context("hq", input.locale);
   if (input.kind === "building") {
     if (!range(input, 1, 800)) throw new Error("invalid_request");
@@ -108,7 +108,7 @@ function stageResult(stages: { stage: number; amount: number; advanceMax: number
   return { totals, stats: addStageStats(withLevels, targetStage, stars) };
 }
 
-export async function calculateVillaCost(input: VillaCostInput): Promise<PrivateCostResult> {
+async function villaCost(input: VillaCostInput): Promise<PrivateCostResult> {
   const book = await context("villa", input.locale);
   if (input.kind === "suite") return stageResult(book.villa.stages, book.villa.suites.map((item) => ({ ...item, id: item.suite })), input);
   if (!range(input, 1, 60) || !safeBase(input.base)) throw new Error("invalid_request");
@@ -119,7 +119,7 @@ export async function calculateVillaCost(input: VillaCostInput): Promise<Private
   return { totals, stats: cleanStats(percent), secondaryStats: percentStats(input.base, percent) };
 }
 
-export async function calculateCeoCost(input: CeoCostInput): Promise<PrivateCostResult> {
+async function ceoCost(input: CeoCostInput): Promise<PrivateCostResult> {
   const book = await context("ceo", input.locale);
   if (input.kind === "appearance") return stageResult(book.ceo.stages, book.ceo.outfits.map((item) => ({ ...item, id: item.outfit })), input);
   if (!range(input, 1, 60) || !safeBase(input.base) || !integer(input.tier, 1, book.ceo.sportCosts.length)) throw new Error("invalid_request");
@@ -131,7 +131,7 @@ export async function calculateCeoCost(input: CeoCostInput): Promise<PrivateCost
   return { totals, stats: cleanStats(percent), secondaryStats: percentStats(input.base, percent) };
 }
 
-export async function calculateCollectionCost(input: CollectionCostInput): Promise<PrivateCostResult> {
+async function collectionCost(input: CollectionCostInput): Promise<PrivateCostResult> {
   const book = await context("collection", input.locale);
   if (!range(input, 1, input.kind === "item" ? 65 : 60)) throw new Error("invalid_request");
   if (input.kind === "item") {
@@ -143,4 +143,33 @@ export async function calculateCollectionCost(input: CollectionCostInput): Promi
   const count = input.part === "all" ? 3 : 1;
   const value = statSum(book.museumStats.filter((row) => row.tier === input.tier).map((row) => ({ level: row.level, sing: row.percent })), input.from, input.to).sing;
   return { totals: multiplyTotals(sumLevels(book.museum[input.tier - 1] ?? [], input.from, input.to), count), stats: museumStats(value, input.part) };
+}
+
+function errorCode(error: unknown): PrivateCostError {
+  if (error instanceof Error && ["unauthenticated", "invalid_request", "rate_limited"].includes(error.message)) return error.message as PrivateCostError;
+  return "server_error";
+}
+
+async function run(calculate: () => Promise<PrivateCostResult>): Promise<PrivateCostResponse> {
+  try {
+    return { ok: true, data: await calculate() };
+  } catch (error) {
+    return { ok: false, error: errorCode(error) };
+  }
+}
+
+export async function calculateCarCost(input: CarCostInput): Promise<PrivateCostResponse> {
+  return run(() => carCost(input));
+}
+export async function calculateHqCost(input: HqCostInput): Promise<PrivateCostResponse> {
+  return run(() => hqCost(input));
+}
+export async function calculateVillaCost(input: VillaCostInput): Promise<PrivateCostResponse> {
+  return run(() => villaCost(input));
+}
+export async function calculateCollectionCost(input: CollectionCostInput): Promise<PrivateCostResponse> {
+  return run(() => collectionCost(input));
+}
+export async function calculateCeoCost(input: CeoCostInput): Promise<PrivateCostResponse> {
+  return run(() => ceoCost(input));
 }

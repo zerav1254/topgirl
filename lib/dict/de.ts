@@ -174,6 +174,10 @@ export const de: Dict = {
     peakStage: "Schwellen-Buff",
     peakStageNote: "Globaler Prozentwert pro Levelschwelle; summiert sich für jeden SSR-Künstler mit Peak-Level.",
     loginHint: "Melde dich an, um die Tabs Auto, HQ, Villa, Sammlung und CEO freizuschalten.",
+    errorUnauthenticated: "Deine Sitzung ist abgelaufen. Melde dich erneut an.",
+    errorInvalid: "Auswahl oder Bereich ist ungültig.",
+    errorRateLimited: "Zu viele Berechnungen. Versuche es später erneut.",
+    errorServer: "Berechnung fehlgeschlagen. Versuche es erneut.",
   },
   common: {
     loading: "Lädt…",

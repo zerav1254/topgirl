@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { calculateCarCost, calculateCeoCost, calculateCollectionCost, calculateHqCost, calculateVillaCost } from "@/app/[locale]/upgrade/actions";
-import type { PrivateCostOptions, PrivateCostResult } from "@/lib/cost-private";
+import type { PrivateCostError, PrivateCostOptions, PrivateCostResponse, PrivateCostResult } from "@/lib/cost-private";
 import { DICT, numberLocale, t, type Locale } from "@/lib/i18n";
 import { chip, clamp, invalid, NumberField, panel, result, Select, Stats, Totals } from "./fields";
 
@@ -26,7 +26,7 @@ export function PrivateCalculator({ tab, options, locale }: { tab: Tab; options:
   const [collectionItem, setCollectionItem] = useState(firstItem);
   const [buildingLevel, setBuildingLevel] = useState(800);
   const [data, setData] = useState<Partial<Record<Mode, PrivateCostResult>>>({});
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<PrivateCostError | null>(null);
   const [pending, startTransition] = useTransition();
 
   const key = tab === "car" ? (mode === "first" ? "part" : "mod") : tab === "hq" ? (mode === "first" ? "building" : "room") : tab === "villa" ? (mode === "first" ? "suite" : "staff") : tab === "collection" ? (mode === "first" ? "item" : "museum") : mode === "first" ? "appearance" : "sport";
@@ -46,19 +46,20 @@ export function PrivateCalculator({ tab, options, locale }: { tab: Tab; options:
   function setRange(field: keyof Range, value: string) {
     setRanges({ ...ranges, [key]: { ...range, [field]: clamp(value, min, max) } });
   }
-  function switchMode(next: Mode) { setMode(next); setError(false); }
+  function switchMode(next: Mode) { setMode(next); setError(null); }
   function run() {
-    setError(false);
+    setError(null);
     startTransition(async () => {
       try {
-        let next: PrivateCostResult;
-        if (tab === "car") next = mode === "first" ? await calculateCarCost({ locale, kind: "part", tier: tier.car, slot: part.car as 0 | 1 | 2 | 3, ...range }) : await calculateCarCost({ locale, kind: "mod", part: modPart as -1 | 0 | 1 | 2 | 3, ...range });
-        else if (tab === "hq") next = mode === "first" ? await calculateHqCost({ locale, kind: "building", ...range }) : await calculateHqCost({ locale, kind: "room", tier: tier.hq, slot: part.hq, buildingLevel, ...range });
-        else if (tab === "villa") next = mode === "first" ? await calculateVillaCost({ locale, kind: "suite", stageFrom: stage.villa.from, stageTo: stage.villa.to, itemId: stage.villa.item, itemFrom: range.from, itemTo: range.to, ...range }) : await calculateVillaCost({ locale, kind: "staff", tier: tier.villa, staffType: part.villa, base: data.first?.stats ?? { sing: 0, dance: 0, management: 0 }, ...range });
-        else if (tab === "collection") next = mode === "first" ? await calculateCollectionCost({ locale, kind: "item", itemId: collectionItem, ...range }) : await calculateCollectionCost({ locale, kind: "museum", tier: tier.collection, part: (["all", "case", "wall", "floor"] as const)[part.collection] ?? "all", ...range });
-        else next = mode === "first" ? await calculateCeoCost({ locale, kind: "appearance", stageFrom: stage.ceo.from, stageTo: stage.ceo.to, itemId: stage.ceo.item, itemFrom: range.from, itemTo: range.to, ...range }) : await calculateCeoCost({ locale, kind: "sport", tier: tier.ceo, base: data.first?.stats ?? { sing: 0, dance: 0, management: 0 }, ...range });
-        setData({ ...data, [mode]: next });
-      } catch { setError(true); }
+        let response: PrivateCostResponse;
+        if (tab === "car") response = mode === "first" ? await calculateCarCost({ locale, kind: "part", tier: tier.car, slot: part.car as 0 | 1 | 2 | 3, ...range }) : await calculateCarCost({ locale, kind: "mod", part: modPart as -1 | 0 | 1 | 2 | 3, ...range });
+        else if (tab === "hq") response = mode === "first" ? await calculateHqCost({ locale, kind: "building", ...range }) : await calculateHqCost({ locale, kind: "room", tier: tier.hq, slot: part.hq, buildingLevel, ...range });
+        else if (tab === "villa") response = mode === "first" ? await calculateVillaCost({ locale, kind: "suite", stageFrom: stage.villa.from, stageTo: stage.villa.to, itemId: stage.villa.item, itemFrom: range.from, itemTo: range.to, ...range }) : await calculateVillaCost({ locale, kind: "staff", tier: tier.villa, staffType: part.villa, base: data.first?.stats ?? { sing: 0, dance: 0, management: 0 }, ...range });
+        else if (tab === "collection") response = mode === "first" ? await calculateCollectionCost({ locale, kind: "item", itemId: collectionItem, ...range }) : await calculateCollectionCost({ locale, kind: "museum", tier: tier.collection, part: (["all", "case", "wall", "floor"] as const)[part.collection] ?? "all", ...range });
+        else response = mode === "first" ? await calculateCeoCost({ locale, kind: "appearance", stageFrom: stage.ceo.from, stageTo: stage.ceo.to, itemId: stage.ceo.item, itemFrom: range.from, itemTo: range.to, ...range }) : await calculateCeoCost({ locale, kind: "sport", tier: tier.ceo, base: data.first?.stats ?? { sing: 0, dance: 0, management: 0 }, ...range });
+        if (!response.ok) return setError(response.error);
+        setData({ ...data, [mode]: response.data });
+      } catch { setError("server_error"); }
     });
   }
   function stats(value: PrivateCostResult["stats"] | undefined, percent = false) {
@@ -89,7 +90,7 @@ export function PrivateCalculator({ tab, options, locale }: { tab: Tab; options:
     {max > 0 ? <div className="mt-3 grid grid-cols-2 gap-3"><NumberField id={`${tab}-${key}-from`} text={C.levelFrom} value={range.from} min={min} max={max} invalid={bad} onChange={(value) => setRange("from", value)}/><NumberField id={`${tab}-${key}-to`} text={C.levelTo} value={range.to} min={min} max={max} invalid={bad} onChange={(value) => setRange("to", value)}/></div> : null}
     {bad ? <p role="status" className={invalid}>{C.invalid}</p> : null}
     <button type="button" disabled={bad || pending || !max && (key === "suite" || key === "appearance")} onClick={run} className={`${chip(true)} mt-4 w-full disabled:cursor-wait disabled:opacity-60`}>{pending ? DICT[locale].common.loading : C.total}</button>
-    {error ? <p role="alert" className={invalid}>{C.invalid}</p> : null}
+    {error ? <p role="alert" className={invalid}>{{ unauthenticated: C.errorUnauthenticated, invalid_request: C.errorInvalid, rate_limited: C.errorRateLimited, server_error: C.errorServer }[error]}</p> : null}
     {data[mode] ? <div className={result}><Totals totals={data[mode]!.totals} empty={C.noCost} format={format}/><Stats title={C.statsTitle} rows={stats(data[mode]!.stats, ["part", "room", "staff", "museum", "sport"].includes(key))} note={C.statsNote}/>{data[mode]!.secondaryStats ? <Stats title={tab === "hq" ? t(C.hqFloorGain, { level: buildingLevel }) : tab === "villa" ? C.villaStaffGain : C.ceoSportGain} rows={stats(data[mode]!.secondaryStats)}/> : null}</div> : null}
   </section>;
 }

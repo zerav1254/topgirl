@@ -6,6 +6,8 @@ import type { Locale } from "./i18n.ts";
 
 export type CostStats = Pick<StatValues, "sing" | "dance" | "management"> & Partial<Pick<StatValues, "fan" | "speed">>;
 export type PrivateCostResult = { totals: CostTotal[]; stats: CostStats; secondaryStats?: CostStats };
+export type PrivateCostError = "unauthenticated" | "invalid_request" | "rate_limited" | "server_error";
+export type PrivateCostResponse = { ok: true; data: PrivateCostResult } | { ok: false; error: PrivateCostError };
 export type PrivateCostOptions = {
   car: { partTiers: number[]; modClasses: { id: number; name: string; star: number; from: number; to: number }[] };
   hq: { rooms: { tier: number; slot: number; room: string; name: string }[] };

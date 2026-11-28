@@ -173,6 +173,10 @@ export const zh: Dict = {
     peakStage: "阈值加成",
     peakStageNote: "每个等级阈值提供全局百分比；每位拥有巅峰等级的 SSR 艺人都会叠加。",
     loginHint: "登录后可解锁车辆、总部、别墅、收藏和 CEO 标签页。",
+    errorUnauthenticated: "会话已过期，请重新登录。",
+    errorInvalid: "选择或范围无效。",
+    errorRateLimited: "计算次数过多，请稍后再试。",
+    errorServer: "计算失败，请重试。",
   },
   common: {
     loading: "加载中…",

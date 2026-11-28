@@ -172,6 +172,10 @@ export const id = {
     peakStage: "Buff ambang",
     peakStageNote: "Persen global per ambang level; menumpuk untuk tiap artis SSR berlevel puncak.",
     loginHint: "Masuk untuk membuka tab mobil, markas, vila, koleksi, dan CEO.",
+    errorUnauthenticated: "Sesi berakhir. Masuk kembali.",
+    errorInvalid: "Pilihan atau rentang tidak valid.",
+    errorRateLimited: "Terlalu banyak kalkulasi. Coba lagi nanti.",
+    errorServer: "Kalkulasi gagal. Coba lagi.",
   },
   common: {
     loading: "Memuat…",

@@ -173,6 +173,10 @@ export const ja: Dict = {
     peakStage: "しきい値バフ",
     peakStageNote: "レベルしきい値ごとの全体割合。ピークレベルを持つSSRアーティストごとに加算されます。",
     loginHint: "サインインすると車、HQ、ヴィラ、コレクション、CEO タブが使えます。",
+    errorUnauthenticated: "セッションの有効期限が切れました。再度サインインしてください。",
+    errorInvalid: "選択または範囲が無効です。",
+    errorRateLimited: "計算回数が多すぎます。しばらくしてから再試行してください。",
+    errorServer: "計算に失敗しました。もう一度お試しください。",
   },
   common: {
     loading: "読み込み中…",

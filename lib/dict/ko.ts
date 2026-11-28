@@ -173,6 +173,10 @@ export const ko: Dict = {
     peakStage: "임계 버프",
     peakStageNote: "레벨 임계값마다 적용되는 전역 퍼센트이며, 피크 레벨이 있는 SSR 아티스트마다 중첩됩니다.",
     loginHint: "로그인하면 자동차, 본부, 빌라, 컬렉션, CEO 탭을 사용할 수 있습니다.",
+    errorUnauthenticated: "세션이 만료되었습니다. 다시 로그인하세요.",
+    errorInvalid: "선택 또는 범위가 올바르지 않습니다.",
+    errorRateLimited: "계산 요청이 너무 많습니다. 나중에 다시 시도하세요.",
+    errorServer: "계산에 실패했습니다. 다시 시도하세요.",
   },
   common: {
     loading: "불러오는 중…",

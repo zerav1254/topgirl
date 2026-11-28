@@ -174,6 +174,10 @@ export const fr: Dict = {
     peakStage: "Bonus de palier",
     peakStageNote: "Pourcentage global par palier de niveau ; se cumule pour chaque artiste SSR ayant un niveau de pointe.",
     loginHint: "Connectez-vous pour débloquer les onglets voiture, QG, villa, collection et CEO.",
+    errorUnauthenticated: "Votre session a expiré. Reconnectez-vous.",
+    errorInvalid: "La sélection ou la plage est invalide.",
+    errorRateLimited: "Trop de calculs. Réessayez plus tard.",
+    errorServer: "Le calcul a échoué. Réessayez.",
   },
   common: {
     loading: "Chargement…",
