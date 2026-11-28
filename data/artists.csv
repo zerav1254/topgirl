@@ -73,7 +73,7 @@ id,slug,name,genre,origin,s2_effect,s2_value,s3_effect,s3_value,base_dmg
 11,anya,Anya,EDM,Event,dps_atk_rally,200,fan,10,1800
 62,savannah,Savannah,Pop,Home,dps_atk_company,200,fan,10,1800
 74,caroline,Caroline,EDM,Home,dps_atk_rally,200,fan,10,1800
-19,brooklyn,Brooklyn,Pop,Home,dps_def,200,wbg_dmg,36,1800
+19,brooklyn,Brooklyn,Pop,Home,dps_def,200,wbg_dmg,30,1800
 38,kelly,Kelly,Rock,Event,fan,10,fan_rally,10,1800
 39,kesnia,Kesnia,R&B,Home,gold,40,gold,40,1800
 127,arashi,Arashi,Hip Hop,Bali,basic_atk,80,skill_dmg,32,1800
@@ -93,3 +93,5 @@ id,slug,name,genre,origin,s2_effect,s2_value,s3_effect,s3_value,base_dmg
 269,elawa,Elawa,Pop,Event,fan_rally,10,basic_atk,50,1800
 270,reika,Reika,Pop,Event,fan_rally,10,basic_atk,50,1800
 272,frostine,Frostine,Pop,Event,fan,16,fan_rally,16,1800
+277,narin,Narin,EDM,Event,gold,40,fan_gain,5,1800
+278,yunying,Yunying,EDM,Event,gold,40,fan_gain,5,1800
