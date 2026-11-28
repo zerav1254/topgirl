@@ -105,11 +105,13 @@ export async function uploadAvatar(locale: Locale, fd: FormData): Promise<Profil
 export async function linkProvider(locale: Locale, provider: Provider): Promise<void> {
   const l = localeOr(locale);
   if (!isProvider(provider)) redirect(`/${l}/profile?error=link`);
+  let userId: string;
   try {
-    await requireUser();
+    userId = (await requireUser()).id;
   } catch {
     redirect(`/${l}/login`);
   }
+  if (!(await allow(`identity:${userId}`, 10, 10 * 60_000))) redirect(`/${l}/profile?error=link`);
   const supabase = await createSupabaseServer();
   const { data, error } = await supabase.auth.linkIdentity({
     provider,
@@ -123,11 +125,13 @@ export async function linkProvider(locale: Locale, provider: Provider): Promise<
 export async function unlinkProvider(locale: Locale, provider: Provider): Promise<void> {
   const l = localeOr(locale);
   if (!isProvider(provider)) redirect(`/${l}/profile?error=unlink`);
+  let userId: string;
   try {
-    await requireUser();
+    userId = (await requireUser()).id;
   } catch {
     redirect(`/${l}/login`);
   }
+  if (!(await allow(`identity:${userId}`, 10, 10 * 60_000))) redirect(`/${l}/profile?error=unlink`);
   const supabase = await createSupabaseServer();
   const { data } = await supabase.auth.getUserIdentities();
   const identities = data?.identities ?? [];
