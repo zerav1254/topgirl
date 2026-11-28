@@ -1,9 +1,16 @@
 import assert from "node:assert/strict";
-import { classLevels, expBetween, modTotals, starBetween, starCardsForLevels, sumLevels } from "../lib/cost-calc.ts";
+import { classLevels, expBetween, modTotals, stagePromotionCost, starBetween, starCardsForLevels, sumLevels } from "../lib/cost-calc.ts";
 import { poolTiers } from "../lib/pool.ts";
 import { genreSynergy, lineupEffects, withGenreBonus } from "../lib/team.ts";
 import { allow } from "../lib/rate-limit.ts";
 import { safeNextPath } from "../lib/redirect.ts";
+import { localizedName } from "../lib/cost-names.ts";
+
+// Nama item DB diterjemahkan per locale; locale id dan nama tak dikenal apa adanya.
+assert.equal(localizedName("id", "Kayu Dasar"), "Kayu Dasar");
+assert.equal(localizedName("en", "Kayu Dasar"), "Wood (Basic)");
+assert.equal(localizedName("ja", "Kayu Dasar"), "木材（基本）");
+assert.equal(localizedName("en", "Nama Tak Dikenal"), "Nama Tak Dikenal");
 
 // Redirect OAuth hanya boleh ke path internal.
 for (const bad of ["", "//evil.com", "/\\evil.com", "https://evil.com", "/id\n/x"]) {
@@ -41,6 +48,15 @@ assert.deepEqual(
 
 // Kalkulator biaya: rentang level/star dijumlahkan, biaya kelas mod ditagih sekali per naik kelas.
 assert.equal(expBetween([0, 120, 120], 1, 3), 240);
+// Promosi stage: amount per bintang × advanceMax; stage A -> B pakai baris A..B-1.
+const stages = [
+  { amount: 200, advanceMax: 1 },
+  { amount: 400, advanceMax: 1 },
+  { amount: 600, advanceMax: 2 },
+];
+assert.equal(stagePromotionCost(stages, 0, 2), 200);
+assert.equal(stagePromotionCost(stages, 1, 3), 600);
+assert.equal(stagePromotionCost(stages, 2, 2), 0);
 assert.equal(starBetween([20, 20, 80], 0, 2), 40);
 // Kartu star turunan level: hanya star di antara batas level awal dan target.
 assert.equal(starCardsForLevels([0, 0, 1, 1], [20, 20, 80], 1, 4), 20);

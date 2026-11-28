@@ -1,6 +1,8 @@
 import { unstable_cache } from "next/cache";
 import { cache } from "react";
 import type { CostItem } from "./cost-calc.ts";
+import { localizedName } from "./cost-names.ts";
+import type { Locale } from "./i18n.ts";
 import { adminClient } from "./supabase.ts";
 
 export type { CostItem } from "./cost-calc.ts";
@@ -12,13 +14,14 @@ export type CarClass = { id: number; name: string; star: number };
 // Biaya per tier; indeks array = tier - 1 (tier mulai 1).
 export type TierCosts = CostItem[][];
 
-export type VillaStage = { stage: number; name: string; itemName: string; amount: number };
+// amount = biaya per bintang; amount × advanceMax = biaya penuh satu stage.
+export type VillaStage = { stage: number; name: string; itemName: string; amount: number; advanceMax: number };
 
 export type VillaSuite = { stage: number; suite: number; name: string; itemName: string; levelMax: number; amount: number };
 
 export type VillaStaff = { id: number; name: string; staffType: number; tier: number; itemName: string; amount: number };
 
-export type CeoStage = { stage: number; name: string; itemName: string; amount: number };
+export type CeoStage = { stage: number; name: string; itemName: string; amount: number; advanceMax: number };
 
 export type CeoOutfit = { stage: number; outfit: number; name: string; itemName: string; levelMax: number; amount: number };
 
@@ -77,12 +80,12 @@ type CostRow = { scope: CostScope; ref_id: number; item_id: number; item_name: s
 type TierCostRow = { tier: number; item_id: number; item_name: string; amounts: Record<string, number> };
 type HqCurveRow = { amounts: number[]; item_name: string | null };
 type HqRoomRow = { tier: number; slot: number; room: string; name: string };
-type VillaStageRow = { stage: number; name: string; item_name: string; amount: number };
+type VillaStageRow = { stage: number; name: string; item_name: string; amount: number; advance_max: number };
 // Relasi embed bisa berbentuk objek atau array tergantung tipe yang digenerate Supabase.
 type StageRef = { stage: number } | { stage: number }[];
 type VillaSuiteRow = { suite: number; name: string; item_name: string; level_max: number; amount: number; villa_stages: StageRef };
 type VillaStaffRow = { id: number; name: string; staff_type: number; tier: number; item_name: string; amount: number };
-type CeoStageRow = { stage: number; name: string; item_name: string; amount: number };
+type CeoStageRow = { stage: number; name: string; item_name: string; amount: number; advance_max: number };
 type CeoOutfitRow = { outfit: number; name: string; item_name: string; level_max: number; amount: number; ceo_appearance_stages: StageRef };
 type CollectionItemRow = { id: number; zone: number; name: string; rarity: number; gem_item: number; gem_name: string };
 type CollectionZoneRow = { zone: number; name: string; icon: string };
@@ -102,7 +105,56 @@ function byTier(rows: TierCostRow[]): TierCosts {
   return tiers;
 }
 
-export async function loadCostBook(): Promise<CostBook> {
+// Nama di DB bahasa Indonesia; terjemahkan seluruh label yang tampil.
+function localizeBook(book: CostBook, locale: Locale): CostBook {
+  if (locale === "id") return book;
+  const n = (name: string) => localizedName(locale, name);
+  const item = (cost: CostItem): CostItem => ({ ...cost, itemName: n(cost.itemName) });
+  const items = (list: CostItem[]) => list.map(item);
+  const tiers = (list: TierCosts) => list.map(items);
+  const groups = (list: Record<number, CostItem[]>) =>
+    Object.fromEntries(Object.entries(list).map(([key, value]) => [key, items(value)]));
+
+  return {
+    ...book,
+    star: { ...book.star, itemName: n(book.star.itemName) },
+    parts: book.parts.map((part) => ({ ...part, name: n(part.name) })),
+    costs: {
+      carPart: tiers(book.costs.carPart),
+      carMod: groups(book.costs.carMod),
+      carModClass: groups(book.costs.carModClass),
+    },
+    museum: tiers(book.museum),
+    hq: {
+      curve: { ...book.hq.curve, itemName: n(book.hq.curve.itemName) },
+      rooms: book.hq.rooms.map((room) => ({ ...room, room: n(room.room), name: n(room.name) })),
+      roomCosts: tiers(book.hq.roomCosts),
+      planItemIds: book.hq.planItemIds,
+    },
+    villa: {
+      stages: book.villa.stages.map((stage) => ({ ...stage, name: n(stage.name), itemName: n(stage.itemName) })),
+      suites: book.villa.suites.map((suite) => ({ ...suite, name: n(suite.name), itemName: n(suite.itemName) })),
+      staff: book.villa.staff.map((member) => ({ ...member, name: n(member.name), itemName: n(member.itemName) })),
+      staffCosts: tiers(book.villa.staffCosts),
+    },
+    collection: {
+      stars: groups(book.collection.stars),
+      items: book.collection.items.map((collectionItem) => ({
+        ...collectionItem,
+        name: n(collectionItem.name),
+        cost: item(collectionItem.cost),
+      })),
+      zones: book.collection.zones.map((zone) => ({ ...zone, name: n(zone.name) })),
+    },
+    ceo: {
+      stages: book.ceo.stages.map((stage) => ({ ...stage, name: n(stage.name), itemName: n(stage.itemName) })),
+      outfits: book.ceo.outfits.map((outfit) => ({ ...outfit, name: n(outfit.name), itemName: n(outfit.itemName) })),
+      sportCosts: tiers(book.ceo.sportCosts),
+    },
+  };
+}
+
+export async function loadCostBook(locale: Locale): Promise<CostBook> {
   // Tabel biaya upgrade hanya untuk role authenticated; server memakai service_role.
   const supabase = adminClient();
   const [
@@ -141,11 +193,11 @@ export async function loadCostBook(): Promise<CostBook> {
     supabase.from("headquarters_level_curve").select("amounts, item_name").single(),
     supabase.from("headquarters_room_cost_items").select("tier, item_id, item_name, amounts").order("tier"),
     supabase.from("headquarters_rooms").select("tier, slot, room, name").order("tier").order("slot"),
-    supabase.from("villa_stages").select("stage, name, item_name, amount").order("stage"),
+    supabase.from("villa_stages").select("stage, name, item_name, amount, advance_max").order("stage"),
     supabase.from("villa_suites").select("suite, name, item_name, level_max, amount, villa_stages!inner(stage)").order("id"),
     supabase.from("villa_staff").select("id, name, staff_type, tier, item_name, amount").order("id"),
     supabase.from("villa_staff_cost_items").select("tier, item_id, item_name, amounts").order("tier"),
-    supabase.from("ceo_appearance_stages").select("stage, name, item_name, amount").order("stage"),
+    supabase.from("ceo_appearance_stages").select("stage, name, item_name, amount, advance_max").order("stage"),
     supabase.from("ceo_appearance_outfits").select("outfit, name, item_name, level_max, amount, ceo_appearance_stages!inner(stage)").order("id"),
     supabase.from("ceo_sport_cost_items").select("tier, item_id, item_name, amounts").order("tier"),
     supabase.from("collection_items").select("id, zone, name, rarity, gem_item, gem_name").order("id"),
@@ -221,6 +273,7 @@ export async function loadCostBook(): Promise<CostBook> {
         name: r.name,
         itemName: r.item_name,
         amount: Number(r.amount),
+        advanceMax: r.advance_max,
       })),
       suites: (villaSuites.data as VillaSuiteRow[]).map((r) => ({
         stage: stageOf(r.villa_stages),
@@ -257,6 +310,7 @@ export async function loadCostBook(): Promise<CostBook> {
         name: r.name,
         itemName: r.item_name,
         amount: Number(r.amount),
+        advanceMax: r.advance_max,
       })),
       outfits: (ceoOutfits.data as CeoOutfitRow[]).map((r) => ({
         stage: stageOf(r.ceo_appearance_stages),
@@ -287,10 +341,10 @@ export async function loadCostBook(): Promise<CostBook> {
     }
   }
 
-  return book;
+  return localizeBook(book, locale);
 }
 
-// Data config game hampir statis; cache satu jam supaya query view tidak diulang tiap request.
+// Data config game hampir statis; cache satu jam per locale supaya query view tidak diulang tiap request.
 export const getCostBook = cache(unstable_cache(loadCostBook, ["cost-book"], { revalidate: 3600 }));
 
 // Pengunjung tanpa login hanya boleh menerima data biaya artist; bagian lain

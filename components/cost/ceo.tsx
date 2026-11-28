@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { expBetween, sumLevels } from "@/lib/cost-calc";
+import { stagePromotionCost, sumLevels } from "@/lib/cost-calc";
 import type { CostBook } from "@/lib/costs";
 import { clamp, invalid, NumberField, panel, result, Segmented, Select, Totals, type CostDict, type Total } from "./fields";
 
@@ -25,9 +25,10 @@ export function CeoPanel({ ceo, C, format }: { ceo: CostBook["ceo"]; C: CostDict
   const appearanceBad = stageTo <= stageFrom;
   const sportBad = sportTo <= sportFrom;
 
-  // Promosi = jumlah biaya stage yang dilewati (stage > from dan <= to).
+  // Promosi: tiap stage butuh advanceMax bintang; amount = biaya per bintang.
+  // Stage A -> B memakai stage A..B-1 (bintang terakhir A menaikkan ke A+1).
   const promoAmount = useMemo(
-    () => (appearanceBad ? 0 : expBetween(ceo.stages.map((item) => item.amount), stageFrom, stageTo)),
+    () => (appearanceBad ? 0 : stagePromotionCost(ceo.stages, stageFrom, stageTo)),
     [appearanceBad, ceo.stages, stageFrom, stageTo],
   );
   const promoItem = ceo.stages.find((item) => item.itemName)?.itemName ?? "";

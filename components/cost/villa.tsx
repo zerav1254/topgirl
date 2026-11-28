@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { expBetween, sumLevels } from "@/lib/cost-calc";
+import { stagePromotionCost, sumLevels } from "@/lib/cost-calc";
 import type { CostBook } from "@/lib/costs";
 import { clamp, invalid, NumberField, panel, result, Segmented, Select, Totals, type CostDict, type Total } from "./fields";
 
@@ -27,9 +27,10 @@ export function VillaPanel({ villa, C, format }: { villa: CostBook["villa"]; C: 
   const stageBad = stageTo <= stageFrom;
   const staffBad = staffTo <= staffFrom;
 
-  // Naik stage = jumlah biaya stage yang dilewati (stage > from dan <= to).
+  // Promosi: tiap stage butuh advanceMax bintang; amount = biaya per bintang.
+  // Stage A -> B memakai stage A..B-1 (bintang terakhir A menaikkan ke A+1).
   const stageAmount = useMemo(
-    () => (stageBad ? 0 : expBetween(villa.stages.map((item) => item.amount), stageFrom, stageTo)),
+    () => (stageBad ? 0 : stagePromotionCost(villa.stages, stageFrom, stageTo)),
     [stageBad, villa.stages, stageFrom, stageTo],
   );
   const stageItem = villa.stages.find((item) => item.itemName)?.itemName ?? "";

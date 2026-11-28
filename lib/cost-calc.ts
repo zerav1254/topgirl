@@ -31,6 +31,18 @@ export function classLevels(classByLevel: number[]): Map<number, { from: number;
   return out;
 }
 
+// Stage vila/tampilan: amount = biaya per bintang, advanceMax = batas bintang.
+// Stage A -> B memakai baris stage A..B-1; bintang terakhir A naik ke A+1.
+export function stagePromotionCost(stages: { amount: number; advanceMax: number }[], from: number, to: number): number {
+  if (to <= from) return 0;
+  let amount = 0;
+  for (let stage = Math.max(from, 1); stage < to; stage++) {
+    const row = stages[stage - 1];
+    if (row) amount += row.amount * row.advanceMax;
+  }
+  return amount;
+}
+
 export function sumLevels(items: CostItem[], from: number, to: number): CostTotal[] {
   if (to <= from) return [];
   return items

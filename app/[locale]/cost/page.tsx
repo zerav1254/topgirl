@@ -31,7 +31,7 @@ export default async function CostPage({ params }: { params: Promise<{ locale: s
   // Tab artist boleh diakses publik; tab biaya lain hanya untuk user login.
   const user = await getUser();
   const C = DICT[locale].cost;
-  const book = await getCostBook();
+  const book = await getCostBook(locale);
 
   return (
     <main id="main" className="mx-auto flex w-full max-w-4xl flex-col gap-4 px-4 pt-3 pb-28 sm:px-6 sm:pt-6">
