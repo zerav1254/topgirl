@@ -147,6 +147,7 @@ export const ko: Dict = {
     villaStageNote: "빌라 스테이지 상승 비용: 별 1개 비용 × 스테이지별 최대 별 수. 스테이지 0은 빌라 없음.",
     villaSuiteNote: "스위트 레벨업 비용이며, 모두 선택하면 4개를 한 번에 계산합니다. 레벨 0은 미건설 상태입니다.",
     villaStaffNote: "스태프 고용 및 레벨업 비용이며, 같은 티어의 스태프는 비용을 공유합니다. 모두 선택하면 3개 슬롯을 한 번에 계산합니다.",
+    villaStaffStatNote: "빌라 스탯에 곱해지는 퍼센트이며 고정 추가가 아닙니다.",
     collectionStar: "별",
     quality: "품질",
     collectionItemNote: "컬렉션 레벨 상승 비용. 보석은 등급에 따라 다릅니다.",
@@ -160,6 +161,7 @@ export const ko: Dict = {
     ceoAppearanceNote: "스테이지 승급은 크라운 카드(별 1개 비용 × 최대 별 수). 액세서리 레벨업은 데빗 카드를 사용합니다. 모두 선택하면 4개 액세서리를 한 번에 계산합니다.",
     ceoSport: "운동",
     ceoSportNote: "운동 레벨 비용. 같은 티어의 운동 유형은 비용을 공유합니다.",
+    ceoSportStatNote: "CEO 의상 스탯에 곱해지는 퍼센트이며 고정 추가가 아닙니다.",
     loginHint: "로그인하면 자동차, 본부, 빌라, 컬렉션, CEO 탭을 사용할 수 있습니다.",
   },
   common: {

@@ -148,6 +148,7 @@ export const de: Dict = {
     villaStageNote: "Kosten für die nächste Villa-Stufe: Kosten pro Stern × Sternlimit der Stufe. Stufe 0 = noch keine Villa.",
     villaSuiteNote: "Kosten für Suite-Level; alle auswählen für alle 4 auf einmal. Level 0 bedeutet, die Suite ist noch nicht gebaut.",
     villaStaffNote: "Rekrutierungs- und Levelkosten; Angestellte derselben Stufe teilen die Kosten. Alle auswählen für alle 3 Plätze.",
+    villaStaffStatNote: "Prozent, das die Villa-Stats multipliziert, kein fester Zuschlag.",
     collectionStar: "Stern",
     quality: "Qualität",
     collectionItemNote: "Levelkosten der Sammlung; Edelsteine richten sich nach der Seltenheit.",
@@ -161,6 +162,7 @@ export const de: Dict = {
     ceoAppearanceNote: "Stufenaufstieg nutzt Kronenkarten (Kosten pro Stern × Sternlimit). Jedes Accessoire-Level nutzt Debitkarten; alle auswählen für alle 4 Accessoires.",
     ceoSport: "Sport",
     ceoSportNote: "Levelkosten für Sport. Sportarten derselben Stufe teilen Kosten.",
+    ceoSportStatNote: "Prozent, das die CEO-Outfit-Stats multipliziert, kein fester Zuschlag.",
     loginHint: "Melde dich an, um die Tabs Auto, HQ, Villa, Sammlung und CEO freizuschalten.",
   },
   common: {

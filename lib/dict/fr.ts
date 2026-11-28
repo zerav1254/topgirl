@@ -148,6 +148,7 @@ export const fr: Dict = {
     villaStageNote: "Coût pour monter le palier de la villa : coût par étoile × limite d'étoiles du palier. Palier 0 = aucune villa.",
     villaSuiteNote: "Coût de montée de niveau des suites ; tout sélectionner pour les 4 à la fois. Niveau 0 : suite non construite.",
     villaStaffNote: "Coût de recrutement et de niveau ; le personnel du même palier partage les coûts. Tout sélectionner pour les 3 emplacements.",
+    villaStaffStatNote: "Pourcentage qui multiplie les stats de la villa, pas un ajout fixe.",
     collectionStar: "Étoile",
     quality: "Qualité",
     collectionItemNote: "Coût de niveau de collection ; les gemmes suivent la rareté de l'objet.",
@@ -161,6 +162,7 @@ export const fr: Dict = {
     ceoAppearanceNote: "La promotion de tenue utilise des cartes couronne (coût par étoile × limite d'étoiles). Chaque niveau d'accessoire utilise des cartes débit ; tout sélectionner pour les 4 accessoires.",
     ceoSport: "Sport",
     ceoSportNote: "Coût des niveaux de sport. Les sports d'un même palier partagent les coûts.",
+    ceoSportStatNote: "Pourcentage qui multiplie les stats de la tenue du PDG, pas un ajout fixe.",
     loginHint: "Connectez-vous pour débloquer les onglets voiture, QG, villa, collection et CEO.",
   },
   common: {

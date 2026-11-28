@@ -146,6 +146,7 @@ export const id = {
     villaStageNote: "Biaya naik stage vila: biaya per bintang × batas bintang stage. Stage 0 berarti belum punya vila.",
     villaSuiteNote: "Biaya naik level suite; pilih semua suite untuk 4 suite sekaligus. Level 0 berarti suite belum dibangun.",
     villaStaffNote: "Biaya rekrut staf + level; staf dalam tier yang sama berbagi biaya. Pilih semua staf untuk 3 slot sekaligus.",
+    villaStaffStatNote: "Persen yang mengalikan stat vila, bukan tambahan flat.",
     collectionStar: "Bintang",
     quality: "Kualitas",
     collectionItemNote: "Biaya naik level koleksi; permata mengikuti rarity item.",
@@ -159,6 +160,7 @@ export const id = {
     ceoAppearanceNote: "Promosi tampilan memakai Kartu mahkota (biaya per bintang × batas bintang). Tiap aksesori naik level memakai Kartu debit; pilih semua outfit untuk 4 aksesori sekaligus.",
     ceoSport: "Olahraga",
     ceoSportNote: "Biaya level olahraga. Jenis olahraga dalam tier yang sama berbagi biaya.",
+    ceoSportStatNote: "Persen yang mengalikan stat outfit CEO, bukan tambahan flat.",
     loginHint: "Masuk untuk membuka tab mobil, markas, vila, koleksi, dan CEO.",
   },
   common: {

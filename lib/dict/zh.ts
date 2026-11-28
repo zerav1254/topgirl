@@ -147,6 +147,7 @@ export const zh: Dict = {
     villaStageNote: "别墅阶段升级费用：每颗星费用 × 阶段星级上限。阶段 0 表示还没有别墅。",
     villaSuiteNote: "套房升级费用；选择全部可一次计算 4 个套房。等级 0 表示尚未建造。",
     villaStaffNote: "员工招募与升级费用；同一阶段的员工共享费用。选择全部可一次计算 3 个槽位。",
+    villaStaffStatNote: "按百分比乘以别墅属性，不是固定加成。",
     collectionStar: "星星",
     quality: "品质",
     collectionItemNote: "收藏升级费用；宝石随稀有度而定。",
@@ -160,6 +161,7 @@ export const zh: Dict = {
     ceoAppearanceNote: "阶段晋升使用皇冠卡（每颗星费用 × 星级上限）。饰品升级使用借记卡；选择全部可一次计算 4 个饰品。",
     ceoSport: "运动",
     ceoSportNote: "运动等级费用。同一层级的运动类型费用相同。",
+    ceoSportStatNote: "按百分比乘以总裁服装属性，不是固定加成。",
     loginHint: "登录后可解锁车辆、总部、别墅、收藏和 CEO 标签页。",
   },
   common: {

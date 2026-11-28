@@ -10,7 +10,17 @@ type Mode = "appearance" | "sport";
 const SPORT_MIN = 1;
 const SPORT_MAX = 60;
 
-export function CeoPanel({ ceo, C, format }: { ceo: CostBook["ceo"]; C: CostDict; format: (value: number) => string }) {
+export function CeoPanel({
+  ceo,
+  C,
+  format,
+  formatPct,
+}: {
+  ceo: CostBook["ceo"];
+  C: CostDict;
+  format: (value: number) => string;
+  formatPct: (value: number) => string;
+}) {
   const [mode, setMode] = useState<Mode>("appearance");
   // Helper tampilan: pakai nama stage dari game, bukan nomor. 0 = belum punya.
   const [stageFrom, setStageFrom] = useState(0);
@@ -78,6 +88,16 @@ export function CeoPanel({ ceo, C, format }: { ceo: CostBook["ceo"]; C: CostDict
     ]
       .filter((row) => row.value > 0)
       .map((row) => ({ label: row.label, value: `+${format(row.value)}` }));
+
+  // Olahraga CEO menambah persen (SingingPer dkk), bukan flat.
+  const pctRows = (stats: { sing: number; dance: number; management: number }) =>
+    [
+      { label: C.statSing, value: stats.sing },
+      { label: C.statDance, value: stats.dance },
+      { label: C.statManage, value: stats.management },
+    ]
+      .filter((row) => row.value > 0)
+      .map((row) => ({ label: row.label, value: `+${formatPct(row.value)}%` }));
 
   const sportTotals = useMemo(
     () => sumLevels(ceo.sportCosts[tier - 1] ?? [], sportFrom, sportTo),
@@ -190,7 +210,7 @@ export function CeoPanel({ ceo, C, format }: { ceo: CostBook["ceo"]; C: CostDict
           {sportBad ? null : (
             <div className={result}>
               <Totals totals={sportTotals} note={C.ceoSportNote} empty={C.noCost} format={format} />
-              <Stats title={C.statsTitle} rows={statRows(sportStats)} note={C.statsNote} />
+              <Stats title={C.statsTitle} rows={pctRows(sportStats)} note={C.ceoSportStatNote} />
             </div>
           )}
         </>

@@ -10,7 +10,17 @@ type Mode = "suite" | "staff";
 const STAFF_MIN = 1;
 const STAFF_MAX = 60;
 
-export function VillaPanel({ villa, C, format }: { villa: CostBook["villa"]; C: CostDict; format: (value: number) => string }) {
+export function VillaPanel({
+  villa,
+  C,
+  format,
+  formatPct,
+}: {
+  villa: CostBook["villa"];
+  C: CostDict;
+  format: (value: number) => string;
+  formatPct: (value: number) => string;
+}) {
   const [mode, setMode] = useState<Mode>("suite");
   // Helper stage: pakai nama stage dari game. 0 = belum punya vila.
   const [stageFrom, setStageFrom] = useState(0);
@@ -80,6 +90,16 @@ export function VillaPanel({ villa, C, format }: { villa: CostBook["villa"]; C: 
     ]
       .filter((row) => row.value > 0)
       .map((row) => ({ label: row.label, value: `+${format(row.value)}` }));
+
+  // Staf vila menambah persen (SingingPer dkk), bukan flat.
+  const pctRows = (stats: { sing: number; dance: number; management: number }) =>
+    [
+      { label: C.statSing, value: stats.sing },
+      { label: C.statDance, value: stats.dance },
+      { label: C.statManage, value: stats.management },
+    ]
+      .filter((row) => row.value > 0)
+      .map((row) => ({ label: row.label, value: `+${formatPct(row.value)}%` }));
 
   const staffTiers = useMemo(() => [...new Set(villa.staff.map((item) => item.tier))].sort((a, b) => a - b), [villa.staff]);
   const tierStaff = villa.staff.filter((item) => item.tier === staffTier);
@@ -224,7 +244,7 @@ export function VillaPanel({ villa, C, format }: { villa: CostBook["villa"]; C: 
           {staffBad ? null : (
             <div className={result}>
               <Totals totals={staffTotals} note={C.villaStaffNote} empty={C.noCost} format={format} />
-              <Stats title={C.statsTitle} rows={statRows(staffStats)} note={C.statsNote} />
+              <Stats title={C.statsTitle} rows={pctRows(staffStats)} note={C.villaStaffStatNote} />
             </div>
           )}
         </>

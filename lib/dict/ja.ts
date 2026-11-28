@@ -147,6 +147,7 @@ export const ja: Dict = {
     villaStageNote: "ヴィラのステージ上げ費用：スター1つ分の費用×ステージの上限スター数。ステージ0は未所持です。",
     villaSuiteNote: "スイートのレベルアップ費用。すべて選ぶと4つ分をまとめて計算します。レベル 0 は未建築です。",
     villaStaffNote: "スタッフの雇用とレベルの費用。同じティアのスタッフは費用を共有します。すべて選ぶと3スロット分をまとめて計算します。",
+    villaStaffStatNote: "ヴィラのステータスに掛かる割合で、固定加算ではありません。",
     collectionStar: "スター",
     quality: "品質",
     collectionItemNote: "コレクションのレベル費用。宝石はレアリティに対応します。",
@@ -160,6 +161,7 @@ export const ja: Dict = {
     ceoAppearanceNote: "ステージ昇格はクラウンカード（スター1つ分の費用×上限スター数）。アクセサリーのレベルアップはデビットカードを使います。すべて選ぶと4つ分をまとめて計算します。",
     ceoSport: "スポーツ",
     ceoSportNote: "スポーツのレベル費用。同じティアのスポーツ種別は費用を共有します。",
+    ceoSportStatNote: "CEO衣装のステータスに掛かる割合で、固定加算ではありません。",
     loginHint: "サインインすると車、HQ、ヴィラ、コレクション、CEO タブが使えます。",
   },
   common: {

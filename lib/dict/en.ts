@@ -148,6 +148,7 @@ export const en: Dict = {
     villaStageNote: "Cost to raise villa stage: per-star cost × the stage's star cap. Stage 0 means no villa yet.",
     villaSuiteNote: "Suite level-up cost; pick all suites for all 4 at once. Level 0 means the suite is not built yet.",
     villaStaffNote: "Recruit and level-up cost; staff in the same tier share costs. Pick all staff for all 3 slots at once.",
+    villaStaffStatNote: "Percentage that multiplies villa stats, not a flat addition.",
     collectionStar: "Star",
     quality: "Quality",
     collectionItemNote: "Collection level-up cost; gems follow the item rarity.",
@@ -161,6 +162,7 @@ export const en: Dict = {
     ceoAppearanceNote: "Stage promotion uses Crown Cards (per-star cost × star cap). Each accessory level-up uses Debit Cards; pick all outfits for all 4 accessories at once.",
     ceoSport: "Sports",
     ceoSportNote: "Sport level cost. Sport types in the same tier share costs.",
+    ceoSportStatNote: "Percentage that multiplies CEO outfit stats, not a flat addition.",
     loginHint: "Sign in to unlock car, HQ, villa, collection, and CEO tabs.",
   },
   common: {
