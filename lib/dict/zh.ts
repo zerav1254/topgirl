@@ -317,6 +317,8 @@ export const zh: Dict = {
     fanCap: "粉丝容量（满级）",
     fanCapNote: "每名艺人满级基础 {base}。",
     fanCapBoost: "已包含技能粉丝加成 +{n}%。",
+    statsNote:
+      "合计仅统计艺人技能与阵容协同；不包含蓝图、大师蓝图、总部、车辆、别墅、收藏、CEO外观、总部皮肤、车辆皮肤、VIP、艺人资产、食物、组队增益、地铁等来源的加成。",
   },
   editor: {
     progressLabel: "照片进度",

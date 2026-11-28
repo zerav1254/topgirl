@@ -162,6 +162,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
                 );
               })}
             </dl>
+            <p className="mt-2 text-xs text-zinc-400">{C.team.statsNote}</p>
           </section>
         </>
       )}

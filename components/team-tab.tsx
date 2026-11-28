@@ -251,6 +251,7 @@ export function TeamTab({ artists, scoped, blocked, rank, seasonTiers, team, pic
                 {t(C.team.fanCapNote, { base: formatStat(FAN_CAP_MAX, locale) })}
                 {summary.fans.pct > 0 && ` ${t(C.team.fanCapBoost, { n: formatStat(summary.fans.pct, locale) })}`}
               </dd>
+              <dd className="mt-1 text-xs text-zinc-400">{C.team.statsNote}</dd>
             </div>
           </dl>
         )}

@@ -316,6 +316,8 @@ export const id = {
     fanCap: "Kapasitas fan (level maks)",
     fanCapNote: "Basis {base} per artis di level maks.",
     fanCapBoost: "Sudah termasuk bonus fan +{n}% dari skill.",
+    statsNote:
+      "Total statistik hanya menjumlahkan skill artis dan sinergi lineup; belum termasuk buff dari sumber lain seperti blueprint, blueprint master, markas, kendaraan, vila, koleksi, CEO appearance, skin HQ, skin mobil, VIP, aset artis, makanan, buff grup, dan metro.",
   },
   editor: {
     progressLabel: "Kemajuan foto",

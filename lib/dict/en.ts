@@ -318,6 +318,8 @@ export const en: Dict = {
     fanCap: "Fan capacity (max level)",
     fanCapNote: "Base {base} per artist at max level.",
     fanCapBoost: "Includes fan bonus +{n}% from skills.",
+    statsNote:
+      "Stat totals only count artist skills and lineup synergy; they exclude other buffs such as blueprints, master blueprints, headquarters, vehicles, villa, collection, CEO appearance, HQ skins, car skins, VIP, artist assets, food, group buffs, and metro.",
   },
   editor: {
     progressLabel: "Photo progress",

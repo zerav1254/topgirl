@@ -317,6 +317,8 @@ export const ko: Dict = {
     fanCap: "팬 수용량 (최대 레벨)",
     fanCapNote: "아티스트당 최대 레벨 기준 {base}.",
     fanCapBoost: "스킬의 팬 보너스 +{n}% 포함.",
+    statsNote:
+      "합계는 아티스트 스킬과 라인업 시너지만 반영합니다. 설계도, 마스터 설계도, 본부, 차량, 빌라, 컬렉션, CEO 외형, HQ 스킨, 차량 스킨, VIP, 아티스트 자산, 음식, 그룹 버프, 메트로 버프는 포함되지 않습니다.",
   },
   editor: {
     progressLabel: "사진 진행률",

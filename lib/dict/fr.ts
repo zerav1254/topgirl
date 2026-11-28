@@ -318,6 +318,8 @@ export const fr: Dict = {
     fanCap: "Capacité de fans (niveau max)",
     fanCapNote: "Base {base} par artiste au niveau max.",
     fanCapBoost: "Inclut le bonus de fans +{n}% des compétences.",
+    statsNote:
+      "Les totaux ne comptent que les compétences des artistes et la synergie du lineup ; ils excluent les autres bonus : plans, plans maîtres, quartier général, véhicules, villa, collection, apparence CEO, skins HQ, skins de voiture, VIP, atouts d'artiste, nourriture, bonus de groupe et métro.",
   },
   editor: {
     progressLabel: "Progression des photos",
