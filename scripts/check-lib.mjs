@@ -5,6 +5,7 @@ import { genreSynergy, lineupEffects, teamFanCap, withGenreBonus } from "../lib/
 import { allow } from "../lib/rate-limit.ts";
 import { safeNextPath } from "../lib/redirect.ts";
 import { localizedName } from "../lib/cost-names.ts";
+import { turnstileHostOk } from "../lib/turnstile.ts";
 
 // Nama item DB diterjemahkan per locale; locale id dan nama tak dikenal apa adanya.
 assert.equal(localizedName("id", "Kayu Dasar"), "Kayu Dasar");
@@ -126,5 +127,13 @@ assert.deepEqual(peakStageBetween(peakStages, 100, 100), { sing: 0, dance: 0, ma
 const ranges = classLevels([1, 1, 1, 2, 2]);
 assert.deepEqual(ranges.get(1), { from: 0, to: 2 });
 assert.deepEqual(ranges.get(2), { from: 3, to: 4 });
+
+// Turnstile: situs produksi redirect ke www, jadi allowlist tanpa "www." harus cocok.
+process.env.TURNSTILE_HOSTNAMES = "zerav.web.id, localhost";
+assert.equal(turnstileHostOk("www.zerav.web.id"), true);
+assert.equal(turnstileHostOk("zerav.web.id"), true);
+assert.equal(turnstileHostOk("evil.example"), false);
+process.env.TURNSTILE_HOSTNAMES = "";
+assert.equal(turnstileHostOk("zerav.web.id"), false);
 
 console.log("check-lib ok");
