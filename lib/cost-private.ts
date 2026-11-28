@@ -14,9 +14,6 @@ export type PrivateCostOptions = {
   ceo: { stages: { id: number; name: string }[]; outfits: { stage: number; id: number; name: string; max: number }[]; sportTiers: number[] };
 };
 
-const stats = (value: StatValues): CostStats => ({ sing: value.sing, dance: value.dance, management: value.management, fan: value.fan, speed: value.speed });
-const multiply = (totals: CostTotal[], count: number) => totals.map((item) => ({ ...item, amount: item.amount * count }));
-
 export async function getPrivateCostOptions(locale: Locale): Promise<PrivateCostOptions> {
   const book = await getCostBook(locale);
   const ranges = new Map<number, { from: number; to: number }>();
@@ -51,5 +48,3 @@ export async function getPrivateCostOptions(locale: Locale): Promise<PrivateCost
     },
   };
 }
-
-export { multiply, stats };
