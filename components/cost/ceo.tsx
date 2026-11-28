@@ -3,9 +3,7 @@
 import { useMemo, useState } from "react";
 import { stagePromotionCost, statSum, sumLevels } from "@/lib/cost-calc";
 import type { CostBook } from "@/lib/costs";
-import { clamp, invalid, NumberField, panel, result, Segmented, Select, Stats, Totals, type CostDict, type Total } from "./fields";
-
-type Mode = "appearance" | "sport";
+import { clamp, heading, invalid, NumberField, panel, result, Select, Stats, Totals, type CostDict, type Total } from "./fields";
 
 const SPORT_MIN = 1;
 const SPORT_MAX = 60;
@@ -21,7 +19,6 @@ export function CeoPanel({
   format: (value: number) => string;
   formatPct: (value: number) => string;
 }) {
-  const [mode, setMode] = useState<Mode>("appearance");
   // Helper tampilan: pakai nama stage dari game, bukan nomor. 0 = belum punya.
   const [stageFrom, setStageFrom] = useState(0);
   const [stageTo, setStageTo] = useState(ceo.stages.at(-1)?.stage ?? 0);
@@ -151,111 +148,99 @@ export function CeoPanel({
   return (
     <section aria-label={C.tabCeo} className={panel}>
       <h2 className="sr-only">{C.tabCeo}</h2>
-      <Segmented
-        text={C.tabCeo}
-        value={mode}
-        onChange={setMode}
-        options={[
-          { id: "appearance", label: C.ceoAppearance },
-          { id: "sport", label: C.ceoSport },
-        ]}
-      />
+      <h2 className={heading}>{C.ceoAppearance}</h2>
 
-      {mode === "appearance" ? (
+      <div className="mt-3 grid grid-cols-2 gap-3">
+        <Select id="cost-ceo-from" text={C.appearanceFrom} value={stageFrom} onChange={setStageFrom}>
+          <option value={0}>{C.stageNone}</option>
+          {ceo.stages.map((item) => (
+            <option key={item.stage} value={item.stage}>
+              {item.name}
+            </option>
+          ))}
+        </Select>
+        <Select
+          id="cost-ceo-to"
+          text={C.appearanceTo}
+          value={stageTo}
+          onChange={(value) => {
+            setStageTo(value);
+            const target = ceo.outfits.find((item) => item.stage === value && item.levelMax > 0);
+            const advance = Math.max(ceo.stages.find((item) => item.stage === value)?.advanceMax ?? 1, 1);
+            // Default tampil sampai total level (LevelMax × peningkatan) stage terpilih.
+            const max = target ? target.levelMax * advance : 0;
+            if (max > 0) {
+              setOutfitFrom(0);
+              setOutfitTo(max);
+            }
+          }}
+        >
+          {ceo.stages.map((item) => (
+            <option key={item.stage} value={item.stage}>
+              {item.name}
+            </option>
+          ))}
+        </Select>
+      </div>
+
+      {hasOutfits ? (
         <>
-          <div className="grid grid-cols-2 gap-3">
-            <Select id="cost-ceo-from" text={C.appearanceFrom} value={stageFrom} onChange={setStageFrom}>
-              <option value={0}>{C.stageNone}</option>
-              {ceo.stages.map((item) => (
-                <option key={item.stage} value={item.stage}>
-                  {item.name}
-                </option>
-              ))}
-            </Select>
-            <Select
-              id="cost-ceo-to"
-              text={C.appearanceTo}
-              value={stageTo}
-              onChange={(value) => {
-                setStageTo(value);
-                const target = ceo.outfits.find((item) => item.stage === value && item.levelMax > 0);
-                const advance = Math.max(ceo.stages.find((item) => item.stage === value)?.advanceMax ?? 1, 1);
-                // Default tampil sampai total level (LevelMax × peningkatan) stage terpilih.
-                const max = target ? target.levelMax * advance : 0;
-                if (max > 0) {
-                  setOutfitFrom(0);
-                  setOutfitTo(max);
-                }
-              }}
-            >
-              {ceo.stages.map((item) => (
-                <option key={item.stage} value={item.stage}>
+          <div className="mt-3">
+            <Select id="cost-ceo-outfit" text={C.ceoAppearance} value={selectedOutfitId} onChange={setOutfitId}>
+              <option value={0}>{C.ceoAllOutfits}</option>
+              {targetOutfits.map((item) => (
+                <option key={item.outfit} value={item.outfit}>
                   {item.name}
                 </option>
               ))}
             </Select>
           </div>
-
-          {hasOutfits ? (
-            <>
-              <div className="mt-3">
-                <Select id="cost-ceo-outfit" text={C.ceoAppearance} value={selectedOutfitId} onChange={setOutfitId}>
-                  <option value={0}>{C.ceoAllOutfits}</option>
-                  {targetOutfits.map((item) => (
-                    <option key={item.outfit} value={item.outfit}>
-                      {item.name}
-                    </option>
-                  ))}
-                </Select>
-              </div>
-
-              <div className="mt-3 grid grid-cols-2 gap-3">
-                <NumberField id="cost-ceo-outfit-from" text={C.levelFrom} value={outfitFrom} min={0} max={outfitMax} invalid={outfitBad} describedBy={outfitBad ? "cost-ceo-error" : undefined} onChange={(v) => setOutfitFrom(clamp(v, 0, outfitMax))} />
-                <NumberField id="cost-ceo-outfit-to" text={C.levelTo} value={outfitTo} min={0} max={outfitMax} invalid={outfitBad} describedBy={outfitBad ? "cost-ceo-error" : undefined} onChange={(v) => setOutfitTo(clamp(v, 0, outfitMax))} />
-              </div>
-            </>
-          ) : null}
-
-          {appearanceBad || outfitBad ? (
-            <p id="cost-ceo-error" role="status" className={invalid}>
-              {C.invalid}
-            </p>
-          ) : (
-            <div className={result}>
-              <Totals totals={totals} note={hasOutfits ? C.ceoAppearanceNote : undefined} empty={C.noCost} format={format} />
-              <Stats title={C.statsTitle} rows={statRows(appearanceTotal)} note={C.statsNote} />
-            </div>
-          )}
-        </>
-      ) : (
-        <>
-          <Select id="cost-ceo-sport-tier" text={C.tier} value={tier} onChange={setTier}>
-            {ceo.sportCosts.map((_, index) => (
-              <option key={index} value={index + 1}>
-                {C.tier} {index + 1}
-              </option>
-            ))}
-          </Select>
 
           <div className="mt-3 grid grid-cols-2 gap-3">
-            <NumberField id="cost-ceo-sport-from" text={C.levelFrom} value={sportFrom} min={SPORT_MIN} max={SPORT_MAX} invalid={sportBad} describedBy={sportBad ? "cost-ceo-sport-error" : undefined} onChange={(v) => setSportFrom(clamp(v, SPORT_MIN, SPORT_MAX))} />
-            <NumberField id="cost-ceo-sport-to" text={C.levelTo} value={sportTo} min={SPORT_MIN} max={SPORT_MAX} invalid={sportBad} describedBy={sportBad ? "cost-ceo-sport-error" : undefined} onChange={(v) => setSportTo(clamp(v, SPORT_MIN, SPORT_MAX))} />
+            <NumberField id="cost-ceo-outfit-from" text={C.levelFrom} value={outfitFrom} min={0} max={outfitMax} invalid={outfitBad} describedBy={outfitBad ? "cost-ceo-error" : undefined} onChange={(v) => setOutfitFrom(clamp(v, 0, outfitMax))} />
+            <NumberField id="cost-ceo-outfit-to" text={C.levelTo} value={outfitTo} min={0} max={outfitMax} invalid={outfitBad} describedBy={outfitBad ? "cost-ceo-error" : undefined} onChange={(v) => setOutfitTo(clamp(v, 0, outfitMax))} />
           </div>
-
-          {sportBad ? (
-            <p id="cost-ceo-sport-error" role="status" className={invalid}>
-              {C.invalid}
-            </p>
-          ) : null}
-
-          {sportBad ? null : (
-            <div className={result}>
-              <Totals totals={sportTotals} note={C.ceoSportNote} empty={C.noCost} format={format} />
-              <Stats title={C.statsTitle} rows={pctRows(sportStats)} note={C.ceoSportStatNote} />
-              <Stats title={C.ceoSportGain} rows={statRows(sportFlat)} note={C.ceoSportGainNote} />
-            </div>
-          )}
         </>
+      ) : null}
+
+      {appearanceBad || outfitBad ? (
+        <p id="cost-ceo-error" role="status" className={invalid}>
+          {C.invalid}
+        </p>
+      ) : (
+        <div className={result}>
+          <Totals totals={totals} note={hasOutfits ? C.ceoAppearanceNote : undefined} empty={C.noCost} format={format} />
+          <Stats title={C.statsTitle} rows={statRows(appearanceTotal)} note={C.statsNote} />
+        </div>
+      )}
+
+      <h2 className={`${heading} mt-6`}>{C.ceoSport}</h2>
+
+      <Select id="cost-ceo-sport-tier" text={C.tier} value={tier} onChange={setTier}>
+        {ceo.sportCosts.map((_, index) => (
+          <option key={index} value={index + 1}>
+            {C.tier} {index + 1}
+          </option>
+        ))}
+      </Select>
+
+      <div className="mt-3 grid grid-cols-2 gap-3">
+        <NumberField id="cost-ceo-sport-from" text={C.levelFrom} value={sportFrom} min={SPORT_MIN} max={SPORT_MAX} invalid={sportBad} describedBy={sportBad ? "cost-ceo-sport-error" : undefined} onChange={(v) => setSportFrom(clamp(v, SPORT_MIN, SPORT_MAX))} />
+        <NumberField id="cost-ceo-sport-to" text={C.levelTo} value={sportTo} min={SPORT_MIN} max={SPORT_MAX} invalid={sportBad} describedBy={sportBad ? "cost-ceo-sport-error" : undefined} onChange={(v) => setSportTo(clamp(v, SPORT_MIN, SPORT_MAX))} />
+      </div>
+
+      {sportBad ? (
+        <p id="cost-ceo-sport-error" role="status" className={invalid}>
+          {C.invalid}
+        </p>
+      ) : null}
+
+      {sportBad ? null : (
+        <div className={result}>
+          <Totals totals={sportTotals} note={C.ceoSportNote} empty={C.noCost} format={format} />
+          <Stats title={C.statsTitle} rows={pctRows(sportStats)} note={C.ceoSportStatNote} />
+          <Stats title={C.ceoSportGain} rows={statRows(sportFlat)} note={C.ceoSportGainNote} />
+        </div>
       )}
     </section>
   );
