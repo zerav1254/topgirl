@@ -127,6 +127,7 @@ export const collectionRarityBg = (rarity: number) =>
 // Peta + ikon area ruang koleksi.
 export const collectionZoneIcon = (icon: string, active = false) => `${ROOT}/koleksi/${icon}${active ? "_a" : ""}.webp`;
 
-// Ikon tombol tab kalkulator: tab artis memakai glyph bottom nav, sisanya
-// badge UI_Item_Tag_Icon game (markas, vila, mobil, koleksi, CEO) + museum.
-export const tabIcon = (tab: string) => `${ROOT}/menu/${tab}.webp`;
+// Ikon tombol tab kalkulator: tab artis memakai glyph bottom nav (tanpa berkas
+// menu), sisanya badge UI_Item_Tag_Icon game (markas, vila, mobil, koleksi, CEO).
+const TAB_ICONS: Record<string, string> = { car: "car", hq: "hq", villa: "villa", collection: "collection", ceo: "ceo" };
+export const tabIcon = (tab: string) => (TAB_ICONS[tab] ? `${ROOT}/menu/${TAB_ICONS[tab]}.webp` : null);

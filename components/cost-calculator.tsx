@@ -26,14 +26,14 @@ export function CostCalculator({ book, privateOptions, locale }: { book: ArtistC
   const [levelTo, setLevelTo] = useState(ARTIST_MAX);
   const artist = book.artists.find((item) => item.id === artistId) ?? book.artists[0];
   const bad = levelTo <= levelFrom;
-  const tabs: { id: Tab; label: string }[] = [
+  const tabs = ([
     { id: "artist", label: C.tabArtist }, { id: "car", label: C.tabCar }, { id: "hq", label: C.tabHq },
     { id: "villa", label: C.tabVilla }, { id: "collection", label: C.tabCollection }, { id: "ceo", label: C.tabCeo },
-  ];
+  ] satisfies { id: Tab; label: string }[]).map((item) => ({ ...item, icon: tabIcon(item.id) }));
 
   return <div className="flex flex-col gap-4">
     {!privateOptions ? <p className="rounded-xl border border-line bg-panel/70 px-3 py-2 text-sm text-zinc-400">{C.loginHint} <Link href={`/${locale}/login`} className="inline-flex min-h-11 items-center font-semibold text-gold underline-offset-2 hover:underline">{DICT[locale].auth.login}</Link></p> : null}
-    {privateOptions ? <div role="group" aria-label={C.title} className="grid grid-cols-3 gap-2 sm:grid-cols-6">{tabs.map((item) => <button key={item.id} type="button" aria-pressed={tab === item.id} onClick={() => setTab(item.id)} className={`${chip(tab === item.id, "sm")} flex flex-col items-center justify-center gap-1 text-center leading-tight sm:flex-row sm:gap-2 sm:px-3 sm:text-sm`}><Image src={tabIcon(item.id)} alt="" width={24} height={24} sizes="24px" className="h-6 w-6 shrink-0 object-contain"/>{item.label}</button>)}</div> : null}
+    {privateOptions ? <div role="group" aria-label={C.title} className="grid grid-cols-3 gap-2 sm:grid-cols-6">{tabs.map((item) => <button key={item.id} type="button" aria-pressed={tab === item.id} onClick={() => setTab(item.id)} className={`${chip(tab === item.id, "sm")} flex flex-col items-center justify-center gap-1 text-center leading-tight sm:flex-row sm:gap-2 sm:px-3 sm:text-sm`}>{item.icon ? <Image src={item.icon} alt="" width={24} height={24} sizes="24px" className="h-6 w-6 shrink-0 object-contain"/> : null}{item.label}</button>)}</div> : null}
 
     {tab === "artist" ? <>
       <section aria-label={C.tabArtist} className={panel}>
